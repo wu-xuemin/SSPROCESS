@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">SSPROCESS</string>
+    <string name="start_service">Start Service</string>
+    <string name="stop_service">Stop Service</string>
+    <string name="qr_scan">二维码扫描</string>
+
+    <string name="system_name">SINSIM</string>
+    <string name="account">账号</string>
+    <string name="signup_password">密码</string>
+    <string name="login_activity">登录</string>
+    <string name="install_activity">待安装</string>
+    <string name="checkout_activity">待检验</string>
+
+    <string name="network_not_connect">Network not connected!</string>
+
+
+</resources>
