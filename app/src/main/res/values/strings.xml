@@ -10,6 +10,7 @@
     <string name="login_activity">登录</string>
     <string name="install_activity">待安装</string>
     <string name="checkout_activity">待检验</string>
+    <string name="detail_update">安装信息更新</string>
 
     <string name="network_not_connect">Network not connected!</string>
 

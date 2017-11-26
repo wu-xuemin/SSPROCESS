@@ -46,7 +46,8 @@
         <activity
             android:name=".activity.ScanQrcodeActivity"
             android:label="@string/qr_scan" />
-        <activity android:name=".activity.DetailToAdminActivity" />
+        <activity android:name=".activity.DetailToAdminActivity"
+            android:label="@string/detail_update"/>
     </application>
 
 </manifest>

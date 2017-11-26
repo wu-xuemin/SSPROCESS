@@ -6,15 +6,15 @@ package com.example.nan.ssprocess.bean.basic;
 
 public class ProcessModuleResponseData {
 
-    private int id;
+    private int machineId;
 
-    private String title;
+    private String machineName;
 
-    public int getId() {
-        return id;
+    public int getMachineId() {
+        return machineId;
     }
 
-    public String getTitle() {
-        return title;
+    public String getMachineName() {
+        return machineName;
     }
 }

@@ -1,7 +1,7 @@
 package com.example.nan.ssprocess.bean.basic;
 
 /**
- * Created by Hu Tong on 2017/5/25.
+ * Created by nan on 2017/5/25.
  */
 
 public class LoginResponseData {
@@ -17,7 +17,7 @@ public class LoginResponseData {
      * 在登陆完成后检查当前进行中的流程状态
      * 未开始：1，进行中：2，结束：3，取消：4
      */
-    private int process_status=3;
+    //private int process_status=3;
 
     public String getFullName() {
         return name;
@@ -35,7 +35,7 @@ public class LoginResponseData {
         return account;
     }
 
-    public int getProcessStatus() {
-        return process_status;
-    }
+//    public int getProcessStatus() {
+//        return process_status;
+//    }
 }

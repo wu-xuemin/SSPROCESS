@@ -46,7 +46,7 @@ import okhttp3.Response;
 
 
 public class Network {
-    private static String TAG = "Network";
+    private static String TAG = "nlgNetwork";
     private static Network mNetWork;
     private static Application mCtx;
     private static ThreadPoolExecutor executor;
