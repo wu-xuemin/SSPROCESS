@@ -96,7 +96,7 @@ public class Network {
                         }
                         requestBody = builder.build();
                         //Post method
-                        Request request = new Request.Builder().url( url).post(requestBody).build();
+                        Request request = new Request.Builder().url(url).post(requestBody).build();
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {

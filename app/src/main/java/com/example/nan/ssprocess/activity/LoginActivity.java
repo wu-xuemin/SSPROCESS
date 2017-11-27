@@ -1,8 +1,11 @@
 package com.example.nan.ssprocess.activity;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +21,11 @@ import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.service.MyMqttService;
+import com.example.nan.ssprocess.app.SinSimApp;
+import com.example.nan.ssprocess.app.URL;
+import com.example.nan.ssprocess.net.Network;
+import com.example.nan.ssprocess.util.ShowMessage;
+import com.example.nan.ssprocess.bean.basic.LoginResponseData;
 
 import java.util.LinkedHashMap;
 
@@ -31,10 +39,12 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mAccountText;
     private EditText mPasswordText;
     private Button mLoginButton;
-
     private AlertDialog mIPSettngDialog = null;
-
     private ProgressDialog mLoadingProcessDialog;
+
+    private Network mNetwork;
+    private LoginHandler mLoginHandler;
+    private SinSimApp mApp;
 
 
     @Override
@@ -71,7 +81,8 @@ public class LoginActivity extends AppCompatActivity {
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("account", mAccountText.getText().toString());
         mPostValue.put("password", mPasswordText.getText().toString());
-        mPostValue.put("mobile", "1");
+        mPostValue.put("mobile", SplashActivity.IMEI);
+        Log.d(TAG, "login: "+SplashActivity.IMEI);
 //        if(TextUtils.isEmpty(SinSimApp.getApp().getServerIP())){
 //            if(mLoadingProcessDialog.isShowing()) {
 //                mLoadingProcessDialog.dismiss();
@@ -82,14 +93,77 @@ public class LoginActivity extends AppCompatActivity {
 //            String loginUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.LOCATION + URL.USER_LOGIN;
 //            mNetwork.fetchLoginData(loginUrl, mPostValue, mLoginHandler);
 //        }
-        Intent intent = new Intent(LoginActivity.this,ProcessToAdminActivity.class);
+        //Intent intent = new Intent(LoginActivity.this,ProcessToAdminActivity.class);
+        //Intent intent = new Intent(LoginActivity.this,ProcessToAdminActivity.class);
+        Intent intent = new Intent(LoginActivity.this,DetailToAdminActivity.class);
         startActivity(intent);
 
-        Intent startIntent = new Intent(LoginActivity.this, MyMqttService.class);
         // 启动服务
+
+        Intent startIntent = new Intent(LoginActivity.this, MyMqttService.class);
         startService(startIntent);
 
         finish();
+    }
+
+    @SuppressLint("HandlerLeak")
+    class LoginHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+
+            if(mLoadingProcessDialog != null && mLoadingProcessDialog.isShowing()) {
+                mLoadingProcessDialog.dismiss();
+            }
+
+            if (msg.what == Network.OK) {
+                onLoginSuccess((LoginResponseData)msg.obj);
+            } else {
+                String errorMsg = (String)msg.obj;
+                onLoginFailed("登陆出错！");
+            }
+        }
+    }
+
+    public void onLoginSuccess(LoginResponseData data) {
+        ShowMessage.showToast(LoginActivity.this, "登录成功!", ShowMessage.MessageDuring.SHORT);
+        mLoginButton.setEnabled(true);
+        if( data != null) {
+            //Store to memory and preference
+            mApp.setIsLogined(true, data.getAccount(), data.getFullName(), data.getPassword(), data.getRoleId());
+            //TODO:
+            /**
+             * 在登陆完成后检查分别进入各自对应的页面
+             * 未开始：1，进行中：2，结束：3，取消：4
+             */
+
+            if(SinSimApp.getApp().getRole() == 1) {
+                Intent it = new Intent();
+                it.setClass(LoginActivity.this, ProcessToAdminActivity.class);
+                startActivity(it);
+                finish();
+
+            }else if(SinSimApp.getApp().getRole() == 2){
+                //进行中，流程记录未结束
+                Intent it2 = new Intent();
+                it2.setClass(LoginActivity.this, ProcessToCheckoutActivity.class);
+                startActivity(it2);
+                finish();
+            }else if(SinSimApp.getApp().getRole() == 3){
+                Intent it3 = new Intent();
+                it3.setClass(LoginActivity.this, ProcessToAdminActivity.class);
+                startActivity(it3);
+            }
+            else {
+                Toast.makeText(LoginActivity.this,"您无权限操作!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void onLoginFailed(String msg) {
+        if( msg != null) {
+            ShowMessage.showDialog(LoginActivity.this, msg);
+        }
+        mLoginButton.setEnabled(true);
     }
 
     @Override
@@ -118,13 +192,13 @@ public class LoginActivity extends AppCompatActivity {
                 mIPSettngDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-//                        try {
-//                            SinSimApp.getApp().writePreferenceValue(SinSimApp.PersistentValueType.SERVICE_IP, editText.getText().toString());
-//                            SinSimApp.getApp().commitValues();
-//                            SinSimApp.getApp().setServerIP(editText.getText().toString());
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
+                        try {
+                            SinSimApp.getApp().writePreferenceValue(SinSimApp.PersistentValueType.SERVICE_IP, editText.getText().toString());
+                            SinSimApp.getApp().commitValues();
+                            SinSimApp.getApp().setServerIP(editText.getText().toString());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
                 mIPSettngDialog.show();

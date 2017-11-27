@@ -10,8 +10,9 @@ import com.example.nan.ssprocess.util.LogUtils;
 
 import okhttp3.OkHttpClient;
 
+
 /**
- * Created by Hu Tong on 7/15/2016.
+ * @author nan
  */
 public class SinSimApp extends Application {
 
@@ -58,21 +59,6 @@ public class SinSimApp extends Application {
         SERVICE_IP   //服务器地址
     }
 
-//    /**
-//     *     服务器端数据返回Class对应的枚举值
-//     */
-//    public enum DataClassName {
-//        LOGIN_RESPONSE_DATA;
-//    }
-
-    /**
-     * 存放key= DataClassName, value=类名
-     */
-//    public static final HashMap TypeToClassMap = new HashMap();
-//    static {
-//        TypeToClassMap.put("LoginResponseData", LoginResponseData.class);
-//        TypeToClassMap.put("ProcessRecordResponseData", ProcessRecordResponseData.class);
-//    }
 
     public static SinSimApp getApp() {
         return mApp;
