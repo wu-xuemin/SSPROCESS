@@ -66,7 +66,8 @@ public class Network {
         }
         return mNetWork;
     }
-
+    /*判断是否有网络连接
+    * */
     public boolean isNetworkConnected() {
         ConnectivityManager connectivity = (ConnectivityManager) (mCtx.getSystemService(Context.CONNECTIVITY_SERVICE));
         if (connectivity != null) {
@@ -80,19 +81,22 @@ public class Network {
 
     public void fetchLoginData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {
+            Log.d(TAG, "fetchLoginData: 没网络");
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
         } else {
+            Log.d(TAG, "fetchLoginData: 有网络");
             if (url != null && values != null && handler != null) {
+                Log.d(TAG, "fetchLoginData: not null");
                 final Message msg = handler.obtainMessage();
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
                         RequestBody requestBody;
                         FormBody.Builder builder = new FormBody.Builder();
-                        Iterator iterator = values.entrySet().iterator();
+                        Iterator iterator = values.entrySet().iterator();//map的迭代器
                         while (iterator.hasNext()) {
                             HashMap.Entry entry = (HashMap.Entry)iterator.next();
-                            builder.add((String) entry.getKey(), (String)entry.getValue());
+                            builder.add((String)entry.getKey(), (String)entry.getValue());
                         }
                         requestBody = builder.build();
                         //Post method
@@ -100,9 +104,10 @@ public class Network {
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {
-                            response = client.newCall(request).execute();
+                            response = client.newCall(request).execute();//同步网络请求
                             boolean success = false;
                             if (response.isSuccessful()) {
+                                Log.d(TAG, "run: response success");
                                 Gson gson = new Gson();
                                 LoginResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<LoginResponseDataWrap>(){}.getType());
                                 if (responseData != null) {
@@ -126,8 +131,10 @@ public class Network {
                         } catch (Exception e) {
                             msg.what = NG;
                             msg.obj = "Network error!";
+                            Log.d(TAG, "run: catch "+e);
                         } finally {
                             handler.sendMessage(msg);
+                            Log.d(TAG, "run: finally");
                             if(response != null) {
                                 response.close();
                             }

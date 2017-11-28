@@ -39,12 +39,12 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mAccountText;
     private EditText mPasswordText;
     private Button mLoginButton;
-    private AlertDialog mIPSettngDialog = null;
     private ProgressDialog mLoadingProcessDialog;
-
     private Network mNetwork;
     private LoginHandler mLoginHandler;
     private SinSimApp mApp;
+    private AlertDialog mIPSettngDialog = null;
+
 
 
     @Override
@@ -52,6 +52,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_login);
+
+        mApp = (SinSimApp) getApplication();
+        mNetwork = Network.Instance(getApplication());
+        mLoginHandler = new LoginHandler();
 
         mLoginButton = (Button) findViewById(R.id.btn_login);
         mPasswordText = (EditText) findViewById(R.id.input_password);
@@ -83,30 +87,32 @@ public class LoginActivity extends AppCompatActivity {
         mPostValue.put("password", mPasswordText.getText().toString());
         mPostValue.put("mobile", SplashActivity.IMEI);
         Log.d(TAG, "login: "+SplashActivity.IMEI);
-//        if(TextUtils.isEmpty(SinSimApp.getApp().getServerIP())){
-//            if(mLoadingProcessDialog.isShowing()) {
-//                mLoadingProcessDialog.dismiss();
-//            }
-//            mLoginButton.setEnabled(true);
-//            Toast.makeText(this, "服务端IP为空，请设置IP地址", Toast.LENGTH_SHORT).show();
-//        } else {
-//            String loginUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.LOCATION + URL.USER_LOGIN;
-//            mNetwork.fetchLoginData(loginUrl, mPostValue, mLoginHandler);
-//        }
-        //Intent intent = new Intent(LoginActivity.this,ProcessToAdminActivity.class);
-        //Intent intent = new Intent(LoginActivity.this,ProcessToAdminActivity.class);
-        Intent intent = new Intent(LoginActivity.this,DetailToAdminActivity.class);
+        Log.d(TAG, "login: "+SinSimApp.getApp().getServerIP());
+        if(TextUtils.isEmpty(SinSimApp.getApp().getServerIP())){
+            if(mLoadingProcessDialog.isShowing()) {
+                mLoadingProcessDialog.dismiss();
+            }
+            mLoginButton.setEnabled(true);
+            Toast.makeText(this, "服务端IP为空，请设置IP地址", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "login: 服务端IP为空，请设置IP地址");
+        } else {
+            String loginUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.LOCATION + URL.USER_LOGIN;
+            Log.d(TAG, "login: string url"+loginUrl);
+            mNetwork.fetchLoginData(loginUrl, mPostValue, mLoginHandler);
+        }
+
+        Intent intent = new Intent(LoginActivity.this,ProcessToAdminActivity.class);
+//        Intent intent = new Intent(LoginActivity.this,DetailToAdminActivity.class);
         startActivity(intent);
-
-        // 启动服务
-
-        Intent startIntent = new Intent(LoginActivity.this, MyMqttService.class);
-        startService(startIntent);
-
-        finish();
+//
+//        // 启动服务
+//
+//        Intent startIntent = new Intent(LoginActivity.this, MyMqttService.class);
+//        startService(startIntent);
+//
+//        finish();
     }
 
-    @SuppressLint("HandlerLeak")
     class LoginHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {

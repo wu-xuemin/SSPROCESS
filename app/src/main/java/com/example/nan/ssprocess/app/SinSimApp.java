@@ -96,7 +96,7 @@ public class SinSimApp extends Application {
         this.account = readValue(PersistentValueType.ACCOUNT, "");
         this.password = readValue(PersistentValueType.PASSWORD, "");
         this.fullname = readValue(PersistentValueType.FULL_NAME, "");
-        String roleStr = readValue(PersistentValueType.ROLE, "0");
+        String roleStr = readValue(PersistentValueType.ROLE, "1");
         if("".equals(roleStr)) {
             this.role = 0;
         }else {

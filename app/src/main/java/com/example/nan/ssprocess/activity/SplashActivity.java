@@ -47,8 +47,8 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
     private static final int REQUEST_SOME_PERMISSIONS = 111;
     private static final String[] APP_NEEDS_PERMISSIONS =
             {Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-    private Network mNetwork = Network.Instance(SinSimApp.getApp());
-    private FetchProcessRecordStatusHandler mFetchProcessRecordStatusHandler = new FetchProcessRecordStatusHandler();
+    private Network mNetwork;
+    private FetchProcessRecordStatusHandler mFetchProcessRecordStatusHandler;
     private Handler mTimeoutHandler;
     private Runnable mTimeOutRunnable;
 
@@ -61,6 +61,9 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
         localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_FULLSCREEN | localLayoutParams.flags);
         setContentView(R.layout.activity_splash);
+
+        mNetwork = Network.Instance(SinSimApp.getApp());
+        mFetchProcessRecordStatusHandler = new FetchProcessRecordStatusHandler();
         //申请权限
         requestSomePermissions();
     }
@@ -84,8 +87,8 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         checkIMEI();
 
         //检查preference中的isLogin状态
-        //boolean  isLogin  = SinSimApp.getApp().isLogined();
-        boolean  isLogin  = false;
+        boolean  isLogin  = SinSimApp.getApp().isLogined();
+//        boolean  isLogin  = false;
         if(isLogin) {
             final String account = SinSimApp.getApp().getAccount();
             final String password = SinSimApp.getApp().getPassword();

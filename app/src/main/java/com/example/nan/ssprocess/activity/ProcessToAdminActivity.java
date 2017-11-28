@@ -34,7 +34,7 @@ public class ProcessToAdminActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_to_admin);
-        Button scanQrcodeBotton = (Button) findViewById(R.id.scan_qrcode_button);
+        Button scanQrcodeBotton = (Button) findViewById(R.id.admin_scan_qrcode_button);
         scanQrcodeBotton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
