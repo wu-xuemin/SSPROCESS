@@ -44,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     private LoginHandler mLoginHandler;
     private SinSimApp mApp;
     private AlertDialog mIPSettngDialog = null;
+    private String mPassword=null;
 
 
 
@@ -83,8 +84,9 @@ public class LoginActivity extends AppCompatActivity {
         }
         mLoadingProcessDialog.show();
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPassword=mPasswordText.getText().toString();
         mPostValue.put("account", mAccountText.getText().toString());
-        mPostValue.put("password", mPasswordText.getText().toString());
+        mPostValue.put("password", mPassword);
         mPostValue.put("mobile", SplashActivity.IMEI);
         Log.d(TAG, "login: "+SplashActivity.IMEI);
         Log.d(TAG, "login: "+SinSimApp.getApp().getServerIP());
@@ -135,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
         mLoginButton.setEnabled(true);
         if( data != null) {
             //Store to memory and preference
-            mApp.setIsLogined(true, data.getAccount(), data.getFullName(), data.getPassword(), data.getRole().getId());
+            mApp.setIsLogined(true, data.getAccount(), data.getFullName(), mPassword, data.getRole().getId());
             //TODO:
             /**
              * 在登陆完成后检查人员role进入不同界面

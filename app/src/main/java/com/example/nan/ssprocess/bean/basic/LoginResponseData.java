@@ -1,8 +1,5 @@
 package com.example.nan.ssprocess.bean.basic;
 
-import com.example.nan.ssprocess.bean.basic.LoginRole;
-import com.example.nan.ssprocess.bean.basic.LoginGroup;
-
 /**
  * Created by nan on 2017/5/25.
  */
@@ -43,5 +40,6 @@ public class LoginResponseData {
     public LoginRole getRole() {
         return role;
     }
+
 }
 
