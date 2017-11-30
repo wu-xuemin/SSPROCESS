@@ -184,7 +184,7 @@ public class SinSimApp extends Application {
                     valueType.toString(), sValue));
         }
 
-        mPrefEditor.putString( valueType.toString(), sValue );
+        mPrefEditor.putString(valueType.toString(), sValue );
 
         if ( DEBUG_LOG ) {
             Log.i(TAG, "[writeValue] <==");
@@ -258,7 +258,13 @@ public class SinSimApp extends Application {
     }
 
     public void setServerIP(String ipStr) {
-        this.ip = ipStr;
+        writePreferenceValue(PersistentValueType.PASSWORD, ipStr);
+        try {
+            commitValues();
+            this.ip = ipStr;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public CacheUtils getCache() {

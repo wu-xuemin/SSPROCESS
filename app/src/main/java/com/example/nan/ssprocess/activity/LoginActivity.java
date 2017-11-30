@@ -72,7 +72,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
-        Log.d(TAG, "Login");
 
         mLoginButton.setEnabled(false);
 

@@ -88,7 +88,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
 
         //检查preference中的isLogin状态
         boolean  isLogin  = SinSimApp.getApp().isLogined();
-//        boolean  isLogin  = false;
+//        boolean  isLogin  = true;
         if(isLogin) {
             final String account = SinSimApp.getApp().getAccount();
             final String password = SinSimApp.getApp().getPassword();
@@ -114,10 +114,11 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
                         protected Object doInBackground(Object[] params) {
                             //检查账号密码是否正确，正确的话返回流程的状态
                             LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                            Log.d(TAG, "doInBackground: "+SinSimApp.getApp().getServerIP()+account+password+IMEI);
                             mPostValue.put("account", account);
                             mPostValue.put("password", password);
                             mPostValue.put("mobile", IMEI);
-                            String fetchProcessRecordURL = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.LOCATION + URL.FETCH_PROCESS_RECORD_STATUS;
+                            String fetchProcessRecordURL = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.USER_LOGIN;
                             mNetwork.fetchProcessRecordStatusData(fetchProcessRecordURL, mPostValue, mFetchProcessRecordStatusHandler);
                             return null;
                         }
@@ -145,23 +146,6 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
             jumpToLoginAct();
         }
 
-    }
-
-    private void checkIMEI() {
-        IMEI = getIMEI();
-        Log.d(TAG, "checkIMEI: "+IMEI);
-    }
-
-    @SuppressLint({"MissingPermission", "HardwareIds"})
-    private String getIMEI() {
-        String idIMEI = null;
-        TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
-        if (telephonyManager != null) {
-            idIMEI = telephonyManager.getDeviceId();
-        }else {
-            Log.d(TAG, "getIMEI: have some error");
-        }
-        return idIMEI;
     }
 
     private void jumpToLoginAct() {
@@ -235,13 +219,13 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
             @Override
             public void onAnimationEnd(Animation animation) {
                 logoText.setVisibility(View.INVISIBLE);
-                if(SinSimApp.getApp().getRole() == 1) {
+                if(SinSimApp.getApp().getRole() == 2) {
                     Intent it = new Intent();
                     it.setClass(SplashActivity.this, ProcessToAdminActivity.class);
                     startActivity(it);
                     finish();
 
-                }else if(SinSimApp.getApp().getRole() == 2){
+                }else if(SinSimApp.getApp().getRole() == 11){
                     //进行中，流程记录未结束
                     Intent it2 = new Intent();
                     it2.setClass(SplashActivity.this, ProcessToCheckoutActivity.class);
@@ -249,7 +233,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
                     finish();
                 }else if(SinSimApp.getApp().getRole() == 3){
                     Intent it3 = new Intent();
-                    it3.setClass(SplashActivity.this, ProcessToAdminActivity.class);
+                    it3.setClass(SplashActivity.this, ProcessToInstallActivity.class);
                     startActivity(it3);
                 }
                 else {
@@ -263,6 +247,23 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
     private void onFetchProcessDataFailed(String errorMsg) {
         Toast.makeText(this,errorMsg, Toast.LENGTH_SHORT).show();
         jumpToLoginAct();
+    }
+
+    private void checkIMEI() {
+        IMEI = getIMEI();
+        Log.d(TAG, "checkIMEI: "+IMEI);
+    }
+
+    @SuppressLint({"MissingPermission", "HardwareIds"})
+    private String getIMEI() {
+        String idIMEI = null;
+        TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
+        if (telephonyManager != null) {
+            idIMEI = telephonyManager.getDeviceId();
+        }else {
+            Log.d(TAG, "getIMEI: have some error");
+        }
+        return idIMEI;
     }
 
     @Override

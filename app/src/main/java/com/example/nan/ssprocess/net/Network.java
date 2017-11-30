@@ -487,10 +487,10 @@ public class Network {
                                 Gson gson = new Gson();
                                 responseData = gson.fromJson(response.body().string(), new TypeToken<ResponseData>(){}.getType());
                                 if (responseData != null) {
-                                    if (responseData.getCode() == 1) {
+                                    if (responseData.getCode() == 200) {
                                         success = true;
                                         msg.obj = responseData.getMassage();
-                                    } else if (responseData.getCode() == 0) {
+                                    } else if (responseData.getCode() == 400) {
                                         msg.obj = responseData.getMassage();
                                     }
                                 }
