@@ -96,14 +96,14 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "服务端IP为空，请设置IP地址", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "login: 服务端IP为空，请设置IP地址");
         } else {
-            String loginUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.LOCATION + URL.USER_LOGIN;
+            String loginUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.USER_LOGIN;
             Log.d(TAG, "login: string url"+loginUrl);
             mNetwork.fetchLoginData(loginUrl, mPostValue, mLoginHandler);
         }
 
-        Intent intent = new Intent(LoginActivity.this,ProcessToAdminActivity.class);
+//        Intent intent = new Intent(LoginActivity.this,ProcessToAdminActivity.class);
 //        Intent intent = new Intent(LoginActivity.this,DetailToAdminActivity.class);
-        startActivity(intent);
+//        startActivity(intent);
 //
 //        // 启动服务
 //
@@ -135,20 +135,21 @@ public class LoginActivity extends AppCompatActivity {
         mLoginButton.setEnabled(true);
         if( data != null) {
             //Store to memory and preference
-            mApp.setIsLogined(true, data.getAccount(), data.getFullName(), data.getPassword(), data.getRoleId());
+            mApp.setIsLogined(true, data.getAccount(), data.getFullName(), data.getPassword(), data.getRole().getId());
             //TODO:
             /**
-             * 在登陆完成后检查分别进入各自对应的页面
-             * 未开始：1，进行中：2，结束：3，取消：4
+             * 在登陆完成后检查人员role进入不同界面
+             * 生产部管理员：2，安装组长：3，质检员：11
              */
+            Log.d(TAG, "onLoginSuccess: role id "+SinSimApp.getApp().getRole());
 
-            if(SinSimApp.getApp().getRole() == 1) {
+            if(SinSimApp.getApp().getRole() == 2) {
                 Intent it = new Intent();
                 it.setClass(LoginActivity.this, ProcessToAdminActivity.class);
                 startActivity(it);
                 finish();
 
-            }else if(SinSimApp.getApp().getRole() == 2){
+            }else if(SinSimApp.getApp().getRole() == 11){
                 //进行中，流程记录未结束
                 Intent it2 = new Intent();
                 it2.setClass(LoginActivity.this, ProcessToCheckoutActivity.class);
@@ -156,7 +157,7 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }else if(SinSimApp.getApp().getRole() == 3){
                 Intent it3 = new Intent();
-                it3.setClass(LoginActivity.this, ProcessToAdminActivity.class);
+                it3.setClass(LoginActivity.this, ProcessToInstallActivity.class);
                 startActivity(it3);
             }
             else {

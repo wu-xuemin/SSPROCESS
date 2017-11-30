@@ -111,12 +111,18 @@ public class Network {
                                 Gson gson = new Gson();
                                 LoginResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<LoginResponseDataWrap>(){}.getType());
                                 if (responseData != null) {
-                                    if (responseData.getStatus() == 1) {
-                                        success = true;
-                                        msg.obj = responseData.getData();
-                                    } else if (responseData.getStatus() == 0) {
-                                        Log.e(TAG, responseData.getInfo());
-                                        msg.obj = responseData.getInfo();
+                                    Log.d(TAG, "run: responseData："+responseData.getCode());
+                                    if (responseData.getCode() == 200) {
+                                        if(responseData.getData().getValid()!=1){
+                                            Log.e(TAG, "用户已离职");
+                                            msg.obj="用户已离职";
+                                        }else {
+                                            success = true;
+                                            msg.obj = responseData.getData();
+                                        }
+                                    } else if (responseData.getCode() == 400) {
+                                        Log.e(TAG, responseData.getMassage());
+                                        msg.obj = responseData.getMassage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -173,11 +179,11 @@ public class Network {
                                 Gson gson = new Gson();
                                 ResponseData responseData = gson.fromJson(response.body().string(), new TypeToken<ResponseData>(){}.getType());
                                 if (responseData != null) {
-                                    if (responseData.getStatus() == 1) {
+                                    if (responseData.getCode() == 1) {
                                         success = true;
-                                    } else if (responseData.getStatus() == 0) {
-                                        Log.e(TAG, responseData.getInfo());
-                                        errorMsg = responseData.getInfo();
+                                    } else if (responseData.getCode() == 0) {
+                                        Log.e(TAG, responseData.getMassage());
+                                        errorMsg = responseData.getMassage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -226,12 +232,12 @@ public class Network {
                                 Gson gson = new Gson();
                                 ToolsPackageResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<ToolsPackageResponseDataWrap>(){}.getType());
                                 if (responseData != null) {
-                                    if (responseData.getStatus() == 1) {
+                                    if (responseData.getCode() == 1) {
                                         success = true;
                                         msg.obj = responseData.getData();
-                                    } else if (responseData.getStatus() == 0) {
-                                        Log.e(TAG, responseData.getInfo());
-                                        msg.obj = responseData.getInfo();
+                                    } else if (responseData.getCode() == 0) {
+                                        Log.e(TAG, responseData.getMassage());
+                                        msg.obj = responseData.getMassage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -286,12 +292,12 @@ public class Network {
                                 Gson gson = new Gson();
                                 GuidanceResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<GuidanceResponseDataWrap>(){}.getType());
                                 if (responseData != null) {
-                                    if (responseData.getStatus() == 1) {
+                                    if (responseData.getCode() == 1) {
                                         success = true;
                                         msg.obj = responseData.getData();//Guidance的内容
-                                    } else if (responseData.getStatus() == 0) {
-                                        Log.e(TAG, responseData.getInfo());
-                                        msg.obj = responseData.getInfo();
+                                    } else if (responseData.getCode() == 0) {
+                                        Log.e(TAG, responseData.getMassage());
+                                        msg.obj = responseData.getMassage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -346,12 +352,12 @@ public class Network {
                                 Gson gson = new Gson();
                                 ProcessModelsResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<ProcessModelsResponseDataWrap>(){}.getType());
                                 if (responseData != null) {
-                                    if (responseData.getStatus() == 1) {
+                                    if (responseData.getCode() == 1) {
                                         success = true;
                                         msg.obj = responseData.getData();
-                                    } else if (responseData.getStatus() == 0) {
-                                        Log.e(TAG, responseData.getInfo());
-                                        msg.obj = responseData.getInfo();
+                                    } else if (responseData.getCode() == 0) {
+                                        Log.e(TAG, responseData.getMassage());
+                                        msg.obj = responseData.getMassage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -413,10 +419,10 @@ public class Network {
                                 Gson gson = new Gson();
                                 responseData = gson.fromJson(response.body().string(), new TypeToken<ResponseData>(){}.getType());
                                 if (responseData != null) {
-                                    if (responseData.getStatus() == 1) {
+                                    if (responseData.getCode() == 1) {
                                         success = true;
-                                    } else if (responseData.getStatus() == 0) {
-                                        msg.obj = responseData.getInfo();
+                                    } else if (responseData.getCode() == 0) {
+                                        msg.obj = responseData.getMassage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -427,7 +433,7 @@ public class Network {
                             } else {
                                 msg.what = NG;
                                 if(responseData != null) {
-                                    msg.obj = responseData.getInfo();
+                                    msg.obj = responseData.getMassage();
                                 }
                             }
                             response.close();
@@ -481,11 +487,11 @@ public class Network {
                                 Gson gson = new Gson();
                                 responseData = gson.fromJson(response.body().string(), new TypeToken<ResponseData>(){}.getType());
                                 if (responseData != null) {
-                                    if (responseData.getStatus() == 1) {
+                                    if (responseData.getCode() == 1) {
                                         success = true;
-                                        msg.obj = responseData.getInfo();
-                                    } else if (responseData.getStatus() == 0) {
-                                        msg.obj = responseData.getInfo();
+                                        msg.obj = responseData.getMassage();
+                                    } else if (responseData.getCode() == 0) {
+                                        msg.obj = responseData.getMassage();
                                     }
                                 }
                                 if (success) {
@@ -494,7 +500,7 @@ public class Network {
                             } else {
                                 msg.what = NG;
                                 if(responseData != null) {
-                                    msg.obj = responseData.getInfo();
+                                    msg.obj = responseData.getMassage();
                                 }
                             }
                             response.close();
@@ -541,11 +547,11 @@ public class Network {
                                 Gson gson = new Gson();
                                 ProcessRecordResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<ProcessRecordResponseDataWrap>(){}.getType());
                                 if (responseData != null) {
-                                    if (responseData.getStatus() == 1) {
+                                    if (responseData.getCode() == 1) {
                                         success = true;
                                         msg.obj = responseData.getData();
-                                    } else if (responseData.getStatus() == 0) {
-                                        msg.obj = responseData.getInfo();
+                                    } else if (responseData.getCode() == 0) {
+                                        msg.obj = responseData.getMassage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -600,10 +606,10 @@ public class Network {
                                 Gson gson = new Gson();
                                 ResponseData responseData = gson.fromJson(response.body().string(), new TypeToken<ResponseData>(){}.getType());
                                 if (responseData != null) {
-                                    if (responseData.getStatus() == 1) {
+                                    if (responseData.getCode() == 1) {
                                         success = true;
-                                    } else if (responseData.getStatus() == 0) {
-                                        msg.obj = responseData.getInfo();
+                                    } else if (responseData.getCode() == 0) {
+                                        msg.obj = responseData.getMassage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -650,10 +656,10 @@ public class Network {
                                 Gson gson = new Gson();
                                 ResponseData responseData = gson.fromJson(response.body().string(), new TypeToken<ResponseData>(){}.getType());
                                 if (responseData != null) {
-                                    if (responseData.getStatus() == 1) {
+                                    if (responseData.getCode() == 1) {
                                         success = true;
-                                    } else if (responseData.getStatus() == 0) {
-                                        msg.obj = responseData.getInfo();
+                                    } else if (responseData.getCode() == 0) {
+                                        msg.obj = responseData.getMassage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }

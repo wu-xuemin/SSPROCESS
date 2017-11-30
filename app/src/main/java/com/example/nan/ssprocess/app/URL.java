@@ -9,7 +9,7 @@ public class URL {
     public static final String HTTP_HEAD = "http://";
     public static final String LOCATION = "/shcrhservice/index.php/home";
 
-    public static final String USER_LOGIN = "/user/ajaxLogin";
+    public static final String USER_LOGIN = "/user/requestLogin";
     public static final String USER_LOGOUT = "/user/logout";
     public static final String PROCESS_MODULE_LIST = "/process/getRecords";
     public static final String PROCESS_RECORD_ADD = "/ProcessRecord/addProcessRecord";

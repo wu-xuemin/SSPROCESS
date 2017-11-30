@@ -4,14 +4,14 @@ package com.example.nan.ssprocess.bean.response;
  * Created by Hu Tong on 7/22/2016.
  */
 public class ResponseData {
-    private int status = -1;
-    private String info = "";
+    private int code = -1;
+    private String massage = "";
 
-    public int getStatus() {
-        return status;
+    public int getCode() {
+        return code;
     }
 
-    public String getInfo() {
-        return info;
+    public String getMassage() {
+        return massage;
     }
 }
