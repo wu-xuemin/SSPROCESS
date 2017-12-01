@@ -238,6 +238,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
                 }
                 else {
                     Toast.makeText(SplashActivity.this,"您无权限操作!", Toast.LENGTH_SHORT).show();
+                    jumpToLoginAct();
                 }
             }
         });

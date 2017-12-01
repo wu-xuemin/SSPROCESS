@@ -24,13 +24,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="订单编号："/>
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/order_number_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="3"/>
+            android:layout_weight="1"/>
     </LinearLayout>
 
     <LinearLayout
@@ -40,7 +39,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="机器编号："/>
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/machine_number_et"
@@ -50,8 +48,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="类型："/>
+            android:text="类  型："/>
         <Spinner
             android:id="@+id/type_spinner"
             android:layout_width="wrap_content"
@@ -65,8 +62,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="头数："/>
+            android:text="头    数："/>
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/needle_count_et"
             android:layout_width="wrap_content"
@@ -75,10 +71,32 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="位置："/>
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/localtion_et"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="装车单："/>
+        <TextView
+            android:id="@+id/intall_list_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="联系单："/>
+        <TextView
+            android:id="@+id/contact_list_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -100,22 +118,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <RadioButton
-            android:id="@+id/normal_rb"
+        <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="正常" />
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <RadioButton
+                android:id="@+id/normal_rb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="正常" />
 
-        <RadioButton
-            android:id="@+id/abnormal_rb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="异常" />
-
+            <RadioButton
+                android:id="@+id/abnormal_rb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="异常" />
+        </RadioGroup>
         <Spinner
-            android:id="@+id/fail_spinner"
+            android:id="@+id/fail_reason_spinner"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"/>

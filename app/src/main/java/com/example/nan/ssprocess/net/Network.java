@@ -121,8 +121,9 @@ public class Network {
                                             msg.obj = responseData.getData();
                                         }
                                     } else if (responseData.getCode() == 400) {
-                                        Log.e(TAG, responseData.getMassage());
-                                        msg.obj = responseData.getMassage();
+                                        Log.e(TAG, responseData.getMessage());
+                                        Log.d(TAG, "run: error:"+responseData.getMessage());
+                                        msg.obj = responseData.getMessage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -182,8 +183,8 @@ public class Network {
                                     if (responseData.getCode() == 1) {
                                         success = true;
                                     } else if (responseData.getCode() == 0) {
-                                        Log.e(TAG, responseData.getMassage());
-                                        errorMsg = responseData.getMassage();
+                                        Log.e(TAG, responseData.getMessage());
+                                        errorMsg = responseData.getMessage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -236,8 +237,8 @@ public class Network {
                                         success = true;
                                         msg.obj = responseData.getData();
                                     } else if (responseData.getCode() == 0) {
-                                        Log.e(TAG, responseData.getMassage());
-                                        msg.obj = responseData.getMassage();
+                                        Log.e(TAG, responseData.getMessage());
+                                        msg.obj = responseData.getMessage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -296,8 +297,8 @@ public class Network {
                                         success = true;
                                         msg.obj = responseData.getData();//Guidance的内容
                                     } else if (responseData.getCode() == 0) {
-                                        Log.e(TAG, responseData.getMassage());
-                                        msg.obj = responseData.getMassage();
+                                        Log.e(TAG, responseData.getMessage());
+                                        msg.obj = responseData.getMessage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -356,8 +357,8 @@ public class Network {
                                         success = true;
                                         msg.obj = responseData.getData();
                                     } else if (responseData.getCode() == 0) {
-                                        Log.e(TAG, responseData.getMassage());
-                                        msg.obj = responseData.getMassage();
+                                        Log.e(TAG, responseData.getMessage());
+                                        msg.obj = responseData.getMessage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -422,7 +423,7 @@ public class Network {
                                     if (responseData.getCode() == 1) {
                                         success = true;
                                     } else if (responseData.getCode() == 0) {
-                                        msg.obj = responseData.getMassage();
+                                        msg.obj = responseData.getMessage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -433,7 +434,7 @@ public class Network {
                             } else {
                                 msg.what = NG;
                                 if(responseData != null) {
-                                    msg.obj = responseData.getMassage();
+                                    msg.obj = responseData.getMessage();
                                 }
                             }
                             response.close();
@@ -476,7 +477,7 @@ public class Network {
                         }
                         requestBody = builder.build();
                         //Post method
-                        Request request = new Request.Builder().url( url).post(requestBody).build();
+                        Request request = new Request.Builder().url(url).post(requestBody).build();
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {
@@ -489,9 +490,9 @@ public class Network {
                                 if (responseData != null) {
                                     if (responseData.getCode() == 200) {
                                         success = true;
-                                        msg.obj = responseData.getMassage();
+                                        msg.obj = responseData.getMessage();
                                     } else if (responseData.getCode() == 400) {
-                                        msg.obj = responseData.getMassage();
+                                        msg.obj = responseData.getMessage();
                                     }
                                 }
                                 if (success) {
@@ -500,7 +501,7 @@ public class Network {
                             } else {
                                 msg.what = NG;
                                 if(responseData != null) {
-                                    msg.obj = responseData.getMassage();
+                                    msg.obj = responseData.getMessage();
                                 }
                             }
                             response.close();
@@ -547,11 +548,11 @@ public class Network {
                                 Gson gson = new Gson();
                                 ProcessRecordResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<ProcessRecordResponseDataWrap>(){}.getType());
                                 if (responseData != null) {
-                                    if (responseData.getCode() == 1) {
+                                    if (responseData.getCode() == 200) {
                                         success = true;
                                         msg.obj = responseData.getData();
-                                    } else if (responseData.getCode() == 0) {
-                                        msg.obj = responseData.getMassage();
+                                    } else if (responseData.getCode() == 400) {
+                                        msg.obj = responseData.getMessage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -609,7 +610,7 @@ public class Network {
                                     if (responseData.getCode() == 1) {
                                         success = true;
                                     } else if (responseData.getCode() == 0) {
-                                        msg.obj = responseData.getMassage();
+                                        msg.obj = responseData.getMessage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
@@ -659,7 +660,7 @@ public class Network {
                                     if (responseData.getCode() == 1) {
                                         success = true;
                                     } else if (responseData.getCode() == 0) {
-                                        msg.obj = responseData.getMassage();
+                                        msg.obj = responseData.getMessage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }

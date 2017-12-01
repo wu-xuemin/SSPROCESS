@@ -103,8 +103,8 @@ public class LoginActivity extends AppCompatActivity {
         }
 
 //        Intent intent = new Intent(LoginActivity.this,ProcessToAdminActivity.class);
-//        Intent intent = new Intent(LoginActivity.this,DetailToAdminActivity.class);
-//        startActivity(intent);
+        Intent intent = new Intent(LoginActivity.this,DetailToAdminActivity.class);
+        startActivity(intent);
 //
 //        // 启动服务
 //
@@ -126,7 +126,7 @@ public class LoginActivity extends AppCompatActivity {
                 onLoginSuccess((LoginResponseData)msg.obj);
             } else {
                 String errorMsg = (String)msg.obj;
-                onLoginFailed("登陆出错！");
+                onLoginFailed(errorMsg);
             }
         }
     }
@@ -182,15 +182,14 @@ public class LoginActivity extends AppCompatActivity {
                 LinearLayout layout = (LinearLayout) View.inflate(LoginActivity.this, R.layout.dialog_ip_setting, null);
                 final EditText editText = (EditText)layout.findViewById(R.id.ip_value);
                 //读取保存的IP地址
-//                String temp = SinSimApp.getApp().readValue(SinSimApp.PersistentValueType.SERVICE_IP, "");
-                if(mIPSettngDialog == null) {
-                    mIPSettngDialog = new AlertDialog.Builder(LoginActivity.this).create();
-                }
+                String temp = SinSimApp.getApp().getServerIP();
+                Log.d(TAG, "onOptionsItemSelected: "+temp);
+                mIPSettngDialog = new AlertDialog.Builder(LoginActivity.this).create();
                 mIPSettngDialog.setTitle("服务端IP设置");
                 mIPSettngDialog.setView(layout);
-//                if(!TextUtils.isEmpty(temp)) {
-//                    editText.setText(temp);
-//                }
+                if(!TextUtils.isEmpty(temp)) {
+                    editText.setText(temp);
+                }
                 mIPSettngDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -201,8 +200,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
-                            SinSimApp.getApp().writePreferenceValue(SinSimApp.PersistentValueType.SERVICE_IP, editText.getText().toString());
-                            SinSimApp.getApp().commitValues();
+                            Log.d(TAG, "onClick: 输入ip："+editText.getText().toString());
                             SinSimApp.getApp().setServerIP(editText.getText().toString());
                         } catch (Exception e) {
                             e.printStackTrace();

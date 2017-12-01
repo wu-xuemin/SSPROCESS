@@ -5,13 +5,13 @@ package com.example.nan.ssprocess.bean.response;
  */
 public class ResponseData {
     private int code = -1;
-    private String massage = "";
+    private String message = "";
 
     public int getCode() {
         return code;
     }
 
-    public String getMassage() {
-        return massage;
+    public String getMessage() {
+        return message;
     }
 }

@@ -12,12 +12,7 @@
         app:iconifiedByDefault="false"
         app:queryHint="输入订单号、机器编号"
         />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="点击扫二维码"
-        android:id="@+id/admin_scan_qrcode_button"
-        />
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/admin_swipe_refresh"
         android:layout_width="match_parent"
@@ -31,4 +26,10 @@
         </android.support.v7.widget.RecyclerView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="点击扫二维码"
+        android:id="@+id/admin_scan_qrcode_button"
+        />
 </LinearLayout>
