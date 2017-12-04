@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
-
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -29,7 +28,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="org.eclipse.paho.android.service.MqttService"/>
+
+        <service android:name="org.eclipse.paho.android.service.MqttService" />
         <service
             android:name=".service.MyMqttService"
             android:enabled="true"
@@ -49,18 +49,23 @@
         <activity
             android:name=".activity.ScanQrcodeActivity"
             android:label="@string/qr_scan" />
-        <activity android:name=".activity.DetailToAdminActivity"
+        <activity
+            android:name=".activity.DetailToAdminActivity"
             android:label="@string/detail_update"
-            android:theme="@style/AppThemeNoTitle"/>
+            android:theme="@style/AppThemeNoTitle" />
+
         <provider
-            android:authorities="com.example.nan.ssprocess.fileprovider"
             android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.nan.ssprocess.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
+
+        <activity android:name=".activity.DetailToInstallActivity" />
+        <activity android:name=".activity.DetailToCheckoutActivity"></activity>
     </application>
 
 </manifest>

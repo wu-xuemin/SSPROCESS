@@ -36,10 +36,11 @@ dependencies {
 
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
     compile 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
-    
+
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.squareup.okhttp3:okhttp:3.9.1'
     compile 'com.orhanobut:logger:1.13'
-    compile 'com.blankj:utilcode:1.9.8'//A super util package, please refer to "https://github.com/Blankj/AndroidUtilCode"
+    compile 'com.blankj:utilcode:1.9.8'
+//A super util package, please refer to "https://github.com/Blankj/AndroidUtilCode"
 
 }
