@@ -41,7 +41,8 @@
         <activity android:name=".activity.MainActivity" />
         <activity
             android:name=".activity.ProcessToInstallActivity"
-            android:label="@string/install_activity" />
+            android:label="@string/install_activity"
+            android:theme="@style/AppThemeNoTitle"/>
         <activity
             android:name=".activity.ProcessToCheckoutActivity"
             android:label="@string/checkout_activity" />
@@ -53,6 +54,8 @@
             android:name=".activity.DetailToAdminActivity"
             android:label="@string/detail_update"
             android:theme="@style/AppThemeNoTitle" />
+        <activity android:name=".activity.DetailToInstallActivity" />
+        <activity android:name=".activity.DetailToCheckoutActivity"></activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -64,8 +67,6 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".activity.DetailToInstallActivity" />
-        <activity android:name=".activity.DetailToCheckoutActivity"></activity>
     </application>
 
 </manifest>

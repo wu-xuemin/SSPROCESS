@@ -102,8 +102,8 @@ public class LoginActivity extends AppCompatActivity {
             mNetwork.fetchLoginData(loginUrl, mPostValue, mLoginHandler);
         }
 
-//        Intent intent = new Intent(LoginActivity.this,ProcessToAdminActivity.class);
-        Intent intent = new Intent(LoginActivity.this,DetailToAdminActivity.class);
+        Intent intent = new Intent(LoginActivity.this,ProcessToInstallActivity.class);
+//        Intent intent = new Intent(LoginActivity.this,DetailToAdminActivity.class);
         startActivity(intent);
 //
 //        // 启动服务
