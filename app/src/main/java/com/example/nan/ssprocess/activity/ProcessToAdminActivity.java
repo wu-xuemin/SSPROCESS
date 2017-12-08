@@ -98,7 +98,7 @@ public class ProcessToAdminActivity extends AppCompatActivity {
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("userAccount", account);
         String fetchProcessRecordUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FETCH_PROCESS_RECORD;
-        Network.Instance(SinSimApp.getApp()).fetchProcessRecordData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
+        Network.Instance(SinSimApp.getApp()).fetchProcessModuleData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
     }
 
     private class FetchProcessDataHandler extends Handler {
@@ -106,6 +106,8 @@ public class ProcessToAdminActivity extends AppCompatActivity {
         public void handleMessage(final Message msg) {
 
             if (msg.what == Network.OK) {
+//                onLoginSuccess((ProcessModuleResponseData)msg.obj);
+
                 Toast.makeText(ProcessToAdminActivity.this, "获取正在进行中流程成功！", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(ProcessToAdminActivity.this, "更新流程信息失败！", Toast.LENGTH_SHORT).show();

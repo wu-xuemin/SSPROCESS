@@ -37,7 +37,6 @@ public class ProcessToAdminAdapter extends RecyclerView.Adapter<ProcessToAdminAd
             processStateTv = (TextView) itemView.findViewById(R.id.process_state_tv);
             beginDateTv = (TextView) itemView.findViewById(R.id.process_begin_date_tv);
             endDateTv = (TextView) itemView.findViewById(R.id.process_end_date_tv);
-
         }
     }
     public ProcessToAdminAdapter(ArrayList<ProcessModuleListData> list) {
@@ -47,17 +46,24 @@ public class ProcessToAdminAdapter extends RecyclerView.Adapter<ProcessToAdminAd
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_status_of_process,parent,false);
+        final ViewHolder holder = new ViewHolder(view);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ProcessToAdminAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        ProcessModuleListData processModuleListData = mProcessList.get(position);
+        holder.machineIdTv.setText(processModuleListData.getId());
+        holder.processNameTv.setText(processModuleListData.getTaskName());
+        holder.processStateTv.setText(processModuleListData.getStatus());
+        holder.beginDateTv.setText(processModuleListData.getBeginTime());
+        holder.endDateTv.setText(processModuleListData.getEndTime());
 
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mProcessList.size();
     }
 
 //    public FruitAdapter(List<Fruit> fruitList) {
