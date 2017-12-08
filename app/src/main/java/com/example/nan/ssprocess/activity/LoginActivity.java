@@ -102,9 +102,9 @@ public class LoginActivity extends AppCompatActivity {
             mNetwork.fetchLoginData(loginUrl, mPostValue, mLoginHandler);
         }
 
-        Intent intent = new Intent(LoginActivity.this,ProcessToInstallActivity.class);
+//        Intent intent = new Intent(LoginActivity.this,ProcessToInstallActivity.class);
 //        Intent intent = new Intent(LoginActivity.this,DetailToAdminActivity.class);
-        startActivity(intent);
+//        startActivity(intent);
 //
 //        // 启动服务
 //
@@ -144,7 +144,7 @@ public class LoginActivity extends AppCompatActivity {
              */
             Log.d(TAG, "onLoginSuccess: role id "+SinSimApp.getApp().getRole());
 
-            if(SinSimApp.getApp().getRole() == 2) {
+            if(SinSimApp.getApp().getRole() == 3) {
                 Intent it = new Intent();
                 it.setClass(LoginActivity.this, ProcessToAdminActivity.class);
                 startActivity(it);
@@ -156,7 +156,7 @@ public class LoginActivity extends AppCompatActivity {
                 it2.setClass(LoginActivity.this, ProcessToCheckoutActivity.class);
                 startActivity(it2);
                 finish();
-            }else if(SinSimApp.getApp().getRole() == 3){
+            }else if(SinSimApp.getApp().getRole() == 2){
                 Intent it3 = new Intent();
                 it3.setClass(LoginActivity.this, ProcessToInstallActivity.class);
                 startActivity(it3);

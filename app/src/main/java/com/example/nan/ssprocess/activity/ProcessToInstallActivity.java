@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.nan.ssprocess.R;
+import com.example.nan.ssprocess.adapter.ProcessToInstallAdapter;
 import com.example.nan.ssprocess.fragment.TabInstallPlanFragment;
 import com.example.nan.ssprocess.fragment.TabInstallReadyFragment;
 
@@ -22,7 +23,18 @@ public class ProcessToInstallActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private List<Fragment> list;
-    private MyAdapter adapter;
+    private ProcessToInstallAdapter adapter;
+
+    private ArrayList<String> titleList = new ArrayList<String>() {{
+        add("安装计划");
+        add("非安装计划");
+    }};
+
+    private ArrayList<Fragment> fragmentList = new ArrayList<Fragment>() {{
+        add(new TabInstallPlanFragment());
+        add(new TabInstallReadyFragment());
+    }};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,29 +46,9 @@ public class ProcessToInstallActivity extends AppCompatActivity {
         list.add(new TabInstallPlanFragment());
         list.add(new TabInstallReadyFragment());
         //ViewPager的适配器
-        adapter = new MyAdapter(getSupportFragmentManager());
+        adapter = new ProcessToInstallAdapter(getSupportFragmentManager(),titleList, fragmentList);
         viewPager.setAdapter(adapter);
         //绑定
-        tabLayout.setupWithViewPager(viewPager);
-    }
-    class MyAdapter extends FragmentPagerAdapter {
-
-        public MyAdapter(FragmentManager fm) {
-            super(fm);
-        }
-        @Override
-        public Fragment getItem(int position) {
-            return list.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return list.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return super.getPageTitle(position);
-        }
+        tabLayout.setupWithViewPager(viewPager,true);
     }
 }

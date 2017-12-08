@@ -10,10 +10,15 @@ import java.util.List;
  */
 public class ProcessModelsResponseDataWrap extends ResponseData {
 
-    private List<ProcessModuleResponseData> data = new ArrayList<>();
+//    private List<ProcessModuleResponseData> data = new ArrayList<>();
+//
+//    public List<ProcessModuleResponseData> getData() {
+//        return data;
+//    }
 
-    public List<ProcessModuleResponseData> getData() {
+    private ProcessModuleResponseData data;
+
+    public ProcessModuleResponseData getData() {
         return data;
     }
-
 }

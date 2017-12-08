@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.ProcessToAdminAdapter;
 import com.example.nan.ssprocess.bean.basic.LoginRequestData;
+import com.example.nan.ssprocess.bean.basic.ProcessModuleListData;
 import com.example.nan.ssprocess.bean.basic.ProcessModuleResponseData;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
@@ -33,7 +34,7 @@ import java.util.LinkedHashMap;
 public class ProcessToAdminActivity extends AppCompatActivity {
 
     private ProcessToAdminActivity mProcessToAdminActivity;
-    private ArrayList<ProcessModuleResponseData> mProcessToAdminList = new ArrayList<>();
+    private ArrayList<ProcessModuleListData> mProcessToAdminList = new ArrayList<>();
     private ProcessToAdminAdapter mProcessToAdminAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
 
@@ -51,6 +52,7 @@ public class ProcessToAdminActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_to_admin);
+
         Button scanQrcodeBotton = (Button) findViewById(R.id.admin_scan_qrcode_button);
         scanQrcodeBotton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,9 +94,10 @@ public class ProcessToAdminActivity extends AppCompatActivity {
     }
 
     private void fetchProcessData() {
+        final String account = SinSimApp.getApp().getAccount();
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("mobile", "1");
-        String fetchProcessRecordUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.LOCATION + URL.FETCH_PROCESS_RECORD;
+        mPostValue.put("userAccount", account);
+        String fetchProcessRecordUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FETCH_PROCESS_RECORD;
         Network.Instance(SinSimApp.getApp()).fetchProcessRecordData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
     }
 

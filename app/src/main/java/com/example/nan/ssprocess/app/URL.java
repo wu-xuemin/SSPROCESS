@@ -7,14 +7,14 @@ public class URL {
 
 	//public static final String IP = "192.168.1.116";
     public static final String HTTP_HEAD = "http://";
-    public static final String LOCATION = "/shcrhservice/index.php/home";
+//    public static final String LOCATION = "/shcrhservice/index.php/home";
 
     public static final String USER_LOGIN = "/user/requestLogin";
     public static final String USER_LOGOUT = "/user/logout";
     public static final String PROCESS_MODULE_LIST = "/process/getRecords";
     public static final String PROCESS_RECORD_ADD = "/ProcessRecord/addProcessRecord";
     public static final String FETCH_PROCESS_RECORD_STATUS = "/ProcessRecord/getProcessRecordStatus";
-    public static final String FETCH_PROCESS_RECORD = "/ProcessRecord/getProcessRecord";
+    public static final String FETCH_PROCESS_RECORD = "/task/record/selectTaskReocords";
     public static final String UPDATE_OPERATION_STATUS = "/OperationStatus/modifyData";
     public static final String FETCH_TOOLS_PACKAGE = "/ToolsPackage/getRecords";
     public static final String FETCH_GUIDANCE = "/TaskContent/getGuidanceByName";

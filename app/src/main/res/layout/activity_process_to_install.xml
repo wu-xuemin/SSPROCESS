@@ -11,14 +11,14 @@
         android:background="#aa000000"
         app:tabSelectedTextColor="@color/colorAccent"
         app:tabTextColor="@color/white">
-        <android.support.design.widget.TabItem
-            android:text="安装计划"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        <android.support.design.widget.TabItem
-            android:text="可以安装"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <!--<android.support.design.widget.TabItem-->
+            <!--android:text="安装计划"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
+        <!--<android.support.design.widget.TabItem-->
+            <!--android:text="可以安装"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
     </android.support.design.widget.TabLayout>
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"
