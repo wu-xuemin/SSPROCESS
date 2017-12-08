@@ -27,8 +27,8 @@ public class ProcessToInstallActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_to_install);
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        tabLayout = (TabLayout) findViewById(R.id.tablayout);
+        viewPager = (ViewPager) findViewById(R.id.view_pager);
+        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         //页面，数据源
         list = new ArrayList<>();
         list.add(new TabInstallPlanFragment());
