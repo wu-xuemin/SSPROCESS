@@ -29,6 +29,7 @@ dependencies {
 
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support:cardview-v7:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
 
     compile 'pub.devrel:easypermissions:1.0.1'
     compile 'com.google.zxing:core:3.3.0'

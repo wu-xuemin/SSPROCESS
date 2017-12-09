@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -26,13 +27,15 @@ import com.example.nan.ssprocess.net.Network;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 
 /**
  * @author nan  2017/11/16
  */
-public class ProcessToAdminActivity extends AppCompatActivity {
+public class ProcessToAdminActivity extends AppCompatActivity implements UpdateOperationStatusListener{
 
+    private static String TAG = "nlgProcessToAdminActivity";
     private ProcessToAdminActivity mProcessToAdminActivity;
     private ArrayList<ProcessModuleListData> mProcessToAdminList = new ArrayList<>();
     private ProcessToAdminAdapter mProcessToAdminAdapter;
@@ -62,7 +65,6 @@ public class ProcessToAdminActivity extends AppCompatActivity {
             }
         });
 
-
         RecyclerView mProcessToAdminRV = (RecyclerView) findViewById(R.id.process_to_admin_rv);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -81,37 +83,53 @@ public class ProcessToAdminActivity extends AppCompatActivity {
                 mSwipeRefresh.postDelayed(mStopSwipeRefreshRunnable, 5000);
                 fetchProcessData();
             }
-
         });
-//        //第一次进入刷新页面， 加载loading页面
-//        if( mLoadingProcessDialog == null) {
-//            mLoadingProcessDialog = new ProgressDialog(ChooseProcessActivity.this);
-//            mLoadingProcessDialog.setCancelable(false);
-//            mLoadingProcessDialog.setCanceledOnTouchOutside(false);
-//            mLoadingProcessDialog.setMessage("获取流程模板中...");
-//        }
-//        mLoadingProcessDialog.show();
+        fetchProcessData();
+
     }
 
     private void fetchProcessData() {
         final String account = SinSimApp.getApp().getAccount();
+        final String ip = SinSimApp.getApp().getServerIP();
+//        final String ip = "192.168.0.102:8080";
+//        final String account = "sss";
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("userAccount", account);
-        String fetchProcessRecordUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FETCH_PROCESS_RECORD;
+        String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_PROCESS_RECORD;
         Network.Instance(SinSimApp.getApp()).fetchProcessModuleData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
+    }
+
+    @Override
+    public void onUpdateOperationStatus(final boolean success, String errorMsg) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(!success) {
+                    Toast.makeText(SinSimApp.getApp().getApplicationContext(), "操作状态更新失败！",Toast.LENGTH_SHORT).show();
+                } else {
+//                    Toast.makeText(ChooseProcessActivity.this, "操作状态更新成功！",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private class FetchProcessDataHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
-
+            if(mSwipeRefresh.isRefreshing()) {
+                mSwipeRefresh.setRefreshing(false);
+            }
             if (msg.what == Network.OK) {
-//                onLoginSuccess((ProcessModuleResponseData)msg.obj);
-
+                mProcessToAdminList=(ArrayList<ProcessModuleListData>)msg.obj;
+                Log.d(TAG, "handleMessage: size: "+mProcessToAdminList.size());
+                mProcessToAdminAdapter.setProcessList(mProcessToAdminList);
+                mProcessToAdminAdapter.notifyDataSetChanged();
                 Toast.makeText(ProcessToAdminActivity.this, "获取正在进行中流程成功！", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(ProcessToAdminActivity.this, "更新流程信息失败！", Toast.LENGTH_SHORT).show();
+                String errorMsg = (String)msg.obj;
+                Toast.makeText(ProcessToAdminActivity.this, "更新流程信息失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }
     }
+
 }

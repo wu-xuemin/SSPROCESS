@@ -328,6 +328,7 @@ public class Network {
     public void fetchProcessModuleData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
+            Log.d(TAG, "fetchProcessModuleData: network_not_connect");
         } else {
             if (url != null && values != null && handler != null) {
                 final Message msg = handler.obtainMessage();
@@ -352,10 +353,11 @@ public class Network {
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
                                 ProcessModelsResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<ProcessModelsResponseDataWrap>(){}.getType());
+                                Log.d(TAG, "run: "+responseData.getCode());
                                 if (responseData != null) {
                                     if (responseData.getCode() == 200) {
                                         success = true;
-                                        msg.obj = responseData.getData();
+                                        msg.obj = responseData.getData().getList();
                                     } else if (responseData.getCode() == 400) {
                                         Log.e(TAG, responseData.getMessage());
                                         msg.obj = responseData.getMessage();
@@ -371,6 +373,7 @@ public class Network {
                             }
                             response.close();
                         } catch (Exception e) {
+                            Log.d(TAG, "run: "+e);
                             msg.what = NG;
                             msg.obj = "Network error!";
                         } finally {

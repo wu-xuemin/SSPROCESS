@@ -8,8 +8,15 @@ public class ProcessModuleListData {
     private int id;
     private String taskName;
     private int status;
-    private int beginTime;
-    private int endTime;
+    private String beginTime;
+    private String endTime;
+    public ProcessModuleListData(int id,String taskName,int status,String beginTime,String endTime){
+        this.id = id;
+        this.taskName = taskName;
+        this.status = status;
+        this.beginTime = beginTime;
+        this.endTime = endTime;
+    }
 
     public int getId() {
         return id;
@@ -23,11 +30,11 @@ public class ProcessModuleListData {
         return status;
     }
 
-    public int getBeginTime() {
+    public String getBeginTime() {
         return beginTime;
     }
 
-    public int getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 }

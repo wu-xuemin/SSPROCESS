@@ -54,6 +54,10 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
 
     public static String IMEI = null;
 
+    private static String ACCOUNT="sss";
+    private static String PASSWORD="sinsim";
+    private static String IP="192.168.0.102:8080";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,11 +91,15 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         checkIMEI();
 
         //检查preference中的isLogin状态
-        boolean  isLogin  = SinSimApp.getApp().isLogined();
-//        boolean  isLogin  = true;
+//        boolean  isLogin  = SinSimApp.getApp().isLogined();
+        boolean  isLogin  = true;
         if(isLogin) {
             final String account = SinSimApp.getApp().getAccount();
             final String password = SinSimApp.getApp().getPassword();
+            final String ip = SinSimApp.getApp().getServerIP();
+//            final String account = ACCOUNT;
+//            final String password = PASSWORD;
+//            final String ip = IP;
             //(1)检查账号密码是否存在
             if(account.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "用户未登录！", Toast.LENGTH_LONG).show();
@@ -114,11 +122,11 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
                         protected Object doInBackground(Object[] params) {
                             //检查账号密码是否正确，正确的话返回流程的状态
                             LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                            Log.d(TAG, "doInBackground: "+SinSimApp.getApp().getServerIP()+account+password+IMEI);
+                            Log.d(TAG, "doInBackground: "+ip+account+password+IMEI);
                             mPostValue.put("account", account);
                             mPostValue.put("password", password);
                             mPostValue.put("mobile", IMEI);
-                            String fetchProcessRecordURL = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.USER_LOGIN;
+                            String fetchProcessRecordURL = URL.HTTP_HEAD + ip + URL.USER_LOGIN;
                             mNetwork.fetchProcessRecordStatusData(fetchProcessRecordURL, mPostValue, mFetchProcessRecordStatusHandler);
                             return null;
                         }
@@ -145,7 +153,6 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         } else {
             jumpToLoginAct();
         }
-
     }
 
     private void jumpToLoginAct() {
@@ -237,6 +244,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
                     startActivity(it3);
                 }
                 else {
+
                     Toast.makeText(SplashActivity.this,"您无权限操作!", Toast.LENGTH_SHORT).show();
                     jumpToLoginAct();
                 }
