@@ -254,7 +254,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
     }
 
     private void onFetchProcessDataFailed(String errorMsg) {
-        Toast.makeText(this,errorMsg, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this,errorMsg, Toast.LENGTH_SHORT).show();
         jumpToLoginAct();
     }
 

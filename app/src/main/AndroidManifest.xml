@@ -41,12 +41,12 @@
         <activity android:name=".activity.MainActivity" />
         <activity
             android:name=".activity.ProcessToInstallActivity"
-            android:label="@string/install_activity"
-            android:theme="@style/AppThemeNoTitle"/>
+            android:label="安装组长"/>
         <activity
             android:name=".activity.ProcessToCheckoutActivity"
-            android:label="@string/checkout_activity" />
-        <activity android:name=".activity.ProcessToAdminActivity"
+            android:label="质检员" />
+        <activity
+            android:name=".activity.ProcessToAdminActivity"
             android:label="生产部管理员"/>
         <activity
             android:name=".activity.ScanQrcodeActivity"

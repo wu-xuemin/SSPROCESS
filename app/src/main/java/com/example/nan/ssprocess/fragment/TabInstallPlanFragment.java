@@ -1,14 +1,32 @@
 package com.example.nan.ssprocess.fragment;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
+import com.example.nan.ssprocess.activity.ProcessToAdminActivity;
+import com.example.nan.ssprocess.adapter.ProcessToAdminAdapter;
+import com.example.nan.ssprocess.app.SinSimApp;
+import com.example.nan.ssprocess.app.URL;
+import com.example.nan.ssprocess.bean.basic.ProcessModuleListData;
+import com.example.nan.ssprocess.net.Network;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,7 +47,20 @@ public class TabInstallPlanFragment extends Fragment {
     private String mParam2;
 
 //    private OnFragmentInteractionListener mListener;
+    private static String TAG = "nlgProcessToAdminActivity";
+    private ArrayList<ProcessModuleListData> mProcessToAdminList = new ArrayList<>();
+    private ProcessToAdminAdapter mProcessToAdminAdapter;
+    private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
 
+    private SwipeRefreshLayout mSwipeRefresh;
+    private Runnable mStopSwipeRefreshRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if(mSwipeRefresh.isRefreshing()) {
+                mSwipeRefresh.setRefreshing(false);
+            }
+        }
+    };
     public TabInstallPlanFragment() {
         // Required empty public constructor
     }
@@ -66,8 +97,57 @@ public class TabInstallPlanFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View viewContent = inflater.inflate(R.layout.fragment_tab_install_plan, container, false);
+        RecyclerView mProcessToAdminRV = (RecyclerView) viewContent.findViewById(R.id.process_to_install_rv);
+        LinearLayoutManager manager = new LinearLayoutManager(viewContent.getContext());
+        manager.setOrientation(LinearLayoutManager.VERTICAL);
+        mProcessToAdminRV.setLayoutManager(manager);
+        mProcessToAdminAdapter = new ProcessToAdminAdapter(mProcessToAdminList);
+        mProcessToAdminRV.setAdapter(mProcessToAdminAdapter);
 
+        //下拉刷新
+        mSwipeRefresh = (SwipeRefreshLayout) viewContent.findViewById(R.id.install_swipe_refresh);
+        int[] colors = getResources().getIntArray(R.array.google_colors);
+        mSwipeRefresh.setColorSchemeColors(colors);
+        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //超时停止刷新
+                mSwipeRefresh.postDelayed(mStopSwipeRefreshRunnable, 5000);
+                fetchProcessData();
+            }
+        });
+
+        fetchProcessData();
         return viewContent;
+    }
+
+    private void fetchProcessData() {
+        final String account = SinSimApp.getApp().getAccount();
+        final String ip = SinSimApp.getApp().getServerIP();
+//        final String ip = "192.168.0.102:8080";
+//        final String account = "sss";
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("userAccount", account);
+        String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_PROCESS_RECORD;
+        Network.Instance(SinSimApp.getApp()).fetchProcessModuleData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class FetchProcessDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if(mSwipeRefresh.isRefreshing()) {
+                mSwipeRefresh.setRefreshing(false);
+            }
+            if (msg.what == Network.OK) {
+                mProcessToAdminList=(ArrayList<ProcessModuleListData>)msg.obj;
+                Log.d(TAG, "handleMessage: size: "+mProcessToAdminList.size());
+                mProcessToAdminAdapter.setProcessList(mProcessToAdminList);
+                mProcessToAdminAdapter.notifyDataSetChanged();
+            } else {
+                String errorMsg = (String)msg.obj;
+            }
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -31,7 +31,7 @@ import java.util.LinkedHashMap;
 /**
  * @author nan  2017/11/16
  */
-public class ProcessToAdminActivity extends AppCompatActivity implements UpdateOperationStatusListener{
+public class ProcessToAdminActivity extends AppCompatActivity{
 
     private static String TAG = "nlgProcessToAdminActivity";
     private ArrayList<ProcessModuleListData> mProcessToAdminList = new ArrayList<>();
@@ -103,20 +103,6 @@ public class ProcessToAdminActivity extends AppCompatActivity implements UpdateO
         mPostValue.put("userAccount", account);
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_PROCESS_RECORD;
         Network.Instance(SinSimApp.getApp()).fetchProcessModuleData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
-    }
-
-    @Override
-    public void onUpdateOperationStatus(final boolean success, String errorMsg) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(!success) {
-                    Toast.makeText(SinSimApp.getApp().getApplicationContext(), "操作状态更新失败！",Toast.LENGTH_SHORT).show();
-                } else {
-//                    Toast.makeText(ChooseProcessActivity.this, "操作状态更新成功！",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     @SuppressLint("HandlerLeak")
