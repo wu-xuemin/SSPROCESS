@@ -1,6 +1,5 @@
 package com.example.nan.ssprocess.adapter;
 
-import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,12 +7,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.bean.basic.ProcessModuleListData;
-import com.example.nan.ssprocess.bean.basic.ProcessModuleResponseData;
+import com.example.nan.ssprocess.bean.basic.TaskRecordDataList;
+import com.example.nan.ssprocess.bean.basic.TaskRecordDataListContent;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Young on 2017/11/26.
@@ -21,10 +19,10 @@ import java.util.List;
 
 public class ProcessToAdminAdapter extends RecyclerView.Adapter{
 
-    private ArrayList<ProcessModuleListData> mProcessList;
+    private ArrayList<TaskRecordDataListContent> mProcessList;
     private OnItemClickListener itemClickListener = null;
 
-    public ProcessToAdminAdapter(ArrayList<ProcessModuleListData> list) {
+    public ProcessToAdminAdapter(ArrayList<TaskRecordDataListContent> list) {
         mProcessList = list;
     }
 
@@ -76,7 +74,7 @@ public class ProcessToAdminAdapter extends RecyclerView.Adapter{
             endDateTv = (TextView) itemView.findViewById(R.id.process_end_date_tv);
         }
     }
-    public void setProcessList(ArrayList<ProcessModuleListData> list) {
+    public void setProcessList(ArrayList<TaskRecordDataListContent> list) {
         mProcessList.clear();
         mProcessList.addAll(list);
     }

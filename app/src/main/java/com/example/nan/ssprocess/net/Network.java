@@ -16,10 +16,9 @@ import com.example.nan.ssprocess.activity.UpdateOperationStatusListener;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.bean.response.GuidanceResponseDataWrap;
 import com.example.nan.ssprocess.bean.response.LoginResponseDataWrap;
-import com.example.nan.ssprocess.bean.response.ProcessModelsResponseDataWrap;
-import com.example.nan.ssprocess.bean.response.ProcessRecordResponseData;
 import com.example.nan.ssprocess.bean.response.ProcessRecordResponseDataWrap;
 import com.example.nan.ssprocess.bean.response.ResponseData;
+import com.example.nan.ssprocess.bean.response.TaskRecordDataWrap;
 import com.example.nan.ssprocess.bean.response.ToolsPackageResponseDataWrap;
 import com.example.nan.ssprocess.util.LogUtils;
 import com.example.nan.ssprocess.util.ShowMessage;
@@ -356,7 +355,7 @@ public class Network {
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
-                                ProcessModelsResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<ProcessModelsResponseDataWrap>(){}.getType());
+                                TaskRecordDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<TaskRecordDataWrap>(){}.getType());
                                 Log.d(TAG, "run: "+responseData.getCode());
                                 if (responseData != null) {
                                     if (responseData.getCode() == 200) {

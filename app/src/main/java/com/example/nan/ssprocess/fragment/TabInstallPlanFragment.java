@@ -22,7 +22,8 @@ import com.example.nan.ssprocess.activity.ProcessToAdminActivity;
 import com.example.nan.ssprocess.adapter.ProcessToAdminAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
-import com.example.nan.ssprocess.bean.basic.ProcessModuleListData;
+import com.example.nan.ssprocess.bean.basic.TaskRecordDataList;
+import com.example.nan.ssprocess.bean.basic.TaskRecordDataListContent;
 import com.example.nan.ssprocess.net.Network;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class TabInstallPlanFragment extends Fragment {
 
 //    private OnFragmentInteractionListener mListener;
     private static String TAG = "nlgProcessToAdminActivity";
-    private ArrayList<ProcessModuleListData> mProcessToAdminList = new ArrayList<>();
+    private ArrayList<TaskRecordDataListContent> mProcessToAdminList = new ArrayList<>();
     private ProcessToAdminAdapter mProcessToAdminAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
 
@@ -140,7 +141,7 @@ public class TabInstallPlanFragment extends Fragment {
                 mSwipeRefresh.setRefreshing(false);
             }
             if (msg.what == Network.OK) {
-                mProcessToAdminList=(ArrayList<ProcessModuleListData>)msg.obj;
+                mProcessToAdminList=(ArrayList<TaskRecordDataListContent>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToAdminList.size());
                 mProcessToAdminAdapter.setProcessList(mProcessToAdminList);
                 mProcessToAdminAdapter.notifyDataSetChanged();

@@ -21,7 +21,8 @@ import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.ProcessToAdminAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
-import com.example.nan.ssprocess.bean.basic.ProcessModuleListData;
+import com.example.nan.ssprocess.bean.basic.TaskRecordDataList;
+import com.example.nan.ssprocess.bean.basic.TaskRecordDataListContent;
 import com.example.nan.ssprocess.net.Network;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ import java.util.LinkedHashMap;
 public class ProcessToCheckoutActivity extends AppCompatActivity {
 
     private static String TAG = "nlgProcessToCheckoutActivity";
-    private ArrayList<ProcessModuleListData> mProcessToCheckoutList = new ArrayList<>();
+    private ArrayList<TaskRecordDataListContent> mProcessToCheckoutList = new ArrayList<>();
     private ProcessToAdminAdapter mProcessToAdminAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
 
@@ -114,7 +115,7 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
                 mSwipeRefresh.setRefreshing(false);
             }
             if (msg.what == Network.OK) {
-                mProcessToCheckoutList=(ArrayList<ProcessModuleListData>)msg.obj;
+                mProcessToCheckoutList=(ArrayList<TaskRecordDataListContent>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToCheckoutList.size());
                 mProcessToAdminAdapter.setProcessList(mProcessToCheckoutList);
                 mProcessToAdminAdapter.notifyDataSetChanged();
