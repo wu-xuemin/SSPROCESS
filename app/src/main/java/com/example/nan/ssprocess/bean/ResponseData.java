@@ -1,4 +1,4 @@
-package com.example.nan.ssprocess.bean.response;
+package com.example.nan.ssprocess.bean;
 
 /**
  * Created by Hu Tong on 7/22/2016.

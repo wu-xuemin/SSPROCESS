@@ -1,5 +1,6 @@
 package com.example.nan.ssprocess.bean.response;
 
+import com.example.nan.ssprocess.bean.ResponseData;
 import com.example.nan.ssprocess.bean.basic.ChooseProcessData;
 
 import java.util.ArrayList;

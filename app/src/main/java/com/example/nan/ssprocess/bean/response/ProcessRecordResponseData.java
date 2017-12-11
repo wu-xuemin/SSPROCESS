@@ -1,5 +1,6 @@
 package com.example.nan.ssprocess.bean.response;
 
+import com.example.nan.ssprocess.bean.ResponseData;
 import com.example.nan.ssprocess.bean.basic.MaterialData;
 import com.example.nan.ssprocess.bean.basic.ProcessInfoData;
 import com.example.nan.ssprocess.bean.basic.ProcessPersonData;

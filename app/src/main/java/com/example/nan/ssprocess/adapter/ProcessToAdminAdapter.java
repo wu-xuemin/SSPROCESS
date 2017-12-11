@@ -7,8 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.bean.basic.TaskRecordDataList;
-import com.example.nan.ssprocess.bean.basic.TaskRecordDataListContent;
+import com.example.nan.ssprocess.bean.TaskRecordDataListContent;
 
 
 import java.util.ArrayList;

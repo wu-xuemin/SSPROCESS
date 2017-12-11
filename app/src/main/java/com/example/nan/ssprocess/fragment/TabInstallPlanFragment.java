@@ -1,9 +1,6 @@
 package com.example.nan.ssprocess.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,15 +12,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.activity.ProcessToAdminActivity;
 import com.example.nan.ssprocess.adapter.ProcessToAdminAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
-import com.example.nan.ssprocess.bean.basic.TaskRecordDataList;
-import com.example.nan.ssprocess.bean.basic.TaskRecordDataListContent;
+import com.example.nan.ssprocess.bean.TaskRecordDataListContent;
 import com.example.nan.ssprocess.net.Network;
 
 import java.util.ArrayList;

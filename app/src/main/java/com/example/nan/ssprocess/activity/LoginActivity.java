@@ -1,6 +1,5 @@
 package com.example.nan.ssprocess.activity;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,12 +19,11 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.service.MyMqttService;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.util.ShowMessage;
-import com.example.nan.ssprocess.bean.basic.LoginResponseData;
+import com.example.nan.ssprocess.bean.LoginResponseData;
 
 import java.util.LinkedHashMap;
 

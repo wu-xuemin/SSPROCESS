@@ -4,40 +4,31 @@ import android.app.Application;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.activity.LoginActivity;
 import com.example.nan.ssprocess.activity.UpdateOperationStatusListener;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.bean.response.GuidanceResponseDataWrap;
-import com.example.nan.ssprocess.bean.response.LoginResponseDataWrap;
+import com.example.nan.ssprocess.bean.LoginResponseDataWrap;
 import com.example.nan.ssprocess.bean.response.ProcessRecordResponseDataWrap;
-import com.example.nan.ssprocess.bean.response.ResponseData;
-import com.example.nan.ssprocess.bean.response.TaskRecordDataWrap;
+import com.example.nan.ssprocess.bean.ResponseData;
+import com.example.nan.ssprocess.bean.TaskRecordDataWrap;
 import com.example.nan.ssprocess.bean.response.ToolsPackageResponseDataWrap;
-import com.example.nan.ssprocess.util.LogUtils;
 import com.example.nan.ssprocess.util.ShowMessage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;

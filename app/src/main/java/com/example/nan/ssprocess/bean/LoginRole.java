@@ -1,4 +1,4 @@
-package com.example.nan.ssprocess.bean.basic;
+package com.example.nan.ssprocess.bean;
 
 public class LoginRole {
     private int id;

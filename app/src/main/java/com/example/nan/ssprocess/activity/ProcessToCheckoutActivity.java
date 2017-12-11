@@ -21,8 +21,7 @@ import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.ProcessToAdminAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
-import com.example.nan.ssprocess.bean.basic.TaskRecordDataList;
-import com.example.nan.ssprocess.bean.basic.TaskRecordDataListContent;
+import com.example.nan.ssprocess.bean.TaskRecordDataListContent;
 import com.example.nan.ssprocess.net.Network;
 
 import java.util.ArrayList;
