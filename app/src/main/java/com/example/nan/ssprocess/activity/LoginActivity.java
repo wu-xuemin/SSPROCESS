@@ -87,8 +87,8 @@ public class LoginActivity extends AppCompatActivity {
         mPostValue.put("account", mAccountText.getText().toString());
         mPostValue.put("password", mPassword);
         mPostValue.put("mobile", SplashActivity.IMEI);
-        Log.d(TAG, "login: "+SplashActivity.IMEI);
-        Log.d(TAG, "login: "+SinSimApp.getApp().getServerIP());
+        Log.d(TAG, "login: IMEI: "+SplashActivity.IMEI);
+        Log.d(TAG, "login: IP: "+SinSimApp.getApp().getServerIP());
         if(TextUtils.isEmpty(SinSimApp.getApp().getServerIP())){
             if(mLoadingProcessDialog.isShowing()) {
                 mLoadingProcessDialog.dismiss();
@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
             Log.d(TAG, "login: 服务端IP为空，请设置IP地址");
         } else {
             String loginUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.USER_LOGIN;
-            Log.d(TAG, "login: string url"+loginUrl);
+            Log.d(TAG, "login: url: "+loginUrl);
             mNetwork.fetchLoginData(loginUrl, mPostValue, mLoginHandler);
         }
 

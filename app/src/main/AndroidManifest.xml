@@ -46,7 +46,8 @@
         <activity
             android:name=".activity.ProcessToCheckoutActivity"
             android:label="@string/checkout_activity" />
-        <activity android:name=".activity.ProcessToAdminActivity" />
+        <activity android:name=".activity.ProcessToAdminActivity"
+            android:label="生产部管理员"/>
         <activity
             android:name=".activity.ScanQrcodeActivity"
             android:label="@string/qr_scan" />

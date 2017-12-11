@@ -122,9 +122,13 @@ public class Network {
                                         }
                                     } else if (responseData.getCode() == 400) {
                                         Log.e(TAG, responseData.getMessage());
-                                        Log.d(TAG, "run: error:"+responseData.getMessage());
+                                        Log.d(TAG, "run: error 400 :"+responseData.getMessage());
                                         msg.obj = responseData.getMessage();
-                                    } else {
+                                    } else if (responseData.getCode() == 500) {
+                                        Log.e(TAG, responseData.getMessage());
+                                        Log.d(TAG, "run: error 500 :"+responseData.getMessage());
+                                        msg.obj = responseData.getMessage();
+                                    }else {
                                         Log.e(TAG, "Format JSON string to object error!");
                                     }
                                 }

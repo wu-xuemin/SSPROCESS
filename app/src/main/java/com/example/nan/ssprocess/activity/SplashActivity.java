@@ -102,7 +102,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
 //            final String ip = IP;
             //(1)检查账号密码是否存在
             if(account.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "用户未登录！", Toast.LENGTH_LONG).show();
+//                Toast.makeText(this, "用户未登录！", Toast.LENGTH_LONG).show();
                 jumpToLoginAct();
             } else {
                 //(2)检查网络连接是否正常
