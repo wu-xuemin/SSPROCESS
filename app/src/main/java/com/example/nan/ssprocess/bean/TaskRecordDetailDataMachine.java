@@ -5,4 +5,15 @@ package com.example.nan.ssprocess.bean;
  */
 
 public class TaskRecordDetailDataMachine {
+    private TaskRecordDetailDataMachineDetail machine;
+    private TaskRecordDetailDataMachineOrderDetail machineOrder;
+
+    public TaskRecordDetailDataMachineDetail getMachine() {
+        return machine;
+    }
+
+    public TaskRecordDetailDataMachineOrderDetail getMachineOrder() {
+        return machineOrder;
+    }
 }
+

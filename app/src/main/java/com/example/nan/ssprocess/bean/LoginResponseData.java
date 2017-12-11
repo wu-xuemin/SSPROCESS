@@ -1,7 +1,5 @@
 package com.example.nan.ssprocess.bean;
 
-import com.example.nan.ssprocess.bean.LoginGroup;
-import com.example.nan.ssprocess.bean.LoginRole;
 
 /**
  * Created by nan on 2017/5/25.

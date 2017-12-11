@@ -319,7 +319,7 @@ public class Network {
         }
     }
 
-    public void fetchProcessModuleData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
+    public void fetchProcessTaskRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
             Log.d(TAG, "fetchProcessModuleData: network_not_connect");
