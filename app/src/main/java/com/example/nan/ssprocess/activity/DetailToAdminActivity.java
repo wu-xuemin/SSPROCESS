@@ -13,15 +13,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.service.MyMqttService;
-import com.example.nan.ssprocess.app.SinSimApp;
 
 import java.io.File;
 import java.io.FileNotFoundException;

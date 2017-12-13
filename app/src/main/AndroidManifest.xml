@@ -53,10 +53,11 @@
             android:label="@string/qr_scan" />
         <activity
             android:name=".activity.DetailToAdminActivity"
-            android:label="@string/detail_update"
             android:theme="@style/AppThemeNoTitle" />
-        <activity android:name=".activity.DetailToInstallActivity" />
-        <activity android:name=".activity.DetailToCheckoutActivity"></activity>
+        <activity android:name=".activity.DetailToInstallActivity"
+            android:theme="@style/AppThemeNoTitle" />
+        <activity android:name=".activity.DetailToCheckoutActivity"
+            android:theme="@style/AppThemeNoTitle" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
