@@ -27,211 +27,98 @@
             android:layout_centerInParent="true"
             android:text="安装详情"/>
     </RelativeLayout>
-    <RelativeLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/basic_info_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:text="基本信息："
-            />
-        <TextView
-            android:id="@+id/order_number_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/basic_info_label"
-            android:layout_marginTop="16dp"
-            android:layout_below="@+id/basic_info_label"
-            android:text="订单编号："/>
-        <TextView
-            android:id="@+id/order_number_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/order_number_label"
-            android:layout_alignTop="@+id/order_number_label"
-            android:text="暂无"/>
-        <TextView
-            android:id="@+id/needle_count_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/basic_info_label"
-            android:layout_marginTop="16dp"
-            android:layout_below="@+id/order_number_label"
-            android:text="头数："/>
-        <TextView
-            android:id="@+id/needle_count_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/needle_count_label"
-            android:layout_toRightOf="@+id/needle_count_label"
-            android:text="暂无"/>
-        <TextView
-            android:id="@+id/type_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/basic_info_label"
-            android:layout_marginTop="16dp"
-            android:layout_below="@+id/needle_count_label"
-            android:text="类型："/>
-        <TextView
-            android:id="@+id/type_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/type_label"
-            android:layout_toRightOf="@+id/type_label"
-            android:text="暂无"/>
-        <TextView
-            android:id="@+id/intall_list_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/basic_info_label"
-            android:layout_marginTop="16dp"
-            android:layout_below="@+id/type_label"
-            android:layout_marginBottom="16dp"
-            android:text="装车单："/>
-        <TextView
-            android:id="@+id/intall_list_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/intall_list_label"
-            android:layout_toRightOf="@+id/intall_list_label"
-            android:text="暂无"/>
-        <TextView
-            android:id="@+id/machine_number_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_toRightOf="@+id/order_number_tv"
-            android:layout_alignTop="@+id/order_number_tv"
-            android:text="机器编号："/>
-        <TextView
-            android:id="@+id/machine_number_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/machine_number_label"
-            android:layout_alignTop="@+id/machine_number_label"
-            android:text="暂无"/>
-        <TextView
-            android:id="@+id/localtion_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/machine_number_label"
-            android:layout_alignLeft="@+id/machine_number_label"
-            android:layout_alignTop="@+id/needle_count_label"
-            android:text="位置："/>
-        <TextView
-            android:id="@+id/localtion_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/localtion_label"
-            android:layout_alignTop="@+id/localtion_label"
-            android:text="暂无"/>
-        <TextView
-            android:id="@+id/contact_list_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/localtion_label"
-            android:layout_alignLeft="@+id/localtion_label"
-            android:layout_alignTop="@+id/type_label"
-            android:text="联系单："/>
-        <TextView
-            android:id="@+id/contact_list_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/contact_list_label"
-            android:layout_alignTop="@+id/type_label"
-            android:text="暂无"/>
-    </RelativeLayout>
+        <include layout="@layout/machine_info"/>
+    </LinearLayout>
 
-    <RelativeLayout
+    <ScrollView
+        android:id="@+id/weather_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/install_info_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:text="安装信息："
-            />
-        <RadioGroup
-            android:id="@+id/resalt_for_install_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_alignLeft="@+id/install_info_label"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_below="@+id/install_info_label"
-            android:layout_weight="1">
-            <RadioButton
-                android:id="@+id/normal_rb"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="none"
+        android:overScrollMode="never">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/install_info_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:text="安装信息：" />
+            <TextView
+                android:id="@+id/result_for_install_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="正常" />
-            <RadioButton
-                android:id="@+id/abnormal_rb"
+                android:layout_marginTop="10dp"
+                android:layout_alignStart="@+id/install_info_label"
+                android:layout_alignLeft="@+id/install_info_label"
+                android:layout_below="@+id/install_info_label"
+                android:text="安装是否有异常："/>
+            <TextView
+                android:id="@+id/fail_reason_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="异常：" />
-        </RadioGroup>
-        <Spinner
-            android:id="@+id/fail_reason_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:entries="@array/fail_reason"
-            android:layout_toRightOf="@+id/resalt_for_install_label"
-            android:layout_alignTop="@+id/resalt_for_install_label"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="5dp"/>
-        <TextView
-            android:id="@+id/abnormal_detail_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/install_info_label"
-            android:layout_marginTop="16dp"
-            android:layout_below="@+id/resalt_for_install_label"
-            android:textSize="16sp"
-            android:text="异常描述："/>
-        <EditText
-            android:id="@+id/abnormal_detail_et"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/install_info_label"
-            android:layout_marginTop="1dp"
-            android:layout_below="@+id/abnormal_detail_label"
-            android:layout_gravity="top"
-            android:hint="输入异常信息"
-            android:textSize="16sp"
-            android:background="@color/hintColor"/>
-        <TextView
-            android:id="@+id/take_photos_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/install_info_label"
-            android:layout_marginTop="16dp"
-            android:layout_below="@+id/abnormal_detail_et"
-            android:textSize="16sp"
-            android:text="拍照上传："/>
-        <ImageButton
-            android:id="@+id/take_photos_ib"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignLeft="@+id/install_info_label"
-            android:layout_marginTop="1dp"
-            android:layout_below="@+id/take_photos_label"
-            android:src="@drawable/ic_launcher_background"/>
-    </RelativeLayout>
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_toEndOf="@+id/result_for_install_label"
+                android:layout_toRightOf="@+id/result_for_install_label"
+                android:layout_alignTop="@+id/result_for_install_label"
+                android:text="暂无" />
+            <TextView
+                android:id="@+id/abnormal_detail_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/install_info_label"
+                android:layout_alignLeft="@+id/install_info_label"
+                android:layout_marginTop="16dp"
+                android:layout_below="@+id/result_for_install_label"
+                android:textSize="16sp"
+                android:text="异常描述：" />
+            <TextView
+                android:id="@+id/abnormal_detail_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/install_info_label"
+                android:layout_alignLeft="@+id/install_info_label"
+                android:layout_marginTop="1dp"
+                android:layout_below="@+id/abnormal_detail_label"
+                android:layout_gravity="top"
+                android:hint="输入异常信息"
+                android:textSize="16sp"
+                android:background="@color/hintColor" />
+            <TextView
+                android:id="@+id/take_photos_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/install_info_label"
+                android:layout_alignLeft="@+id/install_info_label"
+                android:layout_marginTop="16dp"
+                android:layout_below="@+id/abnormal_detail_tv"
+                android:textSize="16sp"
+                android:text="异常照片：" />
 
+            <ImageView
+                android:id="@+id/take_photos_iv"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignStart="@+id/install_info_label"
+                android:layout_alignLeft="@+id/install_info_label"
+                android:layout_marginTop="1dp"
+                android:layout_below="@+id/take_photos_label"
+                android:src="@drawable/ic_launcher_background"
+                android:contentDescription="abnormalPic" />
+        </RelativeLayout>
+
+    </ScrollView>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -244,5 +131,4 @@
             android:padding="12dp"
             android:text="扫码完成"/>
     </LinearLayout>
-
 </LinearLayout>
