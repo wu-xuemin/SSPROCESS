@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -25,15 +24,8 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="25sp"
             android:layout_centerInParent="true"
-            android:text="安装详情"/>
+            android:text="机器详情"/>
     </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <include layout="@layout/machine_info"/>
-    </LinearLayout>
-
     <ScrollView
         android:id="@+id/weather_layout"
         android:layout_width="match_parent"
@@ -41,83 +33,177 @@
         android:layout_weight="1"
         android:scrollbars="none"
         android:overScrollMode="never">
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/install_info_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:text="安装信息：" />
-            <TextView
-                android:id="@+id/result_for_install_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_alignStart="@+id/install_info_label"
-                android:layout_alignLeft="@+id/install_info_label"
-                android:layout_below="@+id/install_info_label"
-                android:text="安装是否有异常："/>
-            <TextView
-                android:id="@+id/fail_reason_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_toEndOf="@+id/result_for_install_label"
-                android:layout_toRightOf="@+id/result_for_install_label"
-                android:layout_alignTop="@+id/result_for_install_label"
-                android:text="暂无" />
-            <TextView
-                android:id="@+id/abnormal_detail_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/install_info_label"
-                android:layout_alignLeft="@+id/install_info_label"
-                android:layout_marginTop="16dp"
-                android:layout_below="@+id/result_for_install_label"
-                android:textSize="16sp"
-                android:text="异常描述：" />
-            <TextView
-                android:id="@+id/abnormal_detail_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/install_info_label"
-                android:layout_alignLeft="@+id/install_info_label"
-                android:layout_marginTop="1dp"
-                android:layout_below="@+id/abnormal_detail_label"
-                android:layout_gravity="top"
-                android:hint="输入异常信息"
-                android:textSize="16sp"
-                android:background="@color/hintColor" />
-            <TextView
-                android:id="@+id/take_photos_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/install_info_label"
-                android:layout_alignLeft="@+id/install_info_label"
-                android:layout_marginTop="16dp"
-                android:layout_below="@+id/abnormal_detail_tv"
-                android:textSize="16sp"
-                android:text="异常照片：" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <include layout="@layout/machine_info"/>
 
-            <ImageView
-                android:id="@+id/take_photos_iv"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_alignStart="@+id/install_info_label"
-                android:layout_alignLeft="@+id/install_info_label"
-                android:layout_marginTop="1dp"
-                android:layout_below="@+id/take_photos_label"
-                android:src="@drawable/ic_launcher_background"
-                android:contentDescription="abnormalPic" />
-        </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/install_info_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:text="安装信息："
+                    android:textColor="#000000"/>
+                <TextView
+                    android:id="@+id/result_for_install_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_alignStart="@+id/install_info_label"
+                    android:layout_alignLeft="@+id/install_info_label"
+                    android:layout_below="@+id/install_info_label"
+                    android:text="安装是否有异常："
+                    android:textColor="#000000"/>
+                <TextView
+                    android:id="@+id/fail_reason_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toEndOf="@+id/result_for_install_label"
+                    android:layout_toRightOf="@+id/result_for_install_label"
+                    android:layout_alignTop="@+id/result_for_install_label"
+                    android:text="暂无" />
+                <TextView
+                    android:id="@+id/abnormal_detail_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/install_info_label"
+                    android:layout_alignLeft="@+id/install_info_label"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@+id/result_for_install_label"
+                    android:textSize="16sp"
+                    android:text="异常描述："
+                    android:textColor="#000000"/>
+                <TextView
+                    android:id="@+id/abnormal_detail_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/install_info_label"
+                    android:layout_alignLeft="@+id/install_info_label"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_below="@+id/abnormal_detail_label"
+                    android:layout_gravity="start"
+                    android:hint="输入异常信息"
+                    android:textSize="16sp"
+                    android:background="@color/hintColor" />
+                <TextView
+                    android:id="@+id/take_photos_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/install_info_label"
+                    android:layout_alignLeft="@+id/install_info_label"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@+id/abnormal_detail_tv"
+                    android:textSize="16sp"
+                    android:text="异常照片："
+                    android:textColor="#000000"/>
 
+                <ImageView
+                    android:id="@+id/take_photos_iv"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_alignStart="@+id/install_info_label"
+                    android:layout_alignLeft="@+id/install_info_label"
+                    android:layout_marginTop="1dp"
+                    android:layout_below="@+id/take_photos_label"
+                    android:src="@drawable/ic_launcher_background"
+                    android:contentDescription="abnormalPic" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/checkout_info_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:text="质检信息："
+                    android:textColor="#000000"/>
+                <TextView
+                    android:id="@+id/result_for_checkout_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_alignStart="@+id/checkout_info_label"
+                    android:layout_alignLeft="@+id/checkout_info_label"
+                    android:layout_below="@+id/checkout_info_label"
+                    android:text="质检结果："
+                    android:textColor="#000000"/>
+                <TextView
+                    android:id="@+id/nok_reason_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toEndOf="@+id/result_for_checkout_label"
+                    android:layout_toRightOf="@+id/result_for_checkout_label"
+                    android:layout_alignTop="@+id/result_for_checkout_label"
+                    android:text="暂无" />
+                <TextView
+                    android:id="@+id/nok_detail_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/checkout_info_label"
+                    android:layout_alignLeft="@+id/checkout_info_label"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@+id/result_for_checkout_label"
+                    android:textSize="16sp"
+                    android:text="质检异常描述："
+                    android:textColor="#000000"/>
+                <TextView
+                    android:id="@+id/nok_detail_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/checkout_info_label"
+                    android:layout_alignLeft="@+id/checkout_info_label"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_below="@+id/nok_detail_label"
+                    android:layout_gravity="start"
+                    android:hint="输入异常信息"
+                    android:textSize="16sp"
+                    android:background="@color/hintColor" />
+                <TextView
+                    android:id="@+id/take_nok_photos_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/checkout_info_label"
+                    android:layout_alignLeft="@+id/checkout_info_label"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@+id/nok_detail_tv"
+                    android:textSize="16sp"
+                    android:text="异常照片："
+                    android:textColor="#000000"/>
+
+                <ImageView
+                    android:id="@+id/take_nok_photos_iv"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_alignStart="@+id/checkout_info_label"
+                    android:layout_alignLeft="@+id/checkout_info_label"
+                    android:layout_marginTop="1dp"
+                    android:layout_below="@+id/take_nok_photos_label"
+                    android:src="@drawable/ic_launcher_background"
+                    android:contentDescription="nokPic" />
+            </RelativeLayout>
+
+        </LinearLayout>
     </ScrollView>
     <LinearLayout
         android:layout_width="match_parent"

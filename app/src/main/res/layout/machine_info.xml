@@ -12,6 +12,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:text="基本信息："
+        android:textColor="#000000"
         />
     <TextView
         android:id="@+id/order_number_label"
@@ -20,7 +21,8 @@
         android:layout_alignLeft="@+id/basic_info_label"
         android:layout_marginTop="16dp"
         android:layout_below="@+id/basic_info_label"
-        android:text="订单编号："/>
+        android:text="订单编号："
+        android:textColor="#000000"/>
     <TextView
         android:id="@+id/order_number_tv"
         android:layout_width="wrap_content"
@@ -35,7 +37,8 @@
         android:layout_alignLeft="@+id/basic_info_label"
         android:layout_marginTop="16dp"
         android:layout_below="@+id/order_number_label"
-        android:text="头数："/>
+        android:text="头数："
+        android:textColor="#000000"/>
     <TextView
         android:id="@+id/needle_count_tv"
         android:layout_width="wrap_content"
@@ -49,8 +52,10 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/basic_info_label"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:layout_below="@+id/needle_count_label"
-        android:text="类型："/>
+        android:text="类型："
+        android:textColor="#000000"/>
     <TextView
         android:id="@+id/type_tv"
         android:layout_width="wrap_content"
@@ -58,22 +63,7 @@
         android:layout_alignTop="@+id/type_label"
         android:layout_toRightOf="@+id/type_label"
         android:text="暂无"/>
-    <TextView
-        android:id="@+id/intall_list_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/basic_info_label"
-        android:layout_marginTop="16dp"
-        android:layout_below="@+id/type_label"
-        android:layout_marginBottom="16dp"
-        android:text="装车单："/>
-    <TextView
-        android:id="@+id/intall_list_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/intall_list_label"
-        android:layout_toRightOf="@+id/intall_list_label"
-        android:text="暂无"/>
+
     <TextView
         android:id="@+id/machine_number_label"
         android:layout_width="wrap_content"
@@ -81,7 +71,8 @@
         android:layout_marginLeft="20dp"
         android:layout_toRightOf="@+id/order_number_tv"
         android:layout_alignTop="@+id/order_number_tv"
-        android:text="机器编号："/>
+        android:text="机器编号："
+        android:textColor="#000000"/>
     <TextView
         android:id="@+id/machine_number_tv"
         android:layout_width="wrap_content"
@@ -96,27 +87,30 @@
         android:layout_below="@+id/machine_number_label"
         android:layout_alignLeft="@+id/machine_number_label"
         android:layout_alignTop="@+id/needle_count_label"
-        android:text="位置："/>
-    <TextView
+        android:text="位置："
+        android:textColor="#000000"/>
+    <EditText
         android:id="@+id/localtion_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/localtion_label"
-        android:layout_alignTop="@+id/localtion_label"
-        android:text="暂无"/>
+        android:layout_alignBaseline="@+id/localtion_label"
+        android:maxLength="6"
+        android:hint="输入位置"/>
     <TextView
-        android:id="@+id/contact_list_label"
+        android:id="@+id/intall_list_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/localtion_label"
         android:layout_alignLeft="@+id/localtion_label"
         android:layout_alignTop="@+id/type_label"
-        android:text="联系单："/>
+        android:text="装车单："
+        android:textColor="#000000"/>
     <TextView
-        android:id="@+id/contact_list_tv"
+        android:id="@+id/intall_list_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/contact_list_label"
+        android:layout_toRightOf="@+id/intall_list_label"
         android:layout_alignTop="@+id/type_label"
         android:text="暂无"/>
 </RelativeLayout>
