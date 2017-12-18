@@ -122,11 +122,11 @@
                     android:textColor="#000000"/>
 
             </RelativeLayout>
+
             <cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout
-                android:id="@+id/snpl_moment_add_photos"
+                android:id="@+id/install_abnormal_add_photos"
                 style="@style/WrapWrap"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_marginTop="10dp"
                 app:bga_snpl_deleteDrawable="@mipmap/bga_pp_ic_delete"
                 app:bga_snpl_deleteDrawableOverlapQuarter="false"
@@ -147,7 +147,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/publish_button"
+            android:id="@+id/install_info_update_button"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:textColor="#ffffff"

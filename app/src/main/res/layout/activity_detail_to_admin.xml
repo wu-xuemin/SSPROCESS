@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -109,17 +110,22 @@
                     android:text="异常照片："
                     android:textColor="#000000"/>
 
-                <ImageView
-                    android:id="@+id/take_photos_iv"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_alignStart="@+id/install_info_label"
-                    android:layout_alignLeft="@+id/install_info_label"
-                    android:layout_marginTop="1dp"
-                    android:layout_below="@+id/take_photos_label"
-                    android:src="@drawable/ic_launcher_background"
-                    android:contentDescription="abnormalPic" />
+                <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
+                    android:id="@+id/install_abnormal_photos"
+                    style="@style/MatchWrap"
+                    android:layout_below="@id/take_photos_label"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="10dp"
+                    app:bga_npl_itemCornerRadius="0dp"
+                    app:bga_npl_itemSpanCount="3"
+                    app:bga_npl_itemWhiteSpacing="4dp"
+                    app:bga_npl_itemWidth="0dp"
+                    app:bga_npl_otherWhiteSpacing="64dp"
+                    app:bga_npl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
+                    app:bga_npl_showAsLargeWhenOnlyOne="true"/>
+
             </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -191,16 +197,19 @@
                     android:text="异常照片："
                     android:textColor="#000000"/>
 
-                <ImageView
-                    android:id="@+id/take_nok_photos_iv"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_alignStart="@+id/checkout_info_label"
-                    android:layout_alignLeft="@+id/checkout_info_label"
-                    android:layout_marginTop="1dp"
-                    android:layout_below="@+id/take_nok_photos_label"
-                    android:src="@drawable/ic_launcher_background"
-                    android:contentDescription="nokPic" />
+                <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
+                    android:id="@+id/checkout_nok_photos"
+                    style="@style/MatchWrap"
+                    android:layout_below="@id/take_nok_photos_label"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="10dp"
+                    app:bga_npl_itemCornerRadius="0dp"
+                    app:bga_npl_itemSpanCount="3"
+                    app:bga_npl_itemWhiteSpacing="4dp"
+                    app:bga_npl_itemWidth="0dp"
+                    app:bga_npl_otherWhiteSpacing="64dp"
+                    app:bga_npl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
+                    app:bga_npl_showAsLargeWhenOnlyOne="true"/>
             </RelativeLayout>
 
         </LinearLayout>
