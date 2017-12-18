@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SSPROCESS</string>
+    <string name="app_name">生产部app</string>
     <string name="start_service">Start Service</string>
     <string name="stop_service">Stop Service</string>
     <string name="qr_scan">二维码扫描</string>
