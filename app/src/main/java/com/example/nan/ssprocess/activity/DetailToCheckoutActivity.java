@@ -16,6 +16,17 @@ import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerPreviewActivity;
 import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
 
+/**
+ * @author nan  2017/12/18
+ */
+/**
+ * 根据传入的strTaskQualityRecordDetail，更新对应多表：
+ "machine_id":"",  --> machine.machine_id
+ "检验是否合格":"", --> task_quality_record.status 质检结果: "1"==>通过； “0”==>不通过
+ "不合格原因":"",	--> task_quality_record.comment
+ "不合格照片":"",	--> quality_record_image.image
+ "检验完成":"",		--> task_record.status  task状态，“1”==>未开始， “2”==>进行中，“3”==>安装完成， “4”==>质检完成，“5“===>异常
+ */
 public class DetailToCheckoutActivity extends AppCompatActivity implements BGASortableNinePhotoLayout.Delegate{
     private BGASortableNinePhotoLayout mCheckoutNokPhotosSnpl;
     private static final String TAG="nlgDetailToCheckout";

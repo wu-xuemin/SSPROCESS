@@ -1,6 +1,10 @@
-package com.example.nan.ssprocess.bean;
+package com.example.nan.ssprocess.bean.basic;
 
-public class TaskRecordDetailDataMachineDetail{
+/**
+ * Created by nan on 2017/12/18.
+ */
+
+public class MachineData {
     private String location;
     private int machineId;
     private int orderId;

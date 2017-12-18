@@ -42,5 +42,25 @@ public class LoginResponseData {
         return role;
     }
 
+    public static class LoginGroup {
+        private String groupName;
+        private int id;
+
+        public String getGroupName() {
+            return groupName;
+        }
+
+        public int getId() {
+            return id;
+        }
+    }
+
+    public static class LoginRole {
+        private int id;
+
+        public int getId() {
+            return id;
+        }
+    }
 }
 

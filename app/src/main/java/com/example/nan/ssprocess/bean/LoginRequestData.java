@@ -5,7 +5,7 @@ package com.example.nan.ssprocess.bean;
  */
 
 public class LoginRequestData {
-    private int imei;//区别移动端和浏览器
+    private int imei;
     private String name;
     private String password;
 

@@ -1,50 +1,31 @@
 package com.example.nan.ssprocess.activity;
 
-import android.Manifest;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.service.MyMqttService;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPreviewActivity;
 import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
-import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
-import pub.devrel.easypermissions.EasyPermissions;
 
 /**
  * @author nan 2017/11/27
  */
+/*"machine_id":"", --> machine.machine_id
+"location":"",-->machine.location
+* */
 public class DetailToAdminActivity extends AppCompatActivity implements BGANinePhotoLayout.Delegate {
 
     private static final String TAG="nlgDetailToAdmin";
-    private String mFilePath = null;// 获取SD卡路径
-    private static final int START_CAMERA = 10001;
-    private ImageView takePhotosImageView;
-    private Uri photoUri;
     private ArrayList<String> installPhotoList;
     private ArrayList<String> checkoutPhotoList;
     private BGANinePhotoLayout mCurrentClickNpl;

@@ -13,7 +13,7 @@ public class URL {
     public static final String USER_LOGOUT = "/user/logout";
     public static final String PROCESS_MODULE_LIST = "/process/getRecords";
     public static final String PROCESS_RECORD_ADD = "/ProcessRecord/addProcessRecord";
-    public static final String FETCH_PROCESS_RECORD = "/task/record/selectTaskReocords";
+    public static final String FETCH_PROCESS_RECORD = "/task/record/selectTaskRecordDetail";
     public static final String FETCH_PROCESS_TASK_PLANS_RECORD = "/selectTaskPlans";
     public static final String UPDATE_OPERATION_STATUS = "/OperationStatus/modifyData";
     public static final String FETCH_TOOLS_PACKAGE = "/ToolsPackage/getRecords";
