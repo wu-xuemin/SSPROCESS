@@ -18,10 +18,10 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.adapter.ProcessToAdminAdapter;
+import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
-import com.example.nan.ssprocess.bean.TaskRecordDataListContent;
+import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
 
 import java.util.ArrayList;
@@ -33,12 +33,13 @@ import java.util.LinkedHashMap;
 public class ProcessToCheckoutActivity extends AppCompatActivity {
 
     private static String TAG = "nlgProcessToCheckoutActivity";
-    private ArrayList<TaskRecordDataListContent> mProcessToCheckoutList = new ArrayList<>();
-    private ProcessToAdminAdapter mProcessToAdminAdapter;
+    private ArrayList<TaskMachineListData> mProcessToCheckoutList = new ArrayList<>();
+    private TaskRecordAdapter mTaskRecordAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
 
     private ProgressDialog mLoadingProcessDialog;
     private SwipeRefreshLayout mSwipeRefresh;
+
     private Runnable mStopSwipeRefreshRunnable = new Runnable() {
         @Override
         public void run() {
@@ -47,6 +48,7 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
             }
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,8 +67,8 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mProcessToAdminRV.setLayoutManager(manager);
-        mProcessToAdminAdapter = new ProcessToAdminAdapter(mProcessToCheckoutList);
-        mProcessToAdminRV.setAdapter(mProcessToAdminAdapter);
+        mTaskRecordAdapter = new TaskRecordAdapter(mProcessToCheckoutList);
+        mProcessToAdminRV.setAdapter(mTaskRecordAdapter);
 
         //下拉刷新
         mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.checkout_swipe_refresh);
@@ -89,7 +91,6 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
         }
         mLoadingProcessDialog.show();
         fetchProcessData();
-
     }
 
     private void fetchProcessData() {
@@ -99,7 +100,7 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
 //        final String account = "sss";
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("userAccount", account);
-        String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_PROCESS_RECORD;
+        String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_QA;
         Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
     }
 
@@ -114,10 +115,10 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
                 mSwipeRefresh.setRefreshing(false);
             }
             if (msg.what == Network.OK) {
-                mProcessToCheckoutList=(ArrayList<TaskRecordDataListContent>)msg.obj;
+                mProcessToCheckoutList=(ArrayList<TaskMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToCheckoutList.size());
-                mProcessToAdminAdapter.setProcessList(mProcessToCheckoutList);
-                mProcessToAdminAdapter.notifyDataSetChanged();
+                mTaskRecordAdapter.setProcessList(mProcessToCheckoutList);
+                mTaskRecordAdapter.notifyDataSetChanged();
                 Toast.makeText(ProcessToCheckoutActivity.this, "更新成功！", Toast.LENGTH_SHORT).show();
             } else {
                 String errorMsg = (String)msg.obj;

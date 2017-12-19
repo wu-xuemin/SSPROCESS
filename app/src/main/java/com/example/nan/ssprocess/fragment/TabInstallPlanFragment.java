@@ -14,23 +14,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.adapter.ProcessToAdminAdapter;
+import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
-import com.example.nan.ssprocess.bean.TaskRecordDataListContent;
+import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TabInstallPlanFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TabInstallPlanFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class TabInstallPlanFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -43,8 +36,8 @@ public class TabInstallPlanFragment extends Fragment {
 
 //    private OnFragmentInteractionListener mListener;
     private static String TAG = "nlgProcessToAdminActivity";
-    private ArrayList<TaskRecordDataListContent> mProcessToAdminList = new ArrayList<>();
-    private ProcessToAdminAdapter mProcessToAdminAdapter;
+    private ArrayList<TaskMachineListData> mProcessToAdminList = new ArrayList<>();
+    private TaskRecordAdapter mTaskRecordAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
 
     private SwipeRefreshLayout mSwipeRefresh;
@@ -96,8 +89,8 @@ public class TabInstallPlanFragment extends Fragment {
         LinearLayoutManager manager = new LinearLayoutManager(viewContent.getContext());
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mProcessToAdminRV.setLayoutManager(manager);
-        mProcessToAdminAdapter = new ProcessToAdminAdapter(mProcessToAdminList);
-        mProcessToAdminRV.setAdapter(mProcessToAdminAdapter);
+        mTaskRecordAdapter = new TaskRecordAdapter(mProcessToAdminList);
+        mProcessToAdminRV.setAdapter(mTaskRecordAdapter);
 
         //下拉刷新
         mSwipeRefresh = (SwipeRefreshLayout) viewContent.findViewById(R.id.install_swipe_refresh);
@@ -123,7 +116,7 @@ public class TabInstallPlanFragment extends Fragment {
 //        final String account = "sss";
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("userAccount", account);
-        String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_PROCESS_RECORD;
+        String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_INSTALL;
         Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
     }
 
@@ -135,10 +128,10 @@ public class TabInstallPlanFragment extends Fragment {
                 mSwipeRefresh.setRefreshing(false);
             }
             if (msg.what == Network.OK) {
-                mProcessToAdminList=(ArrayList<TaskRecordDataListContent>)msg.obj;
+                mProcessToAdminList=(ArrayList<TaskMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToAdminList.size());
-                mProcessToAdminAdapter.setProcessList(mProcessToAdminList);
-                mProcessToAdminAdapter.notifyDataSetChanged();
+                mTaskRecordAdapter.setProcessList(mProcessToAdminList);
+                mTaskRecordAdapter.notifyDataSetChanged();
             } else {
                 String errorMsg = (String)msg.obj;
             }

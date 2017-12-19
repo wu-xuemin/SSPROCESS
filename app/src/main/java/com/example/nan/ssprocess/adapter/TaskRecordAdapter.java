@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.bean.TaskRecordDataListContent;
+import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 
 
 import java.util.ArrayList;
@@ -16,12 +16,12 @@ import java.util.ArrayList;
  * Created by Young on 2017/11/26.
  */
 
-public class ProcessToAdminAdapter extends RecyclerView.Adapter{
+public class TaskRecordAdapter extends RecyclerView.Adapter{
 
-    private ArrayList<TaskRecordDataListContent> mProcessList;
+    private ArrayList<TaskMachineListData> mProcessList;
     private OnItemClickListener itemClickListener = null;
 
-    public ProcessToAdminAdapter(ArrayList<TaskRecordDataListContent> list) {
+    public TaskRecordAdapter(ArrayList<TaskMachineListData> list) {
         mProcessList = list;
     }
 
@@ -36,11 +36,11 @@ public class ProcessToAdminAdapter extends RecyclerView.Adapter{
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final ItemView itemView = (ItemView) holder;
         //itemView.setIsRecyclable(false);//禁止复用
-        itemView.machineIdTv.setText(""+mProcessList.get(position).getId());
+        itemView.machineIdTv.setText(""+mProcessList.get(position).getMachineData().getMachineId());
         itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
         itemView.processStateTv.setText(""+mProcessList.get(position).getStatus());
-        itemView.beginDateTv.setText(mProcessList.get(position).getBeginTime());
-        itemView.endDateTv.setText(mProcessList.get(position).getEndTime());
+        itemView.contractDateTv.setText(mProcessList.get(position).getMachineOrderData().getContract_ship_date());
+        itemView.planDateTv.setText(mProcessList.get(position).getMachineOrderData().getPlanShipDate());
 
 //        itemView.machineIdTv.setOnClickListener(new View.OnClickListener() {
 //                                                     @Override
@@ -62,18 +62,18 @@ public class ProcessToAdminAdapter extends RecyclerView.Adapter{
         TextView machineIdTv;
         TextView processNameTv;
         TextView processStateTv;
-        TextView beginDateTv;
-        TextView endDateTv;
+        TextView contractDateTv;
+        TextView planDateTv;
         public ItemView(View itemView) {
             super(itemView);
             machineIdTv = (TextView) itemView.findViewById(R.id.process_machine_id_tv);
             processNameTv = (TextView) itemView.findViewById(R.id.process_name_tv);
             processStateTv = (TextView) itemView.findViewById(R.id.process_state_tv);
-            beginDateTv = (TextView) itemView.findViewById(R.id.process_begin_date_tv);
-            endDateTv = (TextView) itemView.findViewById(R.id.process_end_date_tv);
+            contractDateTv = (TextView) itemView.findViewById(R.id.process_begin_date_tv);
+            planDateTv = (TextView) itemView.findViewById(R.id.process_end_date_tv);
         }
     }
-    public void setProcessList(ArrayList<TaskRecordDataListContent> list) {
+    public void setProcessList(ArrayList<TaskMachineListData> list) {
         mProcessList.clear();
         mProcessList.addAll(list);
     }

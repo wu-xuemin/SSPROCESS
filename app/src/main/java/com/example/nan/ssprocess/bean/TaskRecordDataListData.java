@@ -1,5 +1,7 @@
 package com.example.nan.ssprocess.bean;
 
+import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,9 +11,9 @@ import java.util.List;
 
 public class TaskRecordDataListData {
 
-    private List<TaskRecordDataListContent> list = new ArrayList<>();
+    private List<TaskMachineListData> list = new ArrayList<>();
 
-    public List<TaskRecordDataListContent> getList() {
+    public List<TaskMachineListData> getList() {
         return list;
     }
 }

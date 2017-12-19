@@ -3,21 +3,28 @@ package com.example.nan.ssprocess.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.nan.ssprocess.R;
+import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
+import com.example.nan.ssprocess.app.SinSimApp;
+import com.example.nan.ssprocess.app.URL;
+import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
+import com.example.nan.ssprocess.net.Network;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TabInstallReadyFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TabInstallReadyFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+
+
 public class TabInstallReadyFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -29,7 +36,20 @@ public class TabInstallReadyFragment extends Fragment {
     private String mParam2;
 
 //    private OnFragmentInteractionListener mListener;
+    private static String TAG = "nlgProcessToAdminActivity";
+    private ArrayList<TaskMachineListData> mProcessToAdminList = new ArrayList<>();
+    private TaskRecordAdapter mTaskRecordAdapter;
+    private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
 
+    private SwipeRefreshLayout mSwipeRefresh;
+    private Runnable mStopSwipeRefreshRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if(mSwipeRefresh.isRefreshing()) {
+                mSwipeRefresh.setRefreshing(false);
+            }
+        }
+    };
     public TabInstallReadyFragment() {
         // Required empty public constructor
     }
@@ -65,7 +85,57 @@ public class TabInstallReadyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tab_install_ready, container, false);
+        View viewContent = inflater.inflate(R.layout.fragment_tab_install_ready, container, false);
+        RecyclerView mProcessToAdminRV = (RecyclerView) viewContent.findViewById(R.id.process_to_install_rv);
+        LinearLayoutManager manager = new LinearLayoutManager(viewContent.getContext());
+        manager.setOrientation(LinearLayoutManager.VERTICAL);
+        mProcessToAdminRV.setLayoutManager(manager);
+        mTaskRecordAdapter = new TaskRecordAdapter(mProcessToAdminList);
+        mProcessToAdminRV.setAdapter(mTaskRecordAdapter);
+
+        //下拉刷新
+        mSwipeRefresh = (SwipeRefreshLayout) viewContent.findViewById(R.id.install_swipe_refresh);
+        int[] colors = getResources().getIntArray(R.array.google_colors);
+        mSwipeRefresh.setColorSchemeColors(colors);
+        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //超时停止刷新
+                mSwipeRefresh.postDelayed(mStopSwipeRefreshRunnable, 5000);
+                fetchProcessData();
+            }
+        });
+
+        fetchProcessData();
+        return viewContent;
+    }
+
+    private void fetchProcessData() {
+        final String account = SinSimApp.getApp().getAccount();
+        final String ip = SinSimApp.getApp().getServerIP();
+//        final String ip = "192.168.0.102:8080";
+//        final String account = "sss";
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("userAccount", account);
+        String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_INSTALL;
+        Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
+    }
+
+    private class FetchProcessDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if(mSwipeRefresh.isRefreshing()) {
+                mSwipeRefresh.setRefreshing(false);
+            }
+            if (msg.what == Network.OK) {
+                mProcessToAdminList=(ArrayList<TaskMachineListData>)msg.obj;
+                Log.d(TAG, "handleMessage: size: "+mProcessToAdminList.size());
+                mTaskRecordAdapter.setProcessList(mProcessToAdminList);
+                mTaskRecordAdapter.notifyDataSetChanged();
+            } else {
+                String errorMsg = (String)msg.obj;
+            }
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

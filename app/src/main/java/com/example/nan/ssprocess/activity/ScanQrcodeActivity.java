@@ -1,5 +1,6 @@
 package com.example.nan.ssprocess.activity;
 
+import android.content.Intent;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -62,6 +63,9 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
     public void onScanQRCodeSuccess(String result) {
         Log.d(TAG, "result:" + result);
         Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
+        Intent intent=new Intent(ScanQrcodeActivity.this,DetailToCheckoutActivity.class);
+        startActivity(intent);
+
         vibrate();
         mQRCodeView.startSpot();
     }
