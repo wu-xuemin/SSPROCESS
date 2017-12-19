@@ -69,6 +69,14 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
         mProcessToAdminRV.setLayoutManager(manager);
         mTaskRecordAdapter = new TaskRecordAdapter(mProcessToCheckoutList);
         mProcessToAdminRV.setAdapter(mTaskRecordAdapter);
+        mTaskRecordAdapter.setOnItemClickListener(new TaskRecordAdapter.OnItemClickListener(){
+            @Override
+            public void onItemClick(int position){
+                Log.d(TAG, "onItemClick: position :"+position);
+                Intent intent=new Intent(ProcessToCheckoutActivity.this,DetailToCheckoutActivity.class);
+                startActivity(intent);
+            }
+        });
 
         //下拉刷新
         mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.checkout_swipe_refresh);

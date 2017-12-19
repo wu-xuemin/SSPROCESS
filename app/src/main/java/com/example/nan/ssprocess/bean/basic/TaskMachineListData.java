@@ -5,20 +5,20 @@ package com.example.nan.ssprocess.bean.basic;
  */
 
 public class TaskMachineListData {
-    private MachineData machineData;
+    private MachineData machine;
     private String taskName;
     private int status;
-    private MachineOrderData machineOrderData;
+    private MachineOrderData machineOrder;
 
     public TaskMachineListData(MachineData machineData,String taskName,int status,MachineOrderData machineOrderData){
-        this.machineData = machineData;
+        this.machine = machineData;
         this.taskName = taskName;
         this.status = status;
-        this.machineOrderData = machineOrderData;
+        this.machineOrder = machineOrderData;
     }
 
     public MachineData getMachineData() {
-        return machineData;
+        return machine;
     }
 
     public String getTaskName() {
@@ -30,7 +30,7 @@ public class TaskMachineListData {
     }
 
     public MachineOrderData getMachineOrderData() {
-        return machineOrderData;
+        return machineOrder;
     }
 
 }

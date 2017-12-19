@@ -69,6 +69,14 @@ public class ProcessToAdminActivity extends AppCompatActivity{
         mProcessToAdminRV.setLayoutManager(manager);
         mProcessToAdminAdapter = new TaskRecordAdapter(mProcessToAdminList);
         mProcessToAdminRV.setAdapter(mProcessToAdminAdapter);
+        mProcessToAdminAdapter.setOnItemClickListener(new TaskRecordAdapter.OnItemClickListener(){
+            @Override
+            public void onItemClick(int position){
+                Log.d(TAG, "onItemClick: position :"+position);
+                Intent intent=new Intent(ProcessToAdminActivity.this,DetailToAdminActivity.class);
+                startActivity(intent);
+            }
+        });
 
         //下拉刷新
         mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.admin_swipe_refresh);

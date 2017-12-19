@@ -6,14 +6,14 @@ package com.example.nan.ssprocess.bean.basic;
 
 public class MachineData {
     private String location;
-    private int machineId;
+    private String machineId;
     private int orderId;
 
     public String getLocation() {
         return location;
     }
 
-    public int getMachineId() {
+    public String getMachineId() {
         return machineId;
     }
 

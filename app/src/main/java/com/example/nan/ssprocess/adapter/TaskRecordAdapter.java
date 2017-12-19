@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.nan.ssprocess.R;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
  * Created by Young on 2017/11/26.
  */
 
-public class TaskRecordAdapter extends RecyclerView.Adapter{
+public class TaskRecordAdapter extends RecyclerView.Adapter {
 
     private ArrayList<TaskMachineListData> mProcessList;
     private OnItemClickListener itemClickListener = null;
@@ -41,17 +42,16 @@ public class TaskRecordAdapter extends RecyclerView.Adapter{
         itemView.processStateTv.setText(""+mProcessList.get(position).getStatus());
         itemView.contractDateTv.setText(mProcessList.get(position).getMachineOrderData().getContract_ship_date());
         itemView.planDateTv.setText(mProcessList.get(position).getMachineOrderData().getPlanShipDate());
+        itemView.itemLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(itemClickListener != null) {
+                    itemClickListener.onItemClick(position);
+                }
+            }
+        });
 
-//        itemView.machineIdTv.setOnClickListener(new View.OnClickListener() {
-//                                                     @Override
-//                                                     public void onClick(View v) {
-//                                                         if(itemClickListener != null) {
-//                                                             itemClickListener.onItemClick(position);
-//                                                         }
-//                                                     }
-//                                                 }
-//        );
-    }
+        }
 
     @Override
     public int getItemCount() {
@@ -59,13 +59,16 @@ public class TaskRecordAdapter extends RecyclerView.Adapter{
     }
 
     public class ItemView extends RecyclerView.ViewHolder {
+        LinearLayout itemLinearLayout;
         TextView machineIdTv;
         TextView processNameTv;
         TextView processStateTv;
         TextView contractDateTv;
         TextView planDateTv;
+
         public ItemView(View itemView) {
             super(itemView);
+            itemLinearLayout=itemView.findViewById(R.id.item_linear_layout);
             machineIdTv = (TextView) itemView.findViewById(R.id.process_machine_id_tv);
             processNameTv = (TextView) itemView.findViewById(R.id.process_name_tv);
             processStateTv = (TextView) itemView.findViewById(R.id.process_state_tv);
@@ -82,7 +85,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter{
         void onItemClick(int position);
     }
     //设置点击事件的方法
-    public void setItemClickListener(OnItemClickListener itemClickListener){
+    public void setOnItemClickListener(OnItemClickListener itemClickListener){
         this.itemClickListener = itemClickListener;
     }
 }
