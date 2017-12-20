@@ -74,6 +74,7 @@ public class ProcessToAdminActivity extends AppCompatActivity{
             public void onItemClick(int position){
                 Log.d(TAG, "onItemClick: position :"+position+mProcessToAdminList.get(position).getMachineData().getMachineId());
                 Intent intent=new Intent(ProcessToAdminActivity.this,DetailToAdminActivity.class);
+                intent.putExtra("machineID", position);
                 startActivity(intent);
             }
         });

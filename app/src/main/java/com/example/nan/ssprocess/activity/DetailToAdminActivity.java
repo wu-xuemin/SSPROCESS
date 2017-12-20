@@ -1,5 +1,7 @@
 package com.example.nan.ssprocess.activity;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -58,6 +60,13 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                 updateProcessDetailData();
             }
         });
+
+        Intent intent = getIntent();
+        // 获取到传递过来的姓名
+        String machineID = intent.getStringExtra("machineID");
+        // 获取到传递过来的图片
+//        Bitmap bitmap = intent.getParcelableExtra("pic");
+        Log.d(TAG, "onCreate: machineID "+machineID);
 
         locationEt=findViewById(R.id.location_et);
 
