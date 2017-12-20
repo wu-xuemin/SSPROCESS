@@ -17,7 +17,7 @@ public class URL {
     public static final String FETCH_TASK_RECORD_TO_QA = "/task/record/selectAllQaTaskRecordDetailByUserAccount";
     public static final String FETCH_TASK_RECORD_TO_INSTALL = "/task/record/selectAllInstallTaskRecordDetailByUserAccount";
     public static final String FETCH_PROCESS_TASK_PLANS_RECORD = "/selectTaskPlans";
-    public static final String UPDATE_OPERATION_STATUS = "/OperationStatus/modifyData";
+    public static final String UPDATE_MACHINE_LOCATION = "/machine/update";
     public static final String FETCH_TOOLS_PACKAGE = "/ToolsPackage/getRecords";
     public static final String FETCH_GUIDANCE = "/TaskContent/getGuidanceByName";
     public static final String UPDATE_PROCESS_RECORD = "/ProcessRecord/updateProcessRecord";

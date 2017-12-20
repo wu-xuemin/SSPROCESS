@@ -174,9 +174,9 @@ public class Network {
                                 Gson gson = new Gson();
                                 ResponseData responseData = gson.fromJson(response.body().string(), new TypeToken<ResponseData>(){}.getType());
                                 if (responseData != null) {
-                                    if (responseData.getCode() == 1) {
+                                    if (responseData.getCode() == 200) {
                                         success = true;
-                                    } else if (responseData.getCode() == 0) {
+                                    } else if (responseData.getCode() == 400) {
                                         Log.e(TAG, responseData.getMessage());
                                         errorMsg = responseData.getMessage();
                                     } else {
@@ -604,9 +604,9 @@ public class Network {
                                 Gson gson = new Gson();
                                 ResponseData responseData = gson.fromJson(response.body().string(), new TypeToken<ResponseData>(){}.getType());
                                 if (responseData != null) {
-                                    if (responseData.getCode() == 1) {
+                                    if (responseData.getCode() == 200) {
                                         success = true;
-                                    } else if (responseData.getCode() == 0) {
+                                    } else if (responseData.getCode() == 400) {
                                         msg.obj = responseData.getMessage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");

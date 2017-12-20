@@ -81,7 +81,7 @@
         android:layout_alignTop="@+id/machine_number_label"
         android:text="暂无"/>
     <TextView
-        android:id="@+id/localtion_label"
+        android:id="@+id/location_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/machine_number_label"
@@ -90,19 +90,19 @@
         android:text="位置："
         android:textColor="#000000"/>
     <EditText
-        android:id="@+id/localtion_tv"
+        android:id="@+id/location_et"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/localtion_label"
-        android:layout_alignBaseline="@+id/localtion_label"
+        android:layout_toRightOf="@+id/location_label"
+        android:layout_alignBaseline="@+id/location_label"
         android:maxLength="6"
         android:hint="输入位置"/>
     <TextView
         android:id="@+id/intall_list_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/localtion_label"
-        android:layout_alignLeft="@+id/localtion_label"
+        android:layout_below="@+id/location_label"
+        android:layout_alignLeft="@+id/location_label"
         android:layout_alignTop="@+id/type_label"
         android:text="装车单："
         android:textColor="#000000"/>

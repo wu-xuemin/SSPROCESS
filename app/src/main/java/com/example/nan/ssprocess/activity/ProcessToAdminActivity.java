@@ -72,7 +72,7 @@ public class ProcessToAdminActivity extends AppCompatActivity{
         mProcessToAdminAdapter.setOnItemClickListener(new TaskRecordAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(int position){
-                Log.d(TAG, "onItemClick: position :"+position);
+                Log.d(TAG, "onItemClick: position :"+position+mProcessToAdminList.get(position).getMachineData().getMachineId());
                 Intent intent=new Intent(ProcessToAdminActivity.this,DetailToAdminActivity.class);
                 startActivity(intent);
             }
