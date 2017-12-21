@@ -23,6 +23,7 @@ import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -72,9 +73,12 @@ public class ProcessToAdminActivity extends AppCompatActivity{
         mProcessToAdminAdapter.setOnItemClickListener(new TaskRecordAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(int position){
+                Gson gson=new Gson();
+                String toJson = gson.toJson(mProcessToAdminList.get(position).getMachineData());
                 Log.d(TAG, "onItemClick: position :"+position+mProcessToAdminList.get(position).getMachineData().getMachineId());
+                Log.d(TAG, "onItemClick: gson :"+toJson);
                 Intent intent=new Intent(ProcessToAdminActivity.this,DetailToAdminActivity.class);
-                intent.putExtra("machineID", position);
+                intent.putExtra("machineData", mProcessToAdminList.get(position).getMachineData());
                 startActivity(intent);
             }
         });

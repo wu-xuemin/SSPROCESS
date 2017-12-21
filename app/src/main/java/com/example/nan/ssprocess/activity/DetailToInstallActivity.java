@@ -20,17 +20,6 @@ import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
 /**
  * @author nan  2017/12/18
  */
-/**
- *根据传入的strAbnormalRecordDetail，更新对应多表：
- "machine_id":"", --> machine.machine_id
- "安装是否异常":"", --> task_record.status  task状态，“1”==>未开始， “2”==>进行中，“3”==>安装完成， “4”==>质检完成，“5“===>异常
- "异常类型":"",	--> abnormal_record.abnormal_type
- "异常原因":"", --> abnormal_record.comment
- "异常照片":"", -->abnormal_image.image
- "安装完成":"",  -->   task_record.status或machine.status都可以，反正这两个表都更新
- 注意：有外键的字段，需要上传实际存在的外键数据。
- 一项update失败的情况下，全部update无效(事务OK)
- */
 public class DetailToInstallActivity extends AppCompatActivity implements BGASortableNinePhotoLayout.Delegate {
 
     private static final String TAG="nlgDetailToInstall";

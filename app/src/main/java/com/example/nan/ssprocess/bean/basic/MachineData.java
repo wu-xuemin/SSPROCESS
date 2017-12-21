@@ -1,10 +1,12 @@
 package com.example.nan.ssprocess.bean.basic;
 
+import java.io.Serializable;
+
 /**
  * Created by nan on 2017/12/18.
  */
 
-public class MachineData {
+public class MachineData implements Serializable{
     private String location;
     private String machineId;
     private int orderId;
@@ -19,6 +21,10 @@ public class MachineData {
 
     public String getLocation() {
         return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getMachineId() {
@@ -56,4 +62,5 @@ public class MachineData {
     public String getUpdateTime() {
         return updateTime;
     }
+
 }

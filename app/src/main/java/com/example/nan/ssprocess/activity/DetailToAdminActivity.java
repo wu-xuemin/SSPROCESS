@@ -1,5 +1,6 @@
 package com.example.nan.ssprocess.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Environment;
@@ -12,15 +13,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.ResponseData;
+import com.example.nan.ssprocess.bean.basic.MachineData;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.service.MyMqttService;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,9 +45,10 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
 
     private static final String TAG="nlgDetailToAdmin";
     private ResponseData mResponseData = new ResponseData();
+    private MachineData machineData;
     private EditText locationEt;
 
-    private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler;
+    private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
     private ArrayList<String> installPhotoList;
     private ArrayList<String> checkoutPhotoList;
     private BGANinePhotoLayout mCurrentClickNpl;
@@ -53,6 +58,13 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_to_admin);
 
+        locationEt=findViewById(R.id.location_et);
+        TextView orderNumberTv=findViewById(R.id.order_number_tv);
+        TextView machineNumberTv=findViewById(R.id.machine_number_tv);
+        TextView needleCountTv=findViewById(R.id.needle_count_tv);
+        TextView typeTv=findViewById(R.id.type_tv);
+        TextView intallListTv=findViewById(R.id.intall_list_tv);
+
         Button publishButton = findViewById(R.id.publish_button);
         publishButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,16 +72,14 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                 updateProcessDetailData();
             }
         });
-
+        //获取传递过来的信息
         Intent intent = getIntent();
-        // 获取到传递过来的姓名
-        String machineID = intent.getStringExtra("machineID");
-        // 获取到传递过来的图片
-//        Bitmap bitmap = intent.getParcelableExtra("pic");
-        Log.d(TAG, "onCreate: machineID "+machineID);
+        machineData = (MachineData) intent.getSerializableExtra("machineData");
+        Log.d(TAG, "onItemClick: position :"+machineData.getLocation());
 
-        locationEt=findViewById(R.id.location_et);
-
+        orderNumberTv.setText(""+machineData.getOrderId());
+        machineNumberTv.setText(machineData.getMachineId());
+        locationEt.setText(machineData.getLocation());
 
         ImageView previousIv = findViewById(R.id.machine_service_detail_back);
         previousIv.setOnClickListener(new View.OnClickListener() {
@@ -92,26 +102,30 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     }
 
     private void updateProcessDetailData() {
-        final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
 //        final String ip = "192.168.0.102:8080";
 //        final String account = "sss";
+        machineData.setLocation(locationEt.getText().toString());
+        Gson gson=new Gson();
+        String machineDataToJson = gson.toJson(machineData);
+        Log.d(TAG, "onItemClick: gson :"+ machineDataToJson);
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("machine", "{\"createTime\":1512192287000,\"id\":3,\"installedTime\":1512097889000,\"location\":\""+locationEt.getText()+"\",\"machineId\":\"3\",\"nameplate\":\"nnnme\",\"orderId\":4,\"shipTime\":1512616296000,\"status\":2,\"updateTime\":1512011479000}");
-        String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.UPDATE_MACHINE_LOCATION;
-        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(fetchProcessRecordUrl, mPostValue, mUpdateProcessDetailDataHandler);
+        mPostValue.put("machine", machineDataToJson);
+        String updateProcessRecordUrl = URL.HTTP_HEAD + ip + URL.UPDATE_MACHINE_LOCATION;
+        Log.d(TAG, "updateProcessDetailData: "+updateProcessRecordUrl+mPostValue.get("machine"));
+        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, mUpdateProcessDetailDataHandler);
     }
 
+    @SuppressLint("HandlerLeak")
     private class UpdateProcessDetailDataHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
 
             if (msg.what == Network.OK) {
-                mResponseData=(ResponseData)msg.obj;
-                Log.d(TAG, "handleMessage: size: "+mResponseData.getMessage());
                 Toast.makeText(DetailToAdminActivity.this, "更新成功！", Toast.LENGTH_SHORT).show();
             } else {
                 String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: "+errorMsg);
                 Toast.makeText(DetailToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }

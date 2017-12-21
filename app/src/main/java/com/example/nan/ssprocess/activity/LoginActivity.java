@@ -135,7 +135,6 @@ public class LoginActivity extends AppCompatActivity {
         if( data != null) {
             //Store to memory and preference
             mApp.setIsLogined(true, data.getAccount(), data.getFullName(), mPassword, data.getRole().getId());
-            //TODO:
             /**
              * 在登陆完成后检查人员role进入不同界面
              * 生产部管理员：2，安装组长：3，质检员：11

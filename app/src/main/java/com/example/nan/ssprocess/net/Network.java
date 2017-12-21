@@ -372,7 +372,7 @@ public class Network {
                             msg.obj = "Network error!";
                         } finally {
                             handler.sendMessage(msg);
-                            if(response != null) {
+                            if (response != null) {
                                 response.close();
                             }
                         }
@@ -622,6 +622,7 @@ public class Network {
                         } catch (Exception e) {
                             msg.what = NG;
                             msg.obj = "Network error!";
+                            Log.d(TAG, "run: network error!");
                         } finally {
                             handler.sendMessage(msg);
                             if(response != null) {
