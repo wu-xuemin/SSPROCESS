@@ -19,6 +19,7 @@ public class URL {
     public static final String FETCH_PROCESS_TASK_PLANS_RECORD = "/selectTaskPlans";
     public static final String UPDATE_MACHINE_LOCATION = "/machine/update";
     public static final String UPDATE_INSTALL_ABNORMAL_RECORD_DETAIL = "/abnormal/record/updateAbnormalRecordDetail";
+    public static final String UPDATE_TASK_QUALITY_RECORD_DETAIL = "/task/quality/record/updateTaskQualityRecordDetail";
     public static final String FETCH_TOOLS_PACKAGE = "/ToolsPackage/getRecords";
     public static final String FETCH_GUIDANCE = "/TaskContent/getGuidanceByName";
     public static final String UPDATE_PROCESS_RECORD = "/ProcessRecord/updateProcessRecord";

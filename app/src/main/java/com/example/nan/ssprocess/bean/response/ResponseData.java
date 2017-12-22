@@ -1,7 +1,7 @@
-package com.example.nan.ssprocess.bean;
+package com.example.nan.ssprocess.bean.response;
 
 /**
- * Created by Hu Tong on 7/22/2016.
+ * Created by nan on 2017/12/12.
  */
 public class ResponseData {
     private int code = -1;

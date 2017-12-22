@@ -1,9 +1,11 @@
 package com.example.nan.ssprocess.bean;
 
+import com.example.nan.ssprocess.bean.response.ResponseData;
 
 /**
- * Created by Hu Tong on 9/24/2016.
+ * Created by nan on 12/24/2017.
  */
+
 public class TaskRecordDataWrap extends ResponseData {
 
     private TaskRecordDataListData data;

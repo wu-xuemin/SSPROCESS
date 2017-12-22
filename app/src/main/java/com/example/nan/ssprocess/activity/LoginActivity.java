@@ -23,7 +23,7 @@ import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.util.ShowMessage;
-import com.example.nan.ssprocess.bean.LoginResponseData;
+import com.example.nan.ssprocess.bean.response.LoginResponseData;
 
 import java.util.LinkedHashMap;
 

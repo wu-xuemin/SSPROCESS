@@ -1,5 +1,7 @@
 package com.example.nan.ssprocess.bean;
 
+import com.example.nan.ssprocess.bean.response.ResponseData;
+
 /**
  * Created by nan on 2017/12/11.
  */

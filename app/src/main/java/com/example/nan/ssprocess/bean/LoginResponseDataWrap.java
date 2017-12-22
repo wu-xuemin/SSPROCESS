@@ -1,8 +1,12 @@
 package com.example.nan.ssprocess.bean;
 
+import com.example.nan.ssprocess.bean.response.LoginResponseData;
+import com.example.nan.ssprocess.bean.response.ResponseData;
+
 /**
- * Created by Hu Tong on 9/24/2016.
+ * Created by nan on 12/24/2017.
  */
+
 public class LoginResponseDataWrap extends ResponseData {
 
     private LoginResponseData data;
