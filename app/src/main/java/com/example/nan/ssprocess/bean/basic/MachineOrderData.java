@@ -5,10 +5,10 @@ package com.example.nan.ssprocess.bean.basic;
  */
 
 public class MachineOrderData {
-    private int headNum;
-    private int machineType;
-    private String contract_ship_date;
-    private String planShipDate;
+    private int headNum;//头数
+    private int machineType;//类型
+    private String contractShipDate;//合同日期
+    private String planShipDate;//计划日期
 
     public int getHeadNum() {
         return headNum;
@@ -18,8 +18,8 @@ public class MachineOrderData {
         return machineType;
     }
 
-    public String getContract_ship_date() {
-        return contract_ship_date;
+    public String getContractShipDate() {
+        return contractShipDate;
     }
 
     public String getPlanShipDate() {

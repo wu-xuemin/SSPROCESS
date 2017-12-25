@@ -7,9 +7,9 @@ import java.io.Serializable;
  */
 
 public class MachineData implements Serializable{
-    private String location;
-    private String machineId;
-    private int orderId;
+    private String location;//位置
+    private String machineId;//机器编号
+    private int orderId;//订单编号
 
     private int status;
     private String createTime;

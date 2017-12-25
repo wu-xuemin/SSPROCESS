@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.example.nan.ssprocess.R;
 
@@ -33,18 +34,29 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_to_install);
-        Button installInfoUpdateButton = findViewById(R.id.install_info_update_button);
 
+        //点击返回
+        ImageView previousIv = findViewById(R.id.close_machine_detail);
+        previousIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        //点击上传安装结果
+        Button installInfoUpdateButton = findViewById(R.id.install_info_update_button);
         installInfoUpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
             }
         });
+
+        //九宫格拍照
         mInstallAbnormalPhotosSnpl = findViewById(R.id.install_abnormal_add_photos);
         mInstallAbnormalPhotosSnpl.setMaxItemCount(9);
         mInstallAbnormalPhotosSnpl.setPlusEnable(true);
         mInstallAbnormalPhotosSnpl.setDelegate(this);
-
     }
 
     @Override
@@ -92,7 +104,9 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == RC_INSTALL_CHOOSE_PHOTO) {
             mInstallAbnormalPhotosSnpl.addMoreData(BGAPhotoPickerActivity.getSelectedPhotos(data));
-        } else {
+        } else if (requestCode == RC_INSTALL_PHOTO_PREVIEW) {
+            mInstallAbnormalPhotosSnpl.setData(BGAPhotoPickerPreviewActivity.getSelectedPhotos(data));
+        }else {
             Log.d(TAG, "onActivityResult: choose nothing");
         }
     }

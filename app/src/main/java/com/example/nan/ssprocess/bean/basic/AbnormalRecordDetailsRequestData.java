@@ -1,4 +1,4 @@
-package com.example.nan.ssprocess.bean.response;
+package com.example.nan.ssprocess.bean.basic;
 
 import com.example.nan.ssprocess.bean.basic.AbnormalData;
 import com.example.nan.ssprocess.bean.basic.AbnormalImageData;
@@ -9,7 +9,7 @@ import com.example.nan.ssprocess.bean.basic.TaskRecordData;
  * Created by nan on 2017/12/22.
  */
 
-public class AbnormalRecordDetailsResponseData {
+public class AbnormalRecordDetailsRequestData {
     private AbnormalData abnormal;
     private AbnormalImageData abnormalImage;
     private int abnormalType;

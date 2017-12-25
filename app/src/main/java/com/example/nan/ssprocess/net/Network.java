@@ -1,5 +1,6 @@
 package com.example.nan.ssprocess.net;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -11,9 +12,10 @@ import android.util.Log;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.activity.UpdateOperationStatusListener;
 import com.example.nan.ssprocess.app.SinSimApp;
-import com.example.nan.ssprocess.bean.LoginResponseDataWrap;
+import com.example.nan.ssprocess.bean.response.LoginResponseDataWrap;
 import com.example.nan.ssprocess.bean.response.ResponseData;
-import com.example.nan.ssprocess.bean.TaskRecordDataWrap;
+import com.example.nan.ssprocess.bean.response.TaskRecordFromIdResponseDataWrap;
+import com.example.nan.ssprocess.bean.response.TaskRecordResponseDataWrap;
 import com.example.nan.ssprocess.util.ShowMessage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -21,6 +23,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -34,12 +37,14 @@ import okhttp3.Response;
 
 public class Network {
     private static String TAG = "nlgNetwork";
+    @SuppressLint("StaticFieldLeak")
     private static Network mNetWork;
+    @SuppressLint("StaticFieldLeak")
     private static Application mCtx;
     private static ThreadPoolExecutor executor;
     private static final int CORE_THREAD_NUM = 3;
     public static final int OK = 1;
-    public static final int NG = 0;
+    private static final int NG = 0;
 
     private Network() {
     }
@@ -66,6 +71,7 @@ public class Network {
         return false;
     }
 
+    //获取login信息
     public void fetchLoginData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {
             Log.d(TAG, "fetchLoginData: 没网络");
@@ -80,10 +86,9 @@ public class Network {
                     public void run() {
                         RequestBody requestBody;
                         FormBody.Builder builder = new FormBody.Builder();
-                        Iterator iterator = values.entrySet().iterator();//map的迭代器
-                        while (iterator.hasNext()) {
-                            HashMap.Entry entry = (HashMap.Entry)iterator.next();
-                            builder.add((String)entry.getKey(), (String)entry.getValue());
+                        for (Object o : values.entrySet()) {
+                            HashMap.Entry entry = (HashMap.Entry) o;
+                            builder.add((String) entry.getKey(), (String) entry.getValue());
                         }
                         requestBody = builder.build();
                         //Post method
@@ -197,11 +202,78 @@ public class Network {
     }
 
 
-
+    //获取machineTaskListDetail信息
     public void fetchProcessTaskRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
             Log.d(TAG, "fetchProcessModuleData: network_not_connect");
+        } else {
+            if (url != null && values != null && handler != null) {
+                final Message msg = handler.obtainMessage();
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        RequestBody requestBody;
+                        FormBody.Builder builder = new FormBody.Builder();
+                        for (Object o : values.entrySet()) {
+                            HashMap.Entry entry = (HashMap.Entry) o;
+                            builder.add((String) entry.getKey(), (String) entry.getValue());
+                        }
+                        requestBody = builder.build();
+                        //Post method
+                        Request request = new Request.Builder().url( url).post(requestBody).build();
+                        OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
+                        Response response = null;
+                        try {
+                            response = client.newCall(request).execute();
+                            boolean success = false;
+                            if (response.isSuccessful()) {
+                                Gson gson = new Gson();
+                                TaskRecordResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<TaskRecordResponseDataWrap>(){}.getType());
+                                if (responseData != null) {
+                                    Log.d(TAG, "run: "+responseData.getCode());
+                                    if (responseData.getCode() == 200) {
+                                        success = true;
+                                        msg.obj = responseData.getData().getList();
+                                    } else if (responseData.getCode() == 400) {
+                                        Log.e(TAG, responseData.getMessage());
+                                        msg.obj = responseData.getMessage();
+                                    } else if (responseData.getCode() == 500) {
+                                        Log.e(TAG, responseData.getMessage());
+                                        Log.d(TAG, "run: error 500 :"+responseData.getMessage());
+                                        msg.obj = responseData.getMessage();
+                                    } else {
+                                        Log.e(TAG, "Format JSON string to object error!");
+                                    }
+                                }
+                                if (success) {
+                                    msg.what = OK;
+                                }
+                            } else {
+                                msg.what = NG;
+                                msg.obj = "网络请求错误！";
+                            }
+                            response.close();
+                        } catch (Exception e) {
+                            Log.d(TAG, "run: "+e);
+                            msg.what = NG;
+                            msg.obj = "网络请求错误!";
+                        } finally {
+                            handler.sendMessage(msg);
+                            if (response != null) {
+                                response.close();
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    //获取单个machineTaskRecordDetail
+    public void fetchTaskProcessFromId(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
+        if (!isNetworkConnected()) {
+            ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
         } else {
             if (url != null && values != null && handler != null) {
                 final Message msg = handler.obtainMessage();
@@ -217,7 +289,7 @@ public class Network {
                         }
                         requestBody = builder.build();
                         //Post method
-                        Request request = new Request.Builder().url( url).post(requestBody).build();
+                        Request request = new Request.Builder().url(url).post(requestBody).build();
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {
@@ -225,14 +297,17 @@ public class Network {
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
-                                TaskRecordDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<TaskRecordDataWrap>(){}.getType());
-                                Log.d(TAG, "run: "+responseData.getCode());
+                                TaskRecordFromIdResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<TaskRecordFromIdResponseDataWrap>(){}.getType());
                                 if (responseData != null) {
                                     if (responseData.getCode() == 200) {
                                         success = true;
-                                        msg.obj = responseData.getData().getList();
+                                        msg.obj = responseData.getData();
                                     } else if (responseData.getCode() == 400) {
                                         Log.e(TAG, responseData.getMessage());
+                                        msg.obj = responseData.getMessage();
+                                    } else if (responseData.getCode() == 500) {
+                                        Log.e(TAG, responseData.getMessage());
+                                        Log.d(TAG, "run: error 500 :"+responseData.getMessage());
                                         msg.obj = responseData.getMessage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
@@ -243,15 +318,15 @@ public class Network {
                                 }
                             } else {
                                 msg.what = NG;
+                                msg.obj = "网络请求错误！";
                             }
                             response.close();
                         } catch (Exception e) {
-                            Log.d(TAG, "run: "+e);
                             msg.what = NG;
-                            msg.obj = "Network error!";
+                            msg.obj = "网络请求错误！";
                         } finally {
                             handler.sendMessage(msg);
-                            if (response != null) {
+                            if(response != null) {
                                 response.close();
                             }
                         }
@@ -260,7 +335,6 @@ public class Network {
             }
         }
     }
-
     /**
      *添加流程模板记录
      * @param url
@@ -329,72 +403,7 @@ public class Network {
         }
     }
 
-    /**
-     *添加流程模板记录
-     * @param url
-     * @param values
-     * @param handler
-     */
-    public void fetchProcessRecordStatusData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
-        if (!isNetworkConnected()) {
-            ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
-        } else {
-            if (url != null && values != null && handler != null) {
-                final Message msg = handler.obtainMessage();
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        RequestBody requestBody;
-                        FormBody.Builder builder = new FormBody.Builder();
-                        Iterator iterator = values.entrySet().iterator();
-                        while (iterator.hasNext()) {
-                            HashMap.Entry entry = (HashMap.Entry)iterator.next();
-                            builder.add((String) entry.getKey(), (String)entry.getValue());
-                        }
-                        requestBody = builder.build();
-                        //Post method
-                        Request request = new Request.Builder().url(url).post(requestBody).build();
-                        OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
-                        Response response = null;
-                        try {
-                            response = client.newCall(request).execute();
-                            ResponseData responseData = null;
-                            boolean success = false;
-                            if (response.isSuccessful()) {
-                                Gson gson = new Gson();
-                                responseData = gson.fromJson(response.body().string(), new TypeToken<ResponseData>(){}.getType());
-                                if (responseData != null) {
-                                    if (responseData.getCode() == 200) {
-                                        success = true;
-                                        msg.obj = responseData.getMessage();
-                                    } else if (responseData.getCode() == 400) {
-                                        msg.obj = responseData.getMessage();
-                                    }
-                                }
-                                if (success) {
-                                    msg.what = OK;
-                                }
-                            } else {
-                                msg.what = NG;
-                                if(responseData != null) {
-                                    msg.obj = responseData.getMessage();
-                                }
-                            }
-                            response.close();
-                        } catch (Exception e) {
-                            msg.what = NG;
-                            msg.obj = "网络请求错误！";
-                        } finally {
-                            handler.sendMessage(msg);
-                            if(response != null) {
-                                response.close();
-                            }
-                        }
-                    }
-                });
-            }
-        }
-    }
+
 
     public void updateProcessRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {

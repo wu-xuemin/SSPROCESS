@@ -55,7 +55,8 @@ public class ProcessToAdminActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_to_admin);
 
-        Button scanQrcodeBotton = (Button) findViewById(R.id.admin_scan_qrcode_button);
+        //点击扫码
+        Button scanQrcodeBotton = findViewById(R.id.admin_scan_qrcode_button);
         scanQrcodeBotton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,27 +65,26 @@ public class ProcessToAdminActivity extends AppCompatActivity{
             }
         });
 
-        RecyclerView mProcessToAdminRV = (RecyclerView) findViewById(R.id.process_to_admin_rv);
+        //列表
+        final RecyclerView mProcessToAdminRV = findViewById(R.id.process_to_admin_rv);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mProcessToAdminRV.setLayoutManager(manager);
         mProcessToAdminAdapter = new TaskRecordAdapter(mProcessToAdminList);
         mProcessToAdminRV.setAdapter(mProcessToAdminAdapter);
+        //点击跳转，把所有接收到的数据传递给下一个activity
         mProcessToAdminAdapter.setOnItemClickListener(new TaskRecordAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(int position){
-                Gson gson=new Gson();
-                String toJson = gson.toJson(mProcessToAdminList.get(position).getMachineData());
-                Log.d(TAG, "onItemClick: position :"+position+mProcessToAdminList.get(position).getMachineData().getMachineId());
-                Log.d(TAG, "onItemClick: gson :"+toJson);
+                Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToAdminList.get(position)));
                 Intent intent=new Intent(ProcessToAdminActivity.this,DetailToAdminActivity.class);
-                intent.putExtra("machineData", mProcessToAdminList.get(position).getMachineData());
+                intent.putExtra("taskMachineListData", mProcessToAdminList.get(position));
                 startActivity(intent);
             }
         });
 
         //下拉刷新
-        mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.admin_swipe_refresh);
+        mSwipeRefresh = findViewById(R.id.admin_swipe_refresh);
         int[] colors = getResources().getIntArray(R.array.google_colors);
         mSwipeRefresh.setColorSchemeColors(colors);
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -103,18 +103,18 @@ public class ProcessToAdminActivity extends AppCompatActivity{
             mLoadingProcessDialog.setMessage("获取信息中...");
         }
         mLoadingProcessDialog.show();
-        fetchProcessData();
 
+        fetchProcessData();
     }
 
     private void fetchProcessData() {
-        final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
+        final String account = SinSimApp.getApp().getAccount();
 //        final String ip = "192.168.0.102:8080";
 //        final String account = "sss";
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("userAccount", account);
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_ADMIN;
+        mPostValue.put("userAccount", account);
         Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
     }
 

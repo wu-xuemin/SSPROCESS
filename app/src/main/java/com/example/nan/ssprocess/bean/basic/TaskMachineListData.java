@@ -1,13 +1,16 @@
 package com.example.nan.ssprocess.bean.basic;
 
+import java.io.Serializable;
+
 /**
  * Created by nan on 2017/12/8.
  */
 
-public class TaskMachineListData {
+public class TaskMachineListData implements Serializable {
+    private int id;//task record id;
     private MachineData machine;
-    private String taskName;
-    private int status;
+    private String taskName;//流程名字
+    private int status;//流程状态
     private MachineOrderData machineOrder;
 
     public TaskMachineListData(MachineData machineData,String taskName,int status,MachineOrderData machineOrderData){
@@ -15,6 +18,10 @@ public class TaskMachineListData {
         this.taskName = taskName;
         this.status = status;
         this.machineOrder = machineOrderData;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public MachineData getMachineData() {
@@ -32,5 +39,4 @@ public class TaskMachineListData {
     public MachineOrderData getMachineOrderData() {
         return machineOrder;
     }
-
 }

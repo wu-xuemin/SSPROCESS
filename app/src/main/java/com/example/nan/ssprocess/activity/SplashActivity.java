@@ -41,7 +41,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
     private static final String[] APP_NEEDS_PERMISSIONS =
             {Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     private Network mNetwork;
-    private FetchProcessRecordStatusHandler mFetchProcessRecordStatusHandler;
+    private FetchLoginHandler mFetchLoginHandler;
     private Handler mTimeoutHandler;
     private Runnable mTimeOutRunnable;
 
@@ -60,7 +60,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         setContentView(R.layout.activity_splash);
 
         mNetwork = Network.Instance(SinSimApp.getApp());
-        mFetchProcessRecordStatusHandler = new FetchProcessRecordStatusHandler();
+        mFetchLoginHandler = new FetchLoginHandler();
         //申请权限
         requestSomePermissions();
     }
@@ -84,8 +84,8 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         checkIMEI();
 
         //检查preference中的isLogin状态
-//        boolean  isLogin  = SinSimApp.getApp().isLogined();
-        boolean  isLogin  = true;
+        boolean  isLogin  = SinSimApp.getApp().isLogined();
+//        boolean  isLogin  = true;
         if(isLogin) {
             final String account = SinSimApp.getApp().getAccount();
             final String password = SinSimApp.getApp().getPassword();
@@ -118,9 +118,9 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
                             Log.d(TAG, "doInBackground: "+ip+account+password+IMEI);
                             mPostValue.put("account", account);
                             mPostValue.put("password", password);
-                            mPostValue.put("mobile", IMEI);
-                            String fetchProcessRecordURL = URL.HTTP_HEAD + ip + URL.USER_LOGIN;
-                            mNetwork.fetchProcessRecordStatusData(fetchProcessRecordURL, mPostValue, mFetchProcessRecordStatusHandler);
+                            mPostValue.put("meid", IMEI);
+                            String loginUrl = URL.HTTP_HEAD + ip + URL.USER_LOGIN;
+                            mNetwork.fetchLoginData(loginUrl, mPostValue, mFetchLoginHandler);
                             return null;
                         }
                     };
@@ -180,7 +180,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         });
         logoText.startAnimation(animation);
     }
-    private class FetchProcessRecordStatusHandler extends Handler {
+    private class FetchLoginHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
             //网络请求返回，移除超时的Runnable

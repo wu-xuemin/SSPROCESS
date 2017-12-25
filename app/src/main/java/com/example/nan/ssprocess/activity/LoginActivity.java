@@ -1,5 +1,6 @@
 package com.example.nan.ssprocess.activity;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -84,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
         mPassword=mPasswordText.getText().toString();
         mPostValue.put("account", mAccountText.getText().toString());
         mPostValue.put("password", mPassword);
-        mPostValue.put("mobile", SplashActivity.IMEI);
+        mPostValue.put("meid", SplashActivity.IMEI);
         Log.d(TAG, "login: IMEI: "+SplashActivity.IMEI);
         Log.d(TAG, "login: IP: "+SinSimApp.getApp().getServerIP());
         if(TextUtils.isEmpty(SinSimApp.getApp().getServerIP())){
@@ -112,6 +113,7 @@ public class LoginActivity extends AppCompatActivity {
 //        finish();
     }
 
+    @SuppressLint("HandlerLeak")
     class LoginHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
@@ -137,7 +139,7 @@ public class LoginActivity extends AppCompatActivity {
             mApp.setIsLogined(true, data.getAccount(), data.getFullName(), mPassword, data.getRole().getId());
             /**
              * 在登陆完成后检查人员role进入不同界面
-             * 生产部管理员：2，安装组长：3，质检员：11
+             * 生产部管理员：2，质检员：11, 安装组长：3
              */
             Log.d(TAG, "onLoginSuccess: role id "+SinSimApp.getApp().getRole());
 
@@ -175,7 +177,6 @@ public class LoginActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.ip_settings:
-                //Toast.makeText(LoginActivity.this, "IP设置", Toast.LENGTH_SHORT).show();
                 LinearLayout layout = (LinearLayout) View.inflate(LoginActivity.this, R.layout.dialog_ip_setting, null);
                 final EditText editText = (EditText)layout.findViewById(R.id.ip_value);
                 //读取保存的IP地址
@@ -207,7 +208,7 @@ public class LoginActivity extends AppCompatActivity {
                 mIPSettngDialog.show();
                 break;
             case R.id.password_settings:
-                Toast.makeText(LoginActivity.this, "密码更改", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "不支持密码更改", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;

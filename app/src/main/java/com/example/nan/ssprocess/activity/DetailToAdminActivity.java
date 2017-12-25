@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
+import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.bean.response.ResponseData;
 import com.example.nan.ssprocess.bean.basic.MachineData;
 import com.example.nan.ssprocess.net.Network;
@@ -42,7 +43,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
 
     private static final String TAG="nlgDetailToAdmin";
     private ResponseData mResponseData = new ResponseData();
-    private MachineData machineData;
+    private TaskMachineListData taskMachineListData;
     private EditText locationEt;
 
     private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
@@ -62,23 +63,21 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         TextView typeTv=findViewById(R.id.type_tv);
         TextView intallListTv=findViewById(R.id.intall_list_tv);
 
-        Button publishButton = findViewById(R.id.publish_button);
-        publishButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateProcessDetailData();
-            }
-        });
+
         //获取传递过来的信息
         Intent intent = getIntent();
-        machineData = (MachineData) intent.getSerializableExtra("machineData");
-        Log.d(TAG, "onItemClick: position :"+machineData.getLocation());
+        taskMachineListData = (TaskMachineListData) intent.getSerializableExtra("taskMachineListData");
+        Log.d(TAG, "onItemClick: position :"+taskMachineListData.getMachineData().getLocation());
 
-        orderNumberTv.setText(""+machineData.getOrderId());
-        machineNumberTv.setText(machineData.getMachineId());
-        locationEt.setText(machineData.getLocation());
+        //把数据填入相应位置
+        orderNumberTv.setText(""+taskMachineListData.getMachineData().getOrderId());
+        needleCountTv.setText(""+taskMachineListData.getMachineOrderData().getHeadNum());
+        machineNumberTv.setText(taskMachineListData.getMachineData().getMachineId());
+        typeTv.setText(taskMachineListData.getMachineOrderData().getMachineType());
+        locationEt.setText(taskMachineListData.getMachineData().getLocation());
 
-        ImageView previousIv = findViewById(R.id.machine_service_detail_back);
+        //点击返回
+        ImageView previousIv = findViewById(R.id.close_machine_detail);
         previousIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,11 +85,20 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
             }
         });
 
+        //点击上传位置信息
+        Button publishButton = findViewById(R.id.update_location_button);
+        publishButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateProcessDetailData();
+            }
+        });
+
+        //九宫格显示照片
         installPhotoList=new ArrayList<>(Arrays.asList("http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered1.png"));
         BGANinePhotoLayout installNinePhotoLayout = findViewById(R.id.install_abnormal_photos);
         installNinePhotoLayout.setDelegate(this);
         installNinePhotoLayout.setData(installPhotoList);
-
         checkoutPhotoList=new ArrayList<>(Arrays.asList("http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered12.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered13.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered14.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered15.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered16.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered17.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered18.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered19.png"));
         BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
         checkoutNinePhotoLayout.setDelegate(this);
@@ -102,9 +110,9 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         final String ip = SinSimApp.getApp().getServerIP();
 //        final String ip = "192.168.0.102:8080";
 //        final String account = "sss";
-        machineData.setLocation(locationEt.getText().toString());
+        taskMachineListData.getMachineData().setLocation(locationEt.getText().toString());
         Gson gson=new Gson();
-        String machineDataToJson = gson.toJson(machineData);
+        String machineDataToJson = gson.toJson(taskMachineListData);
         Log.d(TAG, "onItemClick: gson :"+ machineDataToJson);
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("machine", machineDataToJson);

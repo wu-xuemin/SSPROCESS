@@ -1,5 +1,6 @@
 package com.example.nan.ssprocess.adapter;
 
+import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,13 +35,13 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
 
     //绑定数据
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
         final ItemView itemView = (ItemView) holder;
         //itemView.setIsRecyclable(false);//禁止复用
         itemView.machineIdTv.setText(""+mProcessList.get(position).getMachineData().getMachineId());
         itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
         itemView.processStateTv.setText(""+mProcessList.get(position).getStatus());
-        itemView.contractDateTv.setText(mProcessList.get(position).getMachineOrderData().getContract_ship_date());
+        itemView.contractDateTv.setText(mProcessList.get(position).getMachineOrderData().getContractShipDate());
         itemView.planDateTv.setText(mProcessList.get(position).getMachineOrderData().getPlanShipDate());
         itemView.itemLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +67,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
         TextView contractDateTv;
         TextView planDateTv;
 
-        public ItemView(View itemView) {
+        ItemView(View itemView) {
             super(itemView);
             itemLinearLayout=itemView.findViewById(R.id.item_linear_layout);
             machineIdTv = (TextView) itemView.findViewById(R.id.process_machine_id_tv);

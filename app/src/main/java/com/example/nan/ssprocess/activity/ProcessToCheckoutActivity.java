@@ -23,6 +23,7 @@ import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -33,6 +34,8 @@ import java.util.LinkedHashMap;
 public class ProcessToCheckoutActivity extends AppCompatActivity {
 
     private static String TAG = "nlgProcessToCheckoutActivity";
+    private static final int SCAN_QRCODE_START = 1;
+
     private ArrayList<TaskMachineListData> mProcessToCheckoutList = new ArrayList<>();
     private TaskRecordAdapter mTaskRecordAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
@@ -54,32 +57,37 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_to_checkout);
 
-        Button scanQrcodeBotton = (Button) findViewById(R.id.checkout_scan_qrcode_button);
+        //点击扫码
+        Button scanQrcodeBotton = findViewById(R.id.checkout_scan_qrcode_button);
         scanQrcodeBotton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(ProcessToCheckoutActivity.this,ScanQrcodeActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,SCAN_QRCODE_START);
             }
         });
 
-        RecyclerView mProcessToAdminRV = (RecyclerView) findViewById(R.id.process_to_checkout_rv);
+        //列表
+        RecyclerView mProcessToAdminRV = findViewById(R.id.process_to_checkout_rv);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mProcessToAdminRV.setLayoutManager(manager);
         mTaskRecordAdapter = new TaskRecordAdapter(mProcessToCheckoutList);
         mProcessToAdminRV.setAdapter(mTaskRecordAdapter);
+        //点击跳转，把所有接收到的数据传递给下一个activity
         mTaskRecordAdapter.setOnItemClickListener(new TaskRecordAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(int position){
                 Log.d(TAG, "onItemClick: position :"+position);
+                Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToCheckoutList.get(position)));
                 Intent intent=new Intent(ProcessToCheckoutActivity.this,DetailToCheckoutActivity.class);
+                intent.putExtra("taskMachineListData", mProcessToCheckoutList.get(position));
                 startActivity(intent);
             }
         });
 
         //下拉刷新
-        mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.checkout_swipe_refresh);
+        mSwipeRefresh = findViewById(R.id.checkout_swipe_refresh);
         int[] colors = getResources().getIntArray(R.array.google_colors);
         mSwipeRefresh.setColorSchemeColors(colors);
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -99,6 +107,26 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
         }
         mLoadingProcessDialog.show();
         fetchProcessData();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case SCAN_QRCODE_START:
+                // 当requestCode、resultCode同时为0时，也就是处理特定的结果
+                if (resultCode == RESULT_OK)
+                {
+                    // 取出Intent里的Extras数据传递给跳转的activity
+                    TaskMachineListData taskMachineListData=(TaskMachineListData)data.getSerializableExtra("taskMachineListData");
+                    Intent intent=new Intent(ProcessToCheckoutActivity.this,DetailToAdminActivity.class);
+                    intent.putExtra("taskMachineListData", taskMachineListData);
+                    startActivity(intent);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     private void fetchProcessData() {

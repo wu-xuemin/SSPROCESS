@@ -1,6 +1,8 @@
 package com.example.nan.ssprocess.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,16 +15,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.nan.ssprocess.R;
+import com.example.nan.ssprocess.activity.DetailToAdminActivity;
+import com.example.nan.ssprocess.activity.ProcessToAdminActivity;
+import com.example.nan.ssprocess.activity.ProcessToInstallActivity;
+import com.example.nan.ssprocess.activity.ScanQrcodeActivity;
 import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class TabInstallReadyFragment extends Fragment {
@@ -37,7 +47,7 @@ public class TabInstallReadyFragment extends Fragment {
 
 //    private OnFragmentInteractionListener mListener;
     private static String TAG = "nlgProcessToAdminActivity";
-    private ArrayList<TaskMachineListData> mProcessToAdminList = new ArrayList<>();
+    private ArrayList<TaskMachineListData> mProcessToInstallList = new ArrayList<>();
     private TaskRecordAdapter mTaskRecordAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
 
@@ -86,12 +96,34 @@ public class TabInstallReadyFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View viewContent = inflater.inflate(R.layout.fragment_tab_install_ready, container, false);
-        RecyclerView mProcessToAdminRV = (RecyclerView) viewContent.findViewById(R.id.process_to_install_rv);
+
+        //点击扫码
+        Button scanQrcodeBotton = viewContent.findViewById(R.id.admin_scan_qrcode_button);
+        scanQrcodeBotton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getActivity(),ScanQrcodeActivity.class);
+                startActivityForResult(intent,0);
+            }
+        });
+
+        //列表
+        RecyclerView mProcessToAdminRV = viewContent.findViewById(R.id.process_to_install_rv);
         LinearLayoutManager manager = new LinearLayoutManager(viewContent.getContext());
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mProcessToAdminRV.setLayoutManager(manager);
-        mTaskRecordAdapter = new TaskRecordAdapter(mProcessToAdminList);
+        mTaskRecordAdapter = new TaskRecordAdapter(mProcessToInstallList);
         mProcessToAdminRV.setAdapter(mTaskRecordAdapter);
+        //点击跳转，把所有接收到的数据传递给下一个activity
+        mTaskRecordAdapter.setOnItemClickListener(new TaskRecordAdapter.OnItemClickListener(){
+            @Override
+            public void onItemClick(int position){
+                Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToInstallList.get(position)));
+                Intent intent=new Intent(getActivity(),DetailToAdminActivity.class);
+                intent.putExtra("taskMachineListData", mProcessToInstallList.get(position));
+                startActivity(intent);
+            }
+        });
 
         //下拉刷新
         mSwipeRefresh = (SwipeRefreshLayout) viewContent.findViewById(R.id.install_swipe_refresh);
@@ -110,6 +142,26 @@ public class TabInstallReadyFragment extends Fragment {
         return viewContent;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case RESULT_OK:
+                // 当requestCode、resultCode同时为0时，也就是处理特定的结果
+                if (resultCode == 0)
+                {
+                    // 取出Intent里的Extras数据传递给跳转的activity
+                    TaskMachineListData taskMachineListData=(TaskMachineListData)data.getSerializableExtra("taskMachineListData");
+                    Intent intent=new Intent(getActivity(),DetailToAdminActivity.class);
+                    intent.putExtra("taskMachineListData", taskMachineListData);
+                    startActivity(intent);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     private void fetchProcessData() {
         final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
@@ -121,6 +173,7 @@ public class TabInstallReadyFragment extends Fragment {
         Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
     }
 
+    @SuppressLint("HandlerLeak")
     private class FetchProcessDataHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
@@ -128,9 +181,9 @@ public class TabInstallReadyFragment extends Fragment {
                 mSwipeRefresh.setRefreshing(false);
             }
             if (msg.what == Network.OK) {
-                mProcessToAdminList=(ArrayList<TaskMachineListData>)msg.obj;
-                Log.d(TAG, "handleMessage: size: "+mProcessToAdminList.size());
-                mTaskRecordAdapter.setProcessList(mProcessToAdminList);
+                mProcessToInstallList=(ArrayList<TaskMachineListData>)msg.obj;
+                Log.d(TAG, "handleMessage: size: "+mProcessToInstallList.size());
+                mTaskRecordAdapter.setProcessList(mProcessToInstallList);
                 mTaskRecordAdapter.notifyDataSetChanged();
             } else {
                 String errorMsg = (String)msg.obj;

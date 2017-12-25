@@ -1,7 +1,4 @@
-package com.example.nan.ssprocess.bean;
-
-import com.example.nan.ssprocess.bean.response.LoginResponseData;
-import com.example.nan.ssprocess.bean.response.ResponseData;
+package com.example.nan.ssprocess.bean.response;
 
 /**
  * Created by nan on 12/24/2017.

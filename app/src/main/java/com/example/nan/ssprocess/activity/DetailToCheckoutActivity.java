@@ -6,8 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.nan.ssprocess.R;
+import com.example.nan.ssprocess.bean.basic.MachineData;
+import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,18 +25,13 @@ import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
 /**
  * @author nan  2017/12/18
  */
-/**
- * 根据传入的strTaskQualityRecordDetail，更新对应多表：
- "machine_id":"",  --> machine.machine_id
- "检验是否合格":"", --> task_quality_record.status 质检结果: "1"==>通过； “0”==>不通过
- "不合格原因":"",	--> task_quality_record.comment
- "不合格照片":"",	--> quality_record_image.image
- "检验完成":"",		--> task_record.status  task状态，“1”==>未开始， “2”==>进行中，“3”==>安装完成， “4”==>质检完成，“5“===>异常
- */
-public class DetailToCheckoutActivity extends AppCompatActivity implements BGASortableNinePhotoLayout.Delegate{
-    private BGASortableNinePhotoLayout mCheckoutNokPhotosSnpl;
-    private static final String TAG="nlgDetailToCheckout";
 
+public class DetailToCheckoutActivity extends AppCompatActivity implements BGASortableNinePhotoLayout.Delegate{
+    private static final String TAG="nlgDetailToCheckout";
+    private BGASortableNinePhotoLayout mCheckoutNokPhotosSnpl;
+    private TaskMachineListData taskMachineListData;
+
+    private static final int SCAN_QRCODE_END = 0;
     private static final int RC_CHECKOUT_CHOOSE_PHOTO = 3;
     private static final int RC_CHECKOUT_PHOTO_PREVIEW = 4;
     @Override
@@ -38,6 +39,47 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_to_checkout);
 
+        EditText locationEt=findViewById(R.id.location_et);
+        TextView orderNumberTv=findViewById(R.id.order_number_tv);
+        TextView machineNumberTv=findViewById(R.id.machine_number_tv);
+        TextView needleCountTv=findViewById(R.id.needle_count_tv);
+        TextView typeTv=findViewById(R.id.type_tv);
+        TextView intallListTv=findViewById(R.id.intall_list_tv);
+
+        //获取传递过来的信息
+        Intent intent = getIntent();
+        taskMachineListData = (TaskMachineListData) intent.getSerializableExtra("taskMachineListData");
+        Log.d(TAG, "onItemClick: position :"+taskMachineListData.getMachineData().getLocation());
+
+        //把数据填入相应位置
+        orderNumberTv.setText(""+taskMachineListData.getMachineData().getOrderId());
+        needleCountTv.setText(""+taskMachineListData.getMachineOrderData().getHeadNum());
+        machineNumberTv.setText(taskMachineListData.getMachineData().getMachineId());
+        typeTv.setText(taskMachineListData.getMachineOrderData().getMachineType());
+        locationEt.setText(taskMachineListData.getMachineData().getLocation());
+        locationEt.setFocusable(false);
+        locationEt.setEnabled(false);
+
+        //点击返回
+        ImageView previousIv = findViewById(R.id.close_machine_detail);
+        previousIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        //点击上传质检结果
+        Button installInfoUpdateButton = findViewById(R.id.install_info_update_button);
+        installInfoUpdateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(DetailToCheckoutActivity.this,ScanQrcodeActivity.class);
+                startActivityForResult(intent,SCAN_QRCODE_END);
+            }
+        });
+
+        //九宫格拍照
         mCheckoutNokPhotosSnpl = findViewById(R.id.checkout_nok_add_photos);
         mCheckoutNokPhotosSnpl.setMaxItemCount(9);
         mCheckoutNokPhotosSnpl.setPlusEnable(true);
@@ -86,10 +128,30 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == RC_CHECKOUT_CHOOSE_PHOTO) {
-            mCheckoutNokPhotosSnpl.addMoreData(BGAPhotoPickerActivity.getSelectedPhotos(data));
-        } else {
-            Log.d(TAG, "onActivityResult: choose nothing");
+        switch (requestCode){
+            case SCAN_QRCODE_END:
+                if(resultCode == RESULT_OK) {
+                    // 取出Intent里的Extras数据传递给跳转的activity
+                    String qrCordId = data.getStringExtra("qrCordId");
+                    Intent intent = new Intent(DetailToCheckoutActivity.this, DetailToAdminActivity.class);
+                    intent.putExtra("taskRecordId", qrCordId);
+                    startActivity(intent);
+                } else {
+                    Log.d(TAG, "onActivityResult: scan QRcode fail");
+                }
+
+                break;
+            case RC_CHECKOUT_CHOOSE_PHOTO:
+                if(resultCode == RESULT_OK) {
+                    mCheckoutNokPhotosSnpl.addMoreData(BGAPhotoPickerActivity.getSelectedPhotos(data));
+                } else {
+                    Log.d(TAG, "onActivityResult: choose  nothing");
+                }
+                break;
+            case RC_CHECKOUT_PHOTO_PREVIEW:
+                mCheckoutNokPhotosSnpl.setData(BGAPhotoPickerPreviewActivity.getSelectedPhotos(data));
+            default:
+                break;
         }
     }
 }

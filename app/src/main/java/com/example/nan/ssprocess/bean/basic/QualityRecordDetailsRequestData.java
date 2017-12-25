@@ -1,10 +1,13 @@
 package com.example.nan.ssprocess.bean.basic;
 
+import com.example.nan.ssprocess.bean.basic.QualityRecordImageData;
+import com.example.nan.ssprocess.bean.basic.TaskRecordData;
+
 /**
  * Created by nan on 2017/12/22.
  */
 
-public class QualityRecordDetailsData {
+public class QualityRecordDetailsRequestData {
     private String comment;
     private String createTime;
     private int id;
