@@ -13,13 +13,6 @@ public class TaskMachineListData implements Serializable {
     private int status;//流程状态
     private MachineOrderData machineOrder;
 
-    public TaskMachineListData(MachineData machineData,String taskName,int status,MachineOrderData machineOrderData){
-        this.machine = machineData;
-        this.taskName = taskName;
-        this.status = status;
-        this.machineOrder = machineOrderData;
-    }
-
     public int getId() {
         return id;
     }

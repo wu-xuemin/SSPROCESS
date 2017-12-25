@@ -43,7 +43,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
 
     private static final String TAG="nlgDetailToAdmin";
     private ResponseData mResponseData = new ResponseData();
-    private TaskMachineListData taskMachineListData;
+    private TaskMachineListData taskMachineListData=new TaskMachineListData();
     private EditText locationEt;
 
     private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
@@ -63,17 +63,16 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         TextView typeTv=findViewById(R.id.type_tv);
         TextView intallListTv=findViewById(R.id.intall_list_tv);
 
-
         //获取传递过来的信息
         Intent intent = getIntent();
         taskMachineListData = (TaskMachineListData) intent.getSerializableExtra("taskMachineListData");
-        Log.d(TAG, "onItemClick: position :"+taskMachineListData.getMachineData().getLocation());
+        Log.d(TAG, "onCreate: position :"+taskMachineListData.getMachineData().getLocation());
 
         //把数据填入相应位置
         orderNumberTv.setText(""+taskMachineListData.getMachineData().getOrderId());
         needleCountTv.setText(""+taskMachineListData.getMachineOrderData().getHeadNum());
         machineNumberTv.setText(taskMachineListData.getMachineData().getMachineId());
-        typeTv.setText(taskMachineListData.getMachineOrderData().getMachineType());
+        typeTv.setText(""+taskMachineListData.getMachineOrderData().getMachineType());
         locationEt.setText(taskMachineListData.getMachineData().getLocation());
 
         //点击返回

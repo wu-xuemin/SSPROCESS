@@ -30,7 +30,7 @@ import cn.bingoogolapple.qrcode.zxing.ZXingView;
 public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.Delegate{
 
     private static final String TAG = "nlgScanQrcodeActivity";
-    private TaskMachineListData mTaskMachineDetailData;
+    private TaskMachineListData mTaskMachineDetailData = new TaskMachineListData();
     private FetchTaskProcessFromIdHandler mFetchTaskProcessFromIdHandler = new FetchTaskProcessFromIdHandler();
 
     private ZXingView mQRCodeView;
@@ -76,7 +76,7 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
     @Override
     public void onScanQRCodeSuccess(String result) {
         Log.d(TAG, "result:" + result);
-        Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "result:"+result, Toast.LENGTH_SHORT).show();
 
         //根据result获取对应taskRecordDetail
         final String ip = SinSimApp.getApp().getServerIP();
@@ -85,8 +85,8 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
         String fetchTaskProcessFromIdUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_DETAIL;
         Network.Instance(SinSimApp.getApp()).fetchTaskProcessFromId(fetchTaskProcessFromIdUrl, mPostValue, mFetchTaskProcessFromIdHandler);
 
-//        vibrate();
-//        mQRCodeView.startSpot();
+        vibrate();
+        mQRCodeView.startSpot();
     }
 
     @Override

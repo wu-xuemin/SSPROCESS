@@ -299,6 +299,7 @@ public class Network {
                                 Gson gson = new Gson();
                                 TaskRecordFromIdResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<TaskRecordFromIdResponseDataWrap>(){}.getType());
                                 if (responseData != null) {
+                                    Log.d(TAG, "run: "+responseData.getCode());
                                     if (responseData.getCode() == 200) {
                                         success = true;
                                         msg.obj = responseData.getData();

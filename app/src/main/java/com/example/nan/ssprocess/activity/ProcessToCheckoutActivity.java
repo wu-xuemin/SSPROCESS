@@ -119,7 +119,7 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
                 {
                     // 取出Intent里的Extras数据传递给跳转的activity
                     TaskMachineListData taskMachineListData=(TaskMachineListData)data.getSerializableExtra("taskMachineListData");
-                    Intent intent=new Intent(ProcessToCheckoutActivity.this,DetailToAdminActivity.class);
+                    Intent intent=new Intent(ProcessToCheckoutActivity.this,DetailToCheckoutActivity.class);
                     intent.putExtra("taskMachineListData", taskMachineListData);
                     startActivity(intent);
                 }

@@ -7,9 +7,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
+import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,7 +28,10 @@ import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
 public class DetailToInstallActivity extends AppCompatActivity implements BGASortableNinePhotoLayout.Delegate {
 
     private static final String TAG="nlgDetailToInstall";
+    private TaskMachineListData taskMachineListData=new TaskMachineListData();
+    private EditText locationEt;
 
+    private static final int SCAN_QRCODE_END = 0;
     private static final int RC_INSTALL_CHOOSE_PHOTO = 1;
     private static final int RC_INSTALL_PHOTO_PREVIEW = 2;
 
@@ -35,6 +42,24 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_to_install);
 
+        locationEt=findViewById(R.id.location_et);
+        TextView orderNumberTv=findViewById(R.id.order_number_tv);
+        TextView machineNumberTv=findViewById(R.id.machine_number_tv);
+        TextView needleCountTv=findViewById(R.id.needle_count_tv);
+        TextView typeTv=findViewById(R.id.type_tv);
+        TextView intallListTv=findViewById(R.id.intall_list_tv);
+
+        //获取传递过来的信息
+        Intent intent = getIntent();
+        taskMachineListData = (TaskMachineListData) intent.getSerializableExtra("taskMachineListData");
+        Log.d(TAG, "onCreate: position :"+taskMachineListData.getMachineData().getLocation());
+
+        //把数据填入相应位置
+        orderNumberTv.setText(""+taskMachineListData.getMachineData().getOrderId());
+        needleCountTv.setText(""+taskMachineListData.getMachineOrderData().getHeadNum());
+        machineNumberTv.setText(taskMachineListData.getMachineData().getMachineId());
+        typeTv.setText(""+taskMachineListData.getMachineOrderData().getMachineType());
+        locationEt.setText(taskMachineListData.getMachineData().getLocation());
         //点击返回
         ImageView previousIv = findViewById(R.id.close_machine_detail);
         previousIv.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +74,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         installInfoUpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent=new Intent(DetailToInstallActivity.this,ScanQrcodeActivity.class);
+                startActivityForResult(intent,SCAN_QRCODE_END);
             }
         });
 
@@ -89,7 +116,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private void choicePhotoWrapper() {
         // 拍照后照片的存放目录，改成你自己拍照后要存放照片的目录。如果不传递该参数的话就没有拍照功能
         File takePhotoDir = new File(Environment.getExternalStorageDirectory(), "BGAPhotoPickerTakePhoto");
-        Log.d(TAG, "choicePhotoWrapper: 6");
         Intent photoPickerIntent = new BGAPhotoPickerActivity.IntentBuilder(DetailToInstallActivity.this)
                 .cameraFileDir(takePhotoDir) // 拍照后照片的存放目录，改成你自己拍照后要存放照片的目录。
                 .maxChooseCount(mInstallAbnormalPhotosSnpl.getMaxItemCount() - mInstallAbnormalPhotosSnpl.getItemCount()) // 图片选择张数的最大值
@@ -102,12 +128,33 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == RC_INSTALL_CHOOSE_PHOTO) {
-            mInstallAbnormalPhotosSnpl.addMoreData(BGAPhotoPickerActivity.getSelectedPhotos(data));
-        } else if (requestCode == RC_INSTALL_PHOTO_PREVIEW) {
-            mInstallAbnormalPhotosSnpl.setData(BGAPhotoPickerPreviewActivity.getSelectedPhotos(data));
-        }else {
-            Log.d(TAG, "onActivityResult: choose nothing");
+        switch (requestCode){
+            case SCAN_QRCODE_END:
+                if(resultCode == RESULT_OK) {
+                    // 检验二维码信息是否对应
+                    TaskMachineListData taskMachineListDataId = (TaskMachineListData) data.getSerializableExtra("taskMachineListData");
+                    if(taskMachineListDataId.getId()==taskMachineListDataId.getId()){
+                        //update info
+                    } else {
+                        Log.d(TAG, "onActivityResult: 二维码信息不对应");
+                        Toast.makeText(this, "二维码信息不对应！", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Log.d(TAG, "onActivityResult: scan QRcode fail");
+                }
+
+                break;
+            case RC_INSTALL_CHOOSE_PHOTO:
+                if(resultCode == RESULT_OK) {
+                    mInstallAbnormalPhotosSnpl.addMoreData(BGAPhotoPickerActivity.getSelectedPhotos(data));
+                } else {
+                    Log.d(TAG, "onActivityResult: choose  nothing");
+                }
+                break;
+            case RC_INSTALL_PHOTO_PREVIEW:
+                mInstallAbnormalPhotosSnpl.setData(BGAPhotoPickerPreviewActivity.getSelectedPhotos(data));
+            default:
+                break;
         }
     }
 

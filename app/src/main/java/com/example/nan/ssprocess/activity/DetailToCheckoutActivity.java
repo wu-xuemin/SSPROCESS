@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.bean.basic.MachineData;
@@ -29,7 +30,7 @@ import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
 public class DetailToCheckoutActivity extends AppCompatActivity implements BGASortableNinePhotoLayout.Delegate{
     private static final String TAG="nlgDetailToCheckout";
     private BGASortableNinePhotoLayout mCheckoutNokPhotosSnpl;
-    private TaskMachineListData taskMachineListData;
+    private TaskMachineListData taskMachineListData=new TaskMachineListData();
 
     private static final int SCAN_QRCODE_END = 0;
     private static final int RC_CHECKOUT_CHOOSE_PHOTO = 3;
@@ -49,13 +50,13 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         //获取传递过来的信息
         Intent intent = getIntent();
         taskMachineListData = (TaskMachineListData) intent.getSerializableExtra("taskMachineListData");
-        Log.d(TAG, "onItemClick: position :"+taskMachineListData.getMachineData().getLocation());
+        Log.d(TAG, "onCreate: position :"+taskMachineListData.getMachineData().getLocation());
 
         //把数据填入相应位置
         orderNumberTv.setText(""+taskMachineListData.getMachineData().getOrderId());
         needleCountTv.setText(""+taskMachineListData.getMachineOrderData().getHeadNum());
         machineNumberTv.setText(taskMachineListData.getMachineData().getMachineId());
-        typeTv.setText(taskMachineListData.getMachineOrderData().getMachineType());
+        typeTv.setText(""+taskMachineListData.getMachineOrderData().getMachineType());
         locationEt.setText(taskMachineListData.getMachineData().getLocation());
         locationEt.setFocusable(false);
         locationEt.setEnabled(false);
@@ -70,7 +71,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         });
 
         //点击上传质检结果
-        Button installInfoUpdateButton = findViewById(R.id.install_info_update_button);
+        Button installInfoUpdateButton = findViewById(R.id.checkout_upload_button);
         installInfoUpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,15 +132,18 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         switch (requestCode){
             case SCAN_QRCODE_END:
                 if(resultCode == RESULT_OK) {
-                    // 取出Intent里的Extras数据传递给跳转的activity
-                    String qrCordId = data.getStringExtra("qrCordId");
-                    Intent intent = new Intent(DetailToCheckoutActivity.this, DetailToAdminActivity.class);
-                    intent.putExtra("taskRecordId", qrCordId);
-                    startActivity(intent);
+                    // 检验二维码信息是否对应
+                    TaskMachineListData taskMachineListDataId = (TaskMachineListData) data.getSerializableExtra("taskMachineListData");
+                    if(taskMachineListDataId.getId()==taskMachineListDataId.getId()){
+                        Log.d(TAG, "onActivityResult: id 对应");
+                        //update info
+                    } else {
+                        Log.d(TAG, "onActivityResult: 二维码信息不对应");
+                        Toast.makeText(this, "二维码信息不对应！", Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Log.d(TAG, "onActivityResult: scan QRcode fail");
                 }
-
                 break;
             case RC_CHECKOUT_CHOOSE_PHOTO:
                 if(resultCode == RESULT_OK) {
