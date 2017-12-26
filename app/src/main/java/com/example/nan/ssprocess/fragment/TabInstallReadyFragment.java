@@ -1,6 +1,7 @@
 package com.example.nan.ssprocess.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import android.widget.Button;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.activity.DetailToAdminActivity;
 import com.example.nan.ssprocess.activity.ProcessToAdminActivity;
+import com.example.nan.ssprocess.activity.ProcessToCheckoutActivity;
 import com.example.nan.ssprocess.activity.ProcessToInstallActivity;
 import com.example.nan.ssprocess.activity.ScanQrcodeActivity;
 import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
@@ -45,11 +47,12 @@ public class TabInstallReadyFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-//    private OnFragmentInteractionListener mListener;
     private static String TAG = "nlgProcessToAdminActivity";
     private ArrayList<TaskMachineListData> mProcessToInstallList = new ArrayList<>();
     private TaskRecordAdapter mTaskRecordAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
+    private ProgressDialog mLoadingProcessDialog;
+    private static final int SCAN_QRCODE_START = 1;
 
     private SwipeRefreshLayout mSwipeRefresh;
     private Runnable mStopSwipeRefreshRunnable = new Runnable() {
@@ -72,7 +75,6 @@ public class TabInstallReadyFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment TabInstallReadyFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static TabInstallReadyFragment newInstance(String param1, String param2) {
         TabInstallReadyFragment fragment = new TabInstallReadyFragment();
         Bundle args = new Bundle();
@@ -94,7 +96,6 @@ public class TabInstallReadyFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View viewContent = inflater.inflate(R.layout.fragment_tab_install_ready, container, false);
 
         //点击扫码
@@ -103,7 +104,7 @@ public class TabInstallReadyFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(getActivity(),ScanQrcodeActivity.class);
-                startActivityForResult(intent,0);
+                startActivityForResult(intent,SCAN_QRCODE_START);
             }
         });
 
@@ -120,7 +121,7 @@ public class TabInstallReadyFragment extends Fragment {
             public void onItemClick(int position){
                 Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToInstallList.get(position)));
                 Intent intent=new Intent(getActivity(),DetailToAdminActivity.class);
-                intent.putExtra("taskMachineListData", mProcessToInstallList.get(position));
+                intent.putExtra("mTaskMachineListData", mProcessToInstallList.get(position));
                 startActivity(intent);
             }
         });
@@ -138,6 +139,15 @@ public class TabInstallReadyFragment extends Fragment {
             }
         });
 
+        //第一次进入刷新页面， 加载loading页面
+        if( mLoadingProcessDialog == null) {
+            mLoadingProcessDialog = new ProgressDialog(getActivity());
+            mLoadingProcessDialog.setCancelable(false);
+            mLoadingProcessDialog.setCanceledOnTouchOutside(false);
+            mLoadingProcessDialog.setMessage("获取信息中...");
+        }
+        mLoadingProcessDialog.show();
+
         fetchProcessData();
         return viewContent;
     }
@@ -146,14 +156,15 @@ public class TabInstallReadyFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
-            case RESULT_OK:
+            case SCAN_QRCODE_START:
                 // 当requestCode、resultCode同时为0时，也就是处理特定的结果
-                if (resultCode == 0)
+                if (resultCode == RESULT_OK)
                 {
                     // 取出Intent里的Extras数据传递给跳转的activity
-                    TaskMachineListData taskMachineListData=(TaskMachineListData)data.getSerializableExtra("taskMachineListData");
+                    TaskMachineListData mTaskMachineListData = new TaskMachineListData();
+                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
                     Intent intent=new Intent(getActivity(),DetailToAdminActivity.class);
-                    intent.putExtra("taskMachineListData", taskMachineListData);
+                    intent.putExtra("mTaskMachineListData", mTaskMachineListData);
                     startActivity(intent);
                 }
                 break;

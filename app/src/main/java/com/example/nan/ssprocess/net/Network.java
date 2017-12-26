@@ -12,7 +12,9 @@ import android.util.Log;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.activity.UpdateOperationStatusListener;
 import com.example.nan.ssprocess.app.SinSimApp;
+import com.example.nan.ssprocess.bean.response.AbnormalRecordReponseDataWrap;
 import com.example.nan.ssprocess.bean.response.LoginResponseDataWrap;
+import com.example.nan.ssprocess.bean.response.QualityRecordReponseDataWrap;
 import com.example.nan.ssprocess.bean.response.ResponseData;
 import com.example.nan.ssprocess.bean.response.TaskRecordFromIdResponseDataWrap;
 import com.example.nan.ssprocess.bean.response.TaskRecordResponseDataWrap;
@@ -282,10 +284,9 @@ public class Network {
                     public void run() {
                         RequestBody requestBody;
                         FormBody.Builder builder = new FormBody.Builder();
-                        Iterator iterator = values.entrySet().iterator();
-                        while (iterator.hasNext()) {
-                            HashMap.Entry entry = (HashMap.Entry)iterator.next();
-                            builder.add((String) entry.getKey(), (String)entry.getValue());
+                        for (Object o : values.entrySet()) {
+                            HashMap.Entry entry = (HashMap.Entry) o;
+                            builder.add((String) entry.getKey(), (String) entry.getValue());
                         }
                         requestBody = builder.build();
                         //Post method
@@ -336,13 +337,9 @@ public class Network {
             }
         }
     }
-    /**
-     *添加流程模板记录
-     * @param url
-     * @param values
-     * @param handler
-     */
-    public void addProcessRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
+
+    //获取质检结果
+    public void fetchProcessQARecordData(final String url, final LinkedHashMap<String, Integer> values, final Handler handler) {
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
         } else {
@@ -353,27 +350,32 @@ public class Network {
                     public void run() {
                         RequestBody requestBody;
                         FormBody.Builder builder = new FormBody.Builder();
-                        Iterator iterator = values.entrySet().iterator();
-                        while (iterator.hasNext()) {
-                            HashMap.Entry entry = (HashMap.Entry)iterator.next();
-                            builder.add((String) entry.getKey(), (String)entry.getValue());
+                        for (Object o : values.entrySet()) {
+                            HashMap.Entry entry = (HashMap.Entry) o;
+                            builder.add((String) entry.getKey(), (String) entry.getValue());
                         }
                         requestBody = builder.build();
                         //Post method
-                        Request request = new Request.Builder().url( url).post(requestBody).build();
+                        Request request = new Request.Builder().url(url).post(requestBody).build();
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {
                             response = client.newCall(request).execute();
-                            ResponseData responseData = null;
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
-                                responseData = gson.fromJson(response.body().string(), new TypeToken<ResponseData>(){}.getType());
+                                QualityRecordReponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<QualityRecordReponseDataWrap>(){}.getType());
                                 if (responseData != null) {
-                                    if (responseData.getCode() == 1) {
+                                    Log.d(TAG, "run: "+responseData.getCode());
+                                    if (responseData.getCode() == 200) {
                                         success = true;
-                                    } else if (responseData.getCode() == 0) {
+                                        msg.obj = responseData.getData().getList();
+                                    } else if (responseData.getCode() == 400) {
+                                        Log.e(TAG, responseData.getMessage());
+                                        msg.obj = responseData.getMessage();
+                                    } else if (responseData.getCode() == 500) {
+                                        Log.e(TAG, responseData.getMessage());
+                                        Log.d(TAG, "run: error 500 :"+responseData.getMessage());
                                         msg.obj = responseData.getMessage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
@@ -384,14 +386,12 @@ public class Network {
                                 }
                             } else {
                                 msg.what = NG;
-                                if(responseData != null) {
-                                    msg.obj = responseData.getMessage();
-                                }
+                                msg.obj = "网络请求错误！";
                             }
                             response.close();
                         } catch (Exception e) {
                             msg.what = NG;
-                            msg.obj = "网络出错！";
+                            msg.obj = "网络请求错误！";
                         } finally {
                             handler.sendMessage(msg);
                             if(response != null) {
@@ -404,8 +404,73 @@ public class Network {
         }
     }
 
+    //获取质检结果
+    public void fetchProcessInstallRecordData(final String url, final LinkedHashMap<String, Integer> values, final Handler handler) {
+        if (!isNetworkConnected()) {
+            ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
+        } else {
+            if (url != null && values != null && handler != null) {
+                final Message msg = handler.obtainMessage();
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        RequestBody requestBody;
+                        FormBody.Builder builder = new FormBody.Builder();
+                        for (Object o : values.entrySet()) {
+                            HashMap.Entry entry = (HashMap.Entry) o;
+                            builder.add((String) entry.getKey(), (String) entry.getValue());
+                        }
+                        requestBody = builder.build();
+                        //Post method
+                        Request request = new Request.Builder().url(url).post(requestBody).build();
+                        OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
+                        Response response = null;
+                        try {
+                            response = client.newCall(request).execute();
+                            boolean success = false;
+                            if (response.isSuccessful()) {
+                                Gson gson = new Gson();
+                                AbnormalRecordReponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<AbnormalRecordReponseDataWrap>(){}.getType());
+                                if (responseData != null) {
+                                    Log.d(TAG, "run: getCode: "+responseData.getCode());
+                                    if (responseData.getCode() == 200) {
+                                        success = true;
+                                        msg.obj = responseData.getData().getList();
+                                    } else if (responseData.getCode() == 400) {
+                                        Log.e(TAG, responseData.getMessage());
+                                        msg.obj = responseData.getMessage();
+                                    } else if (responseData.getCode() == 500) {
+                                        Log.e(TAG, responseData.getMessage());
+                                        Log.d(TAG, "run: error 500 :"+responseData.getMessage());
+                                        msg.obj = responseData.getMessage();
+                                    } else {
+                                        Log.e(TAG, "Format JSON string to object error!");
+                                    }
+                                }
+                                if (success) {
+                                    msg.what = OK;
+                                }
+                            } else {
+                                msg.what = NG;
+                                msg.obj = "网络请求错误！";
+                            }
+                            response.close();
+                        } catch (Exception e) {
+                            msg.what = NG;
+                            msg.obj = "网络请求错误！";
+                        } finally {
+                            handler.sendMessage(msg);
+                            if(response != null) {
+                                response.close();
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
 
-
+    //更新数据
     public void updateProcessRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
@@ -465,53 +530,4 @@ public class Network {
         }
     }
 
-    public void printTable(final String url, final Handler handler){
-        if (!isNetworkConnected()) {
-            ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
-        } else {
-            if (url != null && handler != null) {
-                final Message msg = handler.obtainMessage();
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Get method
-                        Request request = new Request.Builder().url(url).build();
-                        OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
-                        Response response = null;
-                        try {
-                            response = client.newCall(request).execute();
-                            boolean success = false;
-                            if (response.isSuccessful()) {
-                                Gson gson = new Gson();
-                                ResponseData responseData = gson.fromJson(response.body().string(), new TypeToken<ResponseData>(){}.getType());
-                                if (responseData != null) {
-                                    if (responseData.getCode() == 1) {
-                                        success = true;
-                                    } else if (responseData.getCode() == 0) {
-                                        msg.obj = responseData.getMessage();
-                                    } else {
-                                        Log.e(TAG, "Format JSON string to object error!");
-                                    }
-                                }
-                                if (success) {
-                                    msg.what = OK;
-                                }
-                            } else {
-                                msg.what = NG;
-                            }
-                            response.close();
-                        } catch (Exception e) {
-                            msg.what = NG;
-                            msg.obj = "Network error!";
-                        } finally {
-                            handler.sendMessage(msg);
-                            if(response != null) {
-                                response.close();
-                            }
-                        }
-                    }
-                });
-            }
-        }
-    }
 }

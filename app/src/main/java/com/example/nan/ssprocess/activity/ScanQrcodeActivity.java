@@ -30,7 +30,6 @@ import cn.bingoogolapple.qrcode.zxing.ZXingView;
 public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.Delegate{
 
     private static final String TAG = "nlgScanQrcodeActivity";
-    private TaskMachineListData mTaskMachineDetailData = new TaskMachineListData();
     private FetchTaskProcessFromIdHandler mFetchTaskProcessFromIdHandler = new FetchTaskProcessFromIdHandler();
 
     private ZXingView mQRCodeView;
@@ -101,12 +100,12 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
             if (msg.what == Network.OK) {
                 Log.d(TAG, "handleMessage: ok...");
                 //获取结果
-                mTaskMachineDetailData=(TaskMachineListData)msg.obj;
+                TaskMachineListData mTaskMachineDetailData = (TaskMachineListData) msg.obj;
 
                 Log.d(TAG, "handleMessage: "+new Gson().toJson(mTaskMachineDetailData));
                 //结果传递回上一个界面
                 Intent intent= getIntent();
-                intent.putExtra("taskMachineListData",mTaskMachineDetailData);
+                intent.putExtra("mTaskMachineListData", mTaskMachineDetailData);
                 ScanQrcodeActivity.this.setResult(RESULT_OK,intent);
                 ScanQrcodeActivity.this.finish();
             } else {

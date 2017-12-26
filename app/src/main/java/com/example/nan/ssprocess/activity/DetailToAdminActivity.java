@@ -20,7 +20,6 @@ import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.bean.response.ResponseData;
-import com.example.nan.ssprocess.bean.basic.MachineData;
 import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
@@ -36,14 +35,12 @@ import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
 /**
  * @author nan 2017/11/27
  */
-/*"machine_id":"", --> machine.machine_id
-"location":"",-->machine.location
-* */
+
 public class DetailToAdminActivity extends AppCompatActivity implements BGANinePhotoLayout.Delegate {
 
     private static final String TAG="nlgDetailToAdmin";
     private ResponseData mResponseData = new ResponseData();
-    private TaskMachineListData taskMachineListData=new TaskMachineListData();
+    private TaskMachineListData mTaskMachineListData=new TaskMachineListData();
     private EditText locationEt;
 
     private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
@@ -65,15 +62,16 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
 
         //获取传递过来的信息
         Intent intent = getIntent();
-        taskMachineListData = (TaskMachineListData) intent.getSerializableExtra("taskMachineListData");
-        Log.d(TAG, "onCreate: position :"+taskMachineListData.getMachineData().getLocation());
+        mTaskMachineListData = (TaskMachineListData) intent.getSerializableExtra("mTaskMachineListData");
+        Log.d(TAG, "onCreate: localtion:"+mTaskMachineListData.getMachineData().getLocation());
 
         //把数据填入相应位置
-        orderNumberTv.setText(""+taskMachineListData.getMachineData().getOrderId());
-        needleCountTv.setText(""+taskMachineListData.getMachineOrderData().getHeadNum());
-        machineNumberTv.setText(taskMachineListData.getMachineData().getMachineId());
-        typeTv.setText(""+taskMachineListData.getMachineOrderData().getMachineType());
-        locationEt.setText(taskMachineListData.getMachineData().getLocation());
+        orderNumberTv.setText(""+mTaskMachineListData.getMachineData().getOrderId());
+        needleCountTv.setText(""+mTaskMachineListData.getMachineOrderData().getHeadNum());
+        machineNumberTv.setText(mTaskMachineListData.getMachineData().getMachineId());
+        typeTv.setText(""+mTaskMachineListData.getMachineOrderData().getMachineType());
+        locationEt.setText(mTaskMachineListData.getMachineData().getLocation());
+
 
         //点击返回
         ImageView previousIv = findViewById(R.id.close_machine_detail);
@@ -107,11 +105,10 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
 
     private void updateProcessDetailData() {
         final String ip = SinSimApp.getApp().getServerIP();
-//        final String ip = "192.168.0.102:8080";
-//        final String account = "sss";
-        taskMachineListData.getMachineData().setLocation(locationEt.getText().toString());
+        //更新loaction状态
+        mTaskMachineListData.getMachineData().setLocation(locationEt.getText().toString());
         Gson gson=new Gson();
-        String machineDataToJson = gson.toJson(taskMachineListData);
+        String machineDataToJson = gson.toJson(mTaskMachineListData);
         Log.d(TAG, "onItemClick: gson :"+ machineDataToJson);
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("machine", machineDataToJson);

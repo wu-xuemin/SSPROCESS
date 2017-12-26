@@ -9,11 +9,11 @@ import com.example.nan.ssprocess.bean.basic.TaskRecordData;
  * Created by nan on 2017/12/22.
  */
 
-public class AbnormalRecordDetailsRequestData {
+public class AbnormalRecordDetailsData {
     private AbnormalData abnormal;
     private AbnormalImageData abnormalImage;
-    private int abnormalType;
-    private String comment;
+    private int abnormalType;//故障类型
+    private String comment;//故障原因
     private int id;
     private MachineData machine;
     private String solution;
@@ -21,7 +21,7 @@ public class AbnormalRecordDetailsRequestData {
     private int submitUser;
     private TaskRecordData taskRecord;
     private int taskRecordId;
-
+    private Long createTime;//更新时间
 
     public AbnormalImageData getAbnormalImage() {
         return abnormalImage;
@@ -35,8 +35,16 @@ public class AbnormalRecordDetailsRequestData {
         return abnormalType;
     }
 
+    public void setAbnormalType(int abnormalType) {
+        this.abnormalType = abnormalType;
+    }
+
     public String getComment() {
         return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public int getId() {
@@ -65,5 +73,9 @@ public class AbnormalRecordDetailsRequestData {
 
     public int getTaskRecordId() {
         return taskRecordId;
+    }
+
+    public Long getCreateTime() {
+        return createTime;
     }
 }

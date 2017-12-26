@@ -66,12 +66,12 @@
                     android:layout_marginTop="8dp"
                     android:layout_below="@+id/checkout_info_label">
                     <RadioButton
-                        android:id="@+id/checkout_ok_rb"
+                        android:id="@+id/checked_ok_rb"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="检验合格" />
                     <RadioButton
-                        android:id="@+id/checkout_nok_rb"
+                        android:id="@+id/checked_nok_rb"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="检验不合格" />
@@ -82,7 +82,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@+id/checkout_info_label"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="1dp"
                     android:layout_below="@+id/resalt_for_checkout_label"
                     android:textSize="16sp"
                     android:text="不合格原因："
@@ -105,7 +105,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignLeft="@+id/checkout_info_label"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="4dp"
                     android:layout_below="@+id/checkout_nok_detail_et"
                     android:textSize="16sp"
                     android:text="拍照上传："
@@ -117,7 +117,7 @@
                 android:id="@+id/checkout_nok_add_photos"
                 style="@style/WrapWrap"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="4dp"
                 app:bga_snpl_deleteDrawable="@mipmap/bga_pp_ic_delete"
                 app:bga_snpl_deleteDrawableOverlapQuarter="false"
                 app:bga_snpl_editable="true"

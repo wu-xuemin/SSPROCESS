@@ -78,7 +78,7 @@ public class ProcessToAdminActivity extends AppCompatActivity{
             public void onItemClick(int position){
                 Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToAdminList.get(position)));
                 Intent intent=new Intent(ProcessToAdminActivity.this,DetailToAdminActivity.class);
-                intent.putExtra("taskMachineListData", mProcessToAdminList.get(position));
+                intent.putExtra("mTaskMachineListData", mProcessToAdminList.get(position));
                 startActivity(intent);
             }
         });

@@ -11,7 +11,7 @@ public class TaskRecordData {
     private String leader;
     private int nodeKey;
     private int processRecordId;
-    private int status;
+    private int status;//task状态
     private String taskName;
     private String workerList;
 
@@ -41,6 +41,10 @@ public class TaskRecordData {
 
     public int getStatus() {
         return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getTaskName() {

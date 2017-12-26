@@ -81,7 +81,7 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
                 Log.d(TAG, "onItemClick: position :"+position);
                 Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToCheckoutList.get(position)));
                 Intent intent=new Intent(ProcessToCheckoutActivity.this,DetailToCheckoutActivity.class);
-                intent.putExtra("taskMachineListData", mProcessToCheckoutList.get(position));
+                intent.putExtra("mTaskMachineListData", mProcessToCheckoutList.get(position));
                 startActivity(intent);
             }
         });
@@ -118,9 +118,10 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK)
                 {
                     // 取出Intent里的Extras数据传递给跳转的activity
-                    TaskMachineListData taskMachineListData=(TaskMachineListData)data.getSerializableExtra("taskMachineListData");
+                    TaskMachineListData mTaskMachineListData=new TaskMachineListData();
+                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
                     Intent intent=new Intent(ProcessToCheckoutActivity.this,DetailToCheckoutActivity.class);
-                    intent.putExtra("taskMachineListData", taskMachineListData);
+                    intent.putExtra("mTaskMachineListData", mTaskMachineListData);
                     startActivity(intent);
                 }
                 break;

@@ -7,9 +7,9 @@ import com.example.nan.ssprocess.bean.basic.TaskRecordData;
  * Created by nan on 2017/12/22.
  */
 
-public class QualityRecordDetailsRequestData {
+public class QualityRecordDetailsData {
     private String comment;
-    private String createTime;
+    private Long createTime;
     private int id;
     private String name;
     private QualityRecordImageData qualityRecordImage;
@@ -21,7 +21,7 @@ public class QualityRecordDetailsRequestData {
         return comment;
     }
 
-    public String getCreateTime() {
+    public Long getCreateTime() {
         return createTime;
     }
 
