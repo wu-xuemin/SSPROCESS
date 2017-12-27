@@ -95,6 +95,7 @@ public class ProcessToAdminActivity extends AppCompatActivity{
                 fetchProcessData();
             }
         });
+
         //第一次进入刷新页面， 加载loading页面
         if( mLoadingProcessDialog == null) {
             mLoadingProcessDialog = new ProgressDialog(ProcessToAdminActivity.this);

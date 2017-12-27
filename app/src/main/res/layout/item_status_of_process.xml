@@ -9,23 +9,28 @@
         android:text="id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"/>
     <TextView
         android:id="@+id/process_name_tv"
         android:text="name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"/>
     <TextView
         android:id="@+id/process_state_tv"
         android:text="state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"/>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_marginRight="16dp"
         android:layout_weight="1">
         <TextView
             android:id="@+id/process_begin_date_tv"

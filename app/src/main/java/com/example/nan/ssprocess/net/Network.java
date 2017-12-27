@@ -10,7 +10,6 @@ import android.os.Message;
 import android.util.Log;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.activity.UpdateOperationStatusListener;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.bean.response.AbnormalRecordReponseDataWrap;
 import com.example.nan.ssprocess.bean.response.LoginResponseDataWrap;
@@ -25,7 +24,6 @@ import com.google.gson.reflect.TypeToken;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -149,60 +147,6 @@ public class Network {
             }
         }
     }
-
-    public void updateOperationStatus(final String url, final LinkedHashMap<String, String> values, final UpdateOperationStatusListener listener){
-        if (!isNetworkConnected()) {
-            ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
-        } else {
-            if (url != null && values != null && listener != null) {
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        RequestBody requestBody;
-                        FormBody.Builder builder = new FormBody.Builder();
-                        Iterator iterator = values.entrySet().iterator();
-                        while (iterator.hasNext()) {
-                            HashMap.Entry entry = (HashMap.Entry)iterator.next();
-                            builder.add((String) entry.getKey(), (String)entry.getValue());
-                        }
-                        requestBody = builder.build();
-                        //Post method
-                        Request request = new Request.Builder().url( url).post(requestBody).build();
-                        OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
-                        Response response = null;
-                        String errorMsg = "";
-                        boolean success = false;
-                        try {
-                            response = client.newCall(request).execute();
-                            if (response.isSuccessful()) {
-                                Gson gson = new Gson();
-                                ResponseData responseData = gson.fromJson(response.body().string(), new TypeToken<ResponseData>(){}.getType());
-                                if (responseData != null) {
-                                    if (responseData.getCode() == 200) {
-                                        success = true;
-                                    } else if (responseData.getCode() == 400) {
-                                        Log.e(TAG, responseData.getMessage());
-                                        errorMsg = responseData.getMessage();
-                                    } else {
-                                        Log.e(TAG, "Format JSON string to object error!");
-                                    }
-                                }
-                            }
-                            response.close();
-                        } catch (Exception e) {
-                            errorMsg = "Network error!";
-                        } finally {
-                            listener.onUpdateOperationStatus(success, errorMsg);
-                            if(response != null) {
-                                response.close();
-                            }
-                        }
-                    }
-                });
-            }
-        }
-    }
-
 
     //获取machineTaskListDetail信息
     public void fetchProcessTaskRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {

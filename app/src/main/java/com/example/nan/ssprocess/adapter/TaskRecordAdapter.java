@@ -31,6 +31,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_status_of_process,parent,false);
         return new ItemView(view);
+
     }
 
     //绑定数据
@@ -56,7 +57,16 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return mProcessList.size();
+        return mProcessList.size()+1;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == mProcessList.size()) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     public class ItemView extends RecyclerView.ViewHolder {
