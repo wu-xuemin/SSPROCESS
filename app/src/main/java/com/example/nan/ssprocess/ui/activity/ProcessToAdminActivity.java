@@ -1,8 +1,9 @@
-package com.example.nan.ssprocess.activity;
+package com.example.nan.ssprocess.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -28,19 +29,24 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
+
 
 /**
  * @author nan  2017/11/16
  */
-public class ProcessToAdminActivity extends AppCompatActivity{
+public class ProcessToAdminActivity extends AppCompatActivity implements BGARefreshLayout.BGARefreshLayoutDelegate{
 
     private static String TAG = "nlgProcessToAdminActivity";
     private ArrayList<TaskMachineListData> mProcessToAdminList = new ArrayList<>();
     private TaskRecordAdapter mProcessToAdminAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
+    private int mPage;
 
     private ProgressDialog mLoadingProcessDialog;
     private SwipeRefreshLayout mSwipeRefresh;
+    private BGARefreshLayout mRefreshLayout;
+
     private Runnable mStopSwipeRefreshRunnable = new Runnable() {
         @Override
         public void run() {
@@ -54,6 +60,8 @@ public class ProcessToAdminActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_to_admin);
+        mRefreshLayout = findViewById(R.id.refreshLayout);
+        mRefreshLayout.setDelegate(this);
 
         //点击扫码
         Button scanQrcodeBotton = findViewById(R.id.admin_scan_qrcode_button);
@@ -84,6 +92,7 @@ public class ProcessToAdminActivity extends AppCompatActivity{
         });
 
         //下拉刷新
+        mPage=0;
         mSwipeRefresh = findViewById(R.id.admin_swipe_refresh);
         int[] colors = getResources().getIntArray(R.array.google_colors);
         mSwipeRefresh.setColorSchemeColors(colors);
@@ -92,7 +101,7 @@ public class ProcessToAdminActivity extends AppCompatActivity{
             public void onRefresh() {
                 //超时停止刷新
                 mSwipeRefresh.postDelayed(mStopSwipeRefreshRunnable, 5000);
-                fetchProcessData();
+                fetchProcessData(mPage);
             }
         });
 
@@ -105,10 +114,10 @@ public class ProcessToAdminActivity extends AppCompatActivity{
         }
         mLoadingProcessDialog.show();
 
-        fetchProcessData();
+        fetchProcessData(mPage);
     }
 
-    private void fetchProcessData() {
+    private void fetchProcessData(int page) {
         final String ip = SinSimApp.getApp().getServerIP();
         final String account = SinSimApp.getApp().getAccount();
 //        final String ip = "192.168.0.102:8080";
@@ -116,7 +125,20 @@ public class ProcessToAdminActivity extends AppCompatActivity{
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_ADMIN;
         mPostValue.put("userAccount", account);
+        mPostValue.put("page", ""+page);
         Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
+    }
+
+    @Override
+    public void onBGARefreshLayoutBeginRefreshing(BGARefreshLayout refreshLayout) {
+
+    }
+
+    @Override
+    public boolean onBGARefreshLayoutBeginLoadingMore(BGARefreshLayout refreshLayout) {
+        mPage=mPage+1;
+        fetchProcessData(mPage);
+        return false;
     }
 
     @SuppressLint("HandlerLeak")

@@ -1,10 +1,6 @@
-package com.example.nan.ssprocess.fragment;
+package com.example.nan.ssprocess.ui.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,28 +12,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.activity.DetailToAdminActivity;
-import com.example.nan.ssprocess.activity.ProcessToAdminActivity;
-import com.example.nan.ssprocess.activity.ProcessToCheckoutActivity;
-import com.example.nan.ssprocess.activity.ProcessToInstallActivity;
-import com.example.nan.ssprocess.activity.ScanQrcodeActivity;
 import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import static android.app.Activity.RESULT_OK;
 
-
-public class TabInstallReadyFragment extends Fragment {
+public class TabInstallPlanFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -47,12 +34,11 @@ public class TabInstallReadyFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+//    private OnFragmentInteractionListener mListener;
     private static String TAG = "nlgProcessToAdminActivity";
-    private ArrayList<TaskMachineListData> mProcessToInstallList = new ArrayList<>();
+    private ArrayList<TaskMachineListData> mProcessToAdminList = new ArrayList<>();
     private TaskRecordAdapter mTaskRecordAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
-    private ProgressDialog mLoadingProcessDialog;
-    private static final int SCAN_QRCODE_START = 1;
 
     private SwipeRefreshLayout mSwipeRefresh;
     private Runnable mStopSwipeRefreshRunnable = new Runnable() {
@@ -63,7 +49,7 @@ public class TabInstallReadyFragment extends Fragment {
             }
         }
     };
-    public TabInstallReadyFragment() {
+    public TabInstallPlanFragment() {
         // Required empty public constructor
     }
 
@@ -73,10 +59,11 @@ public class TabInstallReadyFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment TabInstallReadyFragment.
+     * @return A new instance of fragment TabInstallPlanFragment.
      */
-    public static TabInstallReadyFragment newInstance(String param1, String param2) {
-        TabInstallReadyFragment fragment = new TabInstallReadyFragment();
+    // TODO: Rename and change types and number of parameters
+    public static TabInstallPlanFragment newInstance(String param1, String param2) {
+        TabInstallPlanFragment fragment = new TabInstallPlanFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -96,35 +83,14 @@ public class TabInstallReadyFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View viewContent = inflater.inflate(R.layout.fragment_tab_install_ready, container, false);
-
-        //点击扫码
-        Button scanQrcodeBotton = viewContent.findViewById(R.id.admin_scan_qrcode_button);
-        scanQrcodeBotton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(getActivity(),ScanQrcodeActivity.class);
-                startActivityForResult(intent,SCAN_QRCODE_START);
-            }
-        });
-
-        //列表
-        RecyclerView mProcessToAdminRV = viewContent.findViewById(R.id.process_to_install_rv);
+        // Inflate the layout for this fragment
+        View viewContent = inflater.inflate(R.layout.fragment_tab_install_plan, container, false);
+        RecyclerView mProcessToAdminRV = (RecyclerView) viewContent.findViewById(R.id.process_to_install_rv);
         LinearLayoutManager manager = new LinearLayoutManager(viewContent.getContext());
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mProcessToAdminRV.setLayoutManager(manager);
-        mTaskRecordAdapter = new TaskRecordAdapter(mProcessToInstallList);
+        mTaskRecordAdapter = new TaskRecordAdapter(mProcessToAdminList);
         mProcessToAdminRV.setAdapter(mTaskRecordAdapter);
-        //点击跳转，把所有接收到的数据传递给下一个activity
-        mTaskRecordAdapter.setOnItemClickListener(new TaskRecordAdapter.OnItemClickListener(){
-            @Override
-            public void onItemClick(int position){
-                Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToInstallList.get(position)));
-                Intent intent=new Intent(getActivity(),DetailToAdminActivity.class);
-                intent.putExtra("mTaskMachineListData", mProcessToInstallList.get(position));
-                startActivity(intent);
-            }
-        });
 
         //下拉刷新
         mSwipeRefresh = (SwipeRefreshLayout) viewContent.findViewById(R.id.install_swipe_refresh);
@@ -139,38 +105,8 @@ public class TabInstallReadyFragment extends Fragment {
             }
         });
 
-        //第一次进入刷新页面， 加载loading页面
-        if( mLoadingProcessDialog == null) {
-            mLoadingProcessDialog = new ProgressDialog(getActivity());
-            mLoadingProcessDialog.setCancelable(false);
-            mLoadingProcessDialog.setCanceledOnTouchOutside(false);
-            mLoadingProcessDialog.setMessage("获取信息中...");
-        }
-        mLoadingProcessDialog.show();
-
         fetchProcessData();
         return viewContent;
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-            case SCAN_QRCODE_START:
-                // 当requestCode、resultCode同时为0时，也就是处理特定的结果
-                if (resultCode == RESULT_OK)
-                {
-                    // 取出Intent里的Extras数据传递给跳转的activity
-                    TaskMachineListData mTaskMachineListData = new TaskMachineListData();
-                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
-                    Intent intent=new Intent(getActivity(),DetailToAdminActivity.class);
-                    intent.putExtra("mTaskMachineListData", mTaskMachineListData);
-                    startActivity(intent);
-                }
-                break;
-            default:
-                break;
-        }
     }
 
     private void fetchProcessData() {
@@ -192,9 +128,9 @@ public class TabInstallReadyFragment extends Fragment {
                 mSwipeRefresh.setRefreshing(false);
             }
             if (msg.what == Network.OK) {
-                mProcessToInstallList=(ArrayList<TaskMachineListData>)msg.obj;
-                Log.d(TAG, "handleMessage: size: "+mProcessToInstallList.size());
-                mTaskRecordAdapter.setProcessList(mProcessToInstallList);
+                mProcessToAdminList=(ArrayList<TaskMachineListData>)msg.obj;
+                Log.d(TAG, "handleMessage: size: "+mProcessToAdminList.size());
+                mTaskRecordAdapter.setProcessList(mProcessToAdminList);
                 mTaskRecordAdapter.notifyDataSetChanged();
             } else {
                 String errorMsg = (String)msg.obj;

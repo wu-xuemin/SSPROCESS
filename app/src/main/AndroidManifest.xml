@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.SplashActivity"
+            android:name=".ui.activity.SplashActivity"
             android:theme="@style/AppThemeNoTitle">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,26 +36,26 @@
             android:exported="true" />
 
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".ui.activity.LoginActivity"
             android:label="@string/login_activity" />
         <activity
-            android:name=".activity.ProcessToInstallActivity"
+            android:name=".ui.activity.ProcessToInstallActivity"
             android:label="安装组长"/>
         <activity
-            android:name=".activity.ProcessToCheckoutActivity"
+            android:name=".ui.activity.ProcessToCheckoutActivity"
             android:label="质检员" />
         <activity
-            android:name=".activity.ProcessToAdminActivity"
+            android:name=".ui.activity.ProcessToAdminActivity"
             android:label="生产部管理员"/>
         <activity
-            android:name=".activity.ScanQrcodeActivity"
+            android:name=".ui.activity.ScanQrcodeActivity"
             android:label="@string/qr_scan" />
         <activity
-            android:name=".activity.DetailToAdminActivity"
+            android:name=".ui.activity.DetailToAdminActivity"
             android:theme="@style/AppThemeNoTitle" />
-        <activity android:name=".activity.DetailToInstallActivity"
+        <activity android:name=".ui.activity.DetailToInstallActivity"
             android:theme="@style/AppThemeNoTitle" />
-        <activity android:name=".activity.DetailToCheckoutActivity"
+        <activity android:name=".ui.activity.DetailToCheckoutActivity"
             android:theme="@style/AppThemeNoTitle" />
 
         <provider

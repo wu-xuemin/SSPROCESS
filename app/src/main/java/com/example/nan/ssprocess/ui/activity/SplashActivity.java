@@ -1,4 +1,4 @@
-package com.example.nan.ssprocess.activity;
+package com.example.nan.ssprocess.ui.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;

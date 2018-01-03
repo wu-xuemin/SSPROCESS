@@ -1,4 +1,4 @@
-package com.example.nan.ssprocess.activity;
+package com.example.nan.ssprocess.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;

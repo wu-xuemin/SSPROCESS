@@ -10,7 +10,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.activity.LoginActivity;
+import com.example.nan.ssprocess.ui.activity.LoginActivity;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions;

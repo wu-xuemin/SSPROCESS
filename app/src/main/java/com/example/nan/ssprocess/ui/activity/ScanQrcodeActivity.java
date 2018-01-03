@@ -1,4 +1,4 @@
-package com.example.nan.ssprocess.activity;
+package com.example.nan.ssprocess.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -11,14 +11,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import cn.bingoogolapple.qrcode.core.QRCodeView;

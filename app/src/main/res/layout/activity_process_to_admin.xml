@@ -12,20 +12,23 @@
         app:iconifiedByDefault="false"
         app:queryHint="输入订单号、机器编号"
         />
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/admin_swipe_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="6">
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/process_to_admin_rv"
-            android:background="@color/cardview_light_background"
+    <cn.bingoogolapple.refreshlayout.BGARefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent" >
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/admin_swipe_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </android.support.v7.widget.RecyclerView>
-    </android.support.v4.widget.SwipeRefreshLayout>
-
+            android:layout_height="0dp"
+            android:layout_weight="6">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/process_to_admin_rv"
+                android:background="@color/cardview_light_background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </android.support.v7.widget.RecyclerView>
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </cn.bingoogolapple.refreshlayout.BGARefreshLayout>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,4 +1,4 @@
-package com.example.nan.ssprocess.activity;
+package com.example.nan.ssprocess.ui.activity;
 
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
@@ -14,8 +14,8 @@ import android.widget.Button;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.ProcessToInstallAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
-import com.example.nan.ssprocess.fragment.TabInstallPlanFragment;
-import com.example.nan.ssprocess.fragment.TabInstallReadyFragment;
+import com.example.nan.ssprocess.ui.fragment.TabInstallPlanFragment;
+import com.example.nan.ssprocess.ui.fragment.TabInstallReadyFragment;
 
 import java.util.ArrayList;
 import java.util.List;
