@@ -1,5 +1,6 @@
 package com.example.nan.ssprocess.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Environment;
 import android.os.Handler;
@@ -113,6 +114,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         mInstallAbnormalPhotosSnpl.setDelegate(this);
     }
 
+    //根据taskRecordId获取当前abnormal信息
     private void fetchInstallRecordData() {
         final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
@@ -122,6 +124,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         Network.Instance(SinSimApp.getApp()).fetchProcessInstallRecordData(fetchProcessRecordUrl, mPostValue, mFetchInstallRecordDataHandler);
     }
 
+    @SuppressLint("HandlerLeak")
     private class FetchInstallRecordDataHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
@@ -141,9 +144,17 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     Log.d(TAG, "handleMessage: updateTime2:"+updateTime);
                 }
                 mAbnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
-                //TODO:对应数值填入框内
-
-                updateInstallRecordData();
+                //如果异常，填入异常原因
+                if (mAbnormalRecordDetailsData.getTaskRecord().getStatus()==4){
+                    installAbnormalRb.setChecked(true);
+                    failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(),true);
+                    installAbnormalDetailEt.setText(mAbnormalRecordDetailsData.getComment());
+                    //TODO:照片地址
+                } else {
+                    installAbnormalRb.setChecked(true);
+                    failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(),true);
+                    installAbnormalDetailEt.setText("");
+                }
             } else {
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(DetailToInstallActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
@@ -151,6 +162,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         }
     }
 
+    //更新abnormal信息
     private void updateInstallRecordData() {
         final String ip = SinSimApp.getApp().getServerIP();
         //读取和更新输入信息
@@ -174,6 +186,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, mUpdateProcessDetailDataHandler);
     }
 
+    @SuppressLint("HandlerLeak")
     private class UpdateProcessDetailDataHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
@@ -238,6 +251,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     if(taskMachineListDataId.getId()==mTaskMachineListData.getId()){
                         Log.d(TAG, "onActivityResult: id 对应");
                         //update info
+                        updateInstallRecordData();
                     } else {
                         Log.d(TAG, "onActivityResult: 二维码信息不对应");
                         Toast.makeText(this, "二维码信息不对应！", Toast.LENGTH_LONG).show();

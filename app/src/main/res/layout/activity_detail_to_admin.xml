@@ -61,18 +61,19 @@
                     android:layout_alignStart="@+id/install_info_label"
                     android:layout_alignLeft="@+id/install_info_label"
                     android:layout_below="@+id/install_info_label"
-                    android:text="安装是否有异常："
+                    android:text="安装异常信息："
                     android:textColor="#000000"/>
-                <TextView
-                    android:id="@+id/fail_reason_tv"
+                <Spinner
+                    android:id="@+id/fail_reason_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:entries="@array/fail_reason"
                     android:layout_marginStart="10dp"
                     android:layout_marginLeft="10dp"
                     android:layout_toEndOf="@+id/result_for_install_label"
                     android:layout_toRightOf="@+id/result_for_install_label"
-                    android:layout_alignTop="@+id/result_for_install_label"
-                    android:text="暂无" />
+                    android:layout_alignBaseline="@+id/result_for_install_label"/>
+
                 <TextView
                     android:id="@+id/abnormal_detail_label"
                     android:layout_width="match_parent"
@@ -94,7 +95,7 @@
                     android:layout_marginRight="16dp"
                     android:layout_below="@+id/abnormal_detail_label"
                     android:layout_gravity="start"
-                    android:hint="输入异常信息"
+                    android:hint="暂无"
                     android:textSize="16sp"
                     android:background="@color/hintColor" />
                 <TextView
@@ -181,7 +182,7 @@
                     android:layout_marginRight="16dp"
                     android:layout_below="@+id/nok_detail_label"
                     android:layout_gravity="start"
-                    android:hint="输入异常信息"
+                    android:hint="暂无"
                     android:textSize="16sp"
                     android:background="@color/hintColor" />
                 <TextView

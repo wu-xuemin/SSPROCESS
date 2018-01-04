@@ -12,12 +12,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
+import com.example.nan.ssprocess.bean.basic.AbnormalRecordDetailsData;
+import com.example.nan.ssprocess.bean.basic.QualityRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.bean.response.ResponseData;
 import com.example.nan.ssprocess.net.Network;
@@ -39,11 +42,23 @@ import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
 public class DetailToAdminActivity extends AppCompatActivity implements BGANinePhotoLayout.Delegate {
 
     private static final String TAG="nlgDetailToAdmin";
-    private ResponseData mResponseData = new ResponseData();
     private TaskMachineListData mTaskMachineListData=new TaskMachineListData();
     private EditText locationEt;
+    private Spinner failReasonSpinner;
+    private TextView abnormalDetailTv;
+    private TextView nokReasonTv;
+    private TextView nokDetailTv;
 
     private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
+
+    private FetchInstallRecordDataHandler mFetchInstallRecordDataHandler = new FetchInstallRecordDataHandler();
+    private ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = new ArrayList<>();
+    private AbnormalRecordDetailsData mAbnormalRecordDetailsData=new AbnormalRecordDetailsData();
+
+    private FetchQARecordDataHandler mFetchQARecordDataHandler = new FetchQARecordDataHandler();
+    private ArrayList<QualityRecordDetailsData> mQualityRecordList=new ArrayList<>();
+    private QualityRecordDetailsData mQualityRecordDetailsData =new QualityRecordDetailsData();
+
     private ArrayList<String> installPhotoList;
     private ArrayList<String> checkoutPhotoList;
     private BGANinePhotoLayout mCurrentClickNpl;
@@ -59,6 +74,10 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         TextView needleCountTv=findViewById(R.id.needle_count_tv);
         TextView typeTv=findViewById(R.id.type_tv);
         TextView intallListTv=findViewById(R.id.intall_list_tv);
+        failReasonSpinner=findViewById(R.id.fail_reason_spinner);
+        abnormalDetailTv=findViewById(R.id.abnormal_detail_tv);
+        nokReasonTv=findViewById(R.id.nok_reason_tv);
+        nokDetailTv=findViewById(R.id.nok_detail_tv);
 
         //获取传递过来的信息
         Intent intent = getIntent();
@@ -72,6 +91,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         typeTv.setText(""+mTaskMachineListData.getMachineOrderData().getMachineType());
         locationEt.setText(mTaskMachineListData.getMachineData().getLocation());
 
+        fetchQARecordData();
 
         //点击返回
         ImageView previousIv = findViewById(R.id.close_machine_detail);
@@ -101,6 +121,89 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         checkoutNinePhotoLayout.setDelegate(this);
         checkoutNinePhotoLayout.setData(checkoutPhotoList);
 
+    }
+
+    private void fetchQARecordData() {
+        final String account = SinSimApp.getApp().getAccount();
+        final String ip = SinSimApp.getApp().getServerIP();
+        LinkedHashMap<String, Integer> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("taskRecordId", mTaskMachineListData.getId());
+        String fetchQaProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
+        Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, mFetchQARecordDataHandler);
+
+        String fetchInstallProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_INSTALL_ABNORMAL_RECORD_DETAIL;
+        Network.Instance(SinSimApp.getApp()).fetchProcessInstallRecordData(fetchInstallProcessRecordUrl, mPostValue, mFetchInstallRecordDataHandler);
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class FetchQARecordDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if (msg.what == Network.OK) {
+                //获取质检结果
+                mQualityRecordList=(ArrayList<QualityRecordDetailsData>)msg.obj;
+                int updateTime=0;
+                //对比mQualityRecordList.get(update).getCreateTime()取值
+                for(int update=0;update<mQualityRecordList.size();update++){
+                    if (mQualityRecordList.get(update+1) != null) {
+                        if (mQualityRecordList.get(update).getCreateTime() < mQualityRecordList.get(update + 1).getCreateTime()) {
+                            Log.d(TAG, "handleMessage: "+mQualityRecordList.get(update).getCreateTime()+" : "+mQualityRecordList.get(update+1).getCreateTime());
+                            updateTime = update+1;
+                        }
+                        Log.d(TAG, "handleMessage: updateTime1:"+updateTime);
+                    }
+                    Log.d(TAG, "handleMessage: updateTime2:"+updateTime);
+                }
+                mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
+                if (mQualityRecordDetailsData.getStatus()==0){
+                    nokReasonTv.setText("不合格");
+                    abnormalDetailTv.setText(mQualityRecordDetailsData.getComment());
+                    //TODO:照片地址
+                } else {
+                    nokReasonTv.setText("合格");
+                    abnormalDetailTv.setText("");
+                }
+            } else {
+                String errorMsg = (String)msg.obj;
+                Toast.makeText(DetailToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class FetchInstallRecordDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if (msg.what == Network.OK) {
+                //获取质检结果
+                mAbnormalRecordList=(ArrayList<AbnormalRecordDetailsData>)msg.obj;
+                int updateTime=0;
+                //对比mQualityRecordList.get(update).getCreateTime()取值
+                for(int update=0;update<mAbnormalRecordList.size();update++){
+                    if (mAbnormalRecordList.get(update+1) != null) {
+                        if (mAbnormalRecordList.get(update).getCreateTime() < mAbnormalRecordList.get(update + 1).getCreateTime()) {
+                            Log.d(TAG, "handleMessage: "+mAbnormalRecordList.get(update).getCreateTime()+" : "+mAbnormalRecordList.get(update+1).getCreateTime());
+                            updateTime = update+1;
+                        }
+                        Log.d(TAG, "handleMessage: updateTime1:"+updateTime);
+                    }
+                    Log.d(TAG, "handleMessage: updateTime2:"+updateTime);
+                }
+                mAbnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
+                //如果异常，填入异常原因
+                if (mAbnormalRecordDetailsData.getTaskRecord().getStatus()==4){
+                    failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(),true);
+                    abnormalDetailTv.setText(mAbnormalRecordDetailsData.getComment());
+                    //TODO:照片地址
+                } else {
+                    failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(),true);
+                    abnormalDetailTv.setText("");
+                }
+            } else {
+                String errorMsg = (String)msg.obj;
+                Toast.makeText(DetailToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void updateProcessDetailData() {

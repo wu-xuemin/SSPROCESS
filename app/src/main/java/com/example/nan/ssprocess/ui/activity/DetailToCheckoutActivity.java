@@ -143,7 +143,14 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                     Log.d(TAG, "handleMessage: updateTime2:"+updateTime);
                 }
                 mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
-                //TODO:对应数值填入框内
+                if (mQualityRecordDetailsData.getStatus()==0){
+                    checkedNokRb.setChecked(true);
+                    checkoutNokDetailEt.setText(mQualityRecordDetailsData.getComment());
+                    //TODO:照片地址
+                } else {
+                    checkedOkRb.setChecked(true);
+                    checkoutNokDetailEt.setText("");
+                }
 
             } else {
                 String errorMsg = (String)msg.obj;

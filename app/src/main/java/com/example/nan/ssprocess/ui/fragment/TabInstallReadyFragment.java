@@ -46,7 +46,7 @@ public class TabInstallReadyFragment extends Fragment {
     private String mParam2;
 
     private static String TAG = "nlgProcessToAdminActivity";
-    private ArrayList<TaskMachineListData> mProcessToInstallList = new ArrayList<>();
+    private ArrayList<TaskMachineListData> mProcessToInstallReadyList = new ArrayList<>();
     private TaskRecordAdapter mTaskRecordAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
     private ProgressDialog mLoadingProcessDialog;
@@ -111,15 +111,15 @@ public class TabInstallReadyFragment extends Fragment {
         LinearLayoutManager manager = new LinearLayoutManager(viewContent.getContext());
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mProcessToAdminRV.setLayoutManager(manager);
-        mTaskRecordAdapter = new TaskRecordAdapter(mProcessToInstallList);
+        mTaskRecordAdapter = new TaskRecordAdapter(mProcessToInstallReadyList);
         mProcessToAdminRV.setAdapter(mTaskRecordAdapter);
         //点击跳转，把所有接收到的数据传递给下一个activity
         mTaskRecordAdapter.setOnItemClickListener(new TaskRecordAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(int position){
-                Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToInstallList.get(position)));
+                Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToInstallReadyList.get(position)));
                 Intent intent=new Intent(getActivity(),DetailToAdminActivity.class);
-                intent.putExtra("mTaskMachineListData", mProcessToInstallList.get(position));
+                intent.putExtra("mTaskMachineListData", mProcessToInstallReadyList.get(position));
                 startActivity(intent);
             }
         });
@@ -174,8 +174,6 @@ public class TabInstallReadyFragment extends Fragment {
     private void fetchProcessData() {
         final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
-//        final String ip = "192.168.0.102:8080";
-//        final String account = "sss";
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("userAccount", account);
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_INSTALL;
@@ -190,9 +188,9 @@ public class TabInstallReadyFragment extends Fragment {
                 mSwipeRefresh.setRefreshing(false);
             }
             if (msg.what == Network.OK) {
-                mProcessToInstallList=(ArrayList<TaskMachineListData>)msg.obj;
-                Log.d(TAG, "handleMessage: size: "+mProcessToInstallList.size());
-                mTaskRecordAdapter.setProcessList(mProcessToInstallList);
+                mProcessToInstallReadyList=(ArrayList<TaskMachineListData>)msg.obj;
+                Log.d(TAG, "handleMessage: size: "+mProcessToInstallReadyList.size());
+                mTaskRecordAdapter.setProcessList(mProcessToInstallReadyList);
                 mTaskRecordAdapter.notifyDataSetChanged();
             } else {
                 String errorMsg = (String)msg.obj;
@@ -200,42 +198,4 @@ public class TabInstallReadyFragment extends Fragment {
         }
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-//
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
-//
-//    /**
-//     * This interface must be implemented by activities that contain this
-//     * fragment to allow an interaction in this fragment to be communicated
-//     * to the activity and potentially other fragments contained in that
-//     * activity.
-//     * <p>
-//     * See the Android Training lesson <a href=
-//     * "http://developer.android.com/training/basics/fragments/communicating.html"
-//     * >Communicating with Other Fragments</a> for more information.
-//     */
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onFragmentInteraction(Uri uri);
-//    }
 }

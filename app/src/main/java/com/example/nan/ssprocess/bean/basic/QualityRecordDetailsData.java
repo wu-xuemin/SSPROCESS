@@ -8,12 +8,12 @@ import com.example.nan.ssprocess.bean.basic.TaskRecordData;
  */
 
 public class QualityRecordDetailsData {
-    private String comment;
+    private String comment;//不合格描述
     private Long createTime;
     private int id;
     private String name;
     private QualityRecordImageData qualityRecordImage;
-    private int status;
+    private int status;//检验结果
     private TaskRecordData taskRecord;
     private int taskRecordId;
 

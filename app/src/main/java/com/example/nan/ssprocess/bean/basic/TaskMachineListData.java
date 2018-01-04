@@ -12,6 +12,7 @@ public class TaskMachineListData implements Serializable {
     private String taskName;//流程名字
     private int status;//流程状态
     private MachineOrderData machineOrder;
+    private TaskPlanData taskPlan;
 
     public int getId() {
         return id;
@@ -31,5 +32,9 @@ public class TaskMachineListData implements Serializable {
 
     public MachineOrderData getMachineOrderData() {
         return machineOrder;
+    }
+
+    public TaskPlanData getTaskPlan() {
+        return taskPlan;
     }
 }
