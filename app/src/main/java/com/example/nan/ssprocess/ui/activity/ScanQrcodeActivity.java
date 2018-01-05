@@ -73,8 +73,6 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
     @Override
     public void onScanQRCodeSuccess(String result) {
         Log.d(TAG, "result:" + result);
-        Toast.makeText(this, ""+result, Toast.LENGTH_SHORT).show();
-
         //根据result获取对应taskRecordDetail
         final String ip = SinSimApp.getApp().getServerIP();
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();

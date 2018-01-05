@@ -22,6 +22,7 @@ import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.net.Network;
+import com.example.nan.ssprocess.service.MyMqttService;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -58,6 +59,10 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
         localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_FULLSCREEN | localLayoutParams.flags);
         setContentView(R.layout.activity_splash);
+
+        Intent startIntent = new Intent(this, MyMqttService.class);
+        // 启动服务
+        startService(startIntent);
 
         mNetwork = Network.Instance(SinSimApp.getApp());
         mFetchLoginHandler = new FetchLoginHandler();

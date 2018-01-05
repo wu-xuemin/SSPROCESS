@@ -188,6 +188,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 
             if (msg.what == Network.OK) {
                 Toast.makeText(DetailToCheckoutActivity.this, "更新成功！", Toast.LENGTH_SHORT).show();
+                //TODO:跳转回list界面
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg);

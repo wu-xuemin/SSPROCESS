@@ -195,6 +195,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
             if (msg.what == Network.OK) {
                 Toast.makeText(DetailToInstallActivity.this, "更新成功！", Toast.LENGTH_SHORT).show();
+                //TODO:发送mqtt消息，更新安装状态，跳转回list界面
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg);
@@ -276,6 +277,4 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 break;
         }
     }
-
-
 }
