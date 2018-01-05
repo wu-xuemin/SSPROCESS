@@ -117,8 +117,8 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     private void fetchQARecordData() {
         final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
-        LinkedHashMap<String, Integer> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("taskRecordId", mTaskMachineListData.getId());
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("taskRecordId", ""+mTaskMachineListData.getId());
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
         Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchProcessRecordUrl, mPostValue, mFetchQARecordDataHandler);
     }
@@ -130,28 +130,28 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             if (msg.what == Network.OK) {
                 //获取质检结果
                 mQualityRecordList=(ArrayList<QualityRecordDetailsData>)msg.obj;
-                int updateTime=0;
-                //对比mQualityRecordList.get(update).getCreateTime()取值
-                for(int update=0;update<mQualityRecordList.size();update++){
-                    if (mQualityRecordList.get(update+1) != null) {
-                        if (mQualityRecordList.get(update).getCreateTime() < mQualityRecordList.get(update + 1).getCreateTime()) {
-                            Log.d(TAG, "handleMessage: "+mQualityRecordList.get(update).getCreateTime()+" : "+mQualityRecordList.get(update+1).getCreateTime());
-                            updateTime = update+1;
+                if (mQualityRecordList!=null && !mQualityRecordList.isEmpty()) {
+                    int updateTime = mQualityRecordList.size() - 1;
+                    //对比mQualityRecordList.get(update).getCreateTime()取值
+                    for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
+                        if (mQualityRecordList.get(updateTime).getCreateTime() < mQualityRecordList.get(update).getCreateTime()) {
+                            Log.d(TAG, "handleMessage: " + mQualityRecordList.get(updateTime).getCreateTime() + " : " + mQualityRecordList.get(update).getCreateTime());
+                            updateTime = update;
                         }
-                        Log.d(TAG, "handleMessage: updateTime1:"+updateTime);
+                        Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                     }
-                    Log.d(TAG, "handleMessage: updateTime2:"+updateTime);
-                }
-                mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
-                if (mQualityRecordDetailsData.getStatus()==0){
-                    checkedNokRb.setChecked(true);
-                    checkoutNokDetailEt.setText(mQualityRecordDetailsData.getComment());
-                    //TODO:照片地址
+                    mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
+                    if (mQualityRecordDetailsData.getStatus() == 0) {
+                        checkedNokRb.setChecked(true);
+                        checkoutNokDetailEt.setText(mQualityRecordDetailsData.getComment());
+                        //TODO:照片地址
+                    } else {
+                        checkedOkRb.setChecked(true);
+                        checkoutNokDetailEt.setText("");
+                    }
                 } else {
-                    checkedOkRb.setChecked(true);
-                    checkoutNokDetailEt.setText("");
+                    Log.d(TAG, "handleMessage: 尚未质检");
                 }
-
             } else {
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(DetailToCheckoutActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();

@@ -14,6 +14,7 @@ import android.widget.Button;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.ProcessToInstallAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
+import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.ui.fragment.TabInstallPlanFragment;
 import com.example.nan.ssprocess.ui.fragment.TabInstallReadyFragment;
 
@@ -28,6 +29,7 @@ public class ProcessToInstallActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private List<Fragment> list;
     private ProcessToInstallAdapter adapter;
+    private static final int SCAN_QRCODE_START = 1;
 
     //tab数据源
     private ArrayList<String> titleList = new ArrayList<String>() {{
@@ -51,16 +53,12 @@ public class ProcessToInstallActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(ProcessToInstallActivity.this,ScanQrcodeActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,SCAN_QRCODE_START);
             }
         });
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        //页面，数据源
-//        list = new ArrayList<>();
-//        list.add(new TabInstallPlanFragment());
-//        list.add(new TabInstallReadyFragment());
         //ViewPager的适配器
         adapter = new ProcessToInstallAdapter(getSupportFragmentManager(),titleList, fragmentList);
         viewPager.setAdapter(adapter);
@@ -88,5 +86,26 @@ public class ProcessToInstallActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case SCAN_QRCODE_START:
+                // 当requestCode、resultCode同时为0时，也就是处理特定的结果
+                if (resultCode == RESULT_OK)
+                {
+                    // 取出Intent里的Extras数据传递给跳转的activity
+                    TaskMachineListData mTaskMachineListData = new TaskMachineListData();
+                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
+                    Intent intent=new Intent(this,DetailToAdminActivity.class);
+                    intent.putExtra("mTaskMachineListData", mTaskMachineListData);
+                    startActivity(intent);
+                }
+                break;
+            default:
+                break;
+        }
     }
 }

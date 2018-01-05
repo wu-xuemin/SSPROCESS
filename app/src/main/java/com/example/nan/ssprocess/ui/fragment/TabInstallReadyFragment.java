@@ -18,6 +18,7 @@ import android.widget.Button;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.ui.activity.DetailToAdminActivity;
+import com.example.nan.ssprocess.ui.activity.DetailToInstallActivity;
 import com.example.nan.ssprocess.ui.activity.ProcessToAdminActivity;
 import com.example.nan.ssprocess.ui.activity.ProcessToCheckoutActivity;
 import com.example.nan.ssprocess.ui.activity.ProcessToInstallActivity;
@@ -45,12 +46,11 @@ public class TabInstallReadyFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private static String TAG = "nlgProcessToAdminActivity";
+    private static String TAG = "nlgTabInstallReadyFragment";
     private ArrayList<TaskMachineListData> mProcessToInstallReadyList = new ArrayList<>();
     private TaskRecordAdapter mTaskRecordAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
     private ProgressDialog mLoadingProcessDialog;
-    private static final int SCAN_QRCODE_START = 1;
 
     private SwipeRefreshLayout mSwipeRefresh;
     private Runnable mStopSwipeRefreshRunnable = new Runnable() {
@@ -96,16 +96,6 @@ public class TabInstallReadyFragment extends Fragment {
                              Bundle savedInstanceState) {
         View viewContent = inflater.inflate(R.layout.fragment_tab_install_ready, container, false);
 
-        //点击扫码
-        Button scanQrcodeBotton = viewContent.findViewById(R.id.admin_scan_qrcode_button);
-        scanQrcodeBotton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(getActivity(),ScanQrcodeActivity.class);
-                startActivityForResult(intent,SCAN_QRCODE_START);
-            }
-        });
-
         //列表
         RecyclerView mProcessToAdminRV = viewContent.findViewById(R.id.process_to_install_rv);
         LinearLayoutManager manager = new LinearLayoutManager(viewContent.getContext());
@@ -118,7 +108,7 @@ public class TabInstallReadyFragment extends Fragment {
             @Override
             public void onItemClick(int position){
                 Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToInstallReadyList.get(position)));
-                Intent intent=new Intent(getActivity(),DetailToAdminActivity.class);
+                Intent intent=new Intent(getActivity(),DetailToInstallActivity.class);
                 intent.putExtra("mTaskMachineListData", mProcessToInstallReadyList.get(position));
                 startActivity(intent);
             }
@@ -150,27 +140,6 @@ public class TabInstallReadyFragment extends Fragment {
         return viewContent;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-            case SCAN_QRCODE_START:
-                // 当requestCode、resultCode同时为0时，也就是处理特定的结果
-                if (resultCode == RESULT_OK)
-                {
-                    // 取出Intent里的Extras数据传递给跳转的activity
-                    TaskMachineListData mTaskMachineListData = new TaskMachineListData();
-                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
-                    Intent intent=new Intent(getActivity(),DetailToAdminActivity.class);
-                    intent.putExtra("mTaskMachineListData", mTaskMachineListData);
-                    startActivity(intent);
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
     private void fetchProcessData() {
         final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
@@ -184,6 +153,9 @@ public class TabInstallReadyFragment extends Fragment {
     private class FetchProcessDataHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
+            if(mLoadingProcessDialog != null && mLoadingProcessDialog.isShowing()) {
+                mLoadingProcessDialog.dismiss();
+            }
             if(mSwipeRefresh.isRefreshing()) {
                 mSwipeRefresh.setRefreshing(false);
             }
@@ -194,6 +166,7 @@ public class TabInstallReadyFragment extends Fragment {
                 mTaskRecordAdapter.notifyDataSetChanged();
             } else {
                 String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: "+errorMsg);
             }
         }
     }

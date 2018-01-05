@@ -126,8 +126,8 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     private void fetchQARecordData() {
         final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
-        LinkedHashMap<String, Integer> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("taskRecordId", mTaskMachineListData.getId());
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("taskRecordId", ""+mTaskMachineListData.getId());
         String fetchQaProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
         Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, mFetchQARecordDataHandler);
 
@@ -142,26 +142,27 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
             if (msg.what == Network.OK) {
                 //获取质检结果
                 mQualityRecordList=(ArrayList<QualityRecordDetailsData>)msg.obj;
-                int updateTime=0;
-                //对比mQualityRecordList.get(update).getCreateTime()取值
-                for(int update=0;update<mQualityRecordList.size();update++){
-                    if (mQualityRecordList.get(update+1) != null) {
-                        if (mQualityRecordList.get(update).getCreateTime() < mQualityRecordList.get(update + 1).getCreateTime()) {
-                            Log.d(TAG, "handleMessage: "+mQualityRecordList.get(update).getCreateTime()+" : "+mQualityRecordList.get(update+1).getCreateTime());
-                            updateTime = update+1;
+                if (mQualityRecordList!=null && !mQualityRecordList.isEmpty()) {
+                    int updateTime = mQualityRecordList.size() - 1;
+                    //对比mQualityRecordList.get(update).getCreateTime()取值
+                    for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
+                        if (mQualityRecordList.get(updateTime).getCreateTime() < mQualityRecordList.get(update).getCreateTime()) {
+                            Log.d(TAG, "handleMessage: " + mQualityRecordList.get(updateTime).getCreateTime() + " : " + mQualityRecordList.get(update).getCreateTime());
+                            updateTime = update;
                         }
-                        Log.d(TAG, "handleMessage: updateTime1:"+updateTime);
+                        Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                     }
-                    Log.d(TAG, "handleMessage: updateTime2:"+updateTime);
-                }
-                mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
-                if (mQualityRecordDetailsData.getStatus()==0){
-                    nokReasonTv.setText("不合格");
-                    abnormalDetailTv.setText(mQualityRecordDetailsData.getComment());
-                    //TODO:照片地址
+                    mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
+                    if (mQualityRecordDetailsData.getStatus() == 0) {
+                        nokReasonTv.setText("不合格");
+                        abnormalDetailTv.setText(mQualityRecordDetailsData.getComment());
+                        //TODO:照片地址
+                    } else {
+                        nokReasonTv.setText("合格");
+                        abnormalDetailTv.setText("");
+                    }
                 } else {
-                    nokReasonTv.setText("合格");
-                    abnormalDetailTv.setText("");
+                    Toast.makeText(DetailToAdminActivity.this,"尚未质检",Toast.LENGTH_SHORT).show();
                 }
             } else {
                 String errorMsg = (String)msg.obj;
@@ -177,27 +178,30 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
             if (msg.what == Network.OK) {
                 //获取质检结果
                 mAbnormalRecordList=(ArrayList<AbnormalRecordDetailsData>)msg.obj;
-                int updateTime=0;
-                //对比mQualityRecordList.get(update).getCreateTime()取值
-                for(int update=0;update<mAbnormalRecordList.size();update++){
-                    if (mAbnormalRecordList.get(update+1) != null) {
-                        if (mAbnormalRecordList.get(update).getCreateTime() < mAbnormalRecordList.get(update + 1).getCreateTime()) {
-                            Log.d(TAG, "handleMessage: "+mAbnormalRecordList.get(update).getCreateTime()+" : "+mAbnormalRecordList.get(update+1).getCreateTime());
-                            updateTime = update+1;
+                if (mAbnormalRecordList!=null && !mAbnormalRecordList.isEmpty()) {
+                    int updateTime = mAbnormalRecordList.size()-1;
+                    //对比mQualityRecordList.get(update).getCreateTime()取值
+                    for (int update = mAbnormalRecordList.size()-2; update >= 0; update--) {
+                        if (mAbnormalRecordList.get(updateTime).getCreateTime() < mAbnormalRecordList.get(update).getCreateTime()) {
+                            Log.d(TAG, "handleMessage: " + mAbnormalRecordList.get(update).getCreateTime() + " : " + mAbnormalRecordList.get(update + 1).getCreateTime());
+                            updateTime = update;
                         }
-                        Log.d(TAG, "handleMessage: updateTime1:"+updateTime);
+                        Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                     }
-                    Log.d(TAG, "handleMessage: updateTime2:"+updateTime);
-                }
-                mAbnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
-                //如果异常，填入异常原因
-                if (mAbnormalRecordDetailsData.getTaskRecord().getStatus()==4){
-                    failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(),true);
-                    abnormalDetailTv.setText(mAbnormalRecordDetailsData.getComment());
-                    //TODO:照片地址
+                    mAbnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
+                    //如果异常，填入异常原因
+                    if (mAbnormalRecordDetailsData.getTaskRecord().getStatus() == 4) {
+                        failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(), true);
+                        failReasonSpinner.setEnabled(false);
+                        abnormalDetailTv.setText(mAbnormalRecordDetailsData.getComment());
+                        //TODO:照片地址
+                    } else {
+                        failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(), true);
+                        failReasonSpinner.setEnabled(false);
+                        abnormalDetailTv.setText("");
+                    }
                 } else {
-                    failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(),true);
-                    abnormalDetailTv.setText("");
+                    Log.d(TAG, "handleMessage: 没有安装异常");
                 }
             } else {
                 String errorMsg = (String)msg.obj;

@@ -99,11 +99,11 @@ public class Network {
                             response = client.newCall(request).execute();//同步网络请求
                             boolean success = false;
                             if (response.isSuccessful()) {
-                                Log.d(TAG, "run: response success");
+                                Log.d(TAG, "fetchLoginData run: response success");
                                 Gson gson = new Gson();
                                 LoginResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<LoginResponseDataWrap>(){}.getType());
                                 if (responseData != null) {
-                                    Log.d(TAG, "run: responseData："+responseData.getCode());
+                                    Log.d(TAG, "fetchLoginData run: responseData："+responseData.getCode());
                                     if (responseData.getCode() == 200) {
                                         if(responseData.getData().getValid()!=1){
                                             Log.e(TAG, "用户已离职");
@@ -114,14 +114,14 @@ public class Network {
                                         }
                                     } else if (responseData.getCode() == 400) {
                                         Log.e(TAG, responseData.getMessage());
-                                        Log.d(TAG, "run: error 400 :"+responseData.getMessage());
+                                        Log.d(TAG, "fetchLoginData run: error 400 :"+responseData.getMessage());
                                         msg.obj = responseData.getMessage();
                                     } else if (responseData.getCode() == 500) {
                                         Log.e(TAG, responseData.getMessage());
-                                        Log.d(TAG, "run: error 500 :"+responseData.getMessage());
+                                        Log.d(TAG, "fetchLoginData run: error 500 :"+responseData.getMessage());
                                         msg.obj = responseData.getMessage();
                                     }else {
-                                        Log.e(TAG, "Format JSON string to object error!");
+                                        Log.e(TAG, "fetchLoginData Format JSON string to object error!");
                                     }
                                 }
                                 if (success) {
@@ -134,10 +134,10 @@ public class Network {
                         } catch (Exception e) {
                             msg.what = NG;
                             msg.obj = "Network error!";
-                            Log.d(TAG, "run: catch "+e);
+                            Log.d(TAG, "fetchLoginData run: catch "+e);
                         } finally {
                             handler.sendMessage(msg);
-                            Log.d(TAG, "run: finally");
+                            Log.d(TAG, "fetchLoginData run: finally");
                             if(response != null) {
                                 response.close();
                             }
@@ -177,7 +177,7 @@ public class Network {
                                 Gson gson = new Gson();
                                 TaskRecordResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<TaskRecordResponseDataWrap>(){}.getType());
                                 if (responseData != null) {
-                                    Log.d(TAG, "run: "+responseData.getCode());
+                                    Log.d(TAG, "fetchProcessTaskRecordData run: "+responseData.getCode());
                                     if (responseData.getCode() == 200) {
                                         success = true;
                                         msg.obj = responseData.getData().getList();
@@ -186,10 +186,10 @@ public class Network {
                                         msg.obj = responseData.getMessage();
                                     } else if (responseData.getCode() == 500) {
                                         Log.e(TAG, responseData.getMessage());
-                                        Log.d(TAG, "run: error 500 :"+responseData.getMessage());
+                                        Log.d(TAG, "fetchProcessTaskRecordData run: error 500 :"+responseData.getMessage());
                                         msg.obj = responseData.getMessage();
                                     } else {
-                                        Log.e(TAG, "Format JSON string to object error!");
+                                        Log.e(TAG, "fetchProcessTaskRecordData Format JSON string to object error!");
                                     }
                                 }
                                 if (success) {
@@ -201,7 +201,7 @@ public class Network {
                             }
                             response.close();
                         } catch (Exception e) {
-                            Log.d(TAG, "run: "+e);
+                            Log.d(TAG, "fetchProcessTaskRecordData run: "+e);
                             msg.what = NG;
                             msg.obj = "网络请求错误!";
                         } finally {
@@ -244,7 +244,7 @@ public class Network {
                                 Gson gson = new Gson();
                                 TaskRecordFromIdResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<TaskRecordFromIdResponseDataWrap>(){}.getType());
                                 if (responseData != null) {
-                                    Log.d(TAG, "run: "+responseData.getCode());
+                                    Log.d(TAG, "fetchTaskProcessFromId run: "+responseData.getCode());
                                     if (responseData.getCode() == 200) {
                                         success = true;
                                         msg.obj = responseData.getData();
@@ -253,10 +253,10 @@ public class Network {
                                         msg.obj = responseData.getMessage();
                                     } else if (responseData.getCode() == 500) {
                                         Log.e(TAG, responseData.getMessage());
-                                        Log.d(TAG, "run: error 500 :"+responseData.getMessage());
+                                        Log.d(TAG, "fetchTaskProcessFromId run: error 500 :"+responseData.getMessage());
                                         msg.obj = responseData.getMessage();
                                     } else {
-                                        Log.e(TAG, "Format JSON string to object error!");
+                                        Log.e(TAG, "fetchTaskProcessFromId Format JSON string to object error!");
                                     }
                                 }
                                 if (success) {
@@ -283,7 +283,7 @@ public class Network {
     }
 
     //获取质检结果
-    public void fetchProcessQARecordData(final String url, final LinkedHashMap<String, Integer> values, final Handler handler) {
+    public void fetchProcessQARecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
         } else {
@@ -310,7 +310,7 @@ public class Network {
                                 Gson gson = new Gson();
                                 QualityRecordReponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<QualityRecordReponseDataWrap>(){}.getType());
                                 if (responseData != null) {
-                                    Log.d(TAG, "run: "+responseData.getCode());
+                                    Log.d(TAG, "fetchProcessQARecordData run: "+responseData.getCode());
                                     if (responseData.getCode() == 200) {
                                         success = true;
                                         msg.obj = responseData.getData().getList();
@@ -319,7 +319,7 @@ public class Network {
                                         msg.obj = responseData.getMessage();
                                     } else if (responseData.getCode() == 500) {
                                         Log.e(TAG, responseData.getMessage());
-                                        Log.d(TAG, "run: error 500 :"+responseData.getMessage());
+                                        Log.d(TAG, "fetchProcessQARecordData run: error 500 :"+responseData.getMessage());
                                         msg.obj = responseData.getMessage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
@@ -349,7 +349,7 @@ public class Network {
     }
 
     //获取质检结果
-    public void fetchProcessInstallRecordData(final String url, final LinkedHashMap<String, Integer> values, final Handler handler) {
+    public void fetchProcessInstallRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
         } else {
@@ -376,7 +376,7 @@ public class Network {
                                 Gson gson = new Gson();
                                 AbnormalRecordReponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<AbnormalRecordReponseDataWrap>(){}.getType());
                                 if (responseData != null) {
-                                    Log.d(TAG, "run: getCode: "+responseData.getCode());
+                                    Log.d(TAG, "fetchProcessInstallRecordData run: getCode: "+responseData.getCode());
                                     if (responseData.getCode() == 200) {
                                         success = true;
                                         msg.obj = responseData.getData().getList();
@@ -385,7 +385,7 @@ public class Network {
                                         msg.obj = responseData.getMessage();
                                     } else if (responseData.getCode() == 500) {
                                         Log.e(TAG, responseData.getMessage());
-                                        Log.d(TAG, "run: error 500 :"+responseData.getMessage());
+                                        Log.d(TAG, "fetchProcessInstallRecordData run: error 500 :"+responseData.getMessage());
                                         msg.obj = responseData.getMessage();
                                     } else {
                                         Log.e(TAG, "Format JSON string to object error!");
@@ -448,7 +448,7 @@ public class Network {
                                     } else if (responseData.getCode() == 400) {
                                         msg.obj = responseData.getMessage();
                                     } else {
-                                        Log.e(TAG, "Format JSON string to object error!");
+                                        Log.e(TAG, "updateProcessRecordData Format JSON string to object error!");
                                     }
                                 }
                                 if (success) {
@@ -461,7 +461,7 @@ public class Network {
                         } catch (Exception e) {
                             msg.what = NG;
                             msg.obj = "Network error!";
-                            Log.d(TAG, "run: network error!");
+                            Log.d(TAG, "updateProcessRecordData run: network error!");
                         } finally {
                             handler.sendMessage(msg);
                             if(response != null) {

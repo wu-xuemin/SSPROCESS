@@ -23,6 +23,7 @@ import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.ui.activity.DetailToAdminActivity;
+import com.example.nan.ssprocess.ui.activity.DetailToInstallActivity;
 import com.example.nan.ssprocess.ui.activity.ScanQrcodeActivity;
 import com.google.gson.Gson;
 
@@ -43,7 +44,7 @@ public class TabInstallPlanFragment extends Fragment {
     private String mParam2;
 
 //    private OnFragmentInteractionListener mListener;
-    private static String TAG = "nlgProcessToAdminActivity";
+    private static String TAG = "nlgTabInstallPlanFragment";
     private ArrayList<TaskMachineListData> mProcessToInstallPlanList = new ArrayList<>();
     private TaskRecordAdapter mTaskRecordAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
@@ -96,14 +97,6 @@ public class TabInstallPlanFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View viewContent = inflater.inflate(R.layout.fragment_tab_install_plan, container, false);
-		Button scanQrcodeBotton = viewContent.findViewById(R.id.admin_scan_qrcode_button);
-        scanQrcodeBotton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(getActivity(),ScanQrcodeActivity.class);
-                startActivityForResult(intent,SCAN_QRCODE_START);
-            }
-        });
 
         //列表
         RecyclerView mProcessToAdminRV = viewContent.findViewById(R.id.process_to_install_rv);
@@ -117,7 +110,7 @@ public class TabInstallPlanFragment extends Fragment {
             @Override
             public void onItemClick(int position){
                 Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToInstallPlanList.get(position)));
-                Intent intent=new Intent(getActivity(),DetailToAdminActivity.class);
+                Intent intent=new Intent(getActivity(),DetailToInstallActivity.class);
                 intent.putExtra("mTaskMachineListData", mProcessToInstallPlanList.get(position));
                 startActivity(intent);
             }
@@ -148,27 +141,6 @@ public class TabInstallPlanFragment extends Fragment {
         return viewContent;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-            case SCAN_QRCODE_START:
-                // 当requestCode、resultCode同时为0时，也就是处理特定的结果
-                if (resultCode == RESULT_OK)
-                {
-                    // 取出Intent里的Extras数据传递给跳转的activity
-                    TaskMachineListData mTaskMachineListData = new TaskMachineListData();
-                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
-                    Intent intent=new Intent(getActivity(),DetailToAdminActivity.class);
-                    intent.putExtra("mTaskMachineListData", mTaskMachineListData);
-                    startActivity(intent);
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
     private void fetchProcessData() {
         final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
@@ -182,6 +154,9 @@ public class TabInstallPlanFragment extends Fragment {
     private class FetchProcessDataHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
+            if(mLoadingProcessDialog != null && mLoadingProcessDialog.isShowing()) {
+                mLoadingProcessDialog.dismiss();
+            }
             if(mSwipeRefresh.isRefreshing()) {
                 mSwipeRefresh.setRefreshing(false);
             }
@@ -192,6 +167,7 @@ public class TabInstallPlanFragment extends Fragment {
                 mTaskRecordAdapter.notifyDataSetChanged();
             } else {
                 String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: "+errorMsg);
             }
         }
     }

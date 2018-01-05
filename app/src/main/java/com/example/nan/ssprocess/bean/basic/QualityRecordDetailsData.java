@@ -9,7 +9,7 @@ import com.example.nan.ssprocess.bean.basic.TaskRecordData;
 
 public class QualityRecordDetailsData {
     private String comment;//不合格描述
-    private Long createTime;
+    private long createTime;
     private int id;
     private String name;
     private QualityRecordImageData qualityRecordImage;
@@ -21,7 +21,7 @@ public class QualityRecordDetailsData {
         return comment;
     }
 
-    public Long getCreateTime() {
+    public long getCreateTime() {
         return createTime;
     }
 

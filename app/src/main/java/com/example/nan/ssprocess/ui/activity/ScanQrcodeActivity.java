@@ -73,7 +73,7 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
     @Override
     public void onScanQRCodeSuccess(String result) {
         Log.d(TAG, "result:" + result);
-        Toast.makeText(this, "result:"+result, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, ""+result, Toast.LENGTH_SHORT).show();
 
         //根据result获取对应taskRecordDetail
         final String ip = SinSimApp.getApp().getServerIP();
@@ -100,15 +100,20 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
                 //获取结果
                 TaskMachineListData mTaskMachineDetailData = (TaskMachineListData) msg.obj;
 
-                Log.d(TAG, "handleMessage: "+new Gson().toJson(mTaskMachineDetailData));
-                //结果传递回上一个界面
-                Intent intent= getIntent();
-                intent.putExtra("mTaskMachineListData", mTaskMachineDetailData);
-                ScanQrcodeActivity.this.setResult(RESULT_OK,intent);
-                ScanQrcodeActivity.this.finish();
+                if (mTaskMachineDetailData!=null) {
+                    Log.d(TAG, "handleMessage: " + new Gson().toJson(mTaskMachineDetailData));
+                    //结果传递回上一个界面
+                    Intent intent = getIntent();
+                    intent.putExtra("mTaskMachineListData", mTaskMachineDetailData);
+                    ScanQrcodeActivity.this.setResult(RESULT_OK, intent);
+                    ScanQrcodeActivity.this.finish();
+                } else {
+                    Toast.makeText(ScanQrcodeActivity.this,"没有这个机器，请扫正规的二维码！",Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Log.d(TAG, "handleMessage: error...");
                 String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: error..."+errorMsg);
+                Toast.makeText(ScanQrcodeActivity.this,"扫码有误："+errorMsg,Toast.LENGTH_SHORT).show();
             }
         }
     }

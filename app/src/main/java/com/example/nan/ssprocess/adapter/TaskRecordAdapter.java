@@ -2,11 +2,13 @@ package com.example.nan.ssprocess.adapter;
 
 import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 
 public class TaskRecordAdapter extends RecyclerView.Adapter {
 
+    private static String TAG = "nlgTaskRecordAdapter";
     private ArrayList<TaskMachineListData> mProcessList;
     private OnItemClickListener itemClickListener = null;
 
@@ -39,21 +42,26 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
         final ItemView itemView = (ItemView) holder;
         //itemView.setIsRecyclable(false);//禁止复用
-        itemView.machineIdTv.setText(""+mProcessList.get(position).getMachineData().getMachineId());
-        itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
-        itemView.processStateTv.setText(""+mProcessList.get(position).getStatus());
-        itemView.contractDateTv.setText(mProcessList.get(position).getMachineOrderData().getContractShipDate());
-        itemView.planDateTv.setText(mProcessList.get(position).getMachineOrderData().getPlanShipDate());
-        itemView.itemLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(itemClickListener != null) {
-                    itemClickListener.onItemClick(position);
+        if (mProcessList!=null && !mProcessList.isEmpty() && position < mProcessList.size()) {
+            Log.d(TAG, "onBindViewHolder: 有数据"+position);
+            itemView.machineIdTv.setText("" + mProcessList.get(position).getMachineData().getMachineId());
+            itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
+            itemView.processStateTv.setText("" + mProcessList.get(position).getStatus());
+            itemView.contractDateTv.setText(mProcessList.get(position).getMachineOrderData().getContractShipDate());
+            itemView.planDateTv.setText(mProcessList.get(position).getMachineOrderData().getPlanShipDate());
+            itemView.itemLinearLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (itemClickListener != null) {
+                        itemClickListener.onItemClick(position);
+                    }
                 }
-            }
-        });
-
+            });
+        }else {
+            Log.d(TAG, "onBindViewHolder: 没有获取到list数据");
         }
+
+    }
 
     @Override
     public int getItemCount() {

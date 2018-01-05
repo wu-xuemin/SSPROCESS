@@ -118,8 +118,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private void fetchInstallRecordData() {
         final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
-        LinkedHashMap<String, Integer> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("taskRecordId", mTaskMachineListData.getId());
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("taskRecordId", ""+mTaskMachineListData.getId());
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_INSTALL_ABNORMAL_RECORD_DETAIL;
         Network.Instance(SinSimApp.getApp()).fetchProcessInstallRecordData(fetchProcessRecordUrl, mPostValue, mFetchInstallRecordDataHandler);
     }
@@ -131,29 +131,31 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             if (msg.what == Network.OK) {
                 //获取质检结果
                 mAbnormalRecordList=(ArrayList<AbnormalRecordDetailsData>)msg.obj;
-                int updateTime=0;
-                //对比mQualityRecordList.get(update).getCreateTime()取值
-                for(int update=0;update<mAbnormalRecordList.size();update++){
-                    if (mAbnormalRecordList.get(update+1) != null) {
-                        if (mAbnormalRecordList.get(update).getCreateTime() < mAbnormalRecordList.get(update + 1).getCreateTime()) {
-                            Log.d(TAG, "handleMessage: "+mAbnormalRecordList.get(update).getCreateTime()+" : "+mAbnormalRecordList.get(update+1).getCreateTime());
-                            updateTime = update+1;
+                if (mAbnormalRecordList!=null && !mAbnormalRecordList.isEmpty()) {
+                    int updateTime = mAbnormalRecordList.size() - 1;
+                    //对比mQualityRecordList.get(update).getCreateTime()取值
+                    for (int update = mAbnormalRecordList.size() - 2; update >= 0; update--) {
+                        if (mAbnormalRecordList.get(updateTime).getCreateTime() < mAbnormalRecordList.get(update).getCreateTime()) {
+                            Log.d(TAG, "handleMessage: " + mAbnormalRecordList.get(update).getCreateTime() + " : " + mAbnormalRecordList.get(update + 1).getCreateTime());
+                            updateTime = update;
                         }
-                        Log.d(TAG, "handleMessage: updateTime1:"+updateTime);
+                        Log.d(TAG, "handleMessage: updateTime:" + updateTime);
                     }
-                    Log.d(TAG, "handleMessage: updateTime2:"+updateTime);
-                }
-                mAbnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
-                //如果异常，填入异常原因
-                if (mAbnormalRecordDetailsData.getTaskRecord().getStatus()==4){
-                    installAbnormalRb.setChecked(true);
-                    failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(),true);
-                    installAbnormalDetailEt.setText(mAbnormalRecordDetailsData.getComment());
-                    //TODO:照片地址
+                    mAbnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
+                    //如果异常，填入异常原因
+                    Log.d(TAG, "handleMessage: 流程："+mAbnormalRecordDetailsData.getTaskRecord().getStatus()+" 异常类型："+mAbnormalRecordDetailsData.getAbnormalType());
+                    if (mAbnormalRecordDetailsData.getTaskRecord().getStatus() == 4) {
+                        installAbnormalRb.setChecked(true);
+                        failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(), true);
+                        installAbnormalDetailEt.setText(mAbnormalRecordDetailsData.getComment());
+                        //TODO:照片地址
+                    } else {
+                        installNormalRb.setChecked(true);
+                        failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(), true);
+                        installAbnormalDetailEt.setText("");
+                    }
                 } else {
-                    installAbnormalRb.setChecked(true);
-                    failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(),true);
-                    installAbnormalDetailEt.setText("");
+                    Log.d(TAG, "handleMessage: 没有安装异常");
                 }
             } else {
                 String errorMsg = (String)msg.obj;

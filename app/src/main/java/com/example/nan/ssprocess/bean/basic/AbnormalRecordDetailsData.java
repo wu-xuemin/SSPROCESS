@@ -21,7 +21,7 @@ public class AbnormalRecordDetailsData {
     private int submitUser;
     private TaskRecordData taskRecord;
     private int taskRecordId;
-    private Long createTime;//更新时间
+    private long createTime;//更新时间
 
     public AbnormalImageData getAbnormalImage() {
         return abnormalImage;
@@ -75,7 +75,7 @@ public class AbnormalRecordDetailsData {
         return taskRecordId;
     }
 
-    public Long getCreateTime() {
+    public long getCreateTime() {
         return createTime;
     }
 }
