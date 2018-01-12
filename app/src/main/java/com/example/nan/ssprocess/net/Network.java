@@ -474,4 +474,64 @@ public class Network {
         }
     }
 
+    //上传图片
+    public void uploadQualityRecordImage(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
+        if (!isNetworkConnected()) {
+            ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
+        } else {
+            if (url != null && values != null && handler != null) {
+                final Message msg = handler.obtainMessage();
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        RequestBody requestBody;
+                        FormBody.Builder builder = new FormBody.Builder();
+                        Iterator iterator = values.entrySet().iterator();
+                        while (iterator.hasNext()) {
+                            HashMap.Entry entry = (HashMap.Entry)iterator.next();
+                            builder.add((String) entry.getKey(), (String)entry.getValue());
+                        }
+                        requestBody = builder.build();
+                        //Post method
+                        Request request = new Request.Builder().url( url).post(requestBody).build();
+                        OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
+                        Response response = null;
+                        try {
+                            response = client.newCall(request).execute();
+                            boolean success = false;
+                            if (response.isSuccessful()) {
+                                Gson gson = new Gson();
+                                ResponseData responseData = gson.fromJson(response.body().string(), new TypeToken<ResponseData>(){}.getType());
+                                if (responseData != null) {
+                                    if (responseData.getCode() == 200) {
+                                        success = true;
+                                    } else if (responseData.getCode() == 400) {
+                                        msg.obj = responseData.getMessage();
+                                    } else {
+                                        Log.e(TAG, "updateProcessRecordData Format JSON string to object error!");
+                                    }
+                                }
+                                if (success) {
+                                    msg.what = OK;
+                                }
+                            } else {
+                                msg.what = NG;
+                            }
+                            response.close();
+                        } catch (Exception e) {
+                            msg.what = NG;
+                            msg.obj = "Network error!";
+                            Log.d(TAG, "updateProcessRecordData run: network error!");
+                        } finally {
+                            handler.sendMessage(msg);
+                            if(response != null) {
+                                response.close();
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
+
 }

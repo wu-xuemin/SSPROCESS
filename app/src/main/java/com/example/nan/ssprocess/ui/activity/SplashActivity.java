@@ -90,7 +90,6 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
 
         //检查preference中的isLogin状态
         boolean  isLogin  = SinSimApp.getApp().isLogined();
-//        boolean  isLogin  = true;
         if(isLogin) {
             final String account = SinSimApp.getApp().getAccount();
             final String password = SinSimApp.getApp().getPassword();

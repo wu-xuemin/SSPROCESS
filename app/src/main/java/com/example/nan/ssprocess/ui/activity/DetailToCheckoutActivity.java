@@ -25,12 +25,21 @@ import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerPreviewActivity;
 import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * @author nan  2017/12/18
@@ -49,6 +58,8 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     private FetchQARecordDataHandler mFetchQARecordDataHandler = new FetchQARecordDataHandler();
     private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
 
+    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
+    private final OkHttpClient client = new OkHttpClient();
 
     private static final int SCAN_QRCODE_END = 0;
     private static final int RC_CHECKOUT_CHOOSE_PHOTO = 3;
@@ -162,7 +173,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     private void updateQARecordData() {
         final String ip = SinSimApp.getApp().getServerIP();
         //读取和更新输入信息
-
         if(checkedOkRb.isChecked()){
             mQualityRecordDetailsData.setStatus(PASS);
         }else if(checkedNokRb.isChecked()){
@@ -171,6 +181,8 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                 mQualityRecordDetailsData.setComment(checkoutNokDetailEt.getText().toString());
             }
         }
+        //上传检验失败信息
+        //mCheckoutNokPhotosSnpl.getData();
         Gson gson=new Gson();
         String mQualityRecordDetailsDataToJson = gson.toJson(mQualityRecordDetailsData);
         Log.d(TAG, "updateQARecordData: gson :"+ mQualityRecordDetailsDataToJson);
@@ -248,6 +260,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                     if(taskMachineListDataId.getId()==mTaskMachineListData.getId()){
                         Log.d(TAG, "onActivityResult: id 对应");
                         //update info
+                        uploadImg();
                         updateQARecordData();
                     } else {
                         Log.d(TAG, "onActivityResult: 二维码信息不对应");
@@ -269,5 +282,48 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             default:
                 break;
         }
+    }
+
+    private void uploadImg() {
+        // mImgUrls为存放图片的url集合
+        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        Log.d(TAG, "uploadImg: "+mCheckoutNokPhotosSnpl.getData().size());
+        for (int i = 0; i <mCheckoutNokPhotosSnpl.getData().size() ; i++) {
+            Log.d(TAG, "uploadImg: "+mCheckoutNokPhotosSnpl.getData().get(i));
+            File f=new File(mCheckoutNokPhotosSnpl.getData().get(i));
+            if (f!=null) {
+                builder.addFormDataPart("file1", f.getName(), RequestBody.create(MEDIA_TYPE_PNG, f));
+            }
+        }
+        //添加其它信息
+        builder.addFormDataPart("qualityRecordImage",new Gson().toJson(mQualityRecordDetailsData.getQualityRecordImage()));
+//        builder.addFormDataPart("mapX", SharedInfoUtils.getLongitude());
+//        builder.addFormDataPart("mapY",SharedInfoUtils.getLatitude());
+//        builder.addFormDataPart("name",SharedInfoUtils.getUserName());
+
+        MultipartBody requestBody = builder.build();
+        //构建请求
+        Request request = new Request.Builder()
+                .url(URL.UPLOAD_QUALITY_RECORD_IMAGE)//地址
+                .post(requestBody)//添加请求体
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+                System.out.println("上传失败:e.getLocalizedMessage() = " + e.getLocalizedMessage());
+                Log.d(TAG, "onFailure: 图片上传失败");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                System.out.println("上传照片成功：response = " + response.body().string());
+                Toast.makeText(DetailToCheckoutActivity.this, "上传成功", Toast.LENGTH_LONG).show();
+                Log.d(TAG, "onResponse: 图片上传成功");
+            }
+        });
     }
 }
