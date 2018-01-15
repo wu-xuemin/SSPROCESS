@@ -73,13 +73,14 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
     @Override
     public void onScanQRCodeSuccess(String result) {
         Log.d(TAG, "result:" + result);
-        //根据result获取对应taskRecordDetail
-        final String ip = SinSimApp.getApp().getServerIP();
-        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("taskRecordId", result);
-        String fetchTaskProcessFromIdUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_DETAIL;
-        Network.Instance(SinSimApp.getApp()).fetchTaskProcessFromId(fetchTaskProcessFromIdUrl, mPostValue, mFetchTaskProcessFromIdHandler);
-
+        if (result!=null) {
+            //根据result获取对应taskRecordDetail
+            final String ip = SinSimApp.getApp().getServerIP();
+            LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+            mPostValue.put("taskRecordId", result);
+            String fetchTaskProcessFromIdUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_DETAIL;
+            Network.Instance(SinSimApp.getApp()).fetchTaskProcessFromId(fetchTaskProcessFromIdUrl, mPostValue, mFetchTaskProcessFromIdHandler);
+        }
         vibrate();
         mQRCodeView.startSpot();
     }

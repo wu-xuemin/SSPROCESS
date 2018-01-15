@@ -296,15 +296,18 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             }
         }
         //添加其它信息
+        Log.d(TAG, "uploadImg: qualityRecordImage url : "+new Gson().toJson(mQualityRecordDetailsData.getQualityRecordImage()));
         builder.addFormDataPart("qualityRecordImage",new Gson().toJson(mQualityRecordDetailsData.getQualityRecordImage()));
 //        builder.addFormDataPart("mapX", SharedInfoUtils.getLongitude());
 //        builder.addFormDataPart("mapY",SharedInfoUtils.getLatitude());
 //        builder.addFormDataPart("name",SharedInfoUtils.getUserName());
 
+        String updateImgUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.UPLOAD_QUALITY_RECORD_IMAGE;
+
         MultipartBody requestBody = builder.build();
         //构建请求
         Request request = new Request.Builder()
-                .url(URL.UPLOAD_QUALITY_RECORD_IMAGE)//地址
+                .url(updateImgUrl)//地址
                 .post(requestBody)//添加请求体
                 .build();
 
@@ -321,7 +324,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             public void onResponse(Call call, Response response) throws IOException {
 
                 System.out.println("上传照片成功：response = " + response.body().string());
-                Toast.makeText(DetailToCheckoutActivity.this, "上传成功", Toast.LENGTH_LONG).show();
                 Log.d(TAG, "onResponse: 图片上传成功");
             }
         });

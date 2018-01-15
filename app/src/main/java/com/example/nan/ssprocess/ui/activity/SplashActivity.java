@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
+import com.example.nan.ssprocess.bean.response.LoginResponseData;
 import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.service.MyMqttService;
 
@@ -60,9 +61,9 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_FULLSCREEN | localLayoutParams.flags);
         setContentView(R.layout.activity_splash);
 
-        Intent startIntent = new Intent(this, MyMqttService.class);
-        // 启动服务
-        startService(startIntent);
+//        Intent startIntent = new Intent(this, MyMqttService.class);
+//        // 启动服务
+//        startService(startIntent);
 
         mNetwork = Network.Instance(SinSimApp.getApp());
         mFetchLoginHandler = new FetchLoginHandler();
@@ -190,7 +191,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
             //网络请求返回，移除超时的Runnable
             mTimeoutHandler.removeCallbacks(mTimeOutRunnable);
             if (msg.what == Network.OK) {
-                onFetchProcessDataSuccess((String)msg.obj);
+                onFetchProcessDataSuccess((LoginResponseData)msg.obj);
             } else {
                 String errorMsg = (String)msg.obj;
                 onFetchProcessDataFailed(errorMsg);
@@ -198,8 +199,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         }
     }
 
-    private void onFetchProcessDataSuccess(final String processStatus) {
-        //Toast.makeText(this,"Fetch Successful!", Toast.LENGTH_SHORT).show();
+    private void onFetchProcessDataSuccess(LoginResponseData data) {
 
         final TextView logoText = (TextView)findViewById(R.id.crh_text);
         // 设置加载动画透明度渐变从（0.1不显示-1.0完全显示）

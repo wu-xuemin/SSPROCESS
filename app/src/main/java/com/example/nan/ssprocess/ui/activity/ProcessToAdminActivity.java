@@ -85,7 +85,8 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
             @Override
             public void onItemClick(int position){
                 Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToAdminList.get(position)));
-                Intent intent=new Intent(ProcessToAdminActivity.this,DetailToAdminActivity.class);
+//                Intent intent=new Intent(ProcessToAdminActivity.this,DetailToAdminActivity.class);
+                Intent intent=new Intent(ProcessToAdminActivity.this,DetailToCheckoutActivity.class);
                 intent.putExtra("mTaskMachineListData", mProcessToAdminList.get(position));
                 startActivity(intent);
             }

@@ -61,7 +61,7 @@
                     android:layout_alignStart="@+id/install_info_label"
                     android:layout_alignLeft="@+id/install_info_label"
                     android:layout_below="@+id/install_info_label"
-                    android:text="安装异常信息："
+                    android:text="安装结果："
                     android:textColor="#000000"/>
                 <Spinner
                     android:id="@+id/fail_reason_spinner"
