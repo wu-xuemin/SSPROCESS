@@ -21,14 +21,19 @@ import com.example.nan.ssprocess.util.ShowMessage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -45,6 +50,8 @@ public class Network {
     private static final int CORE_THREAD_NUM = 3;
     public static final int OK = 1;
     private static final int NG = 0;
+    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
+
 
     private Network() {
     }
@@ -171,7 +178,7 @@ public class Network {
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {
-                            response = client.newCall(request).execute();
+                            response = client.newCall(request).execute();//同步网络请求
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
@@ -238,7 +245,7 @@ public class Network {
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {
-                            response = client.newCall(request).execute();
+                            response = client.newCall(request).execute();//同步网络请求
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
@@ -304,7 +311,7 @@ public class Network {
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {
-                            response = client.newCall(request).execute();
+                            response = client.newCall(request).execute();//同步网络请求
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
@@ -370,7 +377,7 @@ public class Network {
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {
-                            response = client.newCall(request).execute();
+                            response = client.newCall(request).execute();//同步网络请求
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
@@ -426,10 +433,9 @@ public class Network {
                     public void run() {
                         RequestBody requestBody;
                         FormBody.Builder builder = new FormBody.Builder();
-                        Iterator iterator = values.entrySet().iterator();
-                        while (iterator.hasNext()) {
-                            HashMap.Entry entry = (HashMap.Entry)iterator.next();
-                            builder.add((String) entry.getKey(), (String)entry.getValue());
+                        for (Object o : values.entrySet()) {
+                            HashMap.Entry entry = (HashMap.Entry) o;
+                            builder.add((String) entry.getKey(), (String) entry.getValue());
                         }
                         requestBody = builder.build();
                         //Post method
@@ -437,7 +443,7 @@ public class Network {
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {
-                            response = client.newCall(request).execute();
+                            response = client.newCall(request).execute();//同步网络请求
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
@@ -475,29 +481,33 @@ public class Network {
     }
 
     //上传图片
-    public void uploadQualityRecordImage(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
+    public void uploadQualityRecordImage(final String url, final ArrayList<String> imageList, final String imageUrl, final Handler handler) {
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
         } else {
-            if (url != null && values != null && handler != null) {
+            if (url != null && imageList != null && imageUrl != null && handler != null) {
                 final Message msg = handler.obtainMessage();
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
                         RequestBody requestBody;
-                        FormBody.Builder builder = new FormBody.Builder();
-                        Iterator iterator = values.entrySet().iterator();
-                        while (iterator.hasNext()) {
-                            HashMap.Entry entry = (HashMap.Entry)iterator.next();
-                            builder.add((String) entry.getKey(), (String)entry.getValue());
+                        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                        Log.d(TAG, "uploadQualityRecordImage: "+imageList.size());
+                        for (int i = 0; i <imageList.size() ; i++) {
+                            Log.d(TAG, "uploadImg: "+imageList.get(i));
+                            File file=new File(imageList.get(i));
+                            builder.addFormDataPart("file1", file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
                         }
+                        //添加其它信息
+                        Log.d(TAG, "uploadQualityRecordImage: imageUrl : "+imageUrl);
+                        builder.addFormDataPart("qualityRecordImage",imageUrl);
                         requestBody = builder.build();
                         //Post method
-                        Request request = new Request.Builder().url( url).post(requestBody).build();
-                        OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
+                        Request request = new Request.Builder().url(url).post(requestBody).build();
+                        OkHttpClient client = ((SinSimApp)mCtx).getOKHttpClient();
                         Response response = null;
                         try {
-                            response = client.newCall(request).execute();
+                            response = client.newCall(request).execute();//同步网络请求
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
@@ -508,7 +518,7 @@ public class Network {
                                     } else if (responseData.getCode() == 400) {
                                         msg.obj = responseData.getMessage();
                                     } else {
-                                        Log.e(TAG, "updateProcessRecordData Format JSON string to object error!");
+                                        Log.e(TAG, "uploadQualityRecordImage Format JSON string to object error!");
                                     }
                                 }
                                 if (success) {
@@ -521,7 +531,7 @@ public class Network {
                         } catch (Exception e) {
                             msg.what = NG;
                             msg.obj = "Network error!";
-                            Log.d(TAG, "updateProcessRecordData run: network error!");
+                            Log.d(TAG, "uploadQualityRecordImage run: network error!");
                         } finally {
                             handler.sendMessage(msg);
                             if(response != null) {
@@ -531,6 +541,7 @@ public class Network {
                     }
                 });
             }
+
         }
     }
 

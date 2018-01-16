@@ -172,13 +172,17 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 
     private void updateQARecordData() {
         final String ip = SinSimApp.getApp().getServerIP();
+        ArrayList<String> imageUrl = new ArrayList<>();
         //读取和更新输入信息
         if(checkedOkRb.isChecked()){
             mQualityRecordDetailsData.setStatus(PASS);
         }else if(checkedNokRb.isChecked()){
             mQualityRecordDetailsData.setStatus(NO_PASS);
-            if(checkoutNokDetailEt.getText()!=null){
+            if(checkoutNokDetailEt.getText()!=null && mCheckoutNokPhotosSnpl.getData().size() > 0){
                 mQualityRecordDetailsData.setComment(checkoutNokDetailEt.getText().toString());
+                imageUrl = mCheckoutNokPhotosSnpl.getData();
+            } else {
+                Toast.makeText(DetailToCheckoutActivity.this,"请拍照并输入质检不合格原因",Toast.LENGTH_SHORT).show();
             }
         }
         //上传检验失败信息
@@ -298,9 +302,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         //添加其它信息
         Log.d(TAG, "uploadImg: qualityRecordImage url : "+new Gson().toJson(mQualityRecordDetailsData.getQualityRecordImage()));
         builder.addFormDataPart("qualityRecordImage",new Gson().toJson(mQualityRecordDetailsData.getQualityRecordImage()));
-//        builder.addFormDataPart("mapX", SharedInfoUtils.getLongitude());
-//        builder.addFormDataPart("mapY",SharedInfoUtils.getLatitude());
-//        builder.addFormDataPart("name",SharedInfoUtils.getUserName());
 
         String updateImgUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.UPLOAD_QUALITY_RECORD_IMAGE;
 
@@ -311,6 +312,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                 .post(requestBody)//添加请求体
                 .build();
 
+        //异步
         client.newCall(request).enqueue(new Callback() {
 
             @Override
