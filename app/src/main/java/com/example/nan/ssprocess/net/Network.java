@@ -481,26 +481,26 @@ public class Network {
     }
 
     //上传图片
-    public void uploadQualityRecordImage(final String url, final ArrayList<String> imageList, final String imageUrl, final Handler handler) {
+    public void uploadTaskRecordImage(final String url, final ArrayList<String> imageUrlList, final String key, final String imageJson, final Handler handler) {
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
         } else {
-            if (url != null && imageList != null && imageUrl != null && handler != null) {
+            if (url != null && imageUrlList != null && imageJson != null && handler != null) {
                 final Message msg = handler.obtainMessage();
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
                         RequestBody requestBody;
                         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-                        Log.d(TAG, "uploadQualityRecordImage: "+imageList.size());
-                        for (int i = 0; i <imageList.size() ; i++) {
-                            Log.d(TAG, "uploadImg: "+imageList.get(i));
-                            File file=new File(imageList.get(i));
+                        Log.d(TAG, "uploadTaskRecordImage: "+imageUrlList.size());
+                        for (int i = 0; i <imageUrlList.size() ; i++) {
+                            Log.d(TAG, "uploadImgUrl: "+imageUrlList.get(i));
+                            File file=new File(imageUrlList.get(i));
                             builder.addFormDataPart("file1", file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
                         }
                         //添加其它信息
-                        Log.d(TAG, "uploadQualityRecordImage: imageUrl : "+imageUrl);
-                        builder.addFormDataPart("qualityRecordImage",imageUrl);
+                        Log.d(TAG, "uploadTaskRecordImage: addImageSql: "+imageJson);
+                        builder.addFormDataPart(key,imageJson);
                         requestBody = builder.build();
                         //Post method
                         Request request = new Request.Builder().url(url).post(requestBody).build();
@@ -518,7 +518,7 @@ public class Network {
                                     } else if (responseData.getCode() == 400) {
                                         msg.obj = responseData.getMessage();
                                     } else {
-                                        Log.e(TAG, "uploadQualityRecordImage Format JSON string to object error!");
+                                        Log.e(TAG, "uploadTaskRecordImage Format JSON string to object error!");
                                     }
                                 }
                                 if (success) {
@@ -531,7 +531,7 @@ public class Network {
                         } catch (Exception e) {
                             msg.what = NG;
                             msg.obj = "Network error!";
-                            Log.d(TAG, "uploadQualityRecordImage run: network error!");
+                            Log.d(TAG, "uploadTaskRecordImage run: network error!");
                         } finally {
                             handler.sendMessage(msg);
                             if(response != null) {

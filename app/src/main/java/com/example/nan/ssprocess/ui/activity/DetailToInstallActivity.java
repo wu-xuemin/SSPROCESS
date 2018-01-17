@@ -20,13 +20,16 @@ import android.widget.Toast;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
+import com.example.nan.ssprocess.bean.basic.AbnormalImageAddData;
 import com.example.nan.ssprocess.bean.basic.AbnormalRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
@@ -49,6 +52,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private AbnormalRecordDetailsData mAbnormalRecordDetailsData=new AbnormalRecordDetailsData();
     private FetchInstallRecordDataHandler mFetchInstallRecordDataHandler = new FetchInstallRecordDataHandler();
     private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
+    private UploadTaskRecordImageHandler mUploadTaskRecordImageHandler=new UploadTaskRecordImageHandler();
+
 
     private static final int SCAN_QRCODE_END = 0;
     private static final int RC_INSTALL_CHOOSE_PHOTO = 3;
@@ -167,25 +172,60 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     //更新abnormal信息
     private void updateInstallRecordData() {
         final String ip = SinSimApp.getApp().getServerIP();
+        ArrayList<String> imageUrlList = new ArrayList<>();
+        Gson gson=new Gson();
         //读取和更新输入信息
         if(installNormalRb.isChecked()){
             mAbnormalRecordDetailsData.getTaskRecord().setStatus(NORMAL);
         }else if(installAbnormalRb.isChecked()){
             mAbnormalRecordDetailsData.getTaskRecord().setStatus(ABNORMAL);
             mAbnormalRecordDetailsData.setAbnormalType((int) failReasonSpinner.getSelectedItemId());
-            if(installAbnormalDetailEt.getText()!=null){
+            if(installAbnormalDetailEt.getText()!=null && mInstallAbnormalPhotosSnpl.getData().size()>0){
+                //获取安装异常的原因
                 mAbnormalRecordDetailsData.setComment(installAbnormalDetailEt.getText().toString());
+                //获取图片本地url
+                imageUrlList = mInstallAbnormalPhotosSnpl.getData();
+                //添加quality_record_image数据库
+                AbnormalImageAddData abnormalImageAddData = new AbnormalImageAddData();
+                //获取当前时间
+                @SuppressLint("SimpleDateFormat")
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+                Date curDate = new Date(System.currentTimeMillis());
+                String strCurTima = formatter.format(curDate);
+                //更新当前时间
+                abnormalImageAddData.setCreateTime(strCurTima);
+                abnormalImageAddData.setAbnormalRecordId(mAbnormalRecordDetailsData.getId());
+                //更新质检不合格照片
+                String imageJson = gson.toJson(abnormalImageAddData);
+                Log.d(TAG, "updateInstallRecordData: "+imageJson);
+                String uploadQualityRecordImageUrl = URL.HTTP_HEAD + ip + URL.UPLOAD_INSTALL_ABNORMAL_IMAGE;
+                Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadQualityRecordImageUrl, imageUrlList, "abnormalImage", imageJson, mUploadTaskRecordImageHandler);
             }
         }
 
-        Gson gson=new Gson();
         String mAbnormalRecordDetailsDataToJson = gson.toJson(mAbnormalRecordDetailsData);
-        Log.d(TAG, "updateQARecordData: gson :"+ mAbnormalRecordDetailsDataToJson);
+        Log.d(TAG, "updateInstallRecordData: gson :"+ mAbnormalRecordDetailsDataToJson);
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("strTaskQualityRecordDetail", mAbnormalRecordDetailsDataToJson);
         String updateProcessRecordUrl = URL.HTTP_HEAD + ip + URL.UPDATE_INSTALL_ABNORMAL_RECORD_DETAIL;
-        Log.d(TAG, "updateQARecordData: "+updateProcessRecordUrl+mPostValue.get("machine"));
+        Log.d(TAG, "updateInstallRecordData: "+updateProcessRecordUrl+mPostValue.get("machine"));
         Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, mUpdateProcessDetailDataHandler);
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class UploadTaskRecordImageHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+
+            if (msg.what == Network.OK) {
+                Toast.makeText(DetailToInstallActivity.this, "上传图片成功！", Toast.LENGTH_SHORT).show();
+                //TODO:是否弹窗
+            } else {
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: "+errorMsg);
+                Toast.makeText(DetailToInstallActivity.this, "上传图片失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @SuppressLint("HandlerLeak")

@@ -144,7 +144,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                 mQualityRecordList=(ArrayList<QualityRecordDetailsData>)msg.obj;
                 if (mQualityRecordList!=null && !mQualityRecordList.isEmpty()) {
                     int updateTime = mQualityRecordList.size() - 1;
-                    //对比mQualityRecordList.get(update).getCreateTime()取值
+                    //根据CreateTime取值
                     for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
                         if (mQualityRecordList.get(updateTime).getCreateTime() < mQualityRecordList.get(update).getCreateTime()) {
                             Log.d(TAG, "handleMessage: " + mQualityRecordList.get(updateTime).getCreateTime() + " : " + mQualityRecordList.get(update).getCreateTime());
@@ -215,7 +215,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         //更新loaction状态
         mTaskMachineListData.getMachineData().setLocation(locationEt.getText().toString());
         Gson gson=new Gson();
-        String machineDataToJson = gson.toJson(mTaskMachineListData);
+        String machineDataToJson = gson.toJson(mTaskMachineListData.getMachineData());
         Log.d(TAG, "onItemClick: gson :"+ machineDataToJson);
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("machine", machineDataToJson);
