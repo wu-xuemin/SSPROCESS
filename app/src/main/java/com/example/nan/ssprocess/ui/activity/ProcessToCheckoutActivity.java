@@ -115,27 +115,6 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
         fetchProcessData();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-            case SCAN_QRCODE_START:
-                // 当requestCode、resultCode同时为0时，也就是处理特定的结果
-                if (resultCode == RESULT_OK)
-                {
-                    // 取出Intent里的Extras数据传递给跳转的activity
-                    TaskMachineListData mTaskMachineListData=new TaskMachineListData();
-                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
-                    Intent intent=new Intent(ProcessToCheckoutActivity.this,DetailToCheckoutActivity.class);
-                    intent.putExtra("mTaskMachineListData", mTaskMachineListData);
-                    startActivity(intent);
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
     private void fetchProcessData() {
         final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
@@ -167,6 +146,29 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(ProcessToCheckoutActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case SCAN_QRCODE_START:
+                // 当requestCode、resultCode同时为0时，也就是处理特定的结果
+                if (resultCode == RESULT_OK)
+                {
+                    // 取出Intent里的Extras数据传递给跳转的activity
+                    TaskMachineListData mTaskMachineListData=new TaskMachineListData();
+                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
+                    //TODO:添加判断逻辑
+
+                    Intent intent=new Intent(ProcessToCheckoutActivity.this,DetailToCheckoutActivity.class);
+                    intent.putExtra("mTaskMachineListData", mTaskMachineListData);
+                    startActivity(intent);
+                }
+                break;
+            default:
+                break;
         }
     }
 

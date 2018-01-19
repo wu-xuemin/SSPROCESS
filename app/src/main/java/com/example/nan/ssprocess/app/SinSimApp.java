@@ -69,7 +69,6 @@ public class SinSimApp extends Application {
     public void onCreate() {
         super.onCreate();
         mApp = this;
-        //Toast.makeText(mApp, (String)TypeToClassMap.get(DataClassName.LOGIN_RESPONSE_DATA), Toast.LENGTH_LONG).show();
         //start log
         LogUtils.logInit(true);
 
