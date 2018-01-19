@@ -105,7 +105,12 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                 fetchProcessData(mPage);
             }
         });
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: ");
         //第一次进入刷新页面， 加载loading页面
         if( mLoadingProcessDialog == null) {
             mLoadingProcessDialog = new ProgressDialog(ProcessToAdminActivity.this);
@@ -114,7 +119,6 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
             mLoadingProcessDialog.setMessage("获取信息中...");
         }
         mLoadingProcessDialog.show();
-
         fetchProcessData(mPage);
     }
 
@@ -157,7 +161,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                 Log.d(TAG, "handleMessage: size: "+mProcessToAdminList.size());
                 mProcessToAdminAdapter.setProcessList(mProcessToAdminList);
                 mProcessToAdminAdapter.notifyDataSetChanged();
-                Toast.makeText(ProcessToAdminActivity.this, "更新成功！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProcessToAdminActivity.this, "列表已更新！", Toast.LENGTH_SHORT).show();
             } else {
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(ProcessToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();

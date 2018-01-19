@@ -1,10 +1,12 @@
 package com.example.nan.ssprocess.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -71,16 +73,31 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
     }
 
     @Override
-    public void onScanQRCodeSuccess(String result) {
+    public void onScanQRCodeSuccess(final String result) {
         Log.d(TAG, "result:" + result);
-        if (result!=null) {
-            //根据result获取对应taskRecordDetail
-            final String ip = SinSimApp.getApp().getServerIP();
-            LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-            mPostValue.put("taskRecordId", result);
-            String fetchTaskProcessFromIdUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_DETAIL;
-            Network.Instance(SinSimApp.getApp()).fetchTaskProcessFromId(fetchTaskProcessFromIdUrl, mPostValue, mFetchTaskProcessFromIdHandler);
-        }
+        final AlertDialog.Builder scanQrResultDialog = new AlertDialog.Builder(ScanQrcodeActivity.this);
+        scanQrResultDialog.setTitle("扫描结果");
+        scanQrResultDialog.setMessage("扫描结果： "+result);
+        scanQrResultDialog.setPositiveButton("确定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //根据result获取对应taskRecordDetail
+                        final String ip = SinSimApp.getApp().getServerIP();
+                        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                        mPostValue.put("taskRecordId", result);
+                        String fetchTaskProcessFromIdUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_DETAIL;
+                        Network.Instance(SinSimApp.getApp()).fetchTaskProcessFromId(fetchTaskProcessFromIdUrl, mPostValue, mFetchTaskProcessFromIdHandler);                    }
+                });
+        scanQrResultDialog.setNegativeButton("取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //...To-do
+                    }
+                });
+        // 显示
+        scanQrResultDialog.show();
         vibrate();
         mQRCodeView.startSpot();
     }
@@ -112,7 +129,7 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: error..."+errorMsg);
-                Toast.makeText(ScanQrcodeActivity.this,"扫码有误："+errorMsg,Toast.LENGTH_SHORT).show();
+                Toast.makeText(ScanQrcodeActivity.this,"扫码失败："+errorMsg,Toast.LENGTH_SHORT).show();
             }
         }
     }

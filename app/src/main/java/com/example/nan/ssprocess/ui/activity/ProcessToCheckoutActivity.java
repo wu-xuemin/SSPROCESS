@@ -98,6 +98,12 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
                 fetchProcessData();
             }
         });
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         //第一次进入刷新页面， 加载loading页面
         if( mLoadingProcessDialog == null) {
             mLoadingProcessDialog = new ProgressDialog(ProcessToCheckoutActivity.this);
@@ -185,4 +191,5 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

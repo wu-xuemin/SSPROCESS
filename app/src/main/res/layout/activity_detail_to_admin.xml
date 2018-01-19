@@ -216,14 +216,25 @@
     </ScrollView>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/update_location_button"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
+            android:layout_weight="1"
             android:textColor="#ffffff"
             android:backgroundTint="@color/colorPrimary"
             android:padding="12dp"
             android:text="上传"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/pre_button"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:textColor="#ffffff"
+            android:backgroundTint="@color/colorPrimary"
+            android:padding="12dp"
+            android:text="返回前页"/>
     </LinearLayout>
 </LinearLayout>

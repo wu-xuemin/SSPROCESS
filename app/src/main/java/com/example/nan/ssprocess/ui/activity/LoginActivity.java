@@ -132,7 +132,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onLoginSuccess(LoginResponseData data) {
-        ShowMessage.showToast(LoginActivity.this, "登录成功!", ShowMessage.MessageDuring.SHORT);
         mLoginButton.setEnabled(true);
         if( data != null) {
             //Store to memory and preference
@@ -148,7 +147,6 @@ public class LoginActivity extends AppCompatActivity {
                 it.setClass(LoginActivity.this, ProcessToAdminActivity.class);
                 startActivity(it);
                 finish();
-
             }else if(SinSimApp.getApp().getRole() == 11){
                 //进行中，流程记录未结束
                 Intent it2 = new Intent();
@@ -159,6 +157,7 @@ public class LoginActivity extends AppCompatActivity {
                 Intent it3 = new Intent();
                 it3.setClass(LoginActivity.this, ProcessToInstallActivity.class);
                 startActivity(it3);
+                finish();
             }
             else {
                 Toast.makeText(LoginActivity.this,"您无权限操作!", Toast.LENGTH_SHORT).show();

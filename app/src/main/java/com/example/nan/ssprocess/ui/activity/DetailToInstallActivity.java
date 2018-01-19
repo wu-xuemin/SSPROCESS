@@ -46,6 +46,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private RadioButton installAbnormalRb;
     private Spinner failReasonSpinner;
     private EditText installAbnormalDetailEt;
+    private Button installInfoUpdateButton;
 
     private TaskMachineListData mTaskMachineListData=new TaskMachineListData();
     private ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = new ArrayList<>();
@@ -103,7 +104,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         });
 
         //点击上传安装结果
-        Button installInfoUpdateButton = findViewById(R.id.install_info_update_button);
+        installInfoUpdateButton = findViewById(R.id.install_info_update_button);
         installInfoUpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,6 +220,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
             if (msg.what == Network.OK) {
                 Toast.makeText(DetailToInstallActivity.this, "上传图片成功！", Toast.LENGTH_SHORT).show();
+                installInfoUpdateButton.setText("重新上传");
                 //TODO:是否弹窗
             } else {
                 String errorMsg = (String)msg.obj;
@@ -235,6 +237,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
             if (msg.what == Network.OK) {
                 Toast.makeText(DetailToInstallActivity.this, "更新成功！", Toast.LENGTH_SHORT).show();
+
                 //TODO:发送mqtt消息，更新安装状态，跳转回list界面
             } else {
                 String errorMsg = (String)msg.obj;

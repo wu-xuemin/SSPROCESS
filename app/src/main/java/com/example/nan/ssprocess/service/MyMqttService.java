@@ -33,7 +33,7 @@ public class MyMqttService extends Service {
     private final String subscriptionTopic = "exampleAndroidPublishTopic";
     private static final String publishTopic = "exampleAndroidPublishTopic";
 
-    private static MqttAndroidClient mqttAndroidClient;
+    private MqttAndroidClient mqttAndroidClient;
 
 
     public MyMqttService() {
@@ -143,7 +143,7 @@ public class MyMqttService extends Service {
     }
 
     //发布消息
-    public static void publishMessage(String msg){
+    public void publishMessage(String msg){
         try {
             MqttMessage message = new MqttMessage();
             message.setPayload(msg.getBytes());

@@ -185,6 +185,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         });
         logoText.startAnimation(animation);
     }
+    @SuppressLint("HandlerLeak")
     private class FetchLoginHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
@@ -228,7 +229,6 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
                     it.setClass(SplashActivity.this, ProcessToAdminActivity.class);
                     startActivity(it);
                     finish();
-
                 }else if(SinSimApp.getApp().getRole() == 11){
                     //进行中，流程记录未结束
                     Intent it2 = new Intent();
@@ -239,9 +239,9 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
                     Intent it3 = new Intent();
                     it3.setClass(SplashActivity.this, ProcessToInstallActivity.class);
                     startActivity(it3);
+                    finish();
                 }
                 else {
-
                     Toast.makeText(SplashActivity.this,"您无权限操作!", Toast.LENGTH_SHORT).show();
                     jumpToLoginAct();
                 }

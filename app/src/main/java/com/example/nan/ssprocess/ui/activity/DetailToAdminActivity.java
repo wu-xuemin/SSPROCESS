@@ -102,6 +102,15 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
             }
         });
 
+        //点击返回
+        Button previousButton = findViewById(R.id.pre_button);
+        previousButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         //点击上传位置信息
         Button publishButton = findViewById(R.id.update_location_button);
         publishButton.setOnClickListener(new View.OnClickListener() {
