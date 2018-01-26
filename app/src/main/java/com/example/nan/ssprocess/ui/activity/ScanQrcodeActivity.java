@@ -89,17 +89,18 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
                         String fetchTaskProcessFromIdUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_DETAIL;
                         Network.Instance(SinSimApp.getApp()).fetchTaskProcessFromId(fetchTaskProcessFromIdUrl, mPostValue, mFetchTaskProcessFromIdHandler);                    }
                 });
-        scanQrResultDialog.setNegativeButton("取消",
+        scanQrResultDialog.setNegativeButton("重新扫描",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //...To-do
+                        //重新扫描
+                        mQRCodeView.startSpot();
                     }
                 });
         // 显示
         scanQrResultDialog.show();
+        //震动
         vibrate();
-        mQRCodeView.startSpot();
     }
 
     @Override
@@ -124,12 +125,14 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
                     ScanQrcodeActivity.this.setResult(RESULT_OK, intent);
                     ScanQrcodeActivity.this.finish();
                 } else {
+                    //二维码不匹配，重新启动扫描
                     Toast.makeText(ScanQrcodeActivity.this,"没有这个机器，请扫正规的二维码！",Toast.LENGTH_SHORT).show();
+                    mQRCodeView.startSpot();
                 }
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: error..."+errorMsg);
-                Toast.makeText(ScanQrcodeActivity.this,"扫码失败："+errorMsg,Toast.LENGTH_SHORT).show();
+                Toast.makeText(ScanQrcodeActivity.this,"网络错误："+errorMsg,Toast.LENGTH_SHORT).show();
             }
         }
     }

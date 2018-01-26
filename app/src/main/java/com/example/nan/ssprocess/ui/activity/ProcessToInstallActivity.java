@@ -33,8 +33,8 @@ public class ProcessToInstallActivity extends AppCompatActivity {
 
     //tab数据源
     private ArrayList<String> titleList = new ArrayList<String>() {{
-        add("安装计划");
-        add("非安装计划");
+        add("计划安装");
+        add("非计划安装");
     }};
 
     //页面数据源

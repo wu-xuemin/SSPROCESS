@@ -7,12 +7,11 @@
     <color name="windowBackground">#EBEBEB</color>
     <color name="windowBackgroundWhite">#FFFFFF</color>
     <color name="windowBackgroundSelected">#F3F3F7</color>
+    <color name="fragmentTab">#686F78</color>
 
     <color name="titleColor">#757575</color>
     <color name="titleColorSelected">#F54D33</color>
 
-    <!--<color name="white">#ffffff</color>-->
-    <!--<color name="red">#FFC93437</color>s-->
     <color name="blue">#FF375BF1</color>
     <color name="yellow">#FFF7D23E</color>
     <color name="green">#FF34A350</color>
