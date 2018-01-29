@@ -45,8 +45,6 @@ public class LoginActivity extends AppCompatActivity {
     private AlertDialog mIPSettngDialog = null;
     private String mPassword=null;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,11 +103,6 @@ public class LoginActivity extends AppCompatActivity {
 //        Intent intent = new Intent(LoginActivity.this,DetailToAdminActivity.class);
 //        startActivity(intent);
 //
-//        // 启动服务
-//
-//        Intent startIntent = new Intent(LoginActivity.this, MyMqttService.class);
-//        startService(startIntent);
-//
 //        finish();
     }
 
@@ -136,24 +129,21 @@ public class LoginActivity extends AppCompatActivity {
         if( data != null) {
             //Store to memory and preference
             mApp.setIsLogined(true, data.getAccount(), data.getFullName(), mPassword, data.getRole().getId());
-            /**
-             * 在登陆完成后检查人员role进入不同界面
-             * 生产部管理员：2，质检员：11, 安装组长：3
-             */
+
+            //在登陆完成后检查人员role进入不同界面：生产部管理员：2，质检员：11, 安装组长：3
             Log.d(TAG, "onLoginSuccess: role id "+SinSimApp.getApp().getRole());
 
-            if(SinSimApp.getApp().getRole() == 2) {
+            if(SinSimApp.LOGIN_FOR_ADMIN == SinSimApp.getApp().getRole()) {
                 Intent it = new Intent();
                 it.setClass(LoginActivity.this, ProcessToAdminActivity.class);
                 startActivity(it);
                 finish();
-            }else if(SinSimApp.getApp().getRole() == 11){
-                //进行中，流程记录未结束
+            }else if(SinSimApp.LOGIN_FOR_QA == SinSimApp.getApp().getRole()){
                 Intent it2 = new Intent();
                 it2.setClass(LoginActivity.this, ProcessToCheckoutActivity.class);
                 startActivity(it2);
                 finish();
-            }else if(SinSimApp.getApp().getRole() == 3){
+            }else if(SinSimApp.LOGIN_FOR_INSTALL == SinSimApp.getApp().getRole()){
                 Intent it3 = new Intent();
                 it3.setClass(LoginActivity.this, ProcessToInstallActivity.class);
                 startActivity(it3);

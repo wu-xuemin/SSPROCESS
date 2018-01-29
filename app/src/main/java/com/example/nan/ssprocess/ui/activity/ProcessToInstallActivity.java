@@ -15,6 +15,7 @@ import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.ProcessToInstallAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
+import com.example.nan.ssprocess.service.MyMqttService;
 import com.example.nan.ssprocess.ui.fragment.TabInstallPlanFragment;
 import com.example.nan.ssprocess.ui.fragment.TabInstallReadyFragment;
 
@@ -31,13 +32,17 @@ public class ProcessToInstallActivity extends AppCompatActivity {
     private ProcessToInstallAdapter adapter;
     private static final int SCAN_QRCODE_START = 1;
 
-    //tab数据源
+    /**
+     * tab数据源
+     */
     private ArrayList<String> titleList = new ArrayList<String>() {{
         add("计划安装");
         add("非计划安装");
     }};
 
-    //页面数据源
+    /**
+     * 页面数据源
+     */
     private ArrayList<Fragment> fragmentList = new ArrayList<Fragment>() {{
         add(new TabInstallPlanFragment());
         add(new TabInstallReadyFragment());
@@ -47,6 +52,10 @@ public class ProcessToInstallActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_to_install);
+
+        //启动MQTT服务
+        Intent startIntent = new Intent(this, MyMqttService.class);
+        startService(startIntent);
 
         Button scanQrcodeBotton = (Button) findViewById(R.id.install_scan_qrcode_button);
         scanQrcodeBotton.setOnClickListener(new View.OnClickListener() {

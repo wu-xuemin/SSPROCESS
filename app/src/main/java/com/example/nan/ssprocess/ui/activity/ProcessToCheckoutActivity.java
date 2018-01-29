@@ -24,6 +24,7 @@ import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
+import com.example.nan.ssprocess.service.MyMqttService;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -57,6 +58,10 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_to_checkout);
+
+        // 启动MQTT服务
+        Intent startIntent = new Intent(this, MyMqttService.class);
+        startService(startIntent);
 
         //点击扫码
         Button scanQrcodeBotton = findViewById(R.id.checkout_scan_qrcode_button);
@@ -104,8 +109,8 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         //第一次进入刷新页面， 加载loading页面
         if( mLoadingProcessDialog == null) {
             mLoadingProcessDialog = new ProgressDialog(ProcessToCheckoutActivity.this);

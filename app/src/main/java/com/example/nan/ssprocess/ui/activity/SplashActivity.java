@@ -61,10 +61,6 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_FULLSCREEN | localLayoutParams.flags);
         setContentView(R.layout.activity_splash);
 
-//        Intent startIntent = new Intent(this, MyMqttService.class);
-//        // 启动服务
-//        startService(startIntent);
-
         mNetwork = Network.Instance(SinSimApp.getApp());
         mFetchLoginHandler = new FetchLoginHandler();
         //申请权限
@@ -131,14 +127,12 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
                     };
                     task.execute();
 
-                    //联系服务器，获取未结束的流程
-                    // 5秒内返回，从handler中移除runnable，检查返回状态[error:{'账号密码错误'，'其他错误'; success:{'无未结束作业流程', '作业流程创建中', '作业流程已开始'}}]
+                    //5秒内返回，从handler中移除runnable
                     mTimeoutHandler = new Handler();
                     mTimeOutRunnable = new Runnable() {
                         @Override
                         public void run() {
-                            //if timeout, finish async task, notify user the network error
-                            // and jump to login activity
+                            //if timeout, finish async task, notify user the network error and jump to login activity
                             task.cancel(true);
                             Toast.makeText(SplashActivity.this, "网络连接错误，请检查无线连接是否在同一个局域网，以及服务端的IP设置是否正确！",
                                     Toast.LENGTH_LONG).show();
@@ -224,18 +218,17 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
             @Override
             public void onAnimationEnd(Animation animation) {
                 logoText.setVisibility(View.INVISIBLE);
-                if(SinSimApp.getApp().getRole() == 2) {
+                if(SinSimApp.LOGIN_FOR_ADMIN == SinSimApp.getApp().getRole()) {
                     Intent it = new Intent();
                     it.setClass(SplashActivity.this, ProcessToAdminActivity.class);
                     startActivity(it);
                     finish();
-                }else if(SinSimApp.getApp().getRole() == 11){
-                    //进行中，流程记录未结束
+                }else if(SinSimApp.LOGIN_FOR_QA == SinSimApp.getApp().getRole()){
                     Intent it2 = new Intent();
                     it2.setClass(SplashActivity.this, ProcessToCheckoutActivity.class);
                     startActivity(it2);
                     finish();
-                }else if(SinSimApp.getApp().getRole() == 3){
+                }else if(SinSimApp.LOGIN_FOR_INSTALL == SinSimApp.getApp().getRole()){
                     Intent it3 = new Intent();
                     it3.setClass(SplashActivity.this, ProcessToInstallActivity.class);
                     startActivity(it3);

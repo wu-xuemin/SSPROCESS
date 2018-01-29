@@ -40,6 +40,9 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
+/**
+ * @author nan
+ */
 public class Network {
     private static String TAG = "nlgNetwork";
     @SuppressLint("StaticFieldLeak")
@@ -65,8 +68,9 @@ public class Network {
         }
         return mNetWork;
     }
-    /*判断是否有网络连接
-    * */
+    /**
+     * 判断是否有网络连接
+     */
     public boolean isNetworkConnected() {
         ConnectivityManager connectivity = (ConnectivityManager) (mCtx.getSystemService(Context.CONNECTIVITY_SERVICE));
         if (connectivity != null) {
@@ -78,7 +82,9 @@ public class Network {
         return false;
     }
 
-    //获取login信息
+    /**
+     * 获取login信息
+     */
     public void fetchLoginData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {
             Log.d(TAG, "fetchLoginData: 没网络");
@@ -103,7 +109,8 @@ public class Network {
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {
-                            response = client.newCall(request).execute();//同步网络请求
+                            //同步网络请求
+                            response = client.newCall(request).execute();
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Log.d(TAG, "fetchLoginData run: response success");
@@ -155,7 +162,9 @@ public class Network {
         }
     }
 
-    //获取machineTaskListDetail信息
+    /**
+     * 获取machineTaskListDetail信息
+     */
     public void fetchProcessTaskRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
@@ -178,7 +187,8 @@ public class Network {
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {
-                            response = client.newCall(request).execute();//同步网络请求
+                            //同步网络请求
+                            response = client.newCall(request).execute();
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
@@ -223,7 +233,9 @@ public class Network {
         }
     }
 
-    //获取单个machineTaskRecordDetail
+    /**
+     * 获取单个machineTaskRecordDetail
+     */
     public void fetchTaskProcessFromId(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
@@ -245,7 +257,8 @@ public class Network {
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {
-                            response = client.newCall(request).execute();//同步网络请求
+                            //同步网络请求
+                            response = client.newCall(request).execute();
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
@@ -289,7 +302,9 @@ public class Network {
         }
     }
 
-    //获取质检结果
+    /**
+     * 获取质检结果
+     */
     public void fetchProcessQARecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
@@ -311,7 +326,8 @@ public class Network {
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {
-                            response = client.newCall(request).execute();//同步网络请求
+                            //同步网络请求
+                            response = client.newCall(request).execute();
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
@@ -355,7 +371,9 @@ public class Network {
         }
     }
 
-    //获取质检结果
+    /**
+     * 获取质检结果
+     */
     public void fetchProcessInstallRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
@@ -377,7 +395,8 @@ public class Network {
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {
-                            response = client.newCall(request).execute();//同步网络请求
+                            //同步网络请求
+                            response = client.newCall(request).execute();
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
@@ -421,7 +440,9 @@ public class Network {
         }
     }
 
-    //更新数据
+    /**
+     * 更新数据
+     */
     public void updateProcessRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
@@ -443,7 +464,8 @@ public class Network {
                         OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
                         Response response = null;
                         try {
-                            response = client.newCall(request).execute();//同步网络请求
+                            //同步网络请求
+                            response = client.newCall(request).execute();
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
@@ -480,7 +502,9 @@ public class Network {
         }
     }
 
-    //上传图片
+    /**
+     * 上传图片
+     */
     public void uploadTaskRecordImage(final String url, final ArrayList<String> imageUrlList, final String key, final String imageJson, final Handler handler) {
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
@@ -507,7 +531,8 @@ public class Network {
                         OkHttpClient client = ((SinSimApp)mCtx).getOKHttpClient();
                         Response response = null;
                         try {
-                            response = client.newCall(request).execute();//同步网络请求
+                            //同步网络请求
+                            response = client.newCall(request).execute();
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();

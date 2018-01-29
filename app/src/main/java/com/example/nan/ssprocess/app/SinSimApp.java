@@ -1,5 +1,6 @@
 package com.example.nan.ssprocess.app;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -26,6 +27,9 @@ public class SinSimApp extends Application {
 
     public static final int LOGIN_REQUEST_CODE = 20000;
     public static final int LOGIN_RESULT_SUCCESS_CODE = 20001;
+    public static final int LOGIN_FOR_ADMIN = 2;
+    public static final int LOGIN_FOR_QA = 11;
+    public static final int LOGIN_FOR_INSTALL = 3;
 
     private boolean isLogined = false; // 是否已登录
     private String account;//用户账号
@@ -35,7 +39,9 @@ public class SinSimApp extends Application {
     private String ip;
     private static SinSimApp mApp;
 
-    //缓存
+    /**
+     * 缓存
+     */
     private CacheUtils mCache;
 
     /**
@@ -44,7 +50,9 @@ public class SinSimApp extends Application {
     private SharedPreferences.Editor mPrefEditor = null;
     private SharedPreferences mSharedPrefs;
 
-    //Http Client
+    /**
+     * Http Client
+     */
     private OkHttpClient mOKHttpClient;
 
     /**
@@ -65,6 +73,7 @@ public class SinSimApp extends Application {
     }
 
 
+    @SuppressLint("CommitPrefEdits")
     @Override
     public void onCreate() {
         super.onCreate();
@@ -76,7 +85,7 @@ public class SinSimApp extends Application {
         mCache = CacheUtils.getInstance(this.getCacheDir());
 
         mOKHttpClient = new OkHttpClient();
-       /*
+        /*
 		 * Get shared preferences and editor so we can read/write program settings.
 		 */
         mSharedPrefs = getSharedPreferences( SHARED_PREFS_FILENAME, 0 );

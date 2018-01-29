@@ -61,6 +61,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_to_admin);
+
         mRefreshLayout = findViewById(R.id.refreshLayout);
         mRefreshLayout.setDelegate(this);
 
@@ -110,8 +111,8 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         Log.d(TAG, "onStart: ");
         //第一次进入刷新页面， 加载loading页面
         if( mLoadingProcessDialog == null) {
