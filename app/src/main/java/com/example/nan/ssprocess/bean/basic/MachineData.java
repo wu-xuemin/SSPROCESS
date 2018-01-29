@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 public class MachineData implements Serializable{
     private String location;//位置
-    private String machineId;//机器编号
+    private String machineStrId;//机器编号
     private int orderId;//订单编号
 
     private int status;
@@ -27,8 +27,8 @@ public class MachineData implements Serializable{
         this.location = location;
     }
 
-    public String getMachineId() {
-        return machineId;
+    public String getMachineStrId() {
+        return machineStrId;
     }
 
     public int getOrderId() {

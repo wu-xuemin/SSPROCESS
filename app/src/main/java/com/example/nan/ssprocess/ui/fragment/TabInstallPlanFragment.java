@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -104,6 +105,7 @@ public class TabInstallPlanFragment extends Fragment {
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mProcessToAdminRV.setLayoutManager(manager);
         mTaskRecordAdapter = new TaskRecordAdapter(mProcessToInstallPlanList);
+        mProcessToAdminRV.addItemDecoration(new DividerItemDecoration(viewContent.getContext(),DividerItemDecoration.VERTICAL));
         mProcessToAdminRV.setAdapter(mTaskRecordAdapter);
         //点击跳转，把所有接收到的数据传递给下一个activity
         mTaskRecordAdapter.setOnItemClickListener(new TaskRecordAdapter.OnItemClickListener(){

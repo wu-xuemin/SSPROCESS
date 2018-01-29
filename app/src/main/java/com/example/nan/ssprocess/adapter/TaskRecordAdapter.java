@@ -44,7 +44,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
         //itemView.setIsRecyclable(false);//禁止复用
         if (mProcessList!=null && !mProcessList.isEmpty() && position < mProcessList.size()) {
             Log.d(TAG, "onBindViewHolder: 有数据"+position);
-            itemView.machineIdTv.setText("" + mProcessList.get(position).getMachineData().getMachineId());
+            itemView.machineIdTv.setText("" + mProcessList.get(position).getMachineData().getMachineStrId());
             itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
             itemView.processStateTv.setText("" + mProcessList.get(position).getStatus());
             itemView.contractDateTv.setText(mProcessList.get(position).getMachineOrderData().getContractShipDate());
@@ -65,7 +65,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return mProcessList.size()+1;
+        return mProcessList.size();
     }
 
     @Override

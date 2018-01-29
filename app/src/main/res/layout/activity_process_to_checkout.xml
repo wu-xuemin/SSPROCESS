@@ -21,6 +21,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="点击扫二维码"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="#ffffff"
         android:id="@+id/checkout_scan_qrcode_button"
         />
 </LinearLayout>

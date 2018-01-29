@@ -96,7 +96,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         //把数据填入相应位置
         orderNumberTv.setText(""+mTaskMachineListData.getMachineData().getOrderId());
         needleCountTv.setText(""+mTaskMachineListData.getMachineOrderData().getHeadNum());
-        machineNumberTv.setText(mTaskMachineListData.getMachineData().getMachineId());
+        machineNumberTv.setText(mTaskMachineListData.getMachineData().getMachineStrId());
         typeTv.setText(""+mTaskMachineListData.getMachineOrderData().getMachineType());
         locationEt.setText(mTaskMachineListData.getMachineData().getLocation());
         locationEt.setFocusable(false);
