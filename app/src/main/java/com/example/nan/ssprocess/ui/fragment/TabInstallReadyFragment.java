@@ -15,15 +15,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.ui.activity.DetailToAdminActivity;
 import com.example.nan.ssprocess.ui.activity.DetailToInstallActivity;
-import com.example.nan.ssprocess.ui.activity.ProcessToAdminActivity;
-import com.example.nan.ssprocess.ui.activity.ProcessToCheckoutActivity;
-import com.example.nan.ssprocess.ui.activity.ProcessToInstallActivity;
-import com.example.nan.ssprocess.ui.activity.ScanQrcodeActivity;
 import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;

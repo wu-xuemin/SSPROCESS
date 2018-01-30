@@ -37,7 +37,9 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
 
     }
 
-    //绑定数据
+    /**
+     * 绑定数据
+     */
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
         final ItemView itemView = (ItemView) holder;
@@ -60,7 +62,6 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
         }else {
             Log.d(TAG, "onBindViewHolder: 没有获取到list数据");
         }
-
     }
 
     @Override
@@ -99,11 +100,17 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
         mProcessList.clear();
         mProcessList.addAll(list);
     }
-    //点击事件接口
+
+    /**
+     * 点击事件接口
+     */
     public interface OnItemClickListener{
         void onItemClick(int position);
     }
-    //设置点击事件的方法
+
+    /**
+     * 设置点击事件的方法
+     */
     public void setOnItemClickListener(OnItemClickListener itemClickListener){
         this.itemClickListener = itemClickListener;
     }

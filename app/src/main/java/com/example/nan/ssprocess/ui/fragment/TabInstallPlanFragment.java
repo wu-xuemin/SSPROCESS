@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
@@ -23,16 +22,11 @@ import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
-import com.example.nan.ssprocess.ui.activity.DetailToAdminActivity;
 import com.example.nan.ssprocess.ui.activity.DetailToInstallActivity;
-import com.example.nan.ssprocess.ui.activity.ScanQrcodeActivity;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-
-import static android.app.Activity.RESULT_OK;
-
 
 public class TabInstallPlanFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -44,7 +38,6 @@ public class TabInstallPlanFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-//    private OnFragmentInteractionListener mListener;
     private static String TAG = "nlgTabInstallPlanFragment";
     private ArrayList<TaskMachineListData> mProcessToInstallPlanList = new ArrayList<>();
     private TaskRecordAdapter mTaskRecordAdapter;

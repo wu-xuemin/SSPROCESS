@@ -122,7 +122,9 @@ public class MyMqttService extends Service {
         startForeground(1, notification);
     }
 
-    //订阅消息
+    /**
+     * 订阅消息
+     */
     public void subscribeToTopic() {
         try {
             mqttAndroidClient.subscribe(subscriptionTopic, 2, null, new IMqttActionListener() {
@@ -142,7 +144,9 @@ public class MyMqttService extends Service {
         }
     }
 
-    //发布消息
+    /**
+     * 发布消息
+     */
     public void publishMessage(String msg){
         try {
             MqttMessage message = new MqttMessage();

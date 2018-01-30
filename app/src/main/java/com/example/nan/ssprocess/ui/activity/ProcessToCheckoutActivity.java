@@ -161,7 +161,7 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
             case SCAN_QRCODE_START:
-                // 当requestCode、resultCode同时为0时，也就是处理特定的结果
+                // 当resultCode为RESULT_OK时，也就是处理特定的结果
                 if (resultCode == RESULT_OK)
                 {
                     // 取出Intent里的Extras数据传递给跳转的activity

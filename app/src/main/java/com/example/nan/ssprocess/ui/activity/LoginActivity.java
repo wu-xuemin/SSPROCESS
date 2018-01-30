@@ -102,7 +102,6 @@ public class LoginActivity extends AppCompatActivity {
 //        Intent intent = new Intent(LoginActivity.this,ProcessToInstallActivity.class);
 //        Intent intent = new Intent(LoginActivity.this,DetailToAdminActivity.class);
 //        startActivity(intent);
-//
 //        finish();
     }
 

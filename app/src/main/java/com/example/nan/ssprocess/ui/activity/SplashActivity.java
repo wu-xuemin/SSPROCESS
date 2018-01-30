@@ -86,7 +86,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         checkIMEI();
 
         //检查preference中的isLogin状态
-        boolean  isLogin  = SinSimApp.getApp().isLogined();
+        boolean isLogin = SinSimApp.getApp().isLogined();
         if(isLogin) {
             final String account = SinSimApp.getApp().getAccount();
             final String password = SinSimApp.getApp().getPassword();
@@ -96,7 +96,6 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
 //            final String ip = IP;
             //(1)检查账号密码是否存在
             if(account.isEmpty() || password.isEmpty()) {
-//                Toast.makeText(this, "用户未登录！", Toast.LENGTH_LONG).show();
                 jumpToLoginAct();
             } else {
                 //(2)检查网络连接是否正常
@@ -104,7 +103,6 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
                     Toast.makeText(this, "网络无法连接，请检查！", Toast.LENGTH_LONG).show();
                     jumpToLoginAct();
                 } else {
-
                     @SuppressLint("StaticFieldLeak")
                     final AsyncTask task = new AsyncTask() {
                         @Override
@@ -179,6 +177,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         });
         logoText.startAnimation(animation);
     }
+
     @SuppressLint("HandlerLeak")
     private class FetchLoginHandler extends Handler {
         @Override
@@ -244,7 +243,6 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
     }
 
     private void onFetchProcessDataFailed(String errorMsg) {
-//        Toast.makeText(this,errorMsg, Toast.LENGTH_SHORT).show();
         jumpToLoginAct();
     }
 

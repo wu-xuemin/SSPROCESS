@@ -24,9 +24,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -372,7 +370,7 @@ public class Network {
     }
 
     /**
-     * 获取质检结果
+     * 获取安装结果
      */
     public void fetchProcessInstallRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {
@@ -441,7 +439,7 @@ public class Network {
     }
 
     /**
-     * 更新数据
+     * 更新位置数据
      */
     public void updateProcessRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         if (!isNetworkConnected()) {

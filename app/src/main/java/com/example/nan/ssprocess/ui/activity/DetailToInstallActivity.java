@@ -120,7 +120,9 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         mInstallAbnormalPhotosSnpl.setDelegate(this);
     }
 
-    //根据taskRecordId获取当前abnormal信息
+    /**
+     * 根据taskRecordId获取当前abnormal信息
+     */
     private void fetchInstallRecordData() {
         final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
@@ -170,7 +172,9 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         }
     }
 
-    //更新abnormal信息
+    /**
+     * 更新abnormal信息
+     */
     private void updateInstallRecordData() {
         final String ip = SinSimApp.getApp().getServerIP();
         ArrayList<String> imageUrlList = new ArrayList<>();
@@ -246,6 +250,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             }
         }
     }
+
     @Override
     public void onClickAddNinePhotoItem(BGASortableNinePhotoLayout sortableNinePhotoLayout, View view, int position, ArrayList<String> models) {
         choicePhotoWrapper();
