@@ -84,14 +84,17 @@ public class Network {
      * 获取login信息
      */
     public void fetchLoginData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
+        final Message msg = handler.obtainMessage();
         if (!isNetworkConnected()) {
             Log.d(TAG, "fetchLoginData: 没网络");
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
+            msg.what = NG;
+            msg.obj = mCtx.getString(R.string.network_not_connect);
+            handler.sendMessage(msg);
         } else {
             Log.d(TAG, "fetchLoginData: 有网络");
             if (url != null && values != null && handler != null) {
                 Log.d(TAG, "fetchLoginData: not null");
-                final Message msg = handler.obtainMessage();
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -164,12 +167,15 @@ public class Network {
      * 获取machineTaskListDetail信息
      */
     public void fetchProcessTaskRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
+        final Message msg = handler.obtainMessage();
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
-            Log.d(TAG, "fetchProcessModuleData: network_not_connect");
+            Log.d(TAG, "fetchProcessTaskRecordData: network_not_connect");
+            msg.what = NG;
+            msg.obj = mCtx.getString(R.string.network_not_connect);
+            handler.sendMessage(msg);
         } else {
             if (url != null && values != null && handler != null) {
-                final Message msg = handler.obtainMessage();
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -235,11 +241,14 @@ public class Network {
      * 获取单个machineTaskRecordDetail
      */
     public void fetchTaskProcessFromId(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
+        final Message msg = handler.obtainMessage();
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
+            msg.what = NG;
+            msg.obj = mCtx.getString(R.string.network_not_connect);
+            handler.sendMessage(msg);
         } else {
             if (url != null && values != null && handler != null) {
-                final Message msg = handler.obtainMessage();
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -304,11 +313,14 @@ public class Network {
      * 获取质检结果
      */
     public void fetchProcessQARecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
+        final Message msg = handler.obtainMessage();
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
+            msg.what = NG;
+            msg.obj = mCtx.getString(R.string.network_not_connect);
+            handler.sendMessage(msg);
         } else {
             if (url != null && values != null && handler != null) {
-                final Message msg = handler.obtainMessage();
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -373,11 +385,14 @@ public class Network {
      * 获取安装结果
      */
     public void fetchProcessInstallRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
+        final Message msg = handler.obtainMessage();
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
+            msg.what = NG;
+            msg.obj = mCtx.getString(R.string.network_not_connect);
+            handler.sendMessage(msg);
         } else {
             if (url != null && values != null && handler != null) {
-                final Message msg = handler.obtainMessage();
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -442,11 +457,14 @@ public class Network {
      * 更新位置数据
      */
     public void updateProcessRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
+        final Message msg = handler.obtainMessage();
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
+            msg.what = NG;
+            msg.obj = mCtx.getString(R.string.network_not_connect);
+            handler.sendMessage(msg);
         } else {
             if (url != null && values != null && handler != null) {
-                final Message msg = handler.obtainMessage();
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -504,11 +522,14 @@ public class Network {
      * 上传图片
      */
     public void uploadTaskRecordImage(final String url, final ArrayList<String> imageUrlList, final String key, final String imageJson, final Handler handler) {
+        final Message msg = handler.obtainMessage();
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
+            msg.what = NG;
+            msg.obj = mCtx.getString(R.string.network_not_connect);
+            handler.sendMessage(msg);
         } else {
             if (url != null && imageUrlList != null && imageJson != null && handler != null) {
-                final Message msg = handler.obtainMessage();
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {

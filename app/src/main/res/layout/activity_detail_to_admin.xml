@@ -9,7 +9,9 @@
         android:id="@+id/machine_service_detail_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="@color/windowBackground"
         android:orientation="vertical">
         <ImageView
             android:id="@+id/close_machine_detail"
