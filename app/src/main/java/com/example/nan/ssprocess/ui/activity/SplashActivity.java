@@ -194,7 +194,6 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
     }
 
     private void onFetchProcessDataSuccess(LoginResponseData data) {
-
         final TextView logoText = (TextView)findViewById(R.id.crh_text);
         // 设置加载动画透明度渐变从（0.1不显示-1.0完全显示）
         AlphaAnimation animation = new AlphaAnimation(1.0f, 0.1f);

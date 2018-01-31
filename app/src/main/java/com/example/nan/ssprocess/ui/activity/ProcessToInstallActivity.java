@@ -108,7 +108,7 @@ public class ProcessToInstallActivity extends AppCompatActivity {
                     // 取出Intent里的Extras数据传递给跳转的activity
                     TaskMachineListData mTaskMachineListData = new TaskMachineListData();
                     mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
-                    Intent intent=new Intent(this,DetailToAdminActivity.class);
+                    Intent intent=new Intent(this,DetailToInstallActivity.class);
                     intent.putExtra("mTaskMachineListData", mTaskMachineListData);
                     startActivity(intent);
                 }

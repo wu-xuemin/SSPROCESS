@@ -59,7 +59,7 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_to_checkout);
 
-        // 启动MQTT服务
+        //启动MQTT服务
         Intent startIntent = new Intent(this, MyMqttService.class);
         startService(startIntent);
 

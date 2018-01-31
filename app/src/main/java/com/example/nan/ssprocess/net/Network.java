@@ -93,7 +93,7 @@ public class Network {
             handler.sendMessage(msg);
         } else {
             Log.d(TAG, "fetchLoginData: 有网络");
-            if (url != null && values != null && handler != null) {
+            if (url != null && values != null) {
                 Log.d(TAG, "fetchLoginData: not null");
                 executor.execute(new Runnable() {
                     @Override
@@ -175,7 +175,7 @@ public class Network {
             msg.obj = mCtx.getString(R.string.network_not_connect);
             handler.sendMessage(msg);
         } else {
-            if (url != null && values != null && handler != null) {
+            if (url != null && values != null) {
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -248,7 +248,7 @@ public class Network {
             msg.obj = mCtx.getString(R.string.network_not_connect);
             handler.sendMessage(msg);
         } else {
-            if (url != null && values != null && handler != null) {
+            if (url != null && values != null) {
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -320,7 +320,7 @@ public class Network {
             msg.obj = mCtx.getString(R.string.network_not_connect);
             handler.sendMessage(msg);
         } else {
-            if (url != null && values != null && handler != null) {
+            if (url != null && values != null) {
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -392,7 +392,7 @@ public class Network {
             msg.obj = mCtx.getString(R.string.network_not_connect);
             handler.sendMessage(msg);
         } else {
-            if (url != null && values != null && handler != null) {
+            if (url != null && values != null) {
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -464,7 +464,7 @@ public class Network {
             msg.obj = mCtx.getString(R.string.network_not_connect);
             handler.sendMessage(msg);
         } else {
-            if (url != null && values != null && handler != null) {
+            if (url != null && values != null) {
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -529,7 +529,7 @@ public class Network {
             msg.obj = mCtx.getString(R.string.network_not_connect);
             handler.sendMessage(msg);
         } else {
-            if (url != null && imageUrlList != null && imageJson != null && handler != null) {
+            if (url != null && imageUrlList != null && imageJson != null) {
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -585,7 +585,6 @@ public class Network {
                     }
                 });
             }
-
         }
     }
 

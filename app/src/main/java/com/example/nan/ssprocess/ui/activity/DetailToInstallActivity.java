@@ -92,6 +92,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         machineNumberTv.setText(mTaskMachineListData.getMachineData().getMachineStrId());
         typeTv.setText(""+mTaskMachineListData.getMachineOrderData().getMachineType());
         locationEt.setText(mTaskMachineListData.getMachineData().getLocation());
+        locationEt.setFocusable(false);
+        locationEt.setEnabled(false);
 
         fetchInstallRecordData();
         //点击返回
