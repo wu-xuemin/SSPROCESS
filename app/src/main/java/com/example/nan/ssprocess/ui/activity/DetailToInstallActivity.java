@@ -46,6 +46,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private RadioButton installAbnormalRb;
     private Spinner failReasonSpinner;
     private EditText installAbnormalDetailEt;
+    private Button begainInstallButton;
     private Button installInfoUpdateButton;
 
     private TaskMachineListData mTaskMachineListData=new TaskMachineListData();
@@ -56,6 +57,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private UploadTaskRecordImageHandler mUploadTaskRecordImageHandler=new UploadTaskRecordImageHandler();
 
 
+    private static final int SCAN_QRCODE_START = 1;
     private static final int SCAN_QRCODE_END = 0;
     private static final int RC_INSTALL_CHOOSE_PHOTO = 3;
     private static final int RC_INSTALL_PHOTO_PREVIEW = 4;
@@ -102,6 +104,16 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        //点击开始安装
+        begainInstallButton = findViewById(R.id.begin_install_button);
+        begainInstallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(DetailToInstallActivity.this,ScanQrcodeActivity.class);
+                startActivityForResult(intent,SCAN_QRCODE_START);
             }
         });
 
@@ -296,7 +308,26 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
-            case SCAN_QRCODE_END:
+            case SCAN_QRCODE_START:
+                if(resultCode == RESULT_OK) {
+                    // 检验二维码信息是否对应
+                    TaskMachineListData taskMachineListDataId=new TaskMachineListData();
+                    taskMachineListDataId = (TaskMachineListData) data.getSerializableExtra("mTaskMachineListData");
+                    if(taskMachineListDataId.getId()==mTaskMachineListData.getId()){
+                        Log.d(TAG, "onActivityResult: id 对应");
+                        //update status
+                        //TODO:更新安装状态
+
+                    } else {
+                        Log.d(TAG, "onActivityResult: 二维码信息不对应");
+                        Toast.makeText(this, "二维码信息不对应！", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Log.d(TAG, "onActivityResult: scan QRcode fail");
+                }
+
+                break;
+                case SCAN_QRCODE_END:
                 if(resultCode == RESULT_OK) {
                     // 检验二维码信息是否对应
                     TaskMachineListData taskMachineListDataId=new TaskMachineListData();
