@@ -5,6 +5,7 @@
     <string name="qr_scan">二维码扫描</string>
 
     <string name="system_name">SINSIM</string>
+    <string name="system_name_cn">浙江信胜</string>
     <string name="account">账号</string>
     <string name="signup_password">密码</string>
     <string name="login_activity">登录</string>

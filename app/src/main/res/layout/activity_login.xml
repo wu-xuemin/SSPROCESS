@@ -25,9 +25,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <TextView
-                    android:text="@string/system_name"
+                    android:text="@string/system_name_cn"
                     android:textStyle="bold"
-                    android:textSize="20sp"
+                    android:textSize="30sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="24dp"
