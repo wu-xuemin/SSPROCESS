@@ -157,6 +157,8 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoginFailed(String msg) {
         if( msg != null) {
             ShowMessage.showDialog(LoginActivity.this, msg);
+        } else {
+            ShowMessage.showDialog(LoginActivity.this, "登入错误，请检查网络！");
         }
         mLoginButton.setEnabled(true);
     }
