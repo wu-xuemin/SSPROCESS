@@ -30,7 +30,9 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import cn.bingoogolapple.refreshlayout.BGAMoocStyleRefreshViewHolder;
 import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
+import cn.bingoogolapple.refreshlayout.BGARefreshViewHolder;
 
 
 /**
@@ -64,6 +66,12 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
 
         mRefreshLayout = findViewById(R.id.refreshLayout);
         mRefreshLayout.setDelegate(this);
+        mPage=0;
+        // 设置下拉刷新和上拉加载更多的风格     参数1：应用程序上下文，参数2：是否具有上拉加载更多功能
+        BGAMoocStyleRefreshViewHolder moocStyleRefreshViewHolder = new BGAMoocStyleRefreshViewHolder(this, true);
+        moocStyleRefreshViewHolder.setOriginalImage(R.drawable.bga_refresh_moooc);
+        moocStyleRefreshViewHolder.setUltimateColor(R.color.colorAccent);
+        mRefreshLayout.setRefreshViewHolder(moocStyleRefreshViewHolder);
 
         //点击扫码
         Button scanQrcodeBotton = findViewById(R.id.admin_scan_qrcode_button);
@@ -92,20 +100,6 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
 //                Intent intent=new Intent(ProcessToAdminActivity.this,DetailToCheckoutActivity.class);
                 intent.putExtra("mTaskMachineListData", mProcessToAdminList.get(position));
                 startActivity(intent);
-            }
-        });
-
-        //下拉刷新
-        mPage=0;
-        mSwipeRefresh = findViewById(R.id.admin_swipe_refresh);
-        int[] colors = getResources().getIntArray(R.array.google_colors);
-        mSwipeRefresh.setColorSchemeColors(colors);
-        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //超时停止刷新
-                mSwipeRefresh.postDelayed(mStopSwipeRefreshRunnable, 5000);
-                fetchProcessData(mPage);
             }
         });
     }
@@ -138,14 +132,16 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
 
     @Override
     public void onBGARefreshLayoutBeginRefreshing(BGARefreshLayout refreshLayout) {
-
+        Log.d(TAG, "onBGARefreshLayoutBeginRefreshing: 下划刷新");
+        fetchProcessData(mPage);
     }
 
     @Override
     public boolean onBGARefreshLayoutBeginLoadingMore(BGARefreshLayout refreshLayout) {
+        Log.d(TAG, "onBGARefreshLayoutBeginLoadingMore: 上划刷新");
         mPage=mPage+1;
         fetchProcessData(mPage);
-        return false;
+        return true;
     }
 
     @SuppressLint("HandlerLeak")
@@ -155,9 +151,9 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
             if(mLoadingProcessDialog != null && mLoadingProcessDialog.isShowing()) {
                 mLoadingProcessDialog.dismiss();
             }
-            if(mSwipeRefresh.isRefreshing()) {
-                mSwipeRefresh.setRefreshing(false);
-            }
+            mRefreshLayout.endRefreshing();
+            mRefreshLayout.endLoadingMore();
+
             if (msg.what == Network.OK) {
                 mProcessToAdminList=(ArrayList<TaskMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToAdminList.size());
