@@ -30,10 +30,13 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import cn.bingoogolapple.refreshlayout.BGAMoocStyleRefreshViewHolder;
+import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
+
 /**
  * @author nan  2017/11/16
  */
-public class ProcessToCheckoutActivity extends AppCompatActivity {
+public class ProcessToCheckoutActivity extends AppCompatActivity implements BGARefreshLayout.BGARefreshLayoutDelegate{
 
     private static String TAG = "nlgProcessToCheckoutActivity";
     private static final int SCAN_QRCODE_START = 1;
@@ -43,16 +46,9 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
 
     private ProgressDialog mLoadingProcessDialog;
-    private SwipeRefreshLayout mSwipeRefresh;
 
-    private Runnable mStopSwipeRefreshRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if(mSwipeRefresh.isRefreshing()) {
-                mSwipeRefresh.setRefreshing(false);
-            }
-        }
-    };
+    private int mPage;
+    private BGARefreshLayout mRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +58,15 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
         //启动MQTT服务
         Intent startIntent = new Intent(this, MyMqttService.class);
         startService(startIntent);
+
+        mRefreshLayout = findViewById(R.id.refreshLayout);
+        mRefreshLayout.setDelegate(this);
+        mPage=0;
+        // 设置下拉刷新和上拉加载更多的风格     参数1：应用程序上下文，参数2：是否具有上拉加载更多功能
+        BGAMoocStyleRefreshViewHolder moocStyleRefreshViewHolder = new BGAMoocStyleRefreshViewHolder(this, true);
+        moocStyleRefreshViewHolder.setOriginalImage(R.drawable.bga_refresh_moooc);
+        moocStyleRefreshViewHolder.setUltimateColor(R.color.colorAccent);
+        mRefreshLayout.setRefreshViewHolder(moocStyleRefreshViewHolder);
 
         //点击扫码
         Button scanQrcodeBotton = findViewById(R.id.checkout_scan_qrcode_button);
@@ -93,19 +98,6 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
             }
         });
 
-        //下拉刷新
-        mSwipeRefresh = findViewById(R.id.checkout_swipe_refresh);
-        int[] colors = getResources().getIntArray(R.array.google_colors);
-        mSwipeRefresh.setColorSchemeColors(colors);
-        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //超时停止刷新
-                mSwipeRefresh.postDelayed(mStopSwipeRefreshRunnable, 5000);
-                fetchProcessData();
-            }
-        });
-
     }
 
     @Override
@@ -119,18 +111,33 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
             mLoadingProcessDialog.setMessage("获取信息中...");
         }
         mLoadingProcessDialog.show();
-        fetchProcessData();
+        fetchProcessData(mPage);
     }
 
-    private void fetchProcessData() {
+    private void fetchProcessData(int page) {
         final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
 //        final String ip = "192.168.0.102:8080";
 //        final String account = "sss";
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("userAccount", account);
+        mPostValue.put("page", ""+page);
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_QA;
         Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
+    }
+
+    @Override
+    public void onBGARefreshLayoutBeginRefreshing(BGARefreshLayout refreshLayout) {
+        Log.d(TAG, "onBGARefreshLayoutBeginRefreshing: 下划刷新");
+        fetchProcessData(mPage);
+    }
+
+    @Override
+    public boolean onBGARefreshLayoutBeginLoadingMore(BGARefreshLayout refreshLayout) {
+        Log.d(TAG, "onBGARefreshLayoutBeginLoadingMore: 上划刷新");
+        mPage=mPage+1;
+        fetchProcessData(mPage);
+        return true;
     }
 
     @SuppressLint("HandlerLeak")
@@ -140,15 +147,15 @@ public class ProcessToCheckoutActivity extends AppCompatActivity {
             if(mLoadingProcessDialog != null && mLoadingProcessDialog.isShowing()) {
                 mLoadingProcessDialog.dismiss();
             }
-            if(mSwipeRefresh.isRefreshing()) {
-                mSwipeRefresh.setRefreshing(false);
-            }
+            mRefreshLayout.endRefreshing();
+            mRefreshLayout.endLoadingMore();
+
             if (msg.what == Network.OK) {
                 mProcessToCheckoutList=(ArrayList<TaskMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToCheckoutList.size());
                 mTaskRecordAdapter.setProcessList(mProcessToCheckoutList);
                 mTaskRecordAdapter.notifyDataSetChanged();
-                Toast.makeText(ProcessToCheckoutActivity.this, "更新成功！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProcessToCheckoutActivity.this, "列表已更新！", Toast.LENGTH_SHORT).show();
             } else {
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(ProcessToCheckoutActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();

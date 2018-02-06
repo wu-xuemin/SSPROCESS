@@ -3,10 +3,8 @@ package com.example.nan.ssprocess.ui.activity;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -32,7 +30,6 @@ import java.util.LinkedHashMap;
 
 import cn.bingoogolapple.refreshlayout.BGAMoocStyleRefreshViewHolder;
 import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
-import cn.bingoogolapple.refreshlayout.BGARefreshViewHolder;
 
 
 /**
@@ -45,19 +42,9 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
     private TaskRecordAdapter mProcessToAdminAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
     private int mPage;
-
-    private ProgressDialog mLoadingProcessDialog;
-    private SwipeRefreshLayout mSwipeRefresh;
     private BGARefreshLayout mRefreshLayout;
 
-    private Runnable mStopSwipeRefreshRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if(mSwipeRefresh.isRefreshing()) {
-                mSwipeRefresh.setRefreshing(false);
-            }
-        }
-    };
+    private ProgressDialog mLoadingProcessDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +71,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
         });
 
         //列表
-        final RecyclerView mProcessToAdminRV = findViewById(R.id.process_to_admin_rv);
+        RecyclerView mProcessToAdminRV = findViewById(R.id.process_to_admin_rv);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mProcessToAdminRV.setLayoutManager(manager);

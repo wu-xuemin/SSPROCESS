@@ -14,16 +14,17 @@
         />
     <cn.bingoogolapple.refreshlayout.BGARefreshLayout
         android:id="@+id/refreshLayout"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent" >
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_weight="1">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/process_to_admin_rv"
-                android:background="@color/cardview_light_background"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-            </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/process_to_admin_rv"
+            android:background="@color/cardview_light_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+        </android.support.v7.widget.RecyclerView>
     </cn.bingoogolapple.refreshlayout.BGARefreshLayout>
     <Button
         android:layout_width="match_parent"
