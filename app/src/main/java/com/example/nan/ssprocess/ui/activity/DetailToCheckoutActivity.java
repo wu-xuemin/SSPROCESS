@@ -87,6 +87,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         checkedOkRb=findViewById(R.id.checked_ok_rb);
         checkedNokRb=findViewById(R.id.checked_nok_rb);
         checkoutNokDetailEt=findViewById(R.id.checkout_nok_detail_et);
+        installInfoUpdateButton = findViewById(R.id.checkout_upload_button);
 
         //获取传递过来的信息
         Intent intent = getIntent();
@@ -115,7 +116,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         });
 
         //点击上传质检结果
-        installInfoUpdateButton = findViewById(R.id.checkout_upload_button);
         installInfoUpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

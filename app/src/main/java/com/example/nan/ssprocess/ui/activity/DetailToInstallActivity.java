@@ -82,6 +82,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         installAbnormalRb=findViewById(R.id.abnormal_rb);
         failReasonSpinner=findViewById(R.id.fail_reason_spinner);
         installAbnormalDetailEt=findViewById(R.id.abnormal_detail_et);
+        begainInstallButton = findViewById(R.id.begin_install_button);
+        installInfoUpdateButton = findViewById(R.id.install_info_update_button);
 
         //获取传递过来的信息
         Intent intent = getIntent();
@@ -97,7 +99,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         locationEt.setFocusable(false);
         locationEt.setEnabled(false);
 
-        fetchInstallRecordData();
         //点击返回
         ImageView previousIv = findViewById(R.id.close_machine_detail);
         previousIv.setOnClickListener(new View.OnClickListener() {
@@ -107,25 +108,62 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             }
         });
 
-        //点击开始安装
-        begainInstallButton = findViewById(R.id.begin_install_button);
-        begainInstallButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(DetailToInstallActivity.this,ScanQrcodeActivity.class);
-                startActivityForResult(intent,SCAN_QRCODE_START);
-            }
-        });
+        //安装状态
+        switch (mTaskMachineListData.getMachineData().getStatus()){
+            case 1:
+                begainInstallButton.setText("扫码开始");
+                begainInstallButton.setEnabled(true);
+                begainInstallButton.setClickable(true);
+                begainInstallButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent=new Intent(DetailToInstallActivity.this,ScanQrcodeActivity.class);
+                        startActivityForResult(intent,SCAN_QRCODE_START);
+                    }
+                });
+                installInfoUpdateButton.setClickable(false);
+                installInfoUpdateButton.setEnabled(false);
+                break;
+            case 2:
+                begainInstallButton.setText("安装中");
+                begainInstallButton.setEnabled(false);
+                begainInstallButton.setClickable(false);
+                installInfoUpdateButton.setClickable(true);
+                installInfoUpdateButton.setEnabled(true);
+                installInfoUpdateButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent=new Intent(DetailToInstallActivity.this,ScanQrcodeActivity.class);
+                        startActivityForResult(intent,SCAN_QRCODE_END);
+                    }
+                });
+                break;
+            case 3:
+                begainInstallButton.setText("扫码开始");
+                begainInstallButton.setEnabled(false);
+                begainInstallButton.setClickable(false);
+                installInfoUpdateButton.setClickable(false);
+                installInfoUpdateButton.setEnabled(false);
+                break;
+            case 4:
+                begainInstallButton.setText("重新开始");
+                begainInstallButton.setEnabled(true);
+                begainInstallButton.setClickable(true);
+                begainInstallButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent=new Intent(DetailToInstallActivity.this,ScanQrcodeActivity.class);
+                        startActivityForResult(intent,SCAN_QRCODE_START);
+                    }
+                });
+                installInfoUpdateButton.setClickable(false);
+                installInfoUpdateButton.setEnabled(false);
+                break;
+            default:
+                break;
+        }
 
-        //点击上传安装结果
-        installInfoUpdateButton = findViewById(R.id.install_info_update_button);
-        installInfoUpdateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(DetailToInstallActivity.this,ScanQrcodeActivity.class);
-                startActivityForResult(intent,SCAN_QRCODE_END);
-            }
-        });
+        fetchInstallRecordData();
 
         //九宫格拍照
         mInstallAbnormalPhotosSnpl = findViewById(R.id.install_abnormal_add_photos);
