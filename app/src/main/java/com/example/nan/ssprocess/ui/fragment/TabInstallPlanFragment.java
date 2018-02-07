@@ -175,4 +175,11 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(mLoadingProcessDialog != null) {
+            mLoadingProcessDialog.dismiss();
+        }
+    }
 }

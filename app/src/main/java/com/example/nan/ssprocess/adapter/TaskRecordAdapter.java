@@ -48,9 +48,38 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             Log.d(TAG, "onBindViewHolder: 有数据"+position);
             itemView.machineIdTv.setText("" + mProcessList.get(position).getMachineData().getMachineStrId());
             itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
-            itemView.processStateTv.setText("" + mProcessList.get(position).getStatus());
             itemView.contractDateTv.setText(mProcessList.get(position).getMachineOrderData().getContractShipDate());
             itemView.planDateTv.setText(mProcessList.get(position).getMachineOrderData().getPlanShipDate());
+            switch (mProcessList.get(position).getStatus()){
+                case 0:
+                    itemView.processStateTv.setText("初始化");
+                    break;
+                case 1:
+                    itemView.processStateTv.setText("待安装");
+                    break;
+                case 2:
+                    itemView.processStateTv.setText("安装中");
+                    break;
+                case 3:
+                    itemView.processStateTv.setText("安装完");
+                    break;
+                case 4:
+                    itemView.processStateTv.setText("质检中");
+                    break;
+                case 5:
+                    itemView.processStateTv.setText("质检通过");
+                    break;
+                case 6:
+                    itemView.processStateTv.setText("安装异常");
+                    break;
+                case 7:
+                    itemView.processStateTv.setText("质检异常");
+                    break;
+                default:
+                    break;
+
+            }
+
             itemView.itemLinearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

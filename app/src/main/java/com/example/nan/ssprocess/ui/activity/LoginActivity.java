@@ -211,4 +211,15 @@ public class LoginActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_home,menu);
         return super.onCreateOptionsMenu(menu);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mLoadingProcessDialog != null) {
+            mLoadingProcessDialog.dismiss();
+        }
+        if(mIPSettngDialog != null) {
+            mIPSettngDialog.dismiss();
+        }
+    }
 }

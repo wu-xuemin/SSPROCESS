@@ -175,4 +175,11 @@ public class TabInstallReadyFragment extends Fragment implements BGARefreshLayou
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(mLoadingProcessDialog != null) {
+            mLoadingProcessDialog.dismiss();
+        }
+    }
 }

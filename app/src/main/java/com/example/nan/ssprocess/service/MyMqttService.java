@@ -29,7 +29,7 @@ public class MyMqttService extends Service {
 
     private static final String TAG="nlgMqttService";
     private final String clientId = "ExampleAndroidClient";
-    private final String serverUri = "tcp://192.168.1.4:1883";
+    private final String serverUri = "tcp://192.168.1.196:1883";
     private final String subscriptionTopic = "exampleAndroidPublishTopic";
     private static final String publishTopic = "exampleAndroidPublishTopic";
 

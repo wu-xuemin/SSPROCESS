@@ -208,4 +208,11 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mLoadingProcessDialog != null) {
+            mLoadingProcessDialog.dismiss();
+        }
+    }
 }

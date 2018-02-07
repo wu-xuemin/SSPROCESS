@@ -160,6 +160,10 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 installInfoUpdateButton.setEnabled(false);
                 break;
             default:
+                begainInstallButton.setEnabled(false);
+                begainInstallButton.setClickable(false);
+                installInfoUpdateButton.setClickable(false);
+                installInfoUpdateButton.setEnabled(false);
                 break;
         }
 

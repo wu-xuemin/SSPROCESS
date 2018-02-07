@@ -176,4 +176,11 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mLoadingProcessDialog != null) {
+            mLoadingProcessDialog.dismiss();
+        }
+    }
 }
