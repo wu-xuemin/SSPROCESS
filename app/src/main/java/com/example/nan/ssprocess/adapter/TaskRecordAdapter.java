@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
@@ -27,7 +26,6 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
     private static String TAG = "nlgTaskRecordAdapter";
     private ArrayList<TaskMachineListData> mProcessList;
     private OnItemClickListener itemClickListener = null;
-    private Context mContext;
 
     public TaskRecordAdapter(ArrayList<TaskMachineListData> list) {
         mProcessList = list;
