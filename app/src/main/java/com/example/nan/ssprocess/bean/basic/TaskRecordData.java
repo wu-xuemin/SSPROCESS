@@ -5,22 +5,24 @@ package com.example.nan.ssprocess.bean.basic;
  */
 
 public class TaskRecordData {
-    private String beginTime;
-    private String endTime;
+    private String installBeginTime;
+    private String installEndTime;
     private int id;
     private String leader;
     private int nodeKey;
     private int processRecordId;
     private int status;//task状态
+    private String qualityBeginTime;
+    private String qualityEndTime;
     private String taskName;
     private String workerList;
 
-    public String getBeginTime() {
-        return beginTime;
+    public String getInstallBeginTime() {
+        return installBeginTime;
     }
 
-    public String getEndTime() {
-        return endTime;
+    public String getInstallEndTime() {
+        return installEndTime;
     }
 
     public int getId() {
@@ -55,4 +57,11 @@ public class TaskRecordData {
         return workerList;
     }
 
+    public String getQualityBeginTime() {
+        return qualityBeginTime;
+    }
+
+    public String getQualityEndTime() {
+        return qualityEndTime;
+    }
 }

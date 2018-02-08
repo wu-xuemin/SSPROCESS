@@ -9,7 +9,9 @@ import java.io.Serializable;
 public class TaskPlanData implements Serializable {
     private String createTime;
     private int id;
+    private int planType;
     private String planTime;
+    private String deadline;
     private int taskRecordId;
     private String updateTime;
     private int userId;
@@ -38,4 +40,11 @@ public class TaskPlanData implements Serializable {
         return userId;
     }
 
+    public int getPlanType() {
+        return planType;
+    }
+
+    public String getDeadline() {
+        return deadline;
+    }
 }

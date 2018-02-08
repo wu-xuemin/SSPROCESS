@@ -144,6 +144,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
             if (msg.what == Network.OK) {
                 mProcessToAdminList=(ArrayList<TaskMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToAdminList.size());
+                //TODO: 合并同一机器不同流程
                 mProcessToAdminAdapter.setProcessList(mProcessToAdminList);
                 mProcessToAdminAdapter.notifyDataSetChanged();
                 Toast.makeText(ProcessToAdminActivity.this, "列表已更新！", Toast.LENGTH_SHORT).show();

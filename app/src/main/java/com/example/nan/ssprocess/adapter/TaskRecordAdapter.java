@@ -56,42 +56,34 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
                 case 0:
                     itemView.processStateTv.setText("初始化");
                     itemView.processStateTv.setTextColor(Color.YELLOW);
-                    Log.d(TAG, "onBindViewHolder: yellow");
                     break;
                 case 1:
                     itemView.processStateTv.setText("待安装");
                     itemView.processStateTv.setTextColor(Color.GREEN);
-                    Log.d(TAG, "onBindViewHolder: green");
                     break;
                 case 2:
                     itemView.processStateTv.setText("安装中");
                     itemView.processStateTv.setTextColor(Color.YELLOW);
-                    Log.d(TAG, "onBindViewHolder: yellow");
                     break;
                 case 3:
                     itemView.processStateTv.setText("安装完");
                     itemView.processStateTv.setTextColor(Color.GREEN);
-                    Log.d(TAG, "onBindViewHolder: green");
                     break;
                 case 4:
                     itemView.processStateTv.setText("质检中");
                     itemView.processStateTv.setTextColor(Color.YELLOW);
-                    Log.d(TAG, "onBindViewHolder: yellow");
                     break;
                 case 5:
                     itemView.processStateTv.setText("质检通过");
                     itemView.processStateTv.setTextColor(Color.GREEN);
-                    Log.d(TAG, "onBindViewHolder: green");
                     break;
                 case 6:
                     itemView.processStateTv.setText("安装异常");
                     itemView.processStateTv.setTextColor(Color.RED);
-                    Log.d(TAG, "onBindViewHolder: red");
                     break;
                 case 7:
                     itemView.processStateTv.setText("质检异常");
                     itemView.processStateTv.setTextColor(Color.RED);
-                    Log.d(TAG, "onBindViewHolder: red");
                     break;
                 default:
                     break;

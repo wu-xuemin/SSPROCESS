@@ -10,7 +10,7 @@ public class MachineData implements Serializable{
     private String location;//位置
     private String machineStrId;//机器编号
     private int orderId;//订单编号
-
+    private int machineType;
     private int status;
     private String createTime;
     private int id;
@@ -63,4 +63,7 @@ public class MachineData implements Serializable{
         return updateTime;
     }
 
+    public int getMachineType() {
+        return machineType;
+    }
 }
