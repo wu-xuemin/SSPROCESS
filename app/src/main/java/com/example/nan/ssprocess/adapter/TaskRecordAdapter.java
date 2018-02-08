@@ -1,6 +1,8 @@
 package com.example.nan.ssprocess.adapter;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
     private static String TAG = "nlgTaskRecordAdapter";
     private ArrayList<TaskMachineListData> mProcessList;
     private OnItemClickListener itemClickListener = null;
+    private Context mContext;
 
     public TaskRecordAdapter(ArrayList<TaskMachineListData> list) {
         mProcessList = list;
@@ -54,42 +57,42 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             switch (mProcessList.get(position).getStatus()){
                 case 0:
                     itemView.processStateTv.setText("初始化");
-                    itemView.processStateTv.setTextColor(R.color.yellow);
+                    itemView.processStateTv.setTextColor(Color.YELLOW);
                     Log.d(TAG, "onBindViewHolder: yellow");
                     break;
                 case 1:
                     itemView.processStateTv.setText("待安装");
-                    itemView.processStateTv.setTextColor(R.color.green);
+                    itemView.processStateTv.setTextColor(Color.GREEN);
                     Log.d(TAG, "onBindViewHolder: green");
                     break;
                 case 2:
                     itemView.processStateTv.setText("安装中");
-                    itemView.processStateTv.setTextColor(R.color.yellow);
+                    itemView.processStateTv.setTextColor(Color.YELLOW);
                     Log.d(TAG, "onBindViewHolder: yellow");
                     break;
                 case 3:
                     itemView.processStateTv.setText("安装完");
-                    itemView.processStateTv.setTextColor(R.color.green);
+                    itemView.processStateTv.setTextColor(Color.GREEN);
                     Log.d(TAG, "onBindViewHolder: green");
                     break;
                 case 4:
                     itemView.processStateTv.setText("质检中");
-                    itemView.processStateTv.setTextColor(R.color.yellow);
+                    itemView.processStateTv.setTextColor(Color.YELLOW);
                     Log.d(TAG, "onBindViewHolder: yellow");
                     break;
                 case 5:
                     itemView.processStateTv.setText("质检通过");
-                    itemView.processStateTv.setTextColor(R.color.green);
+                    itemView.processStateTv.setTextColor(Color.GREEN);
                     Log.d(TAG, "onBindViewHolder: green");
                     break;
                 case 6:
                     itemView.processStateTv.setText("安装异常");
-                    itemView.processStateTv.setTextColor(R.color.red);
+                    itemView.processStateTv.setTextColor(Color.RED);
                     Log.d(TAG, "onBindViewHolder: red");
                     break;
                 case 7:
                     itemView.processStateTv.setText("质检异常");
-                    itemView.processStateTv.setTextColor(R.color.red);
+                    itemView.processStateTv.setTextColor(Color.RED);
                     Log.d(TAG, "onBindViewHolder: red");
                     break;
                 default:
