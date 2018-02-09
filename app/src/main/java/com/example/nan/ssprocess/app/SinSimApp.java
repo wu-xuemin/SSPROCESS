@@ -37,6 +37,7 @@ public class SinSimApp extends Application {
     private String password; //用户密码
     private int role; //用户角色（工长，质检）
     private String ip;
+    private int userId;
     private static SinSimApp mApp;
 
     /**
@@ -64,7 +65,8 @@ public class SinSimApp extends Application {
         FULL_NAME,  //名字
         IS_LOGIN,   //是否登录
         ROLE,        //角色：工长、质检
-        SERVICE_IP   //服务器地址
+        SERVICE_IP,  //服务器地址
+        USER_ID     //用户id
     }
 
 
@@ -111,6 +113,7 @@ public class SinSimApp extends Application {
             this.role = Integer.valueOf(readValue(PersistentValueType.ROLE, "0"));
         }
         this.ip = readValue(PersistentValueType.SERVICE_IP, "");
+        this.userId = Integer.valueOf(readValue(PersistentValueType.USER_ID, "0"));
     }
 
     /**
@@ -120,12 +123,13 @@ public class SinSimApp extends Application {
      * @param account
      * @param fullname
      */
-    public void setIsLogined(boolean isLogined, String account, String fullname, String password, int role) {
+    public void setIsLogined(boolean isLogined, String account, String fullname, String password, int role, int userId) {
         writePreferenceValue(PersistentValueType.IS_LOGIN, String.valueOf(isLogined));
         writePreferenceValue(PersistentValueType.ACCOUNT, account);
         writePreferenceValue(PersistentValueType.FULL_NAME, fullname);
         writePreferenceValue(PersistentValueType.PASSWORD, password);
         writePreferenceValue(PersistentValueType.ROLE, String.valueOf(role));
+        writePreferenceValue(PersistentValueType.USER_ID, String.valueOf(userId));
         try {
             commitValues();
             this.isLogined = isLogined;
@@ -133,6 +137,7 @@ public class SinSimApp extends Application {
             this.fullname = fullname;
             this.password = password;
             this.role = role;
+            this.userId=userId;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -145,6 +150,7 @@ public class SinSimApp extends Application {
         writePreferenceValue(PersistentValueType.FULL_NAME, "");
         writePreferenceValue(PersistentValueType.PASSWORD, "");
         writePreferenceValue(PersistentValueType.ROLE, "");
+        writePreferenceValue(PersistentValueType.USER_ID, "");
         try {
             commitValues();
             this.isLogined = false;
@@ -152,6 +158,7 @@ public class SinSimApp extends Application {
             this.fullname = "";
             this.password = "";
             this.role = -1;
+            this.userId = -1;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -261,12 +268,16 @@ public class SinSimApp extends Application {
         return role;
     }
 
+    public int getUserId() {
+        return userId;
+    }
+
     public String getServerIP() {
         return ip;
     }
 
     public void setServerIP(String ipStr) {
-        writePreferenceValue(PersistentValueType.PASSWORD, ipStr);
+        writePreferenceValue(PersistentValueType.SERVICE_IP, ipStr);
         try {
             commitValues();
             this.ip = ipStr;

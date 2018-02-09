@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
@@ -166,11 +167,16 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
             if (msg.what == Network.OK) {
                 mProcessToInstallPlanList=(ArrayList<TaskMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToInstallPlanList.size());
-                mTaskRecordAdapter.setProcessList(mProcessToInstallPlanList);
-                mTaskRecordAdapter.notifyDataSetChanged();
+                if (mProcessToInstallPlanList.size()==0){
+                    Toast.makeText(getContext(),"没有更多了...",Toast.LENGTH_SHORT).show();
+                } else {
+                    mTaskRecordAdapter.setProcessList(mProcessToInstallPlanList);
+                    mTaskRecordAdapter.notifyDataSetChanged();
+                }
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg);
+                Toast.makeText(getContext(),"更新失败!"+errorMsg,Toast.LENGTH_SHORT).show();
             }
         }
     }

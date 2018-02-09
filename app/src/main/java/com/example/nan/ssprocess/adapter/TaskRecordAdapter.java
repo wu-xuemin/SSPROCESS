@@ -66,7 +66,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
                     itemView.processStateTv.setTextColor(Color.YELLOW);
                     break;
                 case 3:
-                    itemView.processStateTv.setText("安装完");
+                    itemView.processStateTv.setText("待质检");
                     itemView.processStateTv.setTextColor(Color.GREEN);
                     break;
                 case 4:
@@ -74,7 +74,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
                     itemView.processStateTv.setTextColor(Color.YELLOW);
                     break;
                 case 5:
-                    itemView.processStateTv.setText("质检通过");
+                    itemView.processStateTv.setText("质检合格");
                     itemView.processStateTv.setTextColor(Color.GREEN);
                     break;
                 case 6:
@@ -82,7 +82,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
                     itemView.processStateTv.setTextColor(Color.RED);
                     break;
                 case 7:
-                    itemView.processStateTv.setText("质检异常");
+                    itemView.processStateTv.setText("质检不合格");
                     itemView.processStateTv.setTextColor(Color.RED);
                     break;
                 default:

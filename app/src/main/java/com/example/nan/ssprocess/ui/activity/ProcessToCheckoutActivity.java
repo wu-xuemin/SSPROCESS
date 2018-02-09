@@ -153,9 +153,13 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
             if (msg.what == Network.OK) {
                 mProcessToCheckoutList=(ArrayList<TaskMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToCheckoutList.size());
-                mTaskRecordAdapter.setProcessList(mProcessToCheckoutList);
-                mTaskRecordAdapter.notifyDataSetChanged();
-                Toast.makeText(ProcessToCheckoutActivity.this, "列表已更新！", Toast.LENGTH_SHORT).show();
+                if (mProcessToCheckoutList.size()==0){
+                    Toast.makeText(ProcessToCheckoutActivity.this, "没有更多了...", Toast.LENGTH_SHORT).show();
+                }else {
+                    mTaskRecordAdapter.setProcessList(mProcessToCheckoutList);
+                    mTaskRecordAdapter.notifyDataSetChanged();
+                    Toast.makeText(ProcessToCheckoutActivity.this, "列表已更新！", Toast.LENGTH_SHORT).show();
+                }
             } else {
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(ProcessToCheckoutActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
@@ -175,10 +179,15 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
                     TaskMachineListData mTaskMachineListData=new TaskMachineListData();
                     mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
                     //TODO:添加判断逻辑
+                    for (TaskMachineListData taskMachineListData:mProcessToCheckoutList){
+                        if (mTaskMachineListData.getId()==taskMachineListData.getId()){
+                            Intent intent=new Intent(ProcessToCheckoutActivity.this,DetailToCheckoutActivity.class);
+                            intent.putExtra("mTaskMachineListData", mTaskMachineListData);
+                            startActivity(intent);
+                            break;
+                        }
+                    }
 
-                    Intent intent=new Intent(ProcessToCheckoutActivity.this,DetailToCheckoutActivity.class);
-                    intent.putExtra("mTaskMachineListData", mTaskMachineListData);
-                    startActivity(intent);
                 }
                 break;
             default:
