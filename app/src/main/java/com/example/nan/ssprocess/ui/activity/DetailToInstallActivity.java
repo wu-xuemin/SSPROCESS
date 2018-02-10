@@ -71,11 +71,10 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_to_install);
 
-        EditText locationEt = findViewById(R.id.location_et);
+        TextView locationTv = findViewById(R.id.location_tv);
         TextView orderNumberTv=findViewById(R.id.order_number_tv);
         TextView machineNumberTv=findViewById(R.id.machine_number_tv);
-        TextView needleCountTv=findViewById(R.id.needle_count_tv);
-        TextView typeTv=findViewById(R.id.type_tv);
+        TextView currentStatusTv=findViewById(R.id.current_status_tv);
         TextView intallListTv=findViewById(R.id.intall_list_tv);
 
         installNormalRb=findViewById(R.id.normal_rb);
@@ -92,12 +91,10 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
         //把数据填入相应位置
         orderNumberTv.setText(""+mTaskMachineListData.getMachineData().getOrderId());
-        needleCountTv.setText(""+mTaskMachineListData.getMachineOrderData().getHeadNum());
+        currentStatusTv.setText(""+mTaskMachineListData.getStatus());
         machineNumberTv.setText(mTaskMachineListData.getMachineData().getMachineStrId());
-        typeTv.setText(""+mTaskMachineListData.getMachineOrderData().getMachineType());
-        locationEt.setText(mTaskMachineListData.getMachineData().getLocation());
-        locationEt.setFocusable(false);
-        locationEt.setEnabled(false);
+        locationTv.setText(mTaskMachineListData.getMachineData().getLocation());
+
 
         //点击返回
         ImageView previousIv = findViewById(R.id.close_machine_detail);

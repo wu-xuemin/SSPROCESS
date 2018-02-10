@@ -31,38 +31,38 @@
         android:layout_alignTop="@+id/order_number_label"
         android:text="暂无"/>
     <TextView
-        android:id="@+id/needle_count_label"
+        android:id="@+id/current_status_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/basic_info_label"
         android:layout_marginTop="16dp"
         android:layout_below="@+id/order_number_label"
-        android:text="头数："
+        android:text="当前状态："
         android:textColor="#000000"/>
     <TextView
-        android:id="@+id/needle_count_tv"
+        android:id="@+id/current_status_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/needle_count_label"
-        android:layout_toRightOf="@+id/needle_count_label"
+        android:layout_alignTop="@+id/current_status_label"
+        android:layout_toRightOf="@+id/current_status_label"
         android:text="暂无"/>
     <TextView
-        android:id="@+id/type_label"
+        android:id="@+id/intall_list_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/basic_info_label"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:layout_below="@+id/needle_count_label"
-        android:text="类型："
+        android:layout_below="@+id/current_status_label"
+        android:text="装车单："
         android:textColor="#000000"/>
     <TextView
-        android:id="@+id/type_tv"
+        android:id="@+id/intall_list_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/type_label"
-        android:layout_toRightOf="@+id/type_label"
-        android:text="暂无"/>
+        android:layout_alignTop="@+id/intall_list_label"
+        android:layout_toRightOf="@+id/intall_list_label"
+        android:text="点击获取"/>
 
     <TextView
         android:id="@+id/machine_number_label"
@@ -86,31 +86,16 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/machine_number_label"
         android:layout_alignLeft="@+id/machine_number_label"
-        android:layout_alignTop="@+id/needle_count_label"
-        android:text="位置："
+        android:layout_alignTop="@+id/current_status_label"
+        android:text="机器位置："
         android:textColor="#000000"/>
-    <EditText
-        android:id="@+id/location_et"
+    <TextView
+        android:id="@+id/location_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/location_label"
         android:layout_alignBaseline="@+id/location_label"
         android:maxLength="6"
-        android:hint="输入位置"/>
-    <TextView
-        android:id="@+id/intall_list_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/location_label"
-        android:layout_alignLeft="@+id/location_label"
-        android:layout_alignTop="@+id/type_label"
-        android:text="装车单："
-        android:textColor="#000000"/>
-    <TextView
-        android:id="@+id/intall_list_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/intall_list_label"
-        android:layout_alignTop="@+id/type_label"
-        android:text="暂无"/>
+        android:hint="暂无"/>
+
 </RelativeLayout>

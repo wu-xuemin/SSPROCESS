@@ -1,17 +1,23 @@
 package com.example.nan.ssprocess.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,11 +49,12 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
 
     private static final String TAG="nlgDetailToAdmin";
     private TaskMachineListData mTaskMachineListData=new TaskMachineListData();
-    private EditText locationEt;
+    private TextView locationTv;
     private Spinner failReasonSpinner;
     private TextView abnormalDetailTv;
     private TextView nokReasonTv;
     private TextView nokDetailTv;
+    private AlertDialog mLocationSettngDialog=null;
 
     private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
 
@@ -68,11 +75,10 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_to_admin);
 
-        locationEt=findViewById(R.id.location_et);
+        locationTv=findViewById(R.id.location_tv);
         TextView orderNumberTv=findViewById(R.id.order_number_tv);
         TextView machineNumberTv=findViewById(R.id.machine_number_tv);
-        TextView needleCountTv=findViewById(R.id.needle_count_tv);
-        TextView typeTv=findViewById(R.id.type_tv);
+        TextView currentStatusTv=findViewById(R.id.current_status_tv);
         TextView intallListTv=findViewById(R.id.intall_list_tv);
         failReasonSpinner=findViewById(R.id.fail_reason_spinner);
         abnormalDetailTv=findViewById(R.id.abnormal_detail_tv);
@@ -86,10 +92,43 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
 
         //把数据填入相应位置
         orderNumberTv.setText(""+mTaskMachineListData.getMachineData().getOrderId());
-        needleCountTv.setText(""+mTaskMachineListData.getMachineOrderData().getHeadNum());
+        currentStatusTv.setText(""+mTaskMachineListData.getStatus());
         machineNumberTv.setText(mTaskMachineListData.getMachineData().getMachineStrId());
-        typeTv.setText(""+mTaskMachineListData.getMachineOrderData().getMachineType());
-        locationEt.setText(mTaskMachineListData.getMachineData().getLocation());
+        locationTv.setTextColor(Color.BLUE);
+        if (mTaskMachineListData.getMachineData().getLocation().isEmpty()){
+            locationTv.setText("点击上传位置");
+        }else {
+            locationTv.setText(mTaskMachineListData.getMachineData().getLocation());
+        }
+        locationTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LinearLayout layout = (LinearLayout) View.inflate(DetailToAdminActivity.this, R.layout.dialog_location_seting, null);
+                final EditText dialogLocationEt = layout.findViewById(R.id.dialog_location_et);
+                mLocationSettngDialog = new AlertDialog.Builder(DetailToAdminActivity.this).create();
+                mLocationSettngDialog.setTitle("输入机器的位置：");
+                mLocationSettngDialog.setView(layout);
+                mLocationSettngDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                mLocationSettngDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //获取dialog的输入信息，并上传到服务器
+                        if (TextUtils.isEmpty(dialogLocationEt.getText())) {
+                            Toast.makeText(DetailToAdminActivity.this,"地址不能为空，请确认后重新输入！",Toast.LENGTH_SHORT).show();
+                        }else {
+                            locationTv.setText(dialogLocationEt.getText().toString());
+                            updateProcessDetailData();
+                        }
+                    }
+                });
+                mLocationSettngDialog.show();
+            }
+        });
 
         fetchQARecordData();
 
@@ -99,24 +138,6 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
             @Override
             public void onClick(View v) {
                 finish();
-            }
-        });
-
-        //点击返回
-        Button previousButton = findViewById(R.id.pre_button);
-        previousButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        //点击上传位置信息
-        Button publishButton = findViewById(R.id.update_location_button);
-        publishButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateProcessDetailData();
             }
         });
 
@@ -222,7 +243,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     private void updateProcessDetailData() {
         final String ip = SinSimApp.getApp().getServerIP();
         //更新loaction状态
-        mTaskMachineListData.getMachineData().setLocation(locationEt.getText().toString());
+        mTaskMachineListData.getMachineData().setLocation(locationTv.getText().toString());
         Gson gson=new Gson();
         String machineDataToJson = gson.toJson(mTaskMachineListData.getMachineData());
         Log.d(TAG, "onItemClick: gson :"+ machineDataToJson);
@@ -272,5 +293,13 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                     .currentPosition(mCurrentClickNpl.getCurrentClickItemPosition()); // 当前预览图片的索引
         }
         startActivity(photoPreviewIntentBuilder.build());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mLocationSettngDialog!=null) {
+            mLocationSettngDialog.dismiss();
+        }
     }
 }
