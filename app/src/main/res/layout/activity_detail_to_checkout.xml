@@ -44,80 +44,75 @@
 
             <include layout="@layout/machine_info"/>
 
-            <RelativeLayout
+            <TextView
+                android:id="@+id/checkout_info_label"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/checkout_info_label"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:text="质检结果："
+                android:textColor="@color/black"
+                />
+            <RadioGroup
+                android:id="@+id/resalt_for_checkout_label"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp">
+
+                <RadioButton
+                    android:id="@+id/checked_ok_rb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginLeft="16dp"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:text="质检结果："
-                    android:textColor="#000000"
-                    />
-                <RadioGroup
-                    android:id="@+id/resalt_for_checkout_label"
+                    android:text="合格" />
+                <RadioButton
+                    android:id="@+id/checked_nok_rb"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_alignLeft="@+id/checkout_info_label"
-                    android:layout_marginTop="8dp"
-                    android:layout_below="@+id/checkout_info_label">
-                    <RadioButton
-                        android:id="@+id/checked_ok_rb"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="合格" />
-                    <RadioButton
-                        android:id="@+id/checked_nok_rb"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="不合格" />
-                </RadioGroup>
+                    android:layout_height="wrap_content"
+                    android:text="不合格" />
+            </RadioGroup>
 
-                <TextView
-                    android:id="@+id/checkout_nok_detail_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/checkout_info_label"
-                    android:layout_marginTop="1dp"
-                    android:layout_below="@+id/resalt_for_checkout_label"
-                    android:textSize="16sp"
-                    android:text="不合格原因："
-                    android:textColor="#000000"/>
-                <EditText
-                    android:id="@+id/checkout_nok_detail_et"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/checkout_info_label"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_below="@+id/checkout_nok_detail_label"
-                    android:hint="输入不合格原因"
-                    android:lines="3"
-                    android:gravity="start"
-                    android:textSize="16sp"
-                    android:background="@color/hintColor" />
-                <TextView
-                    android:id="@+id/take_photos_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/checkout_info_label"
-                    android:layout_marginTop="4dp"
-                    android:layout_below="@+id/checkout_nok_detail_et"
-                    android:textSize="16sp"
-                    android:text="拍照上传："
-                    android:textColor="#000000"/>
-
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/checkout_nok_detail_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:textSize="16sp"
+                android:text="不合格原因："
+                android:textColor="@color/black"/>
+            <EditText
+                android:id="@+id/checkout_nok_detail_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:hint="输入不合格原因"
+                android:lines="3"
+                android:gravity="start"
+                android:textSize="16sp"
+                android:background="@color/hintColor" />
+            <TextView
+                android:id="@+id/take_photos_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:textSize="16sp"
+                android:text="拍照上传："
+                android:textColor="@color/black"/>
 
             <cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout
                 android:id="@+id/checkout_nok_add_photos"
                 style="@style/WrapWrap"
+                android:layout_marginRight="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="4dp"
                 app:bga_snpl_deleteDrawable="@mipmap/bga_pp_ic_delete"

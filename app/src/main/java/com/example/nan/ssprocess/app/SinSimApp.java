@@ -3,6 +3,7 @@ package com.example.nan.ssprocess.app;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.util.Log;
 
 import com.blankj.utilcode.util.CacheUtils;
@@ -30,6 +31,66 @@ public class SinSimApp extends Application {
     public static final int LOGIN_FOR_ADMIN = 2;
     public static final int LOGIN_FOR_QA = 11;
     public static final int LOGIN_FOR_INSTALL = 3;
+
+    /**
+     * Task(工序)安装状态
+     * "0" --> 初始化状态
+     * "1" --> 已计划
+     * "2" --> 待安装
+     * "3" --> 开始安装
+     * "4" --> 安装完成
+     * "5" --> 质检中
+     * "6" --> 质检完成
+     * "7" --> 安装异常
+     * "8" --> 质检异常
+     * "9" --> 跳过
+     */
+    public static final int TASK_INITIAL = 0;
+    public static final int TASK_PLANED = 1;
+    public static final int TASK_INSTALL_WAITING = 2;
+    public static final int TASK_INSTALLING = 3;
+    public static final int TASK_INSTALLED = 4;
+    public static final int TASK_QUALITY_DOING = 5;
+    public static final int TASK_QUALITY_DONE = 6;
+    public static final int TASK_INSTALL_ABNORMAL = 7;
+    public static final int TASK_QUALITY_ABNORMAL = 8;
+    public static final int TASK_SKIP = 9;
+    public static String getInstallStatusString(int status) {
+        String result = "";
+        switch (status){
+            case SinSimApp.TASK_INITIAL:
+                result = "初始化";
+                break;
+            case SinSimApp.TASK_PLANED:
+                result = "已计划";
+                break;
+            case SinSimApp.TASK_INSTALL_WAITING:
+                result = "待安装";
+                break;
+            case SinSimApp.TASK_INSTALLING:
+                result = "安装中";
+                break;
+            case SinSimApp.TASK_INSTALLED:
+                result = "待质检";
+                break;
+            case SinSimApp.TASK_QUALITY_DOING:
+                result = "质检中";
+                break;
+            case SinSimApp.TASK_QUALITY_DONE:
+                result = "质检合格";
+                break;
+            case SinSimApp.TASK_INSTALL_ABNORMAL:
+                result = "安装异常";
+                break;
+            case SinSimApp.TASK_QUALITY_ABNORMAL:
+                result = "质检不合格";
+                break;
+            default:
+                break;
+
+        }
+        return result;
+    }
 
     private boolean isLogined = false; // 是否已登录
     private String account;//用户账号
@@ -69,11 +130,9 @@ public class SinSimApp extends Application {
         USER_ID     //用户id
     }
 
-
     public static SinSimApp getApp() {
         return mApp;
     }
-
 
     @SuppressLint("CommitPrefEdits")
     @Override

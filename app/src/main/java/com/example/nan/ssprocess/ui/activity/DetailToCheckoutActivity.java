@@ -103,7 +103,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 
         //把数据填入相应位置
         orderNumberTv.setText(""+mTaskMachineListData.getMachineData().getOrderId());
-        currentStatusTv.setText(""+mTaskMachineListData.getStatus());
+        currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskMachineListData.getStatus()));
         machineNumberTv.setText(mTaskMachineListData.getMachineData().getMachineStrId());
         locationTv.setText(mTaskMachineListData.getMachineData().getLocation());
 
@@ -164,7 +164,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                     }
                     mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
                     Log.d(TAG, "handleMessage: get Json = "+new Gson().toJson(mQualityRecordDetailsData));
-                    if (mQualityRecordDetailsData.getStatus() == 0) {
+                    if (mQualityRecordDetailsData.getStatus() == SinSimApp.TASK_QUALITY_ABNORMAL) {
                         //加载历史照片
                         checkedNokRb.setChecked(true);
                         checkoutNokDetailEt.setText(mQualityRecordDetailsData.getComment());

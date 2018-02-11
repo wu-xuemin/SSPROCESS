@@ -110,7 +110,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
         //把数据填入相应位置
         orderNumberTv.setText(""+mTaskMachineListData.getMachineData().getOrderId());
-        currentStatusTv.setText(""+mTaskMachineListData.getStatus());
+        currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskMachineListData.getStatus()));
         machineNumberTv.setText(mTaskMachineListData.getMachineData().getMachineStrId());
         locationTv.setText(mTaskMachineListData.getMachineData().getLocation());
 
@@ -226,7 +226,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     mAbnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
                     //如果异常，填入异常原因
                     Log.d(TAG, "handleMessage: 流程："+mAbnormalRecordDetailsData.getTaskRecord().getStatus()+" 异常类型："+mAbnormalRecordDetailsData.getAbnormalType());
-                    if (mAbnormalRecordDetailsData.getTaskRecord().getStatus() == 4) {
+                    if (mAbnormalRecordDetailsData.getTaskRecord().getStatus() == SinSimApp.TASK_INSTALLED) {
                         installAbnormalRb.setChecked(true);
                         failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(), true);
                         installAbnormalDetailEt.setText(mAbnormalRecordDetailsData.getComment());
@@ -264,12 +264,12 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                     }
                     mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
-                    if (mQualityRecordDetailsData.getStatus() == 0) {
+                    if (mQualityRecordDetailsData.getStatus() == SinSimApp.TASK_QUALITY_ABNORMAL) {
                         nokReasonTv.setText("不合格");
                         qaNokLayout.setVisibility(View.VISIBLE);
                         nokDetailTv.setText(mQualityRecordDetailsData.getComment());
                         //TODO:照片地址
-                    } else if (mQualityRecordDetailsData.getStatus() == 1){
+                    } else if (mQualityRecordDetailsData.getStatus() == SinSimApp.TASK_QUALITY_DONE){
                         nokReasonTv.setText("合格");
                         qaNokLayout.setVisibility(View.GONE);
                     } else {

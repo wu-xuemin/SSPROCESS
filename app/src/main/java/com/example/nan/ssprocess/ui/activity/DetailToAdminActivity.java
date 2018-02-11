@@ -105,7 +105,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
 
         //把数据填入相应位置
         orderNumberTv.setText(""+mTaskMachineListData.getMachineData().getOrderId());
-        currentStatusTv.setText(""+mTaskMachineListData.getStatus());
+        currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskMachineListData.getStatus()));
         machineNumberTv.setText(mTaskMachineListData.getMachineData().getMachineStrId());
         locationTv.setTextColor(Color.BLUE);
         if (mTaskMachineListData.getMachineData().getLocation().isEmpty()){
@@ -196,12 +196,12 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                     }
                     mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
-                    if (mQualityRecordDetailsData.getStatus() == 0) {
+                    if (mQualityRecordDetailsData.getStatus() == SinSimApp.TASK_QUALITY_ABNORMAL) {
                         nokReasonTv.setText("不合格");
                         qaNokLayout.setVisibility(View.VISIBLE);
                         nokDetailTv.setText(mQualityRecordDetailsData.getComment());
                         //TODO:照片地址
-                    } else if (mQualityRecordDetailsData.getStatus() == 1){
+                    } else if (mQualityRecordDetailsData.getStatus() == SinSimApp.TASK_QUALITY_DONE){
                         nokReasonTv.setText("合格");
                         qaNokLayout.setVisibility(View.GONE);
                     } else {
@@ -238,16 +238,16 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                     }
                     mAbnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
                     //异常，填入异常原因
-                    if (mAbnormalRecordDetailsData.getTaskRecord().getStatus() == 4) {
+                    if (mAbnormalRecordDetailsData.getTaskRecord().getStatus() == SinSimApp.TASK_INSTALL_ABNORMAL) {
                         abnormalReasonTv.setText("异常");
                         instalAbnormalLayout.setVisibility(View.VISIBLE);
                         abnormalDetailTv.setText(mAbnormalRecordDetailsData.getComment());
                         //TODO:照片地址
-                    } else if (mAbnormalRecordDetailsData.getTaskRecord().getStatus() == 4){
-                        abnormalReasonTv.setText("暂无");
-                        instalAbnormalLayout.setVisibility(View.GONE);
-                    }else {
+                    } else if (mAbnormalRecordDetailsData.getTaskRecord().getStatus() == SinSimApp.TASK_INSTALLED){
                         abnormalReasonTv.setText("正常");
+                        instalAbnormalLayout.setVisibility(View.GONE);
+                    } else {
+                        abnormalReasonTv.setText("暂无");
                         instalAbnormalLayout.setVisibility(View.GONE);
                     }
                 } else {

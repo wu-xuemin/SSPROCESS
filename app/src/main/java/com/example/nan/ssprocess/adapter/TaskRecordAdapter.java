@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.nan.ssprocess.R;
+import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 
 
@@ -53,35 +54,39 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             itemView.contractDateTv.setText(mProcessList.get(position).getMachineOrderData().getContractShipDate());
             itemView.planDateTv.setText(mProcessList.get(position).getMachineOrderData().getPlanShipDate());
             switch (mProcessList.get(position).getStatus()){
-                case 0:
+                case SinSimApp.TASK_INITIAL:
                     itemView.processStateTv.setText("初始化");
                     itemView.processStateTv.setTextColor(Color.YELLOW);
                     break;
-                case 1:
+                case SinSimApp.TASK_PLANED:
+                    itemView.processStateTv.setText("已计划");
+                    itemView.processStateTv.setTextColor(Color.YELLOW);
+                    break;
+                case SinSimApp.TASK_INSTALL_WAITING:
                     itemView.processStateTv.setText("待安装");
                     itemView.processStateTv.setTextColor(Color.GREEN);
                     break;
-                case 2:
+                case SinSimApp.TASK_INSTALLING:
                     itemView.processStateTv.setText("安装中");
                     itemView.processStateTv.setTextColor(Color.YELLOW);
                     break;
-                case 3:
+                case SinSimApp.TASK_INSTALLED:
                     itemView.processStateTv.setText("待质检");
                     itemView.processStateTv.setTextColor(Color.GREEN);
                     break;
-                case 4:
+                case SinSimApp.TASK_QUALITY_DOING:
                     itemView.processStateTv.setText("质检中");
                     itemView.processStateTv.setTextColor(Color.YELLOW);
                     break;
-                case 5:
+                case SinSimApp.TASK_QUALITY_DONE:
                     itemView.processStateTv.setText("质检合格");
                     itemView.processStateTv.setTextColor(Color.GREEN);
                     break;
-                case 6:
+                case SinSimApp.TASK_INSTALL_ABNORMAL:
                     itemView.processStateTv.setText("安装异常");
                     itemView.processStateTv.setTextColor(Color.RED);
                     break;
-                case 7:
+                case SinSimApp.TASK_QUALITY_ABNORMAL:
                     itemView.processStateTv.setText("质检不合格");
                     itemView.processStateTv.setTextColor(Color.RED);
                     break;
