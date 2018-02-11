@@ -56,7 +56,7 @@
                     android:layout_marginLeft="16dp"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:text="质检信息："
+                    android:text="质检结果："
                     android:textColor="#000000"
                     />
                 <RadioGroup
@@ -71,12 +71,12 @@
                         android:id="@+id/checked_ok_rb"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="检验合格" />
+                        android:text="合格" />
                     <RadioButton
                         android:id="@+id/checked_nok_rb"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="检验不合格" />
+                        android:text="不合格" />
                 </RadioGroup>
 
                 <TextView

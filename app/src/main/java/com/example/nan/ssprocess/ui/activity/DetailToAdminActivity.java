@@ -50,10 +50,12 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     private static final String TAG="nlgDetailToAdmin";
     private TaskMachineListData mTaskMachineListData=new TaskMachineListData();
     private TextView locationTv;
-    private Spinner failReasonSpinner;
+    private TextView abnormalReasonTv;
     private TextView abnormalDetailTv;
     private TextView nokReasonTv;
     private TextView nokDetailTv;
+    private LinearLayout qaNokLayout;
+    private LinearLayout instalAbnormalLayout;
     private AlertDialog mLocationSettngDialog=null;
 
     private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
@@ -80,10 +82,21 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         TextView machineNumberTv=findViewById(R.id.machine_number_tv);
         TextView currentStatusTv=findViewById(R.id.current_status_tv);
         TextView intallListTv=findViewById(R.id.intall_list_tv);
-        failReasonSpinner=findViewById(R.id.fail_reason_spinner);
+
+        //点击下载装车单
+        intallListTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO:下载装车单
+            }
+        });
+
+        abnormalReasonTv=findViewById(R.id.abnormal_reason_tv);
         abnormalDetailTv=findViewById(R.id.abnormal_detail_tv);
+        instalAbnormalLayout=findViewById(R.id.abnormal_detail_layout);
         nokReasonTv=findViewById(R.id.nok_reason_tv);
         nokDetailTv=findViewById(R.id.nok_detail_tv);
+        qaNokLayout=findViewById(R.id.checked_nok_layout);
 
         //获取传递过来的信息
         Intent intent = getIntent();
@@ -185,13 +198,18 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                     mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
                     if (mQualityRecordDetailsData.getStatus() == 0) {
                         nokReasonTv.setText("不合格");
-                        abnormalDetailTv.setText(mQualityRecordDetailsData.getComment());
+                        qaNokLayout.setVisibility(View.VISIBLE);
+                        nokDetailTv.setText(mQualityRecordDetailsData.getComment());
                         //TODO:照片地址
-                    } else {
+                    } else if (mQualityRecordDetailsData.getStatus() == 1){
                         nokReasonTv.setText("合格");
-                        abnormalDetailTv.setText("");
+                        qaNokLayout.setVisibility(View.GONE);
+                    } else {
+                        nokReasonTv.setText("暂无");
+                        qaNokLayout.setVisibility(View.GONE);
                     }
                 } else {
+                    qaNokLayout.setVisibility(View.GONE);
                     Toast.makeText(DetailToAdminActivity.this,"尚未质检",Toast.LENGTH_SHORT).show();
                 }
             } else {
@@ -219,18 +237,21 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                     }
                     mAbnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
-                    //如果异常，填入异常原因
+                    //异常，填入异常原因
                     if (mAbnormalRecordDetailsData.getTaskRecord().getStatus() == 4) {
-                        failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(), true);
-                        failReasonSpinner.setEnabled(false);
+                        abnormalReasonTv.setText("异常");
+                        instalAbnormalLayout.setVisibility(View.VISIBLE);
                         abnormalDetailTv.setText(mAbnormalRecordDetailsData.getComment());
                         //TODO:照片地址
-                    } else {
-                        failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(), true);
-                        failReasonSpinner.setEnabled(false);
-                        abnormalDetailTv.setText("");
+                    } else if (mAbnormalRecordDetailsData.getTaskRecord().getStatus() == 4){
+                        abnormalReasonTv.setText("暂无");
+                        instalAbnormalLayout.setVisibility(View.GONE);
+                    }else {
+                        abnormalReasonTv.setText("正常");
+                        instalAbnormalLayout.setVisibility(View.GONE);
                     }
                 } else {
+                    instalAbnormalLayout.setVisibility(View.GONE);
                     Log.d(TAG, "handleMessage: 没有安装异常");
                 }
             } else {

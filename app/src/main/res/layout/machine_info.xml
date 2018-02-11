@@ -62,6 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/intall_list_label"
         android:layout_toRightOf="@+id/intall_list_label"
+        android:textColor="@color/blue"
         android:text="点击获取"/>
 
     <TextView

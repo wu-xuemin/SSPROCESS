@@ -30,8 +30,6 @@
             />
     </RelativeLayout>
 
-    <include layout="@layout/machine_info"/>
-
     <ScrollView
         android:id="@+id/weather_layout"
         android:layout_width="match_parent"
@@ -43,30 +41,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <RelativeLayout
+
+            <include layout="@layout/machine_info"/>
+
+            <TextView
+                android:id="@+id/install_info_label"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/install_info_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:text="安装信息："
-                    android:textColor="#000000"
-                    />
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:text="安装结果："
+                android:textColor="@color/black"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="10dp">
                 <RadioGroup
                     android:id="@+id/resalt_for_install_label"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_alignLeft="@+id/install_info_label"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_below="@+id/install_info_label"
                     android:layout_weight="1">
                     <RadioButton
                         android:id="@+id/normal_rb"
@@ -77,56 +77,53 @@
                         android:id="@+id/abnormal_rb"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="异常：" />
+                        android:text="异常" />
                 </RadioGroup>
                 <Spinner
                     android:id="@+id/fail_reason_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:entries="@array/fail_reason"
-                    android:layout_toRightOf="@+id/resalt_for_install_label"
-                    android:layout_alignTop="@+id/resalt_for_install_label"
-                    android:layout_marginLeft="16dp"
                     android:layout_marginTop="5dp"/>
-                <TextView
-                    android:id="@+id/abnormal_detail_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/install_info_label"
-                    android:layout_marginTop="1dp"
-                    android:layout_below="@+id/resalt_for_install_label"
-                    android:textSize="16sp"
-                    android:text="异常描述："
-                    android:textColor="#000000"/>
-                <EditText
-                    android:id="@+id/abnormal_detail_et"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/install_info_label"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_below="@+id/abnormal_detail_label"
-                    android:lines="3"
-                    android:gravity="start"
-                    android:hint="输入异常信息"
-                    android:textSize="16sp"
-                    android:background="@color/hintColor"/>
-                <TextView
-                    android:id="@+id/take_photos_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/install_info_label"
-                    android:layout_marginTop="4dp"
-                    android:layout_below="@+id/abnormal_detail_et"
-                    android:textSize="16sp"
-                    android:text="拍照上传："
-                    android:textColor="#000000"/>
+            </LinearLayout>
 
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/abnormal_detail_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="1dp"
+                android:textSize="16sp"
+                android:text="异常描述："
+                android:textColor="#000000"/>
+            <EditText
+                android:id="@+id/abnormal_detail_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="1dp"
+                android:lines="3"
+                android:gravity="start"
+                android:hint="输入异常信息"
+                android:textSize="16sp"
+                android:background="@color/hintColor"/>
+            <TextView
+                android:id="@+id/take_photos_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="4dp"
+                android:textSize="16sp"
+                android:text="拍照上传："
+                android:textColor="@color/black"/>
 
             <cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout
                 android:id="@+id/install_abnormal_add_photos"
                 style="@style/WrapWrap"
+                android:layout_marginRight="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="4dp"
                 app:bga_snpl_deleteDrawable="@mipmap/bga_pp_ic_delete"
@@ -142,6 +139,9 @@
                 app:bga_snpl_plusDrawable="@mipmap/bga_pp_ic_plus"
                 app:bga_snpl_plusEnable="true"
                 app:bga_snpl_sortable="true" />
+
+            <include layout="@layout/item_qa_info"/>
+
         </LinearLayout>
     </ScrollView>
     <LinearLayout

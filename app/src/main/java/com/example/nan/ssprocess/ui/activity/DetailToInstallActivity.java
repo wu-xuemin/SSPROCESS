@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.AbnormalImageAddData;
 import com.example.nan.ssprocess.bean.basic.AbnormalRecordDetailsData;
+import com.example.nan.ssprocess.bean.basic.QualityRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
@@ -56,6 +58,12 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
     private UploadTaskRecordImageHandler mUploadTaskRecordImageHandler=new UploadTaskRecordImageHandler();
 
+    private TextView nokReasonTv;
+    private TextView nokDetailTv;
+    private LinearLayout qaNokLayout;
+    private FetchQARecordDataHandler mFetchQARecordDataHandler = new FetchQARecordDataHandler();
+    private ArrayList<QualityRecordDetailsData> mQualityRecordList=new ArrayList<>();
+    private QualityRecordDetailsData mQualityRecordDetailsData =new QualityRecordDetailsData();
 
     private static final int SCAN_QRCODE_START = 1;
     private static final int SCAN_QRCODE_END = 0;
@@ -77,12 +85,23 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         TextView currentStatusTv=findViewById(R.id.current_status_tv);
         TextView intallListTv=findViewById(R.id.intall_list_tv);
 
+        //点击下载装车单
+        intallListTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO:下载装车单
+            }
+        });
+
         installNormalRb=findViewById(R.id.normal_rb);
         installAbnormalRb=findViewById(R.id.abnormal_rb);
         failReasonSpinner=findViewById(R.id.fail_reason_spinner);
         installAbnormalDetailEt=findViewById(R.id.abnormal_detail_et);
         begainInstallButton = findViewById(R.id.begin_install_button);
         installInfoUpdateButton = findViewById(R.id.install_info_update_button);
+        nokReasonTv=findViewById(R.id.nok_reason_tv);
+        nokDetailTv=findViewById(R.id.nok_detail_tv);
+        qaNokLayout=findViewById(R.id.checked_nok_layout);
 
         //获取传递过来的信息
         Intent intent = getIntent();
@@ -94,7 +113,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         currentStatusTv.setText(""+mTaskMachineListData.getStatus());
         machineNumberTv.setText(mTaskMachineListData.getMachineData().getMachineStrId());
         locationTv.setText(mTaskMachineListData.getMachineData().getLocation());
-
 
         //点击返回
         ImageView previousIv = findViewById(R.id.close_machine_detail);
@@ -183,6 +201,9 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         mPostValue.put("taskRecordId", ""+mTaskMachineListData.getId());
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_INSTALL_ABNORMAL_RECORD_DETAIL;
         Network.Instance(SinSimApp.getApp()).fetchProcessInstallRecordData(fetchProcessRecordUrl, mPostValue, mFetchInstallRecordDataHandler);
+
+        String fetchQaProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
+        Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, mFetchQARecordDataHandler);
     }
 
     @SuppressLint("HandlerLeak")
@@ -217,6 +238,47 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     }
                 } else {
                     Log.d(TAG, "handleMessage: 没有安装异常");
+                }
+            } else {
+                String errorMsg = (String)msg.obj;
+                Toast.makeText(DetailToInstallActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class FetchQARecordDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if (msg.what == Network.OK) {
+                //获取质检结果
+                mQualityRecordList=(ArrayList<QualityRecordDetailsData>)msg.obj;
+                if (mQualityRecordList!=null && !mQualityRecordList.isEmpty()) {
+                    int updateTime = mQualityRecordList.size() - 1;
+                    //根据CreateTime取值
+                    for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
+                        if (mQualityRecordList.get(updateTime).getCreateTime() < mQualityRecordList.get(update).getCreateTime()) {
+                            Log.d(TAG, "handleMessage: " + mQualityRecordList.get(updateTime).getCreateTime() + " : " + mQualityRecordList.get(update).getCreateTime());
+                            updateTime = update;
+                        }
+                        Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
+                    }
+                    mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
+                    if (mQualityRecordDetailsData.getStatus() == 0) {
+                        nokReasonTv.setText("不合格");
+                        qaNokLayout.setVisibility(View.VISIBLE);
+                        nokDetailTv.setText(mQualityRecordDetailsData.getComment());
+                        //TODO:照片地址
+                    } else if (mQualityRecordDetailsData.getStatus() == 1){
+                        nokReasonTv.setText("合格");
+                        qaNokLayout.setVisibility(View.GONE);
+                    } else {
+                        nokReasonTv.setText("暂无");
+                        qaNokLayout.setVisibility(View.GONE);
+                    }
+                } else {
+                    qaNokLayout.setVisibility(View.GONE);
+                    Toast.makeText(DetailToInstallActivity.this,"尚未质检",Toast.LENGTH_SHORT).show();
                 }
             } else {
                 String errorMsg = (String)msg.obj;

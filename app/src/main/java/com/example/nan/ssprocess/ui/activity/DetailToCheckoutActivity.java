@@ -83,6 +83,14 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         TextView currentStatusTv=findViewById(R.id.current_status_tv);
         TextView intallListTv=findViewById(R.id.intall_list_tv);
 
+        //点击下载装车单
+        intallListTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO:下载装车单
+            }
+        });
+
         checkedOkRb=findViewById(R.id.checked_ok_rb);
         checkedNokRb=findViewById(R.id.checked_nok_rb);
         checkoutNokDetailEt=findViewById(R.id.checkout_nok_detail_et);
@@ -105,6 +113,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         //点击返回
         ImageView previousIv = findViewById(R.id.close_machine_detail);
         previousIv.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 finish();

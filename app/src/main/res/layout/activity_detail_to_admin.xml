@@ -18,9 +18,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp"
+            android:layout_marginStart="8dp"
             android:src="@drawable/back_arrow"
-            android:layout_marginStart="1dp" />
+            android:layout_marginLeft="8dp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -41,63 +41,61 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <include layout="@layout/machine_info"/>
 
-            <RelativeLayout
+            <TextView
+                android:id="@+id/install_info_label"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/install_info_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:text="安装信息："
-                    android:textColor="#000000"/>
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:text="安装信息："
+                android:textColor="@color/black"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp">
+
                 <TextView
                     android:id="@+id/result_for_install_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_alignStart="@+id/install_info_label"
-                    android:layout_alignLeft="@+id/install_info_label"
-                    android:layout_below="@+id/install_info_label"
                     android:text="安装结果："
-                    android:textColor="#000000"/>
-                <Spinner
-                    android:id="@+id/fail_reason_spinner"
+                    android:textColor="@color/black"/>
+                <TextView
+                    android:id="@+id/abnormal_reason_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:entries="@array/fail_reason"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toEndOf="@+id/result_for_install_label"
-                    android:layout_toRightOf="@+id/result_for_install_label"
-                    android:layout_alignBaseline="@+id/result_for_install_label"/>
+                    android:text="暂无"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/abnormal_detail_layout"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:orientation="vertical">
                 <TextView
                     android:id="@+id/abnormal_detail_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignStart="@+id/install_info_label"
-                    android:layout_alignLeft="@+id/install_info_label"
                     android:layout_marginTop="8dp"
-                    android:layout_below="@+id/result_for_install_label"
                     android:textSize="16sp"
                     android:text="异常描述："
-                    android:textColor="#000000"/>
+                    android:textColor="@color/black"/>
                 <TextView
                     android:id="@+id/abnormal_detail_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignStart="@+id/install_info_label"
-                    android:layout_alignLeft="@+id/install_info_label"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_below="@+id/abnormal_detail_label"
                     android:layout_gravity="start"
                     android:hint="暂无"
                     android:textSize="16sp"
@@ -106,19 +104,13 @@
                     android:id="@+id/take_photos_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignStart="@+id/install_info_label"
-                    android:layout_alignLeft="@+id/install_info_label"
                     android:layout_marginTop="8dp"
-                    android:layout_below="@+id/abnormal_detail_tv"
                     android:textSize="16sp"
                     android:text="异常照片："
-                    android:textColor="#000000"/>
-
+                    android:textColor="@color/black"/>
                 <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
                     android:id="@+id/install_abnormal_photos"
                     style="@style/MatchWrap"
-                    android:layout_below="@id/take_photos_label"
-                    android:layout_marginLeft="16dp"
                     android:layout_marginTop="10dp"
                     app:bga_npl_itemCornerRadius="0dp"
                     app:bga_npl_itemSpanCount="3"
@@ -127,94 +119,9 @@
                     app:bga_npl_otherWhiteSpacing="64dp"
                     app:bga_npl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
                     app:bga_npl_showAsLargeWhenOnlyOne="true"/>
+            </LinearLayout>
 
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/checkout_info_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:text="质检信息："
-                    android:textColor="#000000"/>
-                <TextView
-                    android:id="@+id/result_for_checkout_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_alignStart="@+id/checkout_info_label"
-                    android:layout_alignLeft="@+id/checkout_info_label"
-                    android:layout_below="@+id/checkout_info_label"
-                    android:text="质检结果："
-                    android:textColor="#000000"/>
-                <TextView
-                    android:id="@+id/nok_reason_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toEndOf="@+id/result_for_checkout_label"
-                    android:layout_toRightOf="@+id/result_for_checkout_label"
-                    android:layout_alignTop="@+id/result_for_checkout_label"
-                    android:text="暂无" />
-                <TextView
-                    android:id="@+id/nok_detail_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignStart="@+id/checkout_info_label"
-                    android:layout_alignLeft="@+id/checkout_info_label"
-                    android:layout_marginTop="8dp"
-                    android:layout_below="@+id/result_for_checkout_label"
-                    android:textSize="16sp"
-                    android:text="质检异常描述："
-                    android:textColor="#000000"/>
-                <TextView
-                    android:id="@+id/nok_detail_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignStart="@+id/checkout_info_label"
-                    android:layout_alignLeft="@+id/checkout_info_label"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_below="@+id/nok_detail_label"
-                    android:layout_gravity="start"
-                    android:hint="暂无"
-                    android:textSize="16sp"
-                    android:background="@color/hintColor" />
-                <TextView
-                    android:id="@+id/take_nok_photos_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignStart="@+id/checkout_info_label"
-                    android:layout_alignLeft="@+id/checkout_info_label"
-                    android:layout_marginTop="8dp"
-                    android:layout_below="@+id/nok_detail_tv"
-                    android:textSize="16sp"
-                    android:text="异常照片："
-                    android:textColor="#000000"/>
-
-                <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
-                    android:id="@+id/checkout_nok_photos"
-                    style="@style/MatchWrap"
-                    android:layout_below="@id/take_nok_photos_label"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="10dp"
-                    app:bga_npl_itemCornerRadius="0dp"
-                    app:bga_npl_itemSpanCount="3"
-                    app:bga_npl_itemWhiteSpacing="4dp"
-                    app:bga_npl_itemWidth="0dp"
-                    app:bga_npl_otherWhiteSpacing="64dp"
-                    app:bga_npl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
-                    app:bga_npl_showAsLargeWhenOnlyOne="true"/>
-            </RelativeLayout>
+            <include layout="@layout/item_qa_info"/>
 
         </LinearLayout>
     </ScrollView>
