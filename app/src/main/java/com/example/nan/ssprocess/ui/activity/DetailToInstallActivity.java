@@ -31,17 +31,21 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerPreviewActivity;
+import cn.bingoogolapple.photopicker.activity.BGAPhotoPreviewActivity;
+import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
 import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
 
 /**
  * @author nan  2017/12/18
  */
-public class DetailToInstallActivity extends AppCompatActivity implements BGASortableNinePhotoLayout.Delegate {
+public class DetailToInstallActivity extends AppCompatActivity implements BGASortableNinePhotoLayout.Delegate,BGANinePhotoLayout.Delegate {
 
     private static final String TAG="nlgDetailToInstall";
     private RadioButton installNormalRb;
@@ -73,6 +77,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private static final int ABNORMAL = 4;
 
     private BGASortableNinePhotoLayout mInstallAbnormalPhotosSnpl;
+    private BGANinePhotoLayout mCurrentClickNpl;
+    private ArrayList<String> checkoutPhotoList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +131,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
         //安装状态
         switch (mTaskMachineListData.getMachineData().getStatus()){
-            case 1:
+            case SinSimApp.TASK_INSTALL_WAITING:
                 begainInstallButton.setText("扫码开始");
                 begainInstallButton.setEnabled(true);
                 begainInstallButton.setClickable(true);
@@ -139,7 +145,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 installInfoUpdateButton.setClickable(false);
                 installInfoUpdateButton.setEnabled(false);
                 break;
-            case 2:
+            case SinSimApp.TASK_INSTALLING:
                 begainInstallButton.setText("安装中");
                 begainInstallButton.setEnabled(false);
                 begainInstallButton.setClickable(false);
@@ -153,14 +159,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     }
                 });
                 break;
-            case 3:
-                begainInstallButton.setText("扫码开始");
-                begainInstallButton.setEnabled(false);
-                begainInstallButton.setClickable(false);
-                installInfoUpdateButton.setClickable(false);
-                installInfoUpdateButton.setEnabled(false);
-                break;
-            case 4:
+            case SinSimApp.TASK_INSTALLED:
+            case SinSimApp.TASK_INSTALL_ABNORMAL:
                 begainInstallButton.setText("重新开始");
                 begainInstallButton.setEnabled(true);
                 begainInstallButton.setClickable(true);
@@ -175,6 +175,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 installInfoUpdateButton.setEnabled(false);
                 break;
             default:
+                begainInstallButton.setText("扫码开始");
                 begainInstallButton.setEnabled(false);
                 begainInstallButton.setClickable(false);
                 installInfoUpdateButton.setClickable(false);
@@ -189,6 +190,11 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         mInstallAbnormalPhotosSnpl.setMaxItemCount(9);
         mInstallAbnormalPhotosSnpl.setPlusEnable(true);
         mInstallAbnormalPhotosSnpl.setDelegate(this);
+
+        checkoutPhotoList=new ArrayList<>(Arrays.asList("http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered12.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered13.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered14.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered15.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered16.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered17.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered18.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered19.png"));
+        BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
+        checkoutNinePhotoLayout.setDelegate(this);
+        checkoutNinePhotoLayout.setData(checkoutPhotoList);
     }
 
     /**
@@ -205,6 +211,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         String fetchQaProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
         Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, mFetchQARecordDataHandler);
     }
+
 
     @SuppressLint("HandlerLeak")
     private class FetchInstallRecordDataHandler extends Handler {
@@ -364,6 +371,32 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 Toast.makeText(DetailToInstallActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void onClickNinePhotoItem(BGANinePhotoLayout ninePhotoLayout, View view, int position, String model, List<String> models) {
+        mCurrentClickNpl = ninePhotoLayout;
+        photoPreviewWrapper();
+    }
+
+    private void photoPreviewWrapper() {
+        if (mCurrentClickNpl == null) {
+            return;
+        }
+
+        File downloadDir = new File(Environment.getExternalStorageDirectory(), "BGAPhotoPickerDownload");
+        BGAPhotoPreviewActivity.IntentBuilder photoPreviewIntentBuilder = new BGAPhotoPreviewActivity.IntentBuilder(this)
+                .saveImgDir(downloadDir); // 保存图片的目录，如果传 null，则没有保存图片功能
+
+        if (mCurrentClickNpl.getItemCount() == 1) {
+            // 预览单张图片
+            photoPreviewIntentBuilder.previewPhoto(mCurrentClickNpl.getCurrentClickItem());
+        } else if (mCurrentClickNpl.getItemCount() > 1) {
+            // 预览多张图片
+            photoPreviewIntentBuilder.previewPhotos(mCurrentClickNpl.getData())
+                    .currentPosition(mCurrentClickNpl.getCurrentClickItemPosition()); // 当前预览图片的索引
+        }
+        startActivity(photoPreviewIntentBuilder.build());
     }
 
     @Override

@@ -42,7 +42,6 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
     /**
      * 绑定数据
      */
-    @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
         final ItemView itemView = (ItemView) holder;
@@ -55,39 +54,39 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             itemView.planDateTv.setText(mProcessList.get(position).getMachineOrderData().getPlanShipDate());
             switch (mProcessList.get(position).getStatus()){
                 case SinSimApp.TASK_INITIAL:
-                    itemView.processStateTv.setText("初始化");
+                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INITIAL));
                     itemView.processStateTv.setTextColor(Color.YELLOW);
                     break;
                 case SinSimApp.TASK_PLANED:
-                    itemView.processStateTv.setText("已计划");
+                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_PLANED));
                     itemView.processStateTv.setTextColor(Color.YELLOW);
                     break;
                 case SinSimApp.TASK_INSTALL_WAITING:
-                    itemView.processStateTv.setText("待安装");
+                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALL_WAITING));
                     itemView.processStateTv.setTextColor(Color.GREEN);
                     break;
                 case SinSimApp.TASK_INSTALLING:
-                    itemView.processStateTv.setText("安装中");
+                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALLING));
                     itemView.processStateTv.setTextColor(Color.YELLOW);
                     break;
                 case SinSimApp.TASK_INSTALLED:
-                    itemView.processStateTv.setText("待质检");
+                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALLED));
                     itemView.processStateTv.setTextColor(Color.GREEN);
                     break;
                 case SinSimApp.TASK_QUALITY_DOING:
-                    itemView.processStateTv.setText("质检中");
+                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DOING));
                     itemView.processStateTv.setTextColor(Color.YELLOW);
                     break;
                 case SinSimApp.TASK_QUALITY_DONE:
-                    itemView.processStateTv.setText("质检合格");
+                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DONE));
                     itemView.processStateTv.setTextColor(Color.GREEN);
                     break;
                 case SinSimApp.TASK_INSTALL_ABNORMAL:
-                    itemView.processStateTv.setText("安装异常");
+                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALL_ABNORMAL));
                     itemView.processStateTv.setTextColor(Color.RED);
                     break;
                 case SinSimApp.TASK_QUALITY_ABNORMAL:
-                    itemView.processStateTv.setText("质检不合格");
+                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_ABNORMAL));
                     itemView.processStateTv.setTextColor(Color.RED);
                     break;
                 default:
