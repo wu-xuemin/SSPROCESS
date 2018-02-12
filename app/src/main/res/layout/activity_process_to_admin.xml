@@ -9,12 +9,13 @@
         android:id="@+id/process_to_admin_sv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/windowBackground"
         app:iconifiedByDefault="false"
         app:queryHint="输入机器编号"
         />
     <cn.bingoogolapple.refreshlayout.BGARefreshLayout
         android:id="@+id/refreshLayout"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_width="match_parent"
         android:layout_weight="1">
 
@@ -29,7 +30,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="点击扫二维码"
+        android:text="扫码上传位置"
         android:id="@+id/admin_scan_qrcode_button"
         />
 </LinearLayout>

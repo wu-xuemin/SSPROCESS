@@ -40,22 +40,27 @@
             android:label="@string/login_activity" />
         <activity
             android:name=".ui.activity.ProcessToInstallActivity"
-            android:label="安装组长"/>
+            android:label="安装组长" />
         <activity
             android:name=".ui.activity.ProcessToCheckoutActivity"
             android:label="质检员" />
         <activity
             android:name=".ui.activity.ProcessToAdminActivity"
-            android:label="生产部管理员"/>
+            android:label="生产部管理员" />
         <activity
             android:name=".ui.activity.ScanQrcodeActivity"
             android:label="@string/qr_scan" />
         <activity
             android:name=".ui.activity.DetailToAdminActivity"
             android:theme="@style/AppThemeNoTitle" />
-        <activity android:name=".ui.activity.DetailToInstallActivity"
+        <activity
+            android:name=".ui.activity.DetailToInstallActivity"
             android:theme="@style/AppThemeNoTitle" />
-        <activity android:name=".ui.activity.DetailToCheckoutActivity"
+        <activity
+            android:name=".ui.activity.DetailToCheckoutActivity"
+            android:theme="@style/AppThemeNoTitle" />
+        <activity
+            android:name=".ui.activity.ProcessToMachineActivity"
             android:theme="@style/AppThemeNoTitle" />
 
         <provider

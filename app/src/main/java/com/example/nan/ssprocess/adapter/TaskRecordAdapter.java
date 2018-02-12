@@ -16,7 +16,10 @@ import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Young on 2017/11/26.
@@ -48,10 +51,14 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
         //itemView.setIsRecyclable(false);//禁止复用
         if (mProcessList!=null && !mProcessList.isEmpty() && position < mProcessList.size()) {
             Log.d(TAG, "onBindViewHolder: 有数据"+position);
+            @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH");
+            Date planShipDate = new Date(mProcessList.get(position).getMachineOrderData().getPlanShipDate());
+            itemView.planShipDateTv.setText(formatter.format(planShipDate));
+            Date planDate = new Date(mProcessList.get(position).getTaskPlan().getPlanTime());
+            itemView.planDateTv.setText(formatter.format(planDate));
             itemView.machineIdTv.setText("" + mProcessList.get(position).getMachineData().getMachineStrId());
             itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
-            itemView.contractDateTv.setText(mProcessList.get(position).getMachineOrderData().getContractShipDate());
-            itemView.planDateTv.setText(mProcessList.get(position).getMachineOrderData().getPlanShipDate());
             switch (mProcessList.get(position).getStatus()){
                 case SinSimApp.TASK_INITIAL:
                     itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INITIAL));
@@ -67,7 +74,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
                     break;
                 case SinSimApp.TASK_INSTALLING:
                     itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALLING));
-                    itemView.processStateTv.setTextColor(Color.YELLOW);
+                    itemView.processStateTv.setTextColor(Color.BLUE);
                     break;
                 case SinSimApp.TASK_INSTALLED:
                     itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALLED));
@@ -75,7 +82,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
                     break;
                 case SinSimApp.TASK_QUALITY_DOING:
                     itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DOING));
-                    itemView.processStateTv.setTextColor(Color.YELLOW);
+                    itemView.processStateTv.setTextColor(Color.BLUE);
                     break;
                 case SinSimApp.TASK_QUALITY_DONE:
                     itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DONE));
@@ -126,7 +133,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
         TextView machineIdTv;
         TextView processNameTv;
         TextView processStateTv;
-        TextView contractDateTv;
+        TextView planShipDateTv;
         TextView planDateTv;
 
         ItemView(View itemView) {
@@ -135,7 +142,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             machineIdTv = (TextView) itemView.findViewById(R.id.process_machine_id_tv);
             processNameTv = (TextView) itemView.findViewById(R.id.process_name_tv);
             processStateTv = (TextView) itemView.findViewById(R.id.process_state_tv);
-            contractDateTv = (TextView) itemView.findViewById(R.id.process_begin_date_tv);
+            planShipDateTv = (TextView) itemView.findViewById(R.id.process_begin_date_tv);
             planDateTv = (TextView) itemView.findViewById(R.id.process_end_date_tv);
         }
     }

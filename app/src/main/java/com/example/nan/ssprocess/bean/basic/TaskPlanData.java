@@ -10,7 +10,7 @@ public class TaskPlanData implements Serializable {
     private String createTime;
     private int id;
     private int planType;
-    private String planTime;
+    private long planTime;
     private String deadline;
     private int taskRecordId;
     private String updateTime;
@@ -24,7 +24,7 @@ public class TaskPlanData implements Serializable {
         return id;
     }
 
-    public String getPlanTime() {
+    public long getPlanTime() {
         return planTime;
     }
 

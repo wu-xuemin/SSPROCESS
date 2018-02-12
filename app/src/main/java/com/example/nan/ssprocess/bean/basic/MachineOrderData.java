@@ -10,7 +10,7 @@ public class MachineOrderData implements Serializable {
     private int headNum;//头数
     private int machineType;//类型
     private String contractShipDate;//合同日期
-    private String planShipDate;//计划日期
+    private long planShipDate;//计划日期
 
     public int getHeadNum() {
         return headNum;
@@ -24,7 +24,7 @@ public class MachineOrderData implements Serializable {
         return contractShipDate;
     }
 
-    public String getPlanShipDate() {
+    public long getPlanShipDate() {
         return planShipDate;
     }
 }
