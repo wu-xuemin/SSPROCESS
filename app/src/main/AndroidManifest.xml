@@ -21,7 +21,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.activity.SplashActivity"
-            android:theme="@style/AppThemeNoTitle">
+            android:theme="@style/AppThemeNoTitle"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,30 +38,39 @@
 
         <activity
             android:name=".ui.activity.LoginActivity"
+            android:screenOrientation="portrait"
             android:label="@string/login_activity" />
         <activity
             android:name=".ui.activity.ProcessToInstallActivity"
+            android:screenOrientation="portrait"
             android:label="安装组长" />
         <activity
             android:name=".ui.activity.ProcessToCheckoutActivity"
+            android:screenOrientation="portrait"
             android:label="质检员" />
         <activity
             android:name=".ui.activity.ProcessToAdminActivity"
+            android:screenOrientation="portrait"
             android:label="生产部管理员" />
         <activity
             android:name=".ui.activity.ScanQrcodeActivity"
+            android:screenOrientation="portrait"
             android:label="@string/qr_scan" />
         <activity
             android:name=".ui.activity.DetailToAdminActivity"
-            android:theme="@style/AppThemeNoTitle" />
+            android:screenOrientation="portrait"
+            android:label="机器详情"/>
         <activity
             android:name=".ui.activity.DetailToInstallActivity"
-            android:theme="@style/AppThemeNoTitle" />
+            android:screenOrientation="portrait"
+            android:label="机器安装详情" />
         <activity
             android:name=".ui.activity.DetailToCheckoutActivity"
-            android:theme="@style/AppThemeNoTitle" />
+            android:screenOrientation="portrait"
+            android:label="质检详情" />
         <activity
             android:name=".ui.activity.ProcessToMachineActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoTitle" />
 
         <provider

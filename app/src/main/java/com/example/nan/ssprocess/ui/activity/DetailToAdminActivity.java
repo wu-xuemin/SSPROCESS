@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -76,6 +77,13 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_to_admin);
+
+        //返回前页按钮
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         locationTv=findViewById(R.id.location_tv);
         TextView orderNumberTv=findViewById(R.id.order_number_tv);
@@ -144,15 +152,6 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         });
 
         fetchQARecordData();
-
-        //点击返回
-        ImageView previousIv = findViewById(R.id.close_machine_detail);
-        previousIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
         //九宫格显示照片
         installPhotoList=new ArrayList<>(Arrays.asList("http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered1.png"));
@@ -322,5 +321,16 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         if (mLocationSettngDialog!=null) {
             mLocationSettngDialog.dismiss();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish(); // back button
+                return true;
+            default:
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

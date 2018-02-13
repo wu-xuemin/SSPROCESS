@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -77,6 +78,13 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_to_checkout);
 
+        //返回前页按钮
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         TextView locationTv=findViewById(R.id.location_tv);
         TextView orderNumberTv=findViewById(R.id.order_number_tv);
         TextView machineNumberTv=findViewById(R.id.machine_number_tv);
@@ -109,16 +117,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 
         //获取历史质检数据
         fetchQARecordData();
-
-        //点击返回
-        ImageView previousIv = findViewById(R.id.close_machine_detail);
-        previousIv.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
         //点击上传质检结果
         installInfoUpdateButton.setOnClickListener(new View.OnClickListener() {
@@ -334,5 +332,16 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             default:
                 break;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish(); // back button
+                return true;
+            default:
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

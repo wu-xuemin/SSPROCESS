@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
@@ -161,7 +162,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_logout, menu);
+        getMenuInflater().inflate(R.menu.menu_admin, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -175,6 +176,9 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                 startActivity(it);
                 finish();
                 break;
+            case R.id.search:
+                Intent intent=new Intent(ProcessToAdminActivity.this,ProcessToMachineActivity.class);
+                startActivity(intent);
             default:
                 break;
         }

@@ -5,14 +5,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <android.support.v7.widget.SearchView
-        android:id="@+id/process_to_admin_sv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/windowBackground"
-        app:iconifiedByDefault="false"
-        app:queryHint="输入机器编号"
-        />
     <cn.bingoogolapple.refreshlayout.BGARefreshLayout
         android:id="@+id/refreshLayout"
         android:layout_height="0dp"
@@ -23,7 +15,7 @@
             android:id="@+id/process_to_admin_rv"
             android:background="@color/cardview_light_background"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1">
         </android.support.v7.widget.RecyclerView>
     </cn.bingoogolapple.refreshlayout.BGARefreshLayout>

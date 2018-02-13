@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -85,6 +86,13 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_to_install);
 
+        //返回前页按钮
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         TextView locationTv = findViewById(R.id.location_tv);
         TextView orderNumberTv=findViewById(R.id.order_number_tv);
         TextView machineNumberTv=findViewById(R.id.machine_number_tv);
@@ -119,15 +127,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskMachineListData.getStatus()));
         machineNumberTv.setText(mTaskMachineListData.getMachineData().getMachineStrId());
         locationTv.setText(mTaskMachineListData.getMachineData().getLocation());
-
-        //点击返回
-        ImageView previousIv = findViewById(R.id.close_machine_detail);
-        previousIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
         //安装状态
         switch (mTaskMachineListData.getMachineData().getStatus()){
@@ -491,5 +490,15 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             default:
                 break;
         }
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish(); // back button
+                return true;
+            default:
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

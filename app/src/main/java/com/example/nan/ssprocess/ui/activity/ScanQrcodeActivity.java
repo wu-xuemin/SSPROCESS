@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
@@ -31,13 +32,19 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
 
     private static final String TAG = "nlgScanQrcodeActivity";
     private FetchTaskProcessFromIdHandler mFetchTaskProcessFromIdHandler = new FetchTaskProcessFromIdHandler();
-
+    private AlertDialog scanQrResultDialog;
     private ZXingView mQRCodeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_qrcode);
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         mQRCodeView = (ZXingView) findViewById(R.id.zxingview);
         mQRCodeView.setDelegate(this);
@@ -63,6 +70,9 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
     protected void onDestroy() {
         mQRCodeView.onDestroy();
         super.onDestroy();
+        if (scanQrResultDialog!=null){
+            scanQrResultDialog.dismiss();
+        }
     }
     
     private void vibrate() {
@@ -75,10 +85,10 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
     @Override
     public void onScanQRCodeSuccess(final String result) {
         Log.d(TAG, "result:" + result);
-        final AlertDialog.Builder scanQrResultDialog = new AlertDialog.Builder(ScanQrcodeActivity.this);
+        scanQrResultDialog = new AlertDialog.Builder(ScanQrcodeActivity.this).create();
         scanQrResultDialog.setTitle("扫描结果");
         scanQrResultDialog.setMessage("扫描结果： "+result);
-        scanQrResultDialog.setPositiveButton("确定",
+        scanQrResultDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -89,7 +99,7 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
                         String fetchTaskProcessFromIdUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_DETAIL;
                         Network.Instance(SinSimApp.getApp()).fetchTaskProcessFromId(fetchTaskProcessFromIdUrl, mPostValue, mFetchTaskProcessFromIdHandler);                    }
                 });
-        scanQrResultDialog.setNegativeButton("重新扫描",
+        scanQrResultDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"重新扫描",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -135,5 +145,16 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
                 Toast.makeText(ScanQrcodeActivity.this,"网络错误："+errorMsg,Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish(); // back button
+                return true;
+            default:
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

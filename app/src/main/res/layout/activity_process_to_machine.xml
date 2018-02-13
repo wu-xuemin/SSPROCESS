@@ -1,9 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.nan.ssprocess.ui.activity.ProcessToMachineActivity">
+    android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/close_machine_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/back_arrow" />
+        <SearchView
+            android:id="@+id/process_to_admin_sv"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:iconifiedByDefault="false"
+            android:inputType="text"
+            android:imeOptions="actionSearch"
+            android:queryHint="搜索" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="搜索" />
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/process_to_machine_rv"
+        android:background="@color/cardview_light_background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    </android.support.v7.widget.RecyclerView>
+</LinearLayout>
