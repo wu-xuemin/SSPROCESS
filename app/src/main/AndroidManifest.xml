@@ -21,8 +21,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.activity.SplashActivity"
-            android:theme="@style/AppThemeNoTitle"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeNoTitle">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,40 +38,44 @@
 
         <activity
             android:name=".ui.activity.LoginActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/login_activity" />
+            android:label="@string/login_activity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.ProcessToInstallActivity"
-            android:screenOrientation="portrait"
-            android:label="安装组长" />
+            android:label="安装组长"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.ProcessToCheckoutActivity"
-            android:screenOrientation="portrait"
-            android:label="质检员" />
+            android:label="质检员"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.ProcessToAdminActivity"
-            android:screenOrientation="portrait"
-            android:label="生产部管理员" />
+            android:label="生产部管理员"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.ScanQrcodeActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/qr_scan" />
+            android:label="@string/qr_scan"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.DetailToAdminActivity"
-            android:screenOrientation="portrait"
-            android:label="机器详情"/>
+            android:label="机器详情"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.DetailToInstallActivity"
-            android:screenOrientation="portrait"
-            android:label="机器安装详情" />
+            android:label="机器安装详情"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.DetailToCheckoutActivity"
-            android:screenOrientation="portrait"
-            android:label="质检详情" />
+            android:label="质检详情"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.ProcessToMachineActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoTitle" />
+        <activity
+            android:name=".ui.activity.ScanResultActivity"
+            android:label="机器详情"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
