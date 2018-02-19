@@ -131,25 +131,26 @@ public class LoginActivity extends AppCompatActivity {
 
             //在登陆完成后检查人员role进入不同界面：生产部管理员：2，质检员：11, 安装组长：3
             Log.d(TAG, "onLoginSuccess: role id "+SinSimApp.getApp().getRole());
-
-            if(SinSimApp.LOGIN_FOR_ADMIN == SinSimApp.getApp().getRole()) {
-                Intent it = new Intent();
-                it.setClass(LoginActivity.this, ProcessToAdminActivity.class);
-                startActivity(it);
-                finish();
-            }else if(SinSimApp.LOGIN_FOR_QA == SinSimApp.getApp().getRole()){
-                Intent it2 = new Intent();
-                it2.setClass(LoginActivity.this, ProcessToCheckoutActivity.class);
-                startActivity(it2);
-                finish();
-            }else if(SinSimApp.LOGIN_FOR_INSTALL == SinSimApp.getApp().getRole()){
-                Intent it3 = new Intent();
-                it3.setClass(LoginActivity.this, ProcessToInstallActivity.class);
-                startActivity(it3);
-                finish();
-            }
-            else {
-                Toast.makeText(LoginActivity.this,"您无权限操作!", Toast.LENGTH_SHORT).show();
+            Intent it = new Intent();
+            switch (SinSimApp.getApp().getRole()){
+                case SinSimApp.LOGIN_FOR_ADMIN:
+                    it.setClass(LoginActivity.this, ProcessToAdminActivity.class);
+                    startActivity(it);
+                    finish();
+                    break;
+                case SinSimApp.LOGIN_FOR_QA:
+                    it.setClass(LoginActivity.this, ProcessToCheckoutActivity.class);
+                    startActivity(it);
+                    finish();
+                    break;
+                case SinSimApp.LOGIN_FOR_INSTALL:
+                    it.setClass(LoginActivity.this, ProcessToInstallActivity.class);
+                    startActivity(it);
+                    finish();
+                    break;
+                default:
+                    Toast.makeText(LoginActivity.this,"您没有登入权限!", Toast.LENGTH_SHORT).show();
+                    break;
             }
         }
     }

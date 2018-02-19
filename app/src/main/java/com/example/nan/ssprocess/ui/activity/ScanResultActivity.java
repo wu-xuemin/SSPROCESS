@@ -8,10 +8,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.ScanResultAdapter;
 import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
+import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.google.gson.Gson;
 
@@ -50,9 +52,30 @@ public class ScanResultActivity extends AppCompatActivity {
             @Override
             public void onItemClick(int position){
                 Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mScanResultList.get(position)));
-                Intent intent=new Intent(ScanResultActivity.this,DetailToAdminActivity.class);
-                intent.putExtra("mTaskMachineListData", mScanResultList.get(position));
-                startActivity(intent);
+                Intent intent = new Intent();
+                switch (SinSimApp.getApp().getRole()){
+                    case SinSimApp.LOGIN_FOR_ADMIN:
+                        intent.setClass(ScanResultActivity.this,DetailToAdminActivity.class);
+                        intent.putExtra("mTaskMachineListData", mScanResultList.get(position));
+                        startActivity(intent);
+                        finish();
+                        break;
+                    case SinSimApp.LOGIN_FOR_INSTALL:
+                        intent.setClass(ScanResultActivity.this,DetailToInstallActivity.class);
+                        intent.putExtra("mTaskMachineListData", mScanResultList.get(position));
+                        startActivity(intent);
+                        finish();
+                        break;
+                    case SinSimApp.LOGIN_FOR_QA:
+                        intent.setClass(ScanResultActivity.this,DetailToCheckoutActivity.class);
+                        intent.putExtra("mTaskMachineListData", mScanResultList.get(position));
+                        startActivity(intent);
+                        finish();
+                        break;
+                    default:
+                        Toast.makeText(ScanResultActivity.this,"请检查登入账号!", Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
         });
     }
