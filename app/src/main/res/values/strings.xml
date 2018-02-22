@@ -3,6 +3,7 @@
     <string name="start_service">Start Service</string>
     <string name="stop_service">Stop Service</string>
     <string name="qr_scan">二维码扫描</string>
+    <string name="search_hint">搜索机器编号</string>
 
     <string name="system_name">SINSIM</string>
     <string name="system_name_cn">浙江信胜</string>

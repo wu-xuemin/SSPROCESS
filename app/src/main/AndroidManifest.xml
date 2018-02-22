@@ -70,8 +70,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.ProcessToMachineActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoTitle" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.ScanResultActivity"
             android:label="机器详情"

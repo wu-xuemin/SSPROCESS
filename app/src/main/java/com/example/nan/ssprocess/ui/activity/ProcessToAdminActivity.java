@@ -2,6 +2,8 @@ package com.example.nan.ssprocess.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -15,7 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.SearchView;
+import android.support.v7.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
@@ -163,7 +165,14 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_admin, menu);
-        return super.onCreateOptionsMenu(menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
+        searchView.setSubmitButtonEnabled(true);    // 显示“开始搜索”的按钮
+        searchView.setQueryRefinementEnabled(true); // 提示内容右边提供一个将提示内容放到搜索框的按钮
+        return true;
     }
 
     @Override
@@ -176,9 +185,9 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                 startActivity(it);
                 finish();
                 break;
-            case R.id.search:
-                Intent intent=new Intent(ProcessToAdminActivity.this,ProcessToMachineActivity.class);
-                startActivity(intent);
+//            case R.id.search:
+//                Intent intent=new Intent(ProcessToAdminActivity.this,ProcessToMachineActivity.class);
+//                startActivity(intent);
             default:
                 break;
         }
