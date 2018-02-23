@@ -48,6 +48,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
     private BGARefreshLayout mRefreshLayout;
 
     private ProgressDialog mLoadingProcessDialog;
+    private static final int SCAN_QRCODE_START = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +70,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(ProcessToAdminActivity.this,ScanQrcodeActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,SCAN_QRCODE_START);
             }
         });
 
@@ -159,6 +160,27 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(ProcessToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case SCAN_QRCODE_START:
+                // 当requestCode、resultCode同时为0时，也就是处理特定的结果
+                if (resultCode == RESULT_OK)
+                {
+                    // 取出Intent里的Extras数据传递给跳转的activity
+                    TaskMachineListData mTaskMachineListData = new TaskMachineListData();
+                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
+                    Intent intent=new Intent(this,DetailToInstallActivity.class);
+                    intent.putExtra("mTaskMachineListData", mTaskMachineListData);
+                    startActivity(intent);
+                }
+                break;
+            default:
+                break;
         }
     }
 

@@ -14,10 +14,13 @@ import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.ScanResultAdapter;
 import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
+import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
+import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 /**
  * @author nan
@@ -38,6 +41,10 @@ public class ScanResultActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        //获取传递过来的信息
+        Intent intent = getIntent();
+        //mScanResultList = (ArrayList<TaskMachineListData>) intent.getSerializableExtra("mTaskMachineListData");
 
         //列表
         RecyclerView mScanResultRv = findViewById(R.id.scan_result_rv);

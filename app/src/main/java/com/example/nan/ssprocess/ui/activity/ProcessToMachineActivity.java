@@ -120,7 +120,7 @@ public class ProcessToMachineActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    //关闭当前activite
+                                    //关闭当前activity
                                     finish();
                                 }
                             });
