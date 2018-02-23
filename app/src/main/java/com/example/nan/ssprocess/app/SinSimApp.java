@@ -172,7 +172,12 @@ public class SinSimApp extends Application {
             this.role = Integer.valueOf(readValue(PersistentValueType.ROLE, "0"));
         }
         this.ip = readValue(PersistentValueType.SERVICE_IP, "");
-        this.userId = Integer.valueOf(readValue(PersistentValueType.USER_ID, "0"));
+        String userIdStr = readValue(PersistentValueType.USER_ID, "0");
+        if ("".equals(userIdStr)){
+            this.userId =0;
+        }else {
+            this.userId = Integer.valueOf(readValue(PersistentValueType.USER_ID, "0"));
+        }
     }
 
     /**
@@ -217,7 +222,7 @@ public class SinSimApp extends Application {
             this.fullname = "";
             this.password = "";
             this.role = -1;
-            this.userId = -1;
+            this.userId = 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -237,7 +242,7 @@ public class SinSimApp extends Application {
                     valueType.toString(), sDefault));
         }
 
-        String sValue = mSharedPrefs.getString( valueType.toString(), sDefault );
+        String sValue = mSharedPrefs.getString(valueType.toString(), sDefault);
 
         if ( DEBUG_LOG ) {
             Log.i(TAG, "[readValue] <== nValue: " + sValue);
