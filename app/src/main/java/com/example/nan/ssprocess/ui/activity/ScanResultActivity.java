@@ -44,7 +44,7 @@ public class ScanResultActivity extends AppCompatActivity {
 
         //获取传递过来的信息
         Intent intent = getIntent();
-        //mScanResultList = (ArrayList<TaskMachineListData>) intent.getSerializableExtra("mTaskMachineListData");
+        final ArrayList<TaskMachineListData> mScanResultList = (ArrayList<TaskMachineListData>) intent.getSerializableExtra("mTaskMachineList");
 
         //列表
         RecyclerView mScanResultRv = findViewById(R.id.scan_result_rv);

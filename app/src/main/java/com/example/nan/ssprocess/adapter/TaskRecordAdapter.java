@@ -57,7 +57,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             itemView.planShipDateTv.setText(formatter.format(planShipDate));
             Date planDate = new Date(mProcessList.get(position).getTaskPlan().getPlanTime());
             itemView.planDateTv.setText(formatter.format(planDate));
-            itemView.machineIdTv.setText("" + mProcessList.get(position).getMachineData().getMachineStrId());
+            itemView.machineIdTv.setText("" + mProcessList.get(position).getMachineData().getNameplate());
             itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
             switch (mProcessList.get(position).getStatus()){
                 case SinSimApp.TASK_INITIAL:

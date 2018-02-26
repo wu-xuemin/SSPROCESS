@@ -10,6 +10,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.example.nan.ssprocess.R;
+import com.example.nan.ssprocess.app.SinSimApp;
+import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.ui.activity.LoginActivity;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
@@ -29,7 +31,6 @@ public class MyMqttService extends Service {
 
     private static final String TAG="nlgMqttService";
     private final String clientId = "ExampleAndroidClient";
-    private final String serverUri = "tcp://192.168.1.196:1883";
     private final String subscriptionTopic = "exampleAndroidPublishTopic";
     private static final String publishTopic = "exampleAndroidPublishTopic";
 
@@ -49,7 +50,8 @@ public class MyMqttService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "MqttService onCreate executed");
-
+        String serverIp = SinSimApp.getApp().getServerIP();
+        final String serverUri = URL.TCP_HEAD + serverIp.substring(0,serverIp.indexOf(":")) + ":1883";
         mqttAndroidClient = new MqttAndroidClient(MyMqttService.this, serverUri, clientId);
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
                                           @Override

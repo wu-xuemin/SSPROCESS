@@ -28,6 +28,7 @@ import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -43,7 +44,6 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
     private static String TAG = "nlgProcessToAdminActivity";
     private ArrayList<TaskMachineListData> mProcessToAdminList = new ArrayList<>();
     private TaskRecordAdapter mProcessToAdminAdapter;
-    private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
     private int mPage;
     private BGARefreshLayout mRefreshLayout;
 
@@ -111,19 +111,16 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
 
     private void fetchProcessData(int page) {
         final String ip = SinSimApp.getApp().getServerIP();
-        final String account = SinSimApp.getApp().getAccount();
-//        final String ip = "192.168.0.102:8080";
-//        final String account = "sss";
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_ADMIN;
-        mPostValue.put("userAccount", account);
         mPostValue.put("page", ""+page);
-        Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
+        Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessDataHandler());
     }
 
     @Override
     public void onBGARefreshLayoutBeginRefreshing(BGARefreshLayout refreshLayout) {
         Log.d(TAG, "onBGARefreshLayoutBeginRefreshing: 下划刷新");
+        mPage=0;
         fetchProcessData(mPage);
     }
 
@@ -151,7 +148,6 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                 if (mProcessToAdminList.size()==0){
                     Toast.makeText(ProcessToAdminActivity.this, "没有更多了...", Toast.LENGTH_SHORT).show();
                 } else {
-                    //TODO: 合并同一机器不同流程
                     mProcessToAdminAdapter.setProcessList(mProcessToAdminList);
                     mProcessToAdminAdapter.notifyDataSetChanged();
                     Toast.makeText(ProcessToAdminActivity.this, "列表已更新！", Toast.LENGTH_SHORT).show();
@@ -172,24 +168,47 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                 if (resultCode == RESULT_OK)
                 {
                     // 取出Intent里的Extras数据传递给跳转的activity
-                    TaskMachineListData mTaskMachineListData = new TaskMachineListData();
-                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
-                    Intent intent=new Intent(this,DetailToInstallActivity.class);
-                    intent.putExtra("mTaskMachineListData", mTaskMachineListData);
-                    startActivity(intent);
+//                    TaskMachineListData mTaskMachineListData = new TaskMachineListData();
+//                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
+                    String mMachineStrId = data.getStringExtra("mMachineStrId");
+
+                    final String ip = SinSimApp.getApp().getServerIP();
+                    LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                    String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_ADMIN;
+                    mPostValue.put("page", ""+mPage);
+                    mPostValue.put("machineStrId", ""+mMachineStrId);
+                    Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessListDataHandler());
                 }
                 break;
             default:
                 break;
         }
     }
-
+    @SuppressLint("HandlerLeak")
+    private class FetchProcessListDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if (msg.what == Network.OK) {
+                ArrayList<TaskMachineListData> mScanResultList=(ArrayList<TaskMachineListData>)msg.obj;
+                Log.d(TAG, "handleMessage: size: "+mScanResultList.size());
+                if (mScanResultList.size()==0){
+                    Toast.makeText(ProcessToAdminActivity.this, "没有内容!", Toast.LENGTH_LONG).show();
+                } else {
+                    Intent intent=new Intent(ProcessToAdminActivity.this,ScanResultActivity.class);
+                    intent.putExtra("mTaskMachineList", (Serializable)mScanResultList);
+                    startActivity(intent);
+                }
+            } else {
+                String errorMsg = (String)msg.obj;
+                Toast.makeText(ProcessToAdminActivity.this, "连接网络失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_admin, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(true);
         searchView.setSubmitButtonEnabled(true);    // 显示“开始搜索”的按钮

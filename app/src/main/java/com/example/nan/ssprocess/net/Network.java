@@ -587,5 +587,4 @@ public class Network {
             }
         }
     }
-
 }

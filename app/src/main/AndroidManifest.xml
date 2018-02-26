@@ -35,6 +35,10 @@
             android:name=".service.MyMqttService"
             android:enabled="true"
             android:exported="true" />
+        <service
+            android:name=".net.DownloadService"
+            android:enabled="true"
+            android:exported="true" />
 
         <activity
             android:name=".ui.activity.LoginActivity"

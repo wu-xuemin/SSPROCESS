@@ -31,7 +31,6 @@ import cn.bingoogolapple.qrcode.zxing.ZXingView;
 public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.Delegate{
 
     private static final String TAG = "nlgScanQrcodeActivity";
-    private FetchTaskProcessFromIdHandler mFetchTaskProcessFromIdHandler = new FetchTaskProcessFromIdHandler();
     private AlertDialog scanQrResultDialog;
     private ZXingView mQRCodeView;
 
@@ -93,11 +92,16 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //根据result获取对应taskRecordDetail
-                        final String ip = SinSimApp.getApp().getServerIP();
-                        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                        mPostValue.put("taskRecordId", result);
-                        String fetchTaskProcessFromIdUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_DETAIL;
-                        Network.Instance(SinSimApp.getApp()).fetchTaskProcessFromId(fetchTaskProcessFromIdUrl, mPostValue, mFetchTaskProcessFromIdHandler);                    }
+                        Intent intent = getIntent();
+                        intent.putExtra("mMachineStrId", result);
+                        ScanQrcodeActivity.this.setResult(RESULT_OK, intent);
+                        ScanQrcodeActivity.this.finish();
+//                        final String ip = SinSimApp.getApp().getServerIP();
+//                        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+//                        mPostValue.put("taskRecordId", result);
+//                        String fetchTaskProcessFromIdUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_DETAIL;
+//                        Network.Instance(SinSimApp.getApp()).fetchTaskProcessFromId(fetchTaskProcessFromIdUrl, mPostValue, new FetchTaskProcessFromIdHandler());
+                    }
                 });
         scanQrResultDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"重新扫描",
                 new DialogInterface.OnClickListener() {

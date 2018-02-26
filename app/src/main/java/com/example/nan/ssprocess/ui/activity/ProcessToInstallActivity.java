@@ -1,25 +1,34 @@
 package com.example.nan.ssprocess.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.ProcessToInstallAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
+import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
+import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.service.MyMqttService;
 import com.example.nan.ssprocess.ui.fragment.TabInstallPlanFragment;
 import com.example.nan.ssprocess.ui.fragment.TabInstallReadyFragment;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -31,6 +40,7 @@ public class ProcessToInstallActivity extends AppCompatActivity {
     private List<Fragment> list;
     private ProcessToInstallAdapter adapter;
     private static final int SCAN_QRCODE_START = 1;
+    private static String TAG = "nlgProcessToInstall";
 
     /**
      * tab数据源
@@ -106,15 +116,43 @@ public class ProcessToInstallActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK)
                 {
                     // 取出Intent里的Extras数据传递给跳转的activity
-                    TaskMachineListData mTaskMachineListData = new TaskMachineListData();
-                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
-                    Intent intent=new Intent(this,DetailToInstallActivity.class);
-                    intent.putExtra("mTaskMachineListData", mTaskMachineListData);
-                    startActivity(intent);
+//                    TaskMachineListData mTaskMachineListData = new TaskMachineListData();
+//                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
+//                    Intent intent=new Intent(this,DetailToInstallActivity.class);
+//                    intent.putExtra("mTaskMachineListData", mTaskMachineListData);
+//                    startActivity(intent);
+                    String mMachineStrId = data.getStringExtra("mMachineStrId");
+
+                    final String ip = SinSimApp.getApp().getServerIP();
+                    LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                    String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_INSTALL;
+                    mPostValue.put("page", "0");
+                    mPostValue.put("machineStrId", ""+mMachineStrId);
+                    Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessListDataHandler());
                 }
                 break;
             default:
                 break;
+        }
+    }
+    @SuppressLint("HandlerLeak")
+    private class FetchProcessListDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if (msg.what == Network.OK) {
+                ArrayList<TaskMachineListData> mScanResultList=(ArrayList<TaskMachineListData>)msg.obj;
+                Log.d(TAG, "handleMessage: size: "+mScanResultList.size());
+                if (mScanResultList.size()==0){
+                    Toast.makeText(ProcessToInstallActivity.this, "没有内容!", Toast.LENGTH_LONG).show();
+                } else {
+                    Intent intent=new Intent(ProcessToInstallActivity.this,ScanResultActivity.class);
+                    intent.putExtra("mTaskMachineList", (Serializable)mScanResultList);
+                    startActivity(intent);
+                }
+            } else {
+                String errorMsg = (String)msg.obj;
+                Toast.makeText(ProcessToInstallActivity.this, "连接网络失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ package com.example.nan.ssprocess.app;
 public class URL {
 
     public static final String HTTP_HEAD = "http://";
+    public static final String TCP_HEAD = "tcp://";
     public static final String USER_LOGIN = "/user/requestLogin";
     public static final String FETCH_TASK_RECORD_DETAIL = "/task/record/selectTaskRecordDetail";
     public static final String FETCH_TASK_RECORD_TO_ADMIN = "/task/record/selectAllTaskRecordDetail";
