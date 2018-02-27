@@ -4,20 +4,25 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.support.v7.widget.SearchView;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
@@ -43,12 +48,17 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
 
     private static String TAG = "nlgProcessToAdminActivity";
     private ArrayList<TaskMachineListData> mProcessToAdminList = new ArrayList<>();
+    private ArrayList<TaskMachineListData> mScanResultList = new ArrayList<>();
+    private TaskMachineListData mScanResultListData=new TaskMachineListData();
     private TaskRecordAdapter mProcessToAdminAdapter;
     private int mPage;
     private BGARefreshLayout mRefreshLayout;
 
+    private AlertDialog mLocationSettngDialog=null;
     private ProgressDialog mLoadingProcessDialog;
     private static final int SCAN_QRCODE_START = 1;
+
+    private String location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,10 +178,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                 if (resultCode == RESULT_OK)
                 {
                     // 取出Intent里的Extras数据传递给跳转的activity
-//                    TaskMachineListData mTaskMachineListData = new TaskMachineListData();
-//                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
                     String mMachineStrId = data.getStringExtra("mMachineStrId");
-
                     final String ip = SinSimApp.getApp().getServerIP();
                     LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
                     String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_ADMIN;
@@ -189,18 +196,76 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
         @Override
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
-                ArrayList<TaskMachineListData> mScanResultList=(ArrayList<TaskMachineListData>)msg.obj;
+                mScanResultList=(ArrayList<TaskMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mScanResultList.size());
                 if (mScanResultList.size()==0){
-                    Toast.makeText(ProcessToAdminActivity.this, "没有内容!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ProcessToAdminActivity.this, "该机器编号没有内容!", Toast.LENGTH_LONG).show();
                 } else {
-                    Intent intent=new Intent(ProcessToAdminActivity.this,ScanResultActivity.class);
-                    intent.putExtra("mTaskMachineList", (Serializable)mScanResultList);
-                    startActivity(intent);
+                    LinearLayout layout = (LinearLayout) View.inflate(ProcessToAdminActivity.this, R.layout.dialog_location_seting, null);
+                    final EditText dialogLocationEt = layout.findViewById(R.id.dialog_location_et);
+                    mLocationSettngDialog = new AlertDialog.Builder(ProcessToAdminActivity.this).create();
+                    mLocationSettngDialog.setTitle("输入机器的位置：");
+                    mLocationSettngDialog.setView(layout);
+                    //获取原有location信息
+                    mScanResultListData=mScanResultList.get(0);
+                    location = mScanResultListData.getMachineData().getLocation();
+                    if (location.isEmpty()|| "".equals(location)){
+                        dialogLocationEt.setText("");
+                    } else {
+                        dialogLocationEt.setText(location);
+                    }
+                    mLocationSettngDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    mLocationSettngDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //获取dialog的输入信息，并上传到服务器
+                            if (TextUtils.isEmpty(dialogLocationEt.getText())) {
+                                Toast.makeText(ProcessToAdminActivity.this,"地址不能为空，请确认后重新输入！",Toast.LENGTH_SHORT).show();
+                            }else {
+                                location=dialogLocationEt.getText().toString();
+                                updateProcessDetailData();
+                            }
+                        }
+                    });
+                    mLocationSettngDialog.show();
                 }
             } else {
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(ProcessToAdminActivity.this, "连接网络失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void updateProcessDetailData() {
+        final String ip = SinSimApp.getApp().getServerIP();
+        //更新loaction状态
+        mScanResultListData.getMachineData().setLocation(location);
+        Gson gson=new Gson();
+        String machineDataToJson = gson.toJson(mScanResultListData.getMachineData());
+        Log.d(TAG, "onItemClick: gson :"+ machineDataToJson);
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("machine", machineDataToJson);
+        String updateProcessRecordUrl = URL.HTTP_HEAD + ip + URL.UPDATE_MACHINE_LOCATION;
+        Log.d(TAG, "updateProcessDetailData: "+updateProcessRecordUrl+mPostValue.get("machine"));
+        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, new UpdateProcessDetailDataHandler());
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class UpdateProcessDetailDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+
+            if (msg.what == Network.OK) {
+                Toast.makeText(ProcessToAdminActivity.this, "更新成功！", Toast.LENGTH_SHORT).show();
+            } else {
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: "+errorMsg);
+                Toast.makeText(ProcessToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -237,6 +302,9 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
         super.onDestroy();
         if(mLoadingProcessDialog != null) {
             mLoadingProcessDialog.dismiss();
+        }
+        if(mLocationSettngDialog != null) {
+            mLocationSettngDialog.dismiss();
         }
     }
 }

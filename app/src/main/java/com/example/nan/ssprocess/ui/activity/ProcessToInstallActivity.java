@@ -137,6 +137,7 @@ public class ProcessToInstallActivity extends AppCompatActivity {
     }
     @SuppressLint("HandlerLeak")
     private class FetchProcessListDataHandler extends Handler {
+
         @Override
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {

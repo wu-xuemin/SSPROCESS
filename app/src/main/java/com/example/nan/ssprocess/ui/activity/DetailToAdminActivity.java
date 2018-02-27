@@ -63,13 +63,9 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     private LinearLayout instalAbnormalLayout;
     private AlertDialog mLocationSettngDialog=null;
 
-    private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
-
-    private FetchInstallRecordDataHandler mFetchInstallRecordDataHandler = new FetchInstallRecordDataHandler();
     private ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = new ArrayList<>();
     private AbnormalRecordDetailsData mAbnormalRecordDetailsData=new AbnormalRecordDetailsData();
 
-    private FetchQARecordDataHandler mFetchQARecordDataHandler = new FetchQARecordDataHandler();
     private ArrayList<QualityRecordDetailsData> mQualityRecordList=new ArrayList<>();
     private QualityRecordDetailsData mQualityRecordDetailsData =new QualityRecordDetailsData();
 
@@ -191,10 +187,10 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("taskRecordId", ""+mTaskMachineListData.getId());
         String fetchQaProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
-        Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, mFetchQARecordDataHandler);
+        Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, new FetchQARecordDataHandler());
 
         String fetchInstallProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_INSTALL_ABNORMAL_RECORD_DETAIL;
-        Network.Instance(SinSimApp.getApp()).fetchProcessInstallRecordData(fetchInstallProcessRecordUrl, mPostValue, mFetchInstallRecordDataHandler);
+        Network.Instance(SinSimApp.getApp()).fetchProcessInstallRecordData(fetchInstallProcessRecordUrl, mPostValue, new FetchInstallRecordDataHandler());
     }
 
     @SuppressLint("HandlerLeak")
@@ -291,7 +287,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         mPostValue.put("machine", machineDataToJson);
         String updateProcessRecordUrl = URL.HTTP_HEAD + ip + URL.UPDATE_MACHINE_LOCATION;
         Log.d(TAG, "updateProcessDetailData: "+updateProcessRecordUrl+mPostValue.get("machine"));
-        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, mUpdateProcessDetailDataHandler);
+        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, new UpdateProcessDetailDataHandler());
     }
 
     @SuppressLint("HandlerLeak")
