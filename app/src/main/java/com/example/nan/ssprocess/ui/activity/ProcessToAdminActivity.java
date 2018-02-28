@@ -56,6 +56,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
 
     private AlertDialog mLocationSettngDialog=null;
     private ProgressDialog mLoadingProcessDialog;
+    private ProgressDialog mUpdateingProcessDialog;
     private static final int SCAN_QRCODE_START = 1;
 
     private String location;
@@ -103,11 +104,6 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                 startActivity(intent);
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         //第一次进入刷新页面， 加载loading页面
         if( mLoadingProcessDialog == null) {
             mLoadingProcessDialog = new ProgressDialog(ProcessToAdminActivity.this);
@@ -160,7 +156,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                 } else {
                     mProcessToAdminAdapter.setProcessList(mProcessToAdminList);
                     mProcessToAdminAdapter.notifyDataSetChanged();
-                    Toast.makeText(ProcessToAdminActivity.this, "列表已更新！", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "handleMessage: 列表已更新!");
                 }
             } else {
                 String errorMsg = (String)msg.obj;
@@ -174,10 +170,9 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
             case SCAN_QRCODE_START:
-                // 当requestCode、resultCode同时为0时，也就是处理特定的结果
                 if (resultCode == RESULT_OK)
                 {
-                    // 取出Intent里的Extras数据传递给跳转的activity
+                    // 取出Intent里的扫码结果去执行机器查找
                     String mMachineStrId = data.getStringExtra("mMachineStrId");
                     final String ip = SinSimApp.getApp().getServerIP();
                     LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
@@ -198,13 +193,15 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
             if (msg.what == Network.OK) {
                 mScanResultList=(ArrayList<TaskMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mScanResultList.size());
+                //结果为空就报错，有结果则取第一条信息位依据
                 if (mScanResultList.size()==0){
                     Toast.makeText(ProcessToAdminActivity.this, "该机器编号没有内容!", Toast.LENGTH_LONG).show();
                 } else {
+                    //弹窗上传机器位置
                     LinearLayout layout = (LinearLayout) View.inflate(ProcessToAdminActivity.this, R.layout.dialog_location_seting, null);
                     final EditText dialogLocationEt = layout.findViewById(R.id.dialog_location_et);
                     mLocationSettngDialog = new AlertDialog.Builder(ProcessToAdminActivity.this).create();
-                    mLocationSettngDialog.setTitle("输入机器的位置：");
+                    mLocationSettngDialog.setTitle("请输入机器的位置：");
                     mLocationSettngDialog.setView(layout);
                     //获取原有location信息
                     mScanResultListData=mScanResultList.get(0);
@@ -228,6 +225,13 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                                 Toast.makeText(ProcessToAdminActivity.this,"地址不能为空，请确认后重新输入！",Toast.LENGTH_SHORT).show();
                             }else {
                                 location=dialogLocationEt.getText().toString();
+                                if( mUpdateingProcessDialog == null) {
+                                    mUpdateingProcessDialog = new ProgressDialog(ProcessToAdminActivity.this);
+                                    mUpdateingProcessDialog.setCancelable(false);
+                                    mUpdateingProcessDialog.setCanceledOnTouchOutside(false);
+                                    mUpdateingProcessDialog.setMessage("上传信息中...");
+                                }
+                                mUpdateingProcessDialog.show();
                                 updateProcessDetailData();
                             }
                         }
@@ -236,11 +240,14 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                 }
             } else {
                 String errorMsg = (String)msg.obj;
-                Toast.makeText(ProcessToAdminActivity.this, "连接网络失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProcessToAdminActivity.this, "网络错误！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    /**
+     * 更新上传机器location
+     */
     private void updateProcessDetailData() {
         final String ip = SinSimApp.getApp().getServerIP();
         //更新loaction状态
@@ -260,24 +267,30 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
         @Override
         public void handleMessage(final Message msg) {
 
+            if(mUpdateingProcessDialog != null && mUpdateingProcessDialog.isShowing()) {
+                mUpdateingProcessDialog.dismiss();
+            }
             if (msg.what == Network.OK) {
-                Toast.makeText(ProcessToAdminActivity.this, "更新成功！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProcessToAdminActivity.this, "上传位置成功！", Toast.LENGTH_SHORT).show();
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg);
-                Toast.makeText(ProcessToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProcessToAdminActivity.this, "上传失败："+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_admin, menu);
+        //搜索框
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(true);
-        searchView.setSubmitButtonEnabled(true);    // 显示“开始搜索”的按钮
-        searchView.setQueryRefinementEnabled(true); // 提示内容右边提供一个将提示内容放到搜索框的按钮
+        // 显示“开始搜索”的按钮
+        searchView.setSubmitButtonEnabled(true);
+        // 提示内容右边提供一个将提示内容放到搜索框的按钮
+        searchView.setQueryRefinementEnabled(true);
         return true;
     }
 

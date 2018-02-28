@@ -121,13 +121,15 @@ public class ProcessToInstallActivity extends AppCompatActivity {
 //                    Intent intent=new Intent(this,DetailToInstallActivity.class);
 //                    intent.putExtra("mTaskMachineListData", mTaskMachineListData);
 //                    startActivity(intent);
+                    // 取出Intent里的扫码结果去执行机器查找
                     String mMachineStrId = data.getStringExtra("mMachineStrId");
-
                     final String ip = SinSimApp.getApp().getServerIP();
+                    final String account = SinSimApp.getApp().getAccount();
                     LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
                     String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_INSTALL;
                     mPostValue.put("page", "0");
                     mPostValue.put("machineStrId", ""+mMachineStrId);
+                    mPostValue.put("account", ""+account);
                     Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessListDataHandler());
                 }
                 break;

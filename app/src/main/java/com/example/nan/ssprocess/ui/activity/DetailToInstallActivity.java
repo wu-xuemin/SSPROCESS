@@ -59,14 +59,10 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private TaskMachineListData mTaskMachineListData=new TaskMachineListData();
     private ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = new ArrayList<>();
     private AbnormalRecordDetailsData mAbnormalRecordDetailsData=new AbnormalRecordDetailsData();
-    private FetchInstallRecordDataHandler mFetchInstallRecordDataHandler = new FetchInstallRecordDataHandler();
-    private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
-    private UploadTaskRecordImageHandler mUploadTaskRecordImageHandler=new UploadTaskRecordImageHandler();
 
     private TextView nokReasonTv;
     private TextView nokDetailTv;
     private LinearLayout qaNokLayout;
-    private FetchQARecordDataHandler mFetchQARecordDataHandler = new FetchQARecordDataHandler();
     private ArrayList<QualityRecordDetailsData> mQualityRecordList=new ArrayList<>();
     private QualityRecordDetailsData mQualityRecordDetailsData =new QualityRecordDetailsData();
 
@@ -190,10 +186,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         mInstallAbnormalPhotosSnpl.setPlusEnable(true);
         mInstallAbnormalPhotosSnpl.setDelegate(this);
 
-        checkoutPhotoList=new ArrayList<>(Arrays.asList("http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered12.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered13.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered14.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered15.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered16.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered17.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered18.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered19.png"));
-        BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
-        checkoutNinePhotoLayout.setDelegate(this);
-        checkoutNinePhotoLayout.setData(checkoutPhotoList);
     }
 
     /**
@@ -205,10 +197,10 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("taskRecordId", ""+mTaskMachineListData.getId());
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_INSTALL_ABNORMAL_RECORD_DETAIL;
-        Network.Instance(SinSimApp.getApp()).fetchProcessInstallRecordData(fetchProcessRecordUrl, mPostValue, mFetchInstallRecordDataHandler);
+        Network.Instance(SinSimApp.getApp()).fetchProcessInstallRecordData(fetchProcessRecordUrl, mPostValue, new FetchInstallRecordDataHandler());
 
         String fetchQaProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
-        Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, mFetchQARecordDataHandler);
+        Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, new FetchQARecordDataHandler());
     }
 
 
@@ -237,6 +229,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(), true);
                         installAbnormalDetailEt.setText(mAbnormalRecordDetailsData.getComment());
                         //TODO:照片地址
+
                     } else {
                         installNormalRb.setChecked(true);
                         failReasonSpinner.setSelection(mAbnormalRecordDetailsData.getAbnormalType(), true);
@@ -275,6 +268,10 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         qaNokLayout.setVisibility(View.VISIBLE);
                         nokDetailTv.setText(mQualityRecordDetailsData.getComment());
                         //TODO:照片地址
+                        checkoutPhotoList=new ArrayList<>(Arrays.asList("http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered12.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered13.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered14.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered15.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered16.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered17.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered18.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered19.png"));
+                        BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
+                        checkoutNinePhotoLayout.setDelegate(DetailToInstallActivity.this);
+                        checkoutNinePhotoLayout.setData(checkoutPhotoList);
                     } else if (mQualityRecordDetailsData.getStatus() == SinSimApp.TASK_QUALITY_DONE){
                         nokReasonTv.setText("合格");
                         qaNokLayout.setVisibility(View.GONE);
@@ -325,7 +322,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 String imageJson = gson.toJson(abnormalImageAddData);
                 Log.d(TAG, "updateInstallRecordData: "+imageJson);
                 String uploadQualityRecordImageUrl = URL.HTTP_HEAD + ip + URL.UPLOAD_INSTALL_ABNORMAL_IMAGE;
-                Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadQualityRecordImageUrl, imageUrlList, "abnormalImage", imageJson, mUploadTaskRecordImageHandler);
+                Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadQualityRecordImageUrl, imageUrlList, "abnormalImage", imageJson, new UploadTaskRecordImageHandler());
             }
         }
 
@@ -335,7 +332,9 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         mPostValue.put("strTaskQualityRecordDetail", mAbnormalRecordDetailsDataToJson);
         String updateProcessRecordUrl = URL.HTTP_HEAD + ip + URL.UPDATE_INSTALL_ABNORMAL_RECORD_DETAIL;
         Log.d(TAG, "updateInstallRecordData: "+updateProcessRecordUrl+mPostValue.get("machine"));
-        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, mUpdateProcessDetailDataHandler);
+        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, new UpdateProcessDetailDataHandler());
+
+
     }
 
     @SuppressLint("HandlerLeak")

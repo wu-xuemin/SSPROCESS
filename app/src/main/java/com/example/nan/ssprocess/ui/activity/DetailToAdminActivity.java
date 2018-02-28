@@ -168,17 +168,6 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         });
 
         fetchQARecordData();
-
-        //九宫格显示照片
-        installPhotoList=new ArrayList<>(Arrays.asList("http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered1.png"));
-        BGANinePhotoLayout installNinePhotoLayout = findViewById(R.id.install_abnormal_photos);
-        installNinePhotoLayout.setDelegate(this);
-        installNinePhotoLayout.setData(installPhotoList);
-        checkoutPhotoList=new ArrayList<>(Arrays.asList("http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered12.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered13.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered14.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered15.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered16.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered17.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered18.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered19.png"));
-        BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
-        checkoutNinePhotoLayout.setDelegate(this);
-        checkoutNinePhotoLayout.setData(checkoutPhotoList);
-
     }
 
     private void fetchQARecordData() {
@@ -216,6 +205,11 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         qaNokLayout.setVisibility(View.VISIBLE);
                         nokDetailTv.setText(mQualityRecordDetailsData.getComment());
                         //TODO:照片地址
+                        //九宫格显示照片
+                        checkoutPhotoList=new ArrayList<>(Arrays.asList("http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered12.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered13.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered14.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered15.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered16.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered17.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered18.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered19.png"));
+                        BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
+                        checkoutNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
+                        checkoutNinePhotoLayout.setData(checkoutPhotoList);
                     } else if (mQualityRecordDetailsData.getStatus() == SinSimApp.TASK_QUALITY_DONE){
                         nokReasonTv.setText("合格");
                         qaNokLayout.setVisibility(View.GONE);
@@ -258,6 +252,11 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         instalAbnormalLayout.setVisibility(View.VISIBLE);
                         abnormalDetailTv.setText(mAbnormalRecordDetailsData.getComment());
                         //TODO:照片地址
+                        //九宫格显示照片
+                        installPhotoList=new ArrayList<>(Arrays.asList("http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered1.png"));
+                        BGANinePhotoLayout installNinePhotoLayout = findViewById(R.id.install_abnormal_photos);
+                        installNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
+                        installNinePhotoLayout.setData(installPhotoList);
                     } else if (mAbnormalRecordDetailsData.getTaskRecord().getStatus() == SinSimApp.TASK_INSTALLED){
                         abnormalReasonTv.setText("正常");
                         instalAbnormalLayout.setVisibility(View.GONE);

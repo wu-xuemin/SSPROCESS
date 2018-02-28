@@ -1,11 +1,14 @@
 package com.example.nan.ssprocess.ui.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -30,6 +33,8 @@ public class ScanResultActivity extends AppCompatActivity {
     private static String TAG = "nlgScanResultActivity";
     private ArrayList<TaskMachineListData> mScanResultList = new ArrayList<>();
     private ScanResultAdapter mScanResultAdapter;
+    private AlertDialog mInstallDialog=null;
+    private AlertDialog mQaDialog=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,30 +62,56 @@ public class ScanResultActivity extends AppCompatActivity {
         //点击跳转，把所有接收到的数据传递给下一个activity
         mScanResultAdapter.setOnItemClickListener(new ScanResultAdapter.OnItemClickListener(){
             @Override
-            public void onItemClick(int position){
+            public void onItemClick(final int position){
                 Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mScanResultList.get(position)));
-                Intent intent = new Intent();
                 switch (SinSimApp.getApp().getRole()){
-                    case SinSimApp.LOGIN_FOR_ADMIN:
-                        intent.setClass(ScanResultActivity.this,DetailToAdminActivity.class);
-                        intent.putExtra("mTaskMachineListData", mScanResultList.get(position));
-                        startActivity(intent);
-                        finish();
-                        break;
                     case SinSimApp.LOGIN_FOR_INSTALL:
-                        intent.setClass(ScanResultActivity.this,DetailToInstallActivity.class);
-                        intent.putExtra("mTaskMachineListData", mScanResultList.get(position));
-                        startActivity(intent);
-                        finish();
+                        mInstallDialog = new AlertDialog.Builder(ScanResultActivity.this).create();
+                        mInstallDialog.setMessage("是否现在开始安装？");
+                        mInstallDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "否", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        mInstallDialog.setButton(AlertDialog.BUTTON_POSITIVE, "是", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //TODO:先改状态再执行跳转
+                                Intent intent = new Intent();
+                                intent.setClass(ScanResultActivity.this,DetailToInstallActivity.class);
+                                intent.putExtra("mTaskMachineListData", mScanResultList.get(position));
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                        mInstallDialog.show();
+
                         break;
                     case SinSimApp.LOGIN_FOR_QA:
-                        intent.setClass(ScanResultActivity.this,DetailToCheckoutActivity.class);
-                        intent.putExtra("mTaskMachineListData", mScanResultList.get(position));
-                        startActivity(intent);
-                        finish();
+                        mQaDialog = new AlertDialog.Builder(ScanResultActivity.this).create();
+                        mQaDialog.setMessage("是否现在开始质检？");
+                        mQaDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "否", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        mQaDialog.setButton(AlertDialog.BUTTON_POSITIVE, "是", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //TODO:先改状态再执行跳转
+                                Intent intent = new Intent();
+                                intent.setClass(ScanResultActivity.this,DetailToCheckoutActivity.class);
+                                intent.putExtra("mTaskMachineListData", mScanResultList.get(position));
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                        mQaDialog.show();
                         break;
                     default:
-                        Toast.makeText(ScanResultActivity.this,"请检查登入账号!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ScanResultActivity.this,"账号错误，请检查登入账号!", Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
