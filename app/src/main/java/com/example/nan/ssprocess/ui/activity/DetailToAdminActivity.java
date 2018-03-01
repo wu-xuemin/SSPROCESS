@@ -63,6 +63,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     private LinearLayout instalAbnormalLayout;
     private AlertDialog mLocationSettngDialog=null;
 
+    private ArrayList<String> mInstallFileList = new ArrayList<>();
     private ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = new ArrayList<>();
     private AbnormalRecordDetailsData mAbnormalRecordDetailsData=new AbnormalRecordDetailsData();
 
@@ -72,6 +73,8 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     private ArrayList<String> installPhotoList;
     private ArrayList<String> checkoutPhotoList;
     private BGANinePhotoLayout mCurrentClickNpl;
+
+    private final String ip = SinSimApp.getApp().getServerIP();
 
     private DownloadService.DownloadBinder downloadBinder;
     private ServiceConnection connection = new ServiceConnection() {
@@ -109,9 +112,8 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         intallListTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO:下载装车单
-                String url = "https://raw.githubusercontent.com/guolindev/eclipse/master/eclipse-inst-win64.exe";
-                downloadBinder.startDownload(url);
+                //下载装车单
+                fetchDownloadListData();
             }
         });
 
@@ -167,23 +169,55 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
             }
         });
 
-        fetchQARecordData();
+        fetchTaskRecordDetailData();
     }
 
-    private void fetchQARecordData() {
-        final String account = SinSimApp.getApp().getAccount();
-        final String ip = SinSimApp.getApp().getServerIP();
+    /**
+     * 获取装车单的文件名
+     */
+    private void fetchDownloadListData() {
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("order_id", ""+mTaskMachineListData.getMachineData().getOrderId());
+        String fetchInstallFileListUrl = URL.HTTP_HEAD + ip + URL.FETCH_DOWNLOADING_FILELIST;
+        Network.Instance(SinSimApp.getApp()).fetchInstallFileList(fetchInstallFileListUrl, mPostValue, new FetchInstallFileListHandler());
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class FetchInstallFileListHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+
+            if (msg.what == Network.OK) {
+                mInstallFileList=(ArrayList<String>)msg.obj;
+                for (String installFile:mInstallFileList){
+                    String url = URL.HTTP_HEAD + ip + URL.DOWNLOAD_DIR + installFile;
+                    //开始下载装车单
+                    downloadBinder.startDownload(url);
+                }
+                Toast.makeText(DetailToAdminActivity.this, "开始下载装车单！", Toast.LENGTH_SHORT).show();
+            } else {
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: "+errorMsg);
+                Toast.makeText(DetailToAdminActivity.this, "下载失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    /**
+     * 获取安装和质检信息
+     */
+    private void fetchTaskRecordDetailData() {
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("taskRecordId", ""+mTaskMachineListData.getId());
         String fetchQaProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
-        Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, new FetchQARecordDataHandler());
+        Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, new FetchQaRecordDataHandler());
 
         String fetchInstallProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_INSTALL_ABNORMAL_RECORD_DETAIL;
         Network.Instance(SinSimApp.getApp()).fetchProcessInstallRecordData(fetchInstallProcessRecordUrl, mPostValue, new FetchInstallRecordDataHandler());
     }
 
     @SuppressLint("HandlerLeak")
-    private class FetchQARecordDataHandler extends Handler {
+    private class FetchQaRecordDataHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
@@ -276,7 +310,6 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     }
 
     private void updateProcessDetailData() {
-        final String ip = SinSimApp.getApp().getServerIP();
         //更新loaction状态
         mTaskMachineListData.getMachineData().setLocation(locationTv.getText().toString());
         Gson gson=new Gson();
