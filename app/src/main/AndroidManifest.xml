@@ -36,7 +36,7 @@
             android:enabled="true"
             android:exported="true" />
         <service
-            android:name=".net.DownloadService"
+            android:name=".service.DownloadService"
             android:enabled="true"
             android:exported="true" />
 
@@ -56,8 +56,9 @@
             android:name=".ui.activity.ProcessToAdminActivity"
             android:label="生产部管理员"
             android:screenOrientation="portrait">
-            <meta-data android:name="android.app.default_searchable"
-                android:value=".ui.activity.ProcessToMachineActivity"/>
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".ui.activity.ProcessToMachineActivity" />
         </activity>
         <activity
             android:name=".ui.activity.ScanQrcodeActivity"
@@ -78,9 +79,11 @@
         <activity
             android:name=".ui.activity.ProcessToMachineActivity"
             android:label="@string/search_result"
-            android:screenOrientation="portrait" >
-            <meta-data android:name="android.app.searchable"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
+
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -88,7 +91,7 @@
         <activity
             android:name=".ui.activity.ScanResultActivity"
             android:label="机器详情"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -100,6 +103,10 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
+        <activity
+            android:name=".ui.activity.InstallListActivity"
+            android:label="下载并打开"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

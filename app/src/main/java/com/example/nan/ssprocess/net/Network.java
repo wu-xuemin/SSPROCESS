@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -23,6 +24,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -486,7 +491,7 @@ public class Network {
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
-                                AbnormalRecordReponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<ListDataWrap>(){}.getType());
+                                ListDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<ListDataWrap>(){}.getType());
                                 if (responseData != null) {
                                     Log.d(TAG, "fetchProcessInstallRecordData run: getCode: "+responseData.getCode());
                                     if (responseData.getCode() == 200) {
@@ -508,7 +513,7 @@ public class Network {
                                 }
                             } else {
                                 msg.what = NG;
-                                msg.obj = "网络请求错误！";
+                                msg.obj = "网络请求失败！";
                             }
                             response.close();
                         } catch (Exception e) {
@@ -526,6 +531,87 @@ public class Network {
         }
     }
 
+    /**
+     * 下载装车单
+     */
+    public void downloadFile(String url, final Handler handler) {
+        final Message msg = handler.obtainMessage();
+        if (!isNetworkConnected()) {
+            ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
+            msg.what = NG;
+            msg.obj = mCtx.getString(R.string.network_not_connect);
+            handler.sendMessage(msg);
+        } else {
+            InputStream is = null;
+            RandomAccessFile savedFile = null;
+            File file = null;
+            try {
+                long downloadedLength = 0; // 记录已下载的文件长度
+                String fileName = url.substring(url.lastIndexOf("/"));
+                String directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
+                file = new File(directory + fileName);
+                if (file.exists()) {
+                    downloadedLength = file.length();
+                }
+
+                OkHttpClient client = new OkHttpClient();
+                Request request = new Request.Builder()
+                        // 断点下载，指定从哪个字节开始下载
+                        .addHeader("RANGE", "bytes=" + downloadedLength + "-")
+                        .url(url)
+                        .build();
+                Response response = client.newCall(request).execute();
+                if (response != null) {
+                    long contentLength = response.body().contentLength();
+                    if (contentLength == 0) {
+                        msg.what = NG;
+                        msg.obj = "装车单为空！";
+                    } else if (contentLength == downloadedLength) {
+                        // 已下载字节和文件总字节相等，说明已经下载完成了
+                        msg.what = OK;
+                        msg.obj = "装车单已存在！";
+                    }
+                    is = response.body().byteStream();
+                    Log.d(TAG, "LocalFile: "+file);
+                    savedFile = new RandomAccessFile(file, "rw");
+                    // 跳过已下载的字节
+                    savedFile.seek(downloadedLength);
+                    byte[] b = new byte[1024];
+                    int total = 0;
+                    int len;
+                    while ((len = is.read(b)) != -1) {
+
+                        total += len;
+                        savedFile.write(b, 0, len);
+                        // 计算已下载的百分比
+                        int progress = (int) ((total + downloadedLength) * 100 / contentLength);
+
+                    }
+                    response.body().close();
+                    msg.what = OK;
+                    msg.obj = "下载完成！";
+                    Log.d(TAG, "downloadFile: 成功下载："+fileName);
+                }
+            } catch (Exception e) {
+                msg.what = NG;
+                msg.obj = "下载失败！";
+                e.printStackTrace();
+            } finally {
+                handler.sendMessage(msg);
+                try {
+                    if (is != null) {
+                        is.close();
+                    }
+                    if (savedFile != null) {
+                        savedFile.close();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    }
     /**
      * 更新位置数据
      */

@@ -63,7 +63,8 @@ public class DownloadTask extends AsyncTask<String, Integer, Integer> {
             if (response != null) {
                 is = response.body().byteStream();
                 savedFile = new RandomAccessFile(file, "rw");
-                savedFile.seek(downloadedLength); // 跳过已下载的字节
+                // 跳过已下载的字节
+                savedFile.seek(downloadedLength);
                 byte[] b = new byte[1024];
                 int total = 0;
                 int len;

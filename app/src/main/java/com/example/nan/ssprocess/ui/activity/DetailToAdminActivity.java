@@ -1,15 +1,11 @@
 package com.example.nan.ssprocess.ui.activity;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,11 +14,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,8 +25,6 @@ import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.AbnormalRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.QualityRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
-import com.example.nan.ssprocess.bean.response.ResponseData;
-import com.example.nan.ssprocess.net.DownloadService;
 import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
@@ -76,16 +67,6 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
 
     private final String ip = SinSimApp.getApp().getServerIP();
 
-    private DownloadService.DownloadBinder downloadBinder;
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            downloadBinder = (DownloadService.DownloadBinder) service;
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,9 +86,6 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         TextView currentStatusTv=findViewById(R.id.current_status_tv);
         TextView intallListTv=findViewById(R.id.intall_list_tv);
 
-        Intent intent1 = new Intent(this, DownloadService.class);
-        startService(intent1); // 启动服务
-        bindService(intent1, connection, BIND_AUTO_CREATE); // 绑定服务
         //点击下载装车单
         intallListTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,20 +167,17 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
 
             if (msg.what == Network.OK) {
                 mInstallFileList=(ArrayList<String>)msg.obj;
-                for (String installFile:mInstallFileList){
-                    String url = URL.HTTP_HEAD + ip + URL.DOWNLOAD_DIR + installFile;
-                    //开始下载装车单
-                    downloadBinder.startDownload(url);
-                }
+                Intent intent=new Intent(DetailToAdminActivity.this,InstallListActivity.class);
+                intent.putExtra("mInstallFileList", mInstallFileList);
+                startActivity(intent);
                 Toast.makeText(DetailToAdminActivity.this, "开始下载装车单！", Toast.LENGTH_SHORT).show();
             } else {
                 String errorMsg = (String)msg.obj;
-                Log.d(TAG, "handleMessage: "+errorMsg);
-                Toast.makeText(DetailToAdminActivity.this, "下载失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "FetchInstallFileListHandler handleMessage: "+errorMsg);
+                Toast.makeText(DetailToAdminActivity.this, "网络错误！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }
     }
-
     /**
      * 获取安装和质检信息
      */

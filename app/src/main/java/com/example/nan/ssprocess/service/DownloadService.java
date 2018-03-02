@@ -1,4 +1,4 @@
-package com.example.nan.ssprocess.net;
+package com.example.nan.ssprocess.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -13,8 +13,10 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
+import com.example.nan.ssprocess.net.DownloadListener;
+import com.example.nan.ssprocess.net.DownloadTask;
 import com.example.nan.ssprocess.ui.activity.DetailToAdminActivity;
-import com.example.nan.ssprocess.ui.activity.DetailToInstallActivity;
+import com.example.nan.ssprocess.ui.activity.ScanQrcodeActivity;
 
 import java.io.File;
 
@@ -114,7 +116,7 @@ public class DownloadService extends Service {
     }
 
     private Notification getNotification(String title, int progress) {
-        Intent intent = new Intent(this, DetailToAdminActivity.class);
+        Intent intent = new Intent(this, ScanQrcodeActivity.class);
         PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.mipmap.ic_launcher);

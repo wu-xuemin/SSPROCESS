@@ -97,12 +97,6 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
                 startActivity(intent);
             }
         });
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         //第一次进入刷新页面， 加载loading页面
         if( mLoadingProcessDialog == null) {
             mLoadingProcessDialog = new ProgressDialog(ProcessToCheckoutActivity.this);
@@ -117,8 +111,6 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
     private void fetchProcessData(int page) {
         final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
-//        final String ip = "192.168.0.102:8080";
-//        final String account = "sss";
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("userAccount", account);
         mPostValue.put("page", ""+page);
