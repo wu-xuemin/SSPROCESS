@@ -65,7 +65,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     private ArrayList<String> checkoutPhotoList;
     private BGANinePhotoLayout mCurrentClickNpl;
 
-    private final String ip = SinSimApp.getApp().getServerIP();
+    private final String IP = SinSimApp.getApp().getServerIP();
 
 
     @Override
@@ -156,7 +156,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     private void fetchDownloadListData() {
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("order_id", ""+mTaskMachineListData.getMachineData().getOrderId());
-        String fetchInstallFileListUrl = URL.HTTP_HEAD + ip + URL.FETCH_DOWNLOADING_FILELIST;
+        String fetchInstallFileListUrl = URL.HTTP_HEAD + IP + URL.FETCH_DOWNLOADING_FILELIST;
         Network.Instance(SinSimApp.getApp()).fetchInstallFileList(fetchInstallFileListUrl, mPostValue, new FetchInstallFileListHandler());
     }
 
@@ -183,10 +183,10 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     private void fetchTaskRecordDetailData() {
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("taskRecordId", ""+mTaskMachineListData.getId());
-        String fetchQaProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
+        String fetchQaProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
         Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, new FetchQaRecordDataHandler());
 
-        String fetchInstallProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_INSTALL_ABNORMAL_RECORD_DETAIL;
+        String fetchInstallProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FATCH_INSTALL_ABNORMAL_RECORD_DETAIL;
         Network.Instance(SinSimApp.getApp()).fetchProcessInstallRecordData(fetchInstallProcessRecordUrl, mPostValue, new FetchInstallRecordDataHandler());
     }
 
@@ -213,7 +213,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         qaNokLayout.setVisibility(View.VISIBLE);
                         nokDetailTv.setText(mQualityRecordDetailsData.getComment());
                         //九宫格显示照片
-                        checkoutPhotoList=new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + ip + mQualityRecordDetailsData.getQualityRecordImage().getImage(),"http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png"));
+                        checkoutPhotoList=new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + IP + mQualityRecordDetailsData.getQualityRecordImage().getImage(),"http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png"));
                         BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
                         checkoutNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
                         checkoutNinePhotoLayout.setData(checkoutPhotoList);
@@ -225,10 +225,12 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         qaNokLayout.setVisibility(View.GONE);
                     }
                 } else {
+                    nokReasonTv.setText("尚未质检");
                     qaNokLayout.setVisibility(View.GONE);
-                    Toast.makeText(DetailToAdminActivity.this,"尚未质检",Toast.LENGTH_SHORT).show();
                 }
             } else {
+                nokReasonTv.setText("暂无");
+                qaNokLayout.setVisibility(View.GONE);
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(DetailToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
@@ -259,7 +261,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         instalAbnormalLayout.setVisibility(View.VISIBLE);
                         abnormalDetailTv.setText(mAbnormalRecordDetailsData.getComment());
                         //九宫格显示照片
-                        installPhotoList=new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + ip + mAbnormalRecordDetailsData.getAbnormalImage().getImage(),"http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered1.png"));
+                        installPhotoList=new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + IP + mAbnormalRecordDetailsData.getAbnormalImage().getImage(),"http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered1.png"));
                         BGANinePhotoLayout installNinePhotoLayout = findViewById(R.id.install_abnormal_photos);
                         installNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
                         installNinePhotoLayout.setData(installPhotoList);
@@ -271,10 +273,13 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         instalAbnormalLayout.setVisibility(View.GONE);
                     }
                 } else {
+                    abnormalReasonTv.setText("尚未安装");
                     instalAbnormalLayout.setVisibility(View.GONE);
                     Log.d(TAG, "handleMessage: 没有安装异常");
                 }
             } else {
+                abnormalReasonTv.setText("暂无");
+                instalAbnormalLayout.setVisibility(View.GONE);
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(DetailToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
@@ -289,7 +294,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         Log.d(TAG, "onItemClick: gson :"+ machineDataToJson);
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("machine", machineDataToJson);
-        String updateProcessRecordUrl = URL.HTTP_HEAD + ip + URL.UPDATE_MACHINE_LOCATION;
+        String updateProcessRecordUrl = URL.HTTP_HEAD + IP + URL.UPDATE_MACHINE_LOCATION;
         Log.d(TAG, "updateProcessDetailData: "+updateProcessRecordUrl+mPostValue.get("machine"));
         Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, new UpdateProcessDetailDataHandler());
     }

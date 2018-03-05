@@ -1,13 +1,15 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.TabInstallReadyFragment">
+    tools:context=".ui.fragment.TabInstallReadyFragment"
+    android:orientation="vertical">
 
     <cn.bingoogolapple.refreshlayout.BGARefreshLayout
         android:id="@+id/refreshLayout"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent">
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1">
         <android.support.v7.widget.RecyclerView
             android:id="@+id/process_to_install_rv"
             android:background="@color/cardview_light_background"
@@ -16,4 +18,12 @@
             android:layout_weight="1">
         </android.support.v7.widget.RecyclerView>
     </cn.bingoogolapple.refreshlayout.BGARefreshLayout>
-</FrameLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="扫码开始安装"
+        android:backgroundTint="@color/fragmentTab"
+        android:textColor="#ffffff"
+        android:id="@+id/unplaned_install_scan_qrcode_button"
+        />
+</LinearLayout>

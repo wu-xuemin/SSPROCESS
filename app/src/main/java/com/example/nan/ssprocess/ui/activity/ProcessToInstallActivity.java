@@ -67,15 +67,6 @@ public class ProcessToInstallActivity extends AppCompatActivity {
         Intent startIntent = new Intent(this, MyMqttService.class);
         startService(startIntent);
 
-        Button scanQrcodeBotton = (Button) findViewById(R.id.install_scan_qrcode_button);
-        scanQrcodeBotton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(ProcessToInstallActivity.this,ScanQrcodeActivity.class);
-                startActivityForResult(intent,SCAN_QRCODE_START);
-            }
-        });
-
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         //ViewPager的适配器
@@ -107,55 +98,4 @@ public class ProcessToInstallActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-            case SCAN_QRCODE_START:
-                // 当requestCode、resultCode同时为0时，也就是处理特定的结果
-                if (resultCode == RESULT_OK)
-                {
-                    // 取出Intent里的Extras数据传递给跳转的activity
-//                    TaskMachineListData mTaskMachineListData = new TaskMachineListData();
-//                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
-//                    Intent intent=new Intent(this,DetailToInstallActivity.class);
-//                    intent.putExtra("mTaskMachineListData", mTaskMachineListData);
-//                    startActivity(intent);
-                    // 取出Intent里的扫码结果去执行机器查找
-                    String mMachineStrId = data.getStringExtra("mMachineStrId");
-                    final String ip = SinSimApp.getApp().getServerIP();
-                    final String account = SinSimApp.getApp().getAccount();
-                    LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                    String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_INSTALL;
-                    mPostValue.put("page", "0");
-                    mPostValue.put("machineStrId", ""+mMachineStrId);
-                    mPostValue.put("account", ""+account);
-                    Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessListDataHandler());
-                }
-                break;
-            default:
-                break;
-        }
-    }
-    @SuppressLint("HandlerLeak")
-    private class FetchProcessListDataHandler extends Handler {
-
-        @Override
-        public void handleMessage(final Message msg) {
-            if (msg.what == Network.OK) {
-                ArrayList<TaskMachineListData> mScanResultList=(ArrayList<TaskMachineListData>)msg.obj;
-                Log.d(TAG, "handleMessage: size: "+mScanResultList.size());
-                if (mScanResultList.size()==0){
-                    Toast.makeText(ProcessToInstallActivity.this, "没有内容!", Toast.LENGTH_LONG).show();
-                } else {
-                    Intent intent=new Intent(ProcessToInstallActivity.this,ScanResultActivity.class);
-                    intent.putExtra("mTaskMachineList", (Serializable)mScanResultList);
-                    startActivity(intent);
-                }
-            } else {
-                String errorMsg = (String)msg.obj;
-                Toast.makeText(ProcessToInstallActivity.this, "连接网络失败！"+errorMsg, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 }

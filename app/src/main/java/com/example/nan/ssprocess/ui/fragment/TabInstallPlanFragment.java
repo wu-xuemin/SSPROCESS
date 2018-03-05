@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
@@ -24,13 +25,19 @@ import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.ui.activity.DetailToInstallActivity;
+import com.example.nan.ssprocess.ui.activity.ProcessToCheckoutActivity;
+import com.example.nan.ssprocess.ui.activity.ScanQrcodeActivity;
+import com.example.nan.ssprocess.ui.activity.ScanResultActivity;
 import com.google.gson.Gson;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import cn.bingoogolapple.refreshlayout.BGAMoocStyleRefreshViewHolder;
 import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
+
+import static android.app.Activity.RESULT_OK;
 
 public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout.BGARefreshLayoutDelegate{
     // TODO: Rename parameter arguments, choose names that match
@@ -45,7 +52,6 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
     private static String TAG = "nlgTabInstallPlanFragment";
     private ArrayList<TaskMachineListData> mProcessToInstallPlanList = new ArrayList<>();
     private TaskRecordAdapter mTaskRecordAdapter;
-    private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
     private ProgressDialog mLoadingProcessDialog;
 
     private static final int SCAN_QRCODE_START = 1;
@@ -109,6 +115,16 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
             }
         });
 
+        //点击扫码
+        Button scanQrcodeBotton = viewContent.findViewById(R.id.planed_install_scan_qrcode_button);
+        scanQrcodeBotton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getActivity(),ScanQrcodeActivity.class);
+                startActivityForResult(intent,SCAN_QRCODE_START);
+            }
+        });
+
         mRefreshLayout = viewContent.findViewById(R.id.refreshLayout);
         mRefreshLayout.setDelegate(this);
         mPage=0;
@@ -118,6 +134,12 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
         moocStyleRefreshViewHolder.setUltimateColor(R.color.colorAccent);
         mRefreshLayout.setRefreshViewHolder(moocStyleRefreshViewHolder);
 
+        return viewContent;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         //第一次进入刷新页面， 加载loading页面
         if( mLoadingProcessDialog == null) {
             mLoadingProcessDialog = new ProgressDialog(getActivity());
@@ -127,7 +149,6 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
         }
         mLoadingProcessDialog.show();
         fetchProcessData(mPage);
-        return viewContent;
     }
 
     private void fetchProcessData(int page) {
@@ -137,7 +158,7 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
         mPostValue.put("userAccount", account);
         mPostValue.put("page", ""+page);
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_INSTALL;
-        Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
+        Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessDataHandler());
     }
 
     @Override
@@ -177,6 +198,49 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg);
                 Toast.makeText(getContext(),"更新失败!"+errorMsg,Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case SCAN_QRCODE_START:
+                if (resultCode == RESULT_OK)
+                {
+                    // 取出Intent里的扫码结果去执行机器查找
+                    String mMachineStrId = data.getStringExtra("mMachineStrId");
+                    final String ip = SinSimApp.getApp().getServerIP();
+                    LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                    String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_INSTALL;
+                    mPostValue.put("page", ""+mPage);
+                    mPostValue.put("machineStrId", ""+mMachineStrId);
+                    mPostValue.put("account", ""+SinSimApp.getApp().getAccount());
+                    Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessListDataHandler());
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    @SuppressLint("HandlerLeak")
+    private class FetchProcessListDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if (msg.what == Network.OK) {
+                ArrayList<TaskMachineListData> mScanResultList=(ArrayList<TaskMachineListData>)msg.obj;
+                Log.d(TAG, "handleMessage: size: "+mScanResultList.size());
+                if (mScanResultList.size()==0){
+                    Toast.makeText(getContext(), "没有内容!", Toast.LENGTH_LONG).show();
+                } else {
+                    Intent intent=new Intent(getContext(),ScanResultActivity.class);
+                    intent.putExtra("mTaskMachineList", (Serializable)mScanResultList);
+                    startActivity(intent);
+                }
+            } else {
+                String errorMsg = (String)msg.obj;
+                Toast.makeText(getContext(), "网络错误！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }
     }

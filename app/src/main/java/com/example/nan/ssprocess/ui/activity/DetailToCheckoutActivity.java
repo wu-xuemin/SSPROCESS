@@ -307,9 +307,8 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             case SCAN_QRCODE_END:
                 if(resultCode == RESULT_OK) {
                     // 检验二维码信息是否对应
-                    TaskMachineListData taskMachineListDataId=new TaskMachineListData();
-                    taskMachineListDataId = (TaskMachineListData) data.getSerializableExtra("mTaskMachineListData");
-                    if(taskMachineListDataId.getId()==mTaskMachineListData.getId()){
+                    String mMachineStrId = data.getStringExtra("mMachineStrId");
+                    if(mMachineStrId.equals(mTaskMachineListData.getMachineData().getMachineStrId())){
                         Log.d(TAG, "onActivityResult: id 对应");
                         updateQARecordData();
                     } else {

@@ -48,7 +48,6 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
     private static final int SCAN_QRCODE_START = 1;
 
     private ArrayList<TaskMachineListData> mProcessToCheckoutList = new ArrayList<>();
-    private ArrayList<TaskMachineListData> mScanResultList = new ArrayList<>();
     private TaskRecordAdapter mTaskRecordAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
 
@@ -171,7 +170,6 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
             case SCAN_QRCODE_START:
-                // 当resultCode为RESULT_OK时，也就是处理特定的结果
                 if (resultCode == RESULT_OK)
                 {
                     // 取出Intent里的扫码结果去执行机器查找
@@ -195,13 +193,13 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
         @Override
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
-                mScanResultList=(ArrayList<TaskMachineListData>)msg.obj;
-                Log.d(TAG, "handleMessage: size: "+mScanResultList.size());
+                ArrayList<TaskMachineListData> mScanResultList = (ArrayList<TaskMachineListData>) msg.obj;
+                Log.d(TAG, "handleMessage: size: "+ mScanResultList.size());
                 if (mScanResultList.size()==0){
                     Toast.makeText(ProcessToCheckoutActivity.this, "没有内容!", Toast.LENGTH_LONG).show();
                 } else {
                     Intent intent=new Intent(ProcessToCheckoutActivity.this,ScanResultActivity.class);
-                    intent.putExtra("mTaskMachineList", (Serializable)mScanResultList);
+                    intent.putExtra("mTaskMachineList", (Serializable) mScanResultList);
                     startActivity(intent);
                 }
             } else {

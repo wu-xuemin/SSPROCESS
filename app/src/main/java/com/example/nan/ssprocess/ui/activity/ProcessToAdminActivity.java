@@ -58,6 +58,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
     private ProgressDialog mLoadingProcessDialog;
     private ProgressDialog mUpdateingProcessDialog;
     private static final int SCAN_QRCODE_START = 1;
+    private final String IP = SinSimApp.getApp().getServerIP();
 
     private String location;
 
@@ -104,6 +105,12 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                 startActivity(intent);
             }
         });
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         //第一次进入刷新页面， 加载loading页面
         if( mLoadingProcessDialog == null) {
             mLoadingProcessDialog = new ProgressDialog(ProcessToAdminActivity.this);
@@ -116,9 +123,8 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
     }
 
     private void fetchProcessData(int page) {
-        final String ip = SinSimApp.getApp().getServerIP();
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-        String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_ADMIN;
+        String fetchProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FETCH_TASK_RECORD_TO_ADMIN;
         mPostValue.put("page", ""+page);
         Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessDataHandler());
     }
@@ -174,9 +180,8 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                 {
                     // 取出Intent里的扫码结果去执行机器查找
                     String mMachineStrId = data.getStringExtra("mMachineStrId");
-                    final String ip = SinSimApp.getApp().getServerIP();
                     LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                    String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_ADMIN;
+                    String fetchProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_ADMIN;
                     mPostValue.put("page", ""+mPage);
                     mPostValue.put("machineStrId", ""+mMachineStrId);
                     Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessListDataHandler());
@@ -201,7 +206,6 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                     LinearLayout layout = (LinearLayout) View.inflate(ProcessToAdminActivity.this, R.layout.dialog_location_seting, null);
                     final EditText dialogLocationEt = layout.findViewById(R.id.dialog_location_et);
                     mLocationSettngDialog = new AlertDialog.Builder(ProcessToAdminActivity.this).create();
-                    mLocationSettngDialog.setTitle("请输入机器的位置：");
                     mLocationSettngDialog.setView(layout);
                     //获取原有location信息
                     mScanResultListData=mScanResultList.get(0);
@@ -211,6 +215,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                     } else {
                         dialogLocationEt.setText(location);
                     }
+                    mLocationSettngDialog.setTitle("请输入 "+mScanResultListData.getMachineData().getNameplate()+" 的位置：");
                     mLocationSettngDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -249,7 +254,6 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
      * 更新上传机器location
      */
     private void updateProcessDetailData() {
-        final String ip = SinSimApp.getApp().getServerIP();
         //更新loaction状态
         mScanResultListData.getMachineData().setLocation(location);
         Gson gson=new Gson();
@@ -257,7 +261,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
         Log.d(TAG, "onItemClick: gson :"+ machineDataToJson);
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("machine", machineDataToJson);
-        String updateProcessRecordUrl = URL.HTTP_HEAD + ip + URL.UPDATE_MACHINE_LOCATION;
+        String updateProcessRecordUrl = URL.HTTP_HEAD + IP + URL.UPDATE_MACHINE_LOCATION;
         Log.d(TAG, "updateProcessDetailData: "+updateProcessRecordUrl+mPostValue.get("machine"));
         Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, new UpdateProcessDetailDataHandler());
     }

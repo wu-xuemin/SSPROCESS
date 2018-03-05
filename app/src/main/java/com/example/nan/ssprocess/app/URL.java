@@ -15,7 +15,7 @@ public class URL {
     public static final String FETCH_DOWNLOADING_FILELIST = "/order/loading/list/selectOrderLoadingFileNameByOrderId";
     public static final String FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_ADMIN = "/task/record/selectTaskRecordByMachineStrId";
     public static final String FETCH_TASK_RECORD_TO_QA = "/task/record/selectAllQaTaskRecordDetailByUserAccount";
-    public static final String FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_QA = "/task/record/selectQATaskRecordByAccountAndMachineStrID";
+    public static final String FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_QA = "/task/record/selectQATaskRecordDetailByAccountAndMachineStrID";
     public static final String FETCH_TASK_RECORD_TO_INSTALL = "/task/record/selectAllInstallTaskRecordDetailByUserAccount";
     public static final String FETCH_TASK_RECORD_TO_UNPLANNED_INSTALL = "/task/record/selectUnplannedTaskRecordByAccount";
     public static final String FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_INSTALL = "/task/record/selectTaskRecordByMachineStrIdAndAccount";

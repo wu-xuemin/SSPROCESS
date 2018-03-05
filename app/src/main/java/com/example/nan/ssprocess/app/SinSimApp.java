@@ -85,6 +85,9 @@ public class SinSimApp extends Application {
             case SinSimApp.TASK_QUALITY_ABNORMAL:
                 result = "质检不合格";
                 break;
+            case SinSimApp.TASK_SKIP:
+                result = "跳过";
+                break;
             default:
                 break;
 
