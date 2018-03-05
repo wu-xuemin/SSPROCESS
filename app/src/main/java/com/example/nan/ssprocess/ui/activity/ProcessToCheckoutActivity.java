@@ -2,20 +2,25 @@ package com.example.nan.ssprocess.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
@@ -27,6 +32,7 @@ import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.service.MyMqttService;
 import com.google.gson.Gson;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -42,6 +48,7 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
     private static final int SCAN_QRCODE_START = 1;
 
     private ArrayList<TaskMachineListData> mProcessToCheckoutList = new ArrayList<>();
+    private ArrayList<TaskMachineListData> mScanResultList = new ArrayList<>();
     private TaskRecordAdapter mTaskRecordAdapter;
     private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
 
@@ -167,23 +174,40 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
                 // 当resultCode为RESULT_OK时，也就是处理特定的结果
                 if (resultCode == RESULT_OK)
                 {
-                    // 取出Intent里的Extras数据传递给跳转的activity
-                    TaskMachineListData mTaskMachineListData=new TaskMachineListData();
-                    mTaskMachineListData=(TaskMachineListData)data.getSerializableExtra("mTaskMachineListData");
-                    //TODO:添加判断逻辑
-                    for (TaskMachineListData taskMachineListData:mProcessToCheckoutList){
-                        if (mTaskMachineListData.getId()==taskMachineListData.getId()){
-                            Intent intent=new Intent(ProcessToCheckoutActivity.this,DetailToCheckoutActivity.class);
-                            intent.putExtra("mTaskMachineListData", mTaskMachineListData);
-                            startActivity(intent);
-                            break;
-                        }
-                    }
-
+                    // 取出Intent里的扫码结果去执行机器查找
+                    String mMachineStrId = data.getStringExtra("mMachineStrId");
+                    final String ip = SinSimApp.getApp().getServerIP();
+                    LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                    String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_QA;
+                    mPostValue.put("page", ""+mPage);
+                    mPostValue.put("machineStrId", ""+mMachineStrId);
+                    mPostValue.put("account", ""+SinSimApp.getApp().getAccount());
+                    Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessListDataHandler());
                 }
                 break;
             default:
                 break;
+        }
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class FetchProcessListDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if (msg.what == Network.OK) {
+                mScanResultList=(ArrayList<TaskMachineListData>)msg.obj;
+                Log.d(TAG, "handleMessage: size: "+mScanResultList.size());
+                if (mScanResultList.size()==0){
+                    Toast.makeText(ProcessToCheckoutActivity.this, "没有内容!", Toast.LENGTH_LONG).show();
+                } else {
+                    Intent intent=new Intent(ProcessToCheckoutActivity.this,ScanResultActivity.class);
+                    intent.putExtra("mTaskMachineList", (Serializable)mScanResultList);
+                    startActivity(intent);
+                }
+            } else {
+                String errorMsg = (String)msg.obj;
+                Toast.makeText(ProcessToCheckoutActivity.this, "网络错误！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

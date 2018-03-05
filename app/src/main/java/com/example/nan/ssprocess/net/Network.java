@@ -589,7 +589,7 @@ public class Network {
                     }
                     response.body().close();
                     msg.what = OK;
-                    msg.obj = "下载完成！";
+                    msg.obj = directory + fileName;
                     Log.d(TAG, "downloadFile: 成功下载："+fileName);
                 }
             } catch (Exception e) {

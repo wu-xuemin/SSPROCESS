@@ -170,7 +170,6 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                 Intent intent=new Intent(DetailToAdminActivity.this,InstallListActivity.class);
                 intent.putExtra("mInstallFileList", mInstallFileList);
                 startActivity(intent);
-                Toast.makeText(DetailToAdminActivity.this, "开始下载装车单！", Toast.LENGTH_SHORT).show();
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "FetchInstallFileListHandler handleMessage: "+errorMsg);
@@ -213,9 +212,8 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         nokReasonTv.setText("不合格");
                         qaNokLayout.setVisibility(View.VISIBLE);
                         nokDetailTv.setText(mQualityRecordDetailsData.getComment());
-                        //TODO:照片地址
                         //九宫格显示照片
-                        checkoutPhotoList=new ArrayList<>(Arrays.asList("http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered12.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered13.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered14.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered15.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered16.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered17.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered18.png", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered19.png"));
+                        checkoutPhotoList=new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + ip + mQualityRecordDetailsData.getQualityRecordImage().getImage(),"http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png"));
                         BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
                         checkoutNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
                         checkoutNinePhotoLayout.setData(checkoutPhotoList);
@@ -260,9 +258,8 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         abnormalReasonTv.setText("异常");
                         instalAbnormalLayout.setVisibility(View.VISIBLE);
                         abnormalDetailTv.setText(mAbnormalRecordDetailsData.getComment());
-                        //TODO:照片地址
                         //九宫格显示照片
-                        installPhotoList=new ArrayList<>(Arrays.asList("http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered1.png"));
+                        installPhotoList=new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + ip + mAbnormalRecordDetailsData.getAbnormalImage().getImage(),"http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered1.png"));
                         BGANinePhotoLayout installNinePhotoLayout = findViewById(R.id.install_abnormal_photos);
                         installNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
                         installNinePhotoLayout.setData(installPhotoList);

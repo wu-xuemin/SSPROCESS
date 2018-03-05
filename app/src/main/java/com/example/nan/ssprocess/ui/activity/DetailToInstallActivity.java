@@ -1,6 +1,7 @@
 package com.example.nan.ssprocess.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Environment;
 import android.os.Handler;
@@ -65,6 +66,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private LinearLayout qaNokLayout;
     private ArrayList<QualityRecordDetailsData> mQualityRecordList=new ArrayList<>();
     private QualityRecordDetailsData mQualityRecordDetailsData =new QualityRecordDetailsData();
+
+    private ProgressDialog mUploadingProcessDialog;
 
     private static final int SCAN_QRCODE_START = 1;
     private static final int SCAN_QRCODE_END = 0;
@@ -318,14 +321,16 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 //更新当前时间
                 abnormalImageAddData.setCreateTime(strCurTima);
                 abnormalImageAddData.setAbnormalRecordId(mAbnormalRecordDetailsData.getId());
-                //更新质检不合格照片
+                //上传质检不合格照片
                 String imageJson = gson.toJson(abnormalImageAddData);
                 Log.d(TAG, "updateInstallRecordData: "+imageJson);
                 String uploadQualityRecordImageUrl = URL.HTTP_HEAD + ip + URL.UPLOAD_INSTALL_ABNORMAL_IMAGE;
                 Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadQualityRecordImageUrl, imageUrlList, "abnormalImage", imageJson, new UploadTaskRecordImageHandler());
+            } else {
+                Toast.makeText(DetailToInstallActivity.this, "异常原因和异常照片不能为空！", Toast.LENGTH_SHORT).show();
             }
         }
-
+        //上传质检结果
         String mAbnormalRecordDetailsDataToJson = gson.toJson(mAbnormalRecordDetailsData);
         Log.d(TAG, "updateInstallRecordData: gson :"+ mAbnormalRecordDetailsDataToJson);
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
@@ -333,7 +338,14 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         String updateProcessRecordUrl = URL.HTTP_HEAD + ip + URL.UPDATE_INSTALL_ABNORMAL_RECORD_DETAIL;
         Log.d(TAG, "updateInstallRecordData: "+updateProcessRecordUrl+mPostValue.get("machine"));
         Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, new UpdateProcessDetailDataHandler());
-
+        
+        if( mUploadingProcessDialog == null) {
+            mUploadingProcessDialog = new ProgressDialog(DetailToInstallActivity.this);
+            mUploadingProcessDialog.setCancelable(false);
+            mUploadingProcessDialog.setCanceledOnTouchOutside(false);
+            mUploadingProcessDialog.setMessage("上传信息中...");
+        }
+        mUploadingProcessDialog.show();
 
     }
 
@@ -341,15 +353,18 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private class UploadTaskRecordImageHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
-
             if (msg.what == Network.OK) {
-                Toast.makeText(DetailToInstallActivity.this, "上传图片成功！", Toast.LENGTH_SHORT).show();
-                installInfoUpdateButton.setText("重新上传");
-                //TODO:是否弹窗
+                Toast.makeText(DetailToInstallActivity.this, "照片上传成功！", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "handleMessage: 照片上传成功！");
+                installInfoUpdateButton.setText("再次上传");
             } else {
+                if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
+                    mUploadingProcessDialog.dismiss();
+                }
+                installInfoUpdateButton.setText("重新上传");
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg);
-                Toast.makeText(DetailToInstallActivity.this, "上传图片失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailToInstallActivity.this, "异常照片上传失败！请重新上传", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -358,15 +373,17 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private class UpdateProcessDetailDataHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
-
+            if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
+                mUploadingProcessDialog.dismiss();
+            }
             if (msg.what == Network.OK) {
-                Toast.makeText(DetailToInstallActivity.this, "更新成功！", Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(DetailToInstallActivity.this, "异常信息上传成功！", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "handleMessage: 异常信息上传成功");
                 //TODO:发送mqtt消息，更新安装状态，跳转回list界面
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg);
-                Toast.makeText(DetailToInstallActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailToInstallActivity.this, "异常信息上传失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -499,5 +516,13 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             default:
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mUploadingProcessDialog != null) {
+            mUploadingProcessDialog.dismiss();
+        }
     }
 }

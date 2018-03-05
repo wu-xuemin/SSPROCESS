@@ -167,9 +167,9 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                         checkedNokRb.setChecked(true);
                         checkoutNokDetailEt.setText(mQualityRecordDetailsData.getComment());
                         //加载历史照片地址
-//                        Log.d(TAG, "handleMessage: photo url: "+mQualityRecordDetailsData.getQualityRecordImage().getImage());
-//                        ArrayList<String> installPhotoList=new ArrayList<>(Arrays.asList(mQualityRecordDetailsData.getQualityRecordImage().getImage()));
-//                        mCheckoutNokPhotosSnpl.addMoreData(installPhotoList);
+                        Log.d(TAG, "handleMessage: photo url: "+mQualityRecordDetailsData.getQualityRecordImage().getImage());
+                        ArrayList<String> installPhotoList=new ArrayList<>(Arrays.asList(mQualityRecordDetailsData.getQualityRecordImage().getImage()));
+                        mCheckoutNokPhotosSnpl.addMoreData(installPhotoList);
                     } else {
                         checkedOkRb.setChecked(true);
                         checkoutNokDetailEt.setText("");
