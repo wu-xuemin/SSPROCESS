@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="fail_reason">
-        <item>正常</item>
         <item>缺料</item>
-        <item>缺人</item>
-        <item>缺扳手</item>
-        <item>缺螺丝</item>
+        <item>机器故障</item>
+        <item>缺人手</item>
     </string-array>
 </resources>

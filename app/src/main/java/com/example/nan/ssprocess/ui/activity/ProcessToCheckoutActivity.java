@@ -2,25 +2,19 @@ package com.example.nan.ssprocess.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
@@ -46,15 +40,14 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
 
     private static String TAG = "nlgProcessToCheckoutActivity";
     private static final int SCAN_QRCODE_START = 1;
+    private int mPage;
 
     private ArrayList<TaskMachineListData> mProcessToCheckoutList = new ArrayList<>();
     private TaskRecordAdapter mTaskRecordAdapter;
-    private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
 
+    private BGARefreshLayout mRefreshLayout;
     private ProgressDialog mLoadingProcessDialog;
 
-    private int mPage;
-    private BGARefreshLayout mRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,21 +114,7 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
         mPostValue.put("userAccount", account);
         mPostValue.put("page", ""+page);
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_QA;
-        Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
-    }
-
-    @Override
-    public void onBGARefreshLayoutBeginRefreshing(BGARefreshLayout refreshLayout) {
-        Log.d(TAG, "onBGARefreshLayoutBeginRefreshing: 下划刷新");
-        fetchProcessData(mPage);
-    }
-
-    @Override
-    public boolean onBGARefreshLayoutBeginLoadingMore(BGARefreshLayout refreshLayout) {
-        Log.d(TAG, "onBGARefreshLayoutBeginLoadingMore: 上划刷新");
-        mPage=mPage+1;
-        fetchProcessData(mPage);
-        return true;
+        Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessDataHandler());
     }
 
     @SuppressLint("HandlerLeak")
@@ -163,6 +142,20 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
                 Toast.makeText(ProcessToCheckoutActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void onBGARefreshLayoutBeginRefreshing(BGARefreshLayout refreshLayout) {
+        Log.d(TAG, "onBGARefreshLayoutBeginRefreshing: 下划刷新");
+        fetchProcessData(mPage);
+    }
+
+    @Override
+    public boolean onBGARefreshLayoutBeginLoadingMore(BGARefreshLayout refreshLayout) {
+        Log.d(TAG, "onBGARefreshLayoutBeginLoadingMore: 上划刷新");
+        mPage=mPage+1;
+        fetchProcessData(mPage);
+        return true;
     }
 
     @Override

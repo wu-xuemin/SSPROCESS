@@ -31,7 +31,6 @@ import java.util.LinkedHashMap;
 public class ScanResultActivity extends AppCompatActivity {
 
     private static String TAG = "nlgScanResultActivity";
-    private ArrayList<TaskMachineListData> mScanResultList = new ArrayList<>();
     private ScanResultAdapter mScanResultAdapter;
     private AlertDialog mInstallDialog=null;
     private AlertDialog mQaDialog=null;

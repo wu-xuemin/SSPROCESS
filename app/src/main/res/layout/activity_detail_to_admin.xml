@@ -25,12 +25,12 @@
                 android:id="@+id/install_info_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp"
+                android:padding="8dp"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:text="安装信息："
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:background="@color/windowBackground"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -45,12 +45,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="安装结果："
+                    android:textSize="16sp"
                     android:textColor="@color/black"/>
                 <TextView
                     android:id="@+id/abnormal_reason_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="暂无"
+                    android:textSize="16sp"
                     android:textColor="@color/black"/>
             </LinearLayout>
 

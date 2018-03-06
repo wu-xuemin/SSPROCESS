@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,7 +24,6 @@ import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.ui.activity.DetailToInstallActivity;
-import com.example.nan.ssprocess.ui.activity.ProcessToCheckoutActivity;
 import com.example.nan.ssprocess.ui.activity.ScanQrcodeActivity;
 import com.example.nan.ssprocess.ui.activity.ScanResultActivity;
 import com.google.gson.Gson;
@@ -40,12 +38,10 @@ import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
 import static android.app.Activity.RESULT_OK;
 
 public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout.BGARefreshLayoutDelegate{
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -71,7 +67,6 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
      * @param param2 Parameter 2.
      * @return A new instance of fragment TabInstallPlanFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static TabInstallPlanFragment newInstance(String param1, String param2) {
         TabInstallPlanFragment fragment = new TabInstallPlanFragment();
         Bundle args = new Bundle();

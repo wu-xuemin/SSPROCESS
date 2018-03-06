@@ -49,10 +49,6 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
 
     public static String IMEI = null;
 
-    private static String ACCOUNT="sss";
-    private static String PASSWORD="sinsim";
-    private static String IP="192.168.0.102:8080";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +87,6 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
             final String account = SinSimApp.getApp().getAccount();
             final String password = SinSimApp.getApp().getPassword();
             final String ip = SinSimApp.getApp().getServerIP();
-//            final String account = ACCOUNT;
-//            final String password = PASSWORD;
-//            final String ip = IP;
             //(1)检查账号密码是否存在
             if(account.isEmpty() || password.isEmpty()) {
                 jumpToLoginAct();

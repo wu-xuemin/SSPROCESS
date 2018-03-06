@@ -11,9 +11,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +29,6 @@ import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,14 +38,6 @@ import java.util.LinkedHashMap;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerPreviewActivity;
 import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * @author nan  2017/12/18
@@ -56,23 +49,19 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     private RadioButton checkedNokRb;
     private EditText checkoutNokDetailEt;
     private Button installInfoUpdateButton;
+    private LinearLayout QaNokLinearLayout;
 
     private BGASortableNinePhotoLayout mCheckoutNokPhotosSnpl;
     private TaskMachineListData mTaskMachineListData=new TaskMachineListData();
-    private ArrayList<QualityRecordDetailsData> mQualityRecordList=new ArrayList<>();
     private QualityRecordDetailsData mQualityRecordDetailsData =new QualityRecordDetailsData();
-    private FetchQARecordDataHandler mFetchQARecordDataHandler = new FetchQARecordDataHandler();
-    private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
-    private UploadTaskRecordImageHandler mUploadTaskRecordImageHandler=new UploadTaskRecordImageHandler();
 
-    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
-    private final OkHttpClient client = new OkHttpClient();
-
+    private final String IP = SinSimApp.getApp().getServerIP();
     private static final int SCAN_QRCODE_END = 0;
     private static final int RC_CHECKOUT_CHOOSE_PHOTO = 3;
     private static final int RC_CHECKOUT_PHOTO_PREVIEW = 4;
     private static final int PASS = 1;
     private static final int NO_PASS = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,13 +78,14 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         TextView orderNumberTv=findViewById(R.id.order_number_tv);
         TextView machineNumberTv=findViewById(R.id.machine_number_tv);
         TextView currentStatusTv=findViewById(R.id.current_status_tv);
-        TextView intallListTv=findViewById(R.id.intall_list_tv);
+        TextView installListTv=findViewById(R.id.intall_list_tv);
 
         //点击下载装车单
-        intallListTv.setOnClickListener(new View.OnClickListener() {
+        installListTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO:下载装车单
+                //下载装车单
+                fetchDownloadListData();
             }
         });
 
@@ -103,6 +93,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         checkedNokRb=findViewById(R.id.checked_nok_rb);
         checkoutNokDetailEt=findViewById(R.id.checkout_nok_detail_et);
         installInfoUpdateButton = findViewById(R.id.checkout_upload_button);
+        QaNokLinearLayout = findViewById(R.id.qa_nok_ll);
 
         //获取传递过来的信息
         Intent intent = getIntent();
@@ -112,8 +103,23 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         //把数据填入相应位置
         orderNumberTv.setText(""+mTaskMachineListData.getMachineData().getOrderId());
         currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskMachineListData.getStatus()));
-        machineNumberTv.setText(mTaskMachineListData.getMachineData().getMachineStrId());
+        machineNumberTv.setText(mTaskMachineListData.getMachineData().getNameplate());
         locationTv.setText(mTaskMachineListData.getMachineData().getLocation());
+
+        checkedOkRb.setChecked(true);
+        QaNokLinearLayout.setVisibility(View.GONE);
+        checkedOkRb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                QaNokLinearLayout.setVisibility(View.VISIBLE);
+            }
+        });
+        checkedNokRb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                QaNokLinearLayout.setVisibility(View.GONE);
+            }
+        });
 
         //获取历史质检数据
         fetchQARecordData();
@@ -135,22 +141,20 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     }
 
     private void fetchQARecordData() {
-        final String account = SinSimApp.getApp().getAccount();
-        final String ip = SinSimApp.getApp().getServerIP();
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("taskRecordId", ""+mTaskMachineListData.getId());
-        String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
-        Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchProcessRecordUrl, mPostValue, mFetchQARecordDataHandler);
+        String fetchProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
+        Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchProcessRecordUrl, mPostValue, new FetchQaRecordDataHandler());
     }
 
     @SuppressLint("HandlerLeak")
-    private class FetchQARecordDataHandler extends Handler {
+    private class FetchQaRecordDataHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
                 //获取质检结果
-                mQualityRecordList=(ArrayList<QualityRecordDetailsData>)msg.obj;
-                if (mQualityRecordList!=null && !mQualityRecordList.isEmpty()) {
+                ArrayList<QualityRecordDetailsData> mQualityRecordList = (ArrayList<QualityRecordDetailsData>) msg.obj;
+                if (mQualityRecordList !=null && !mQualityRecordList.isEmpty()) {
                     int updateTime = mQualityRecordList.size() - 1;
                     //对比更新时间取值
                     for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
@@ -185,8 +189,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     }
 
     private void updateQARecordData() {
-        final String ip = SinSimApp.getApp().getServerIP();
-        ArrayList<String> imageUrlList = new ArrayList<>();
+        ArrayList<String> imageUrlList;
         Gson gson=new Gson();
 
         //读取和更新输入信息
@@ -212,8 +215,8 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                 //更新质检不合格照片
                 String imageJson = gson.toJson(qualityRecordImageAddData);
                 Log.d(TAG, "updateQARecordData: "+imageJson);
-                String uploadQualityRecordImageUrl = URL.HTTP_HEAD + ip + URL.UPLOAD_QUALITY_RECORD_IMAGE;
-                Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadQualityRecordImageUrl, imageUrlList, "qualityRecordImage", imageJson, mUploadTaskRecordImageHandler);
+                String uploadQualityRecordImageUrl = URL.HTTP_HEAD + IP + URL.UPLOAD_QUALITY_RECORD_IMAGE;
+                Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadQualityRecordImageUrl, imageUrlList, "qualityRecordImage", imageJson, new UploadTaskRecordImageHandler());
             } else {
                 Toast.makeText(DetailToCheckoutActivity.this,"请拍照并输入质检不合格原因！",Toast.LENGTH_SHORT).show();
             }
@@ -223,9 +226,9 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         Log.d(TAG, "updateQARecordData: mQualityRecordDetailsDataToJson:"+ mQualityRecordDetailsDataToJson);
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("strTaskQualityRecordDetail", mQualityRecordDetailsDataToJson);
-        String updateProcessRecordUrl = URL.HTTP_HEAD + ip + URL.UPDATE_TASK_QUALITY_RECORD_DETAIL;
+        String updateProcessRecordUrl = URL.HTTP_HEAD + IP + URL.UPDATE_TASK_QUALITY_RECORD_DETAIL;
         Log.d(TAG, "updateQARecordData: "+updateProcessRecordUrl+mPostValue.get("machine"));
-        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, mUpdateProcessDetailDataHandler);
+        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, new UpdateProcessDetailDataHandler());
     }
 
     @SuppressLint("HandlerLeak")
@@ -260,6 +263,33 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         }
     }
 
+    /**
+     * 获取装车单的文件名
+     */
+    private void fetchDownloadListData() {
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("order_id", ""+mTaskMachineListData.getMachineData().getOrderId());
+        String fetchInstallFileListUrl = URL.HTTP_HEAD + IP + URL.FETCH_DOWNLOADING_FILELIST;
+        Network.Instance(SinSimApp.getApp()).fetchInstallFileList(fetchInstallFileListUrl, mPostValue, new FetchInstallFileListHandler());
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class FetchInstallFileListHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+
+            if (msg.what == Network.OK) {
+                ArrayList<String> mInstallFileList = (ArrayList<String>) msg.obj;
+                Intent intent=new Intent(DetailToCheckoutActivity.this,InstallListActivity.class);
+                intent.putExtra("mInstallFileList", mInstallFileList);
+                startActivity(intent);
+            } else {
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "FetchInstallFileListHandler handleMessage: "+errorMsg);
+                Toast.makeText(DetailToCheckoutActivity.this, "网络错误！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     @Override
     public void onClickAddNinePhotoItem(BGASortableNinePhotoLayout sortableNinePhotoLayout, View view, int position, ArrayList<String> models) {
@@ -306,7 +336,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         switch (requestCode){
             case SCAN_QRCODE_END:
                 if(resultCode == RESULT_OK) {
-                    // 检验二维码信息是否对应
+                    //检验二维码信息是否对应
                     String mMachineStrId = data.getStringExtra("mMachineStrId");
                     if(mMachineStrId.equals(mTaskMachineListData.getMachineData().getMachineStrId())){
                         Log.d(TAG, "onActivityResult: id 对应");

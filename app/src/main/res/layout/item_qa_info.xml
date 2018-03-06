@@ -9,13 +9,12 @@
         android:id="@+id/checkout_info_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
+        android:padding="8dp"
         android:textSize="20sp"
         android:textStyle="bold"
         android:text="质检信息："
-        android:textColor="@color/black"/>
+        android:textColor="@color/black"
+        android:background="@color/windowBackground"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,19 +22,22 @@
         android:orientation="horizontal"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
 
         <TextView
             android:id="@+id/result_for_checkout_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="质检结果："
+            android:textSize="16sp"
             android:textColor="@color/black"/>
         <TextView
             android:id="@+id/nok_reason_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="暂无"
+            android:textSize="16sp"
             android:textColor="@color/black" />
     </LinearLayout>
 
@@ -58,7 +60,7 @@
             android:id="@+id/nok_detail_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
+            android:layout_marginTop="8dp"
             android:layout_gravity="start"
             android:hint="暂无"
             android:textSize="16sp"
@@ -75,7 +77,7 @@
         <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
             android:id="@+id/checkout_nok_photos"
             style="@style/MatchWrap"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             app:bga_npl_itemCornerRadius="0dp"
             app:bga_npl_itemSpanCount="3"
             app:bga_npl_itemWhiteSpacing="4dp"

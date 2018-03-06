@@ -24,13 +24,12 @@
                 android:id="@+id/checkout_info_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp"
+                android:padding="8dp"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:text="质检结果："
                 android:textColor="@color/black"
-                />
+                android:background="@color/windowBackground"/>
             <RadioGroup
                 android:id="@+id/resalt_for_checkout_label"
                 android:layout_width="match_parent"
@@ -44,66 +43,75 @@
                     android:id="@+id/checked_ok_rb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="合格" />
                 <RadioButton
                     android:id="@+id/checked_nok_rb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="不合格" />
             </RadioGroup>
 
-            <TextView
-                android:id="@+id/checkout_nok_detail_label"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp"
-                android:textSize="16sp"
-                android:text="不合格原因："
-                android:textColor="@color/black"/>
-            <EditText
-                android:id="@+id/checkout_nok_detail_et"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp"
-                android:hint="输入不合格原因"
-                android:lines="3"
-                android:gravity="start"
-                android:textSize="16sp"
-                android:background="@color/hintColor" />
-            <TextView
-                android:id="@+id/take_photos_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp"
-                android:textSize="16sp"
-                android:text="拍照上传："
-                android:textColor="@color/black"/>
+                android:id="@+id/qa_nok_ll"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/checkout_nok_detail_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:textSize="16sp"
+                    android:text="不合格原因："
+                    android:textColor="@color/black"/>
+                <EditText
+                    android:id="@+id/checkout_nok_detail_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:hint="输入不合格原因"
+                    android:lines="3"
+                    android:gravity="start"
+                    android:textSize="16sp"
+                    android:background="@color/hintColor" />
+                <TextView
+                    android:id="@+id/take_photos_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:textSize="16sp"
+                    android:text="拍照上传："
+                    android:textColor="@color/black"/>
 
-            <cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout
-                android:id="@+id/checkout_nok_add_photos"
-                style="@style/WrapWrap"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="4dp"
-                app:bga_snpl_deleteDrawable="@mipmap/bga_pp_ic_delete"
-                app:bga_snpl_deleteDrawableOverlapQuarter="false"
-                app:bga_snpl_editable="true"
-                app:bga_snpl_itemCornerRadius="0dp"
-                app:bga_snpl_itemSpanCount="3"
-                app:bga_snpl_itemWhiteSpacing="4dp"
-                app:bga_snpl_itemWidth="0dp"
-                app:bga_snpl_maxItemCount="9"
-                app:bga_snpl_otherWhiteSpacing="100dp"
-                app:bga_snpl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
-                app:bga_snpl_plusDrawable="@mipmap/bga_pp_ic_plus"
-                app:bga_snpl_plusEnable="true"
-                app:bga_snpl_sortable="true" />
+                <cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout
+                    android:id="@+id/checkout_nok_add_photos"
+                    style="@style/WrapWrap"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="4dp"
+                    app:bga_snpl_deleteDrawable="@mipmap/bga_pp_ic_delete"
+                    app:bga_snpl_deleteDrawableOverlapQuarter="false"
+                    app:bga_snpl_editable="true"
+                    app:bga_snpl_itemCornerRadius="0dp"
+                    app:bga_snpl_itemSpanCount="3"
+                    app:bga_snpl_itemWhiteSpacing="4dp"
+                    app:bga_snpl_itemWidth="0dp"
+                    app:bga_snpl_maxItemCount="9"
+                    app:bga_snpl_otherWhiteSpacing="100dp"
+                    app:bga_snpl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
+                    app:bga_snpl_plusDrawable="@mipmap/bga_pp_ic_plus"
+                    app:bga_snpl_plusEnable="true"
+                    app:bga_snpl_sortable="true" />
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
     <LinearLayout

@@ -51,18 +51,9 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     private TextView nokReasonTv;
     private TextView nokDetailTv;
     private LinearLayout qaNokLayout;
-    private LinearLayout instalAbnormalLayout;
-    private AlertDialog mLocationSettngDialog=null;
+    private LinearLayout installAbnormalLayout;
+    private AlertDialog mLocationSettingDialog =null;
 
-    private ArrayList<String> mInstallFileList = new ArrayList<>();
-    private ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = new ArrayList<>();
-    private AbnormalRecordDetailsData mAbnormalRecordDetailsData=new AbnormalRecordDetailsData();
-
-    private ArrayList<QualityRecordDetailsData> mQualityRecordList=new ArrayList<>();
-    private QualityRecordDetailsData mQualityRecordDetailsData =new QualityRecordDetailsData();
-
-    private ArrayList<String> installPhotoList;
-    private ArrayList<String> checkoutPhotoList;
     private BGANinePhotoLayout mCurrentClickNpl;
 
     private final String IP = SinSimApp.getApp().getServerIP();
@@ -84,10 +75,10 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         TextView orderNumberTv=findViewById(R.id.order_number_tv);
         TextView machineNumberTv=findViewById(R.id.machine_number_tv);
         TextView currentStatusTv=findViewById(R.id.current_status_tv);
-        TextView intallListTv=findViewById(R.id.intall_list_tv);
+        TextView installListTv=findViewById(R.id.intall_list_tv);
 
         //点击下载装车单
-        intallListTv.setOnClickListener(new View.OnClickListener() {
+        installListTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //下载装车单
@@ -97,7 +88,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
 
         abnormalReasonTv=findViewById(R.id.abnormal_reason_tv);
         abnormalDetailTv=findViewById(R.id.abnormal_detail_tv);
-        instalAbnormalLayout=findViewById(R.id.abnormal_detail_layout);
+        installAbnormalLayout=findViewById(R.id.abnormal_detail_layout);
         nokReasonTv=findViewById(R.id.nok_reason_tv);
         nokDetailTv=findViewById(R.id.nok_detail_tv);
         qaNokLayout=findViewById(R.id.checked_nok_layout);
@@ -105,12 +96,12 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         //获取传递过来的信息
         Intent intent = getIntent();
         mTaskMachineListData = (TaskMachineListData) intent.getSerializableExtra("mTaskMachineListData");
-        Log.d(TAG, "onCreate: localtion:"+mTaskMachineListData.getMachineData().getLocation());
+        Log.d(TAG, "onCreate: location:"+mTaskMachineListData.getMachineData().getLocation());
 
         //把数据填入相应位置
         orderNumberTv.setText(""+mTaskMachineListData.getMachineData().getOrderId());
         currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskMachineListData.getStatus()));
-        machineNumberTv.setText(mTaskMachineListData.getMachineData().getMachineStrId());
+        machineNumberTv.setText(mTaskMachineListData.getMachineData().getNameplate());
         locationTv.setTextColor(Color.BLUE);
         if (mTaskMachineListData.getMachineData().getLocation().isEmpty()){
             locationTv.setText("点击上传位置");
@@ -122,16 +113,16 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
             public void onClick(View view) {
                 LinearLayout layout = (LinearLayout) View.inflate(DetailToAdminActivity.this, R.layout.dialog_location_seting, null);
                 final EditText dialogLocationEt = layout.findViewById(R.id.dialog_location_et);
-                mLocationSettngDialog = new AlertDialog.Builder(DetailToAdminActivity.this).create();
-                mLocationSettngDialog.setTitle("输入机器的位置：");
-                mLocationSettngDialog.setView(layout);
-                mLocationSettngDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+                mLocationSettingDialog = new AlertDialog.Builder(DetailToAdminActivity.this).create();
+                mLocationSettingDialog.setTitle("输入机器的位置：");
+                mLocationSettingDialog.setView(layout);
+                mLocationSettingDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
-                mLocationSettngDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
+                mLocationSettingDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //获取dialog的输入信息，并上传到服务器
@@ -143,7 +134,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         }
                     }
                 });
-                mLocationSettngDialog.show();
+                mLocationSettingDialog.show();
             }
         });
 
@@ -166,7 +157,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         public void handleMessage(final Message msg) {
 
             if (msg.what == Network.OK) {
-                mInstallFileList=(ArrayList<String>)msg.obj;
+                ArrayList<String> mInstallFileList = (ArrayList<String>) msg.obj;
                 Intent intent=new Intent(DetailToAdminActivity.this,InstallListActivity.class);
                 intent.putExtra("mInstallFileList", mInstallFileList);
                 startActivity(intent);
@@ -196,8 +187,8 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
                 //获取质检结果
-                mQualityRecordList=(ArrayList<QualityRecordDetailsData>)msg.obj;
-                if (mQualityRecordList!=null && !mQualityRecordList.isEmpty()) {
+                ArrayList<QualityRecordDetailsData> mQualityRecordList = (ArrayList<QualityRecordDetailsData>) msg.obj;
+                if (mQualityRecordList !=null && !mQualityRecordList.isEmpty()) {
                     int updateTime = mQualityRecordList.size() - 1;
                     //根据CreateTime取值
                     for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
@@ -207,13 +198,13 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         }
                         Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                     }
-                    mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
+                    QualityRecordDetailsData mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
                     if (mQualityRecordDetailsData.getStatus() == SinSimApp.TASK_QUALITY_ABNORMAL) {
                         nokReasonTv.setText("不合格");
                         qaNokLayout.setVisibility(View.VISIBLE);
                         nokDetailTv.setText(mQualityRecordDetailsData.getComment());
                         //九宫格显示照片
-                        checkoutPhotoList=new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + IP + mQualityRecordDetailsData.getQualityRecordImage().getImage(),"http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png"));
+                        ArrayList<String> checkoutPhotoList = new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + IP + mQualityRecordDetailsData.getQualityRecordImage().getImage(), "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png"));
                         BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
                         checkoutNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
                         checkoutNinePhotoLayout.setData(checkoutPhotoList);
@@ -243,8 +234,8 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
                 //获取质检结果
-                mAbnormalRecordList=(ArrayList<AbnormalRecordDetailsData>)msg.obj;
-                if (mAbnormalRecordList!=null && !mAbnormalRecordList.isEmpty()) {
+                ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = (ArrayList<AbnormalRecordDetailsData>) msg.obj;
+                if (mAbnormalRecordList !=null && !mAbnormalRecordList.isEmpty()) {
                     int updateTime = mAbnormalRecordList.size()-1;
                     //对比mQualityRecordList.get(update).getCreateTime()取值
                     for (int update = mAbnormalRecordList.size()-2; update >= 0; update--) {
@@ -254,32 +245,32 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         }
                         Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                     }
-                    mAbnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
+                    AbnormalRecordDetailsData mAbnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
                     //异常，填入异常原因
                     if (mAbnormalRecordDetailsData.getTaskRecord().getStatus() == SinSimApp.TASK_INSTALL_ABNORMAL) {
                         abnormalReasonTv.setText("异常");
-                        instalAbnormalLayout.setVisibility(View.VISIBLE);
+                        installAbnormalLayout.setVisibility(View.VISIBLE);
                         abnormalDetailTv.setText(mAbnormalRecordDetailsData.getComment());
                         //九宫格显示照片
-                        installPhotoList=new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + IP + mAbnormalRecordDetailsData.getAbnormalImage().getImage(),"http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered1.png"));
+                        ArrayList<String> installPhotoList = new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + IP + mAbnormalRecordDetailsData.getAbnormalImage().getImage(), "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered1.png"));
                         BGANinePhotoLayout installNinePhotoLayout = findViewById(R.id.install_abnormal_photos);
                         installNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
                         installNinePhotoLayout.setData(installPhotoList);
                     } else if (mAbnormalRecordDetailsData.getTaskRecord().getStatus() == SinSimApp.TASK_INSTALLED){
                         abnormalReasonTv.setText("正常");
-                        instalAbnormalLayout.setVisibility(View.GONE);
+                        installAbnormalLayout.setVisibility(View.GONE);
                     } else {
                         abnormalReasonTv.setText("暂无");
-                        instalAbnormalLayout.setVisibility(View.GONE);
+                        installAbnormalLayout.setVisibility(View.GONE);
                     }
                 } else {
                     abnormalReasonTv.setText("尚未安装");
-                    instalAbnormalLayout.setVisibility(View.GONE);
+                    installAbnormalLayout.setVisibility(View.GONE);
                     Log.d(TAG, "handleMessage: 没有安装异常");
                 }
             } else {
                 abnormalReasonTv.setText("暂无");
-                instalAbnormalLayout.setVisibility(View.GONE);
+                installAbnormalLayout.setVisibility(View.GONE);
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(DetailToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
@@ -343,8 +334,8 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mLocationSettngDialog!=null) {
-            mLocationSettngDialog.dismiss();
+        if (mLocationSettingDialog !=null) {
+            mLocationSettingDialog.dismiss();
         }
     }
 

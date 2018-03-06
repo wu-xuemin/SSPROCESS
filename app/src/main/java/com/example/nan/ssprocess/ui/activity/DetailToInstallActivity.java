@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -56,30 +57,26 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private EditText installAbnormalDetailEt;
     private Button begainInstallButton;
     private Button installInfoUpdateButton;
-
-    private TaskMachineListData mTaskMachineListData=new TaskMachineListData();
-    private ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = new ArrayList<>();
-    private AbnormalRecordDetailsData mAbnormalRecordDetailsData=new AbnormalRecordDetailsData();
-
     private TextView nokReasonTv;
     private TextView nokDetailTv;
+    private LinearLayout installAbnormalLayout;
     private LinearLayout qaNokLayout;
-    private ArrayList<QualityRecordDetailsData> mQualityRecordList=new ArrayList<>();
-    private QualityRecordDetailsData mQualityRecordDetailsData =new QualityRecordDetailsData();
 
     private ProgressDialog mUploadingProcessDialog;
+
+    private TaskMachineListData mTaskMachineListData=new TaskMachineListData();
+    private AbnormalRecordDetailsData mAbnormalRecordDetailsData=new AbnormalRecordDetailsData();
+
+    private BGASortableNinePhotoLayout mInstallAbnormalPhotosSnpl;
+    private BGANinePhotoLayout mCurrentClickNpl;
 
     private final String IP = SinSimApp.getApp().getServerIP();
     private static final int SCAN_QRCODE_START = 1;
     private static final int SCAN_QRCODE_END = 0;
     private static final int RC_INSTALL_CHOOSE_PHOTO = 3;
     private static final int RC_INSTALL_PHOTO_PREVIEW = 4;
-	private static final int NORMAL = 3;
+    private static final int NORMAL = 3;
     private static final int ABNORMAL = 4;
-
-    private BGASortableNinePhotoLayout mInstallAbnormalPhotosSnpl;
-    private BGANinePhotoLayout mCurrentClickNpl;
-    private ArrayList<String> checkoutPhotoList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,13 +94,14 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         TextView orderNumberTv=findViewById(R.id.order_number_tv);
         TextView machineNumberTv=findViewById(R.id.machine_number_tv);
         TextView currentStatusTv=findViewById(R.id.current_status_tv);
-        TextView intallListTv=findViewById(R.id.intall_list_tv);
+        TextView installListTv=findViewById(R.id.intall_list_tv);
 
         //点击下载装车单
-        intallListTv.setOnClickListener(new View.OnClickListener() {
+        installListTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO:下载装车单
+                //下载装车单
+                fetchDownloadListData();
             }
         });
 
@@ -115,6 +113,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         installInfoUpdateButton = findViewById(R.id.install_info_update_button);
         nokReasonTv=findViewById(R.id.nok_reason_tv);
         nokDetailTv=findViewById(R.id.nok_detail_tv);
+        installAbnormalLayout=findViewById(R.id.install_abnormal_ll);
         qaNokLayout=findViewById(R.id.checked_nok_layout);
 
         //获取传递过来的信息
@@ -125,15 +124,30 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         //把数据填入相应位置
         orderNumberTv.setText(""+mTaskMachineListData.getMachineData().getOrderId());
         currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskMachineListData.getStatus()));
-        machineNumberTv.setText(mTaskMachineListData.getMachineData().getMachineStrId());
+        machineNumberTv.setText(mTaskMachineListData.getMachineData().getNameplate());
         locationTv.setText(mTaskMachineListData.getMachineData().getLocation());
+
+        installNormalRb.setChecked(true);
+        installAbnormalLayout.setVisibility(View.GONE);
+        installNormalRb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                installAbnormalLayout.setVisibility(View.VISIBLE);
+            }
+        });
+        installAbnormalRb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                installAbnormalLayout.setVisibility(View.GONE);
+            }
+        });
 
         //开始安装
         begainInstallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mTaskMachineListData.getMachineData().getStatus()!=SinSimApp.TASK_INSTALL_WAITING){
-                    Toast.makeText(DetailToInstallActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskMachineListData.getMachineData().getStatus())+" ，不能开始安装！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailToInstallActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskMachineListData.getStatus())+" ，不能开始安装！", Toast.LENGTH_SHORT).show();
                 } else {
                     Intent intent = new Intent(DetailToInstallActivity.this, ScanQrcodeActivity.class);
                     startActivityForResult(intent, SCAN_QRCODE_START);
@@ -145,7 +159,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             @Override
             public void onClick(View v) {
                 if (mTaskMachineListData.getMachineData().getStatus()!=SinSimApp.TASK_INSTALLING){
-                    Toast.makeText(DetailToInstallActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskMachineListData.getMachineData().getStatus())+" ，不能结束安装！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailToInstallActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskMachineListData.getStatus())+" ，不能结束安装！", Toast.LENGTH_SHORT).show();
                 } else {
                     Intent intent = new Intent(DetailToInstallActivity.this, ScanQrcodeActivity.class);
                     startActivityForResult(intent, SCAN_QRCODE_END);
@@ -167,14 +181,13 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
      * 根据taskRecordId获取当前abnormal信息
      */
     private void fetchInstallRecordData() {
-        final String account = SinSimApp.getApp().getAccount();
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("taskRecordId", ""+mTaskMachineListData.getId());
         String fetchProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FATCH_INSTALL_ABNORMAL_RECORD_DETAIL;
         Network.Instance(SinSimApp.getApp()).fetchProcessInstallRecordData(fetchProcessRecordUrl, mPostValue, new FetchInstallRecordDataHandler());
 
         String fetchQaProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
-        Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, new FetchQARecordDataHandler());
+        Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, new FetchQaRecordDataHandler());
     }
 
 
@@ -184,8 +197,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
                 //获取质检结果
-                mAbnormalRecordList=(ArrayList<AbnormalRecordDetailsData>)msg.obj;
-                if (mAbnormalRecordList!=null && !mAbnormalRecordList.isEmpty()) {
+                ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = (ArrayList<AbnormalRecordDetailsData>) msg.obj;
+                if (mAbnormalRecordList !=null && !mAbnormalRecordList.isEmpty()) {
                     int updateTime = mAbnormalRecordList.size() - 1;
                     //对比mQualityRecordList.get(update).getCreateTime()取值
                     for (int update = mAbnormalRecordList.size() - 2; update >= 0; update--) {
@@ -222,13 +235,13 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     }
 
     @SuppressLint("HandlerLeak")
-    private class FetchQARecordDataHandler extends Handler {
+    private class FetchQaRecordDataHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
                 //获取质检结果
-                mQualityRecordList=(ArrayList<QualityRecordDetailsData>)msg.obj;
-                if (mQualityRecordList!=null && !mQualityRecordList.isEmpty()) {
+                ArrayList<QualityRecordDetailsData> mQualityRecordList = (ArrayList<QualityRecordDetailsData>) msg.obj;
+                if (mQualityRecordList !=null && !mQualityRecordList.isEmpty()) {
                     int updateTime = mQualityRecordList.size() - 1;
                     //根据CreateTime取值
                     for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
@@ -238,13 +251,13 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         }
                         Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                     }
-                    mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
+                    QualityRecordDetailsData mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
                     if (mQualityRecordDetailsData.getStatus() == SinSimApp.TASK_QUALITY_ABNORMAL) {
                         nokReasonTv.setText("不合格");
                         qaNokLayout.setVisibility(View.VISIBLE);
                         nokDetailTv.setText(mQualityRecordDetailsData.getComment());
                         //照片地址
-                        checkoutPhotoList=new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + IP + mQualityRecordDetailsData.getQualityRecordImage().getImage(), "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png"));
+                        ArrayList<String> checkoutPhotoList = new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + IP + mQualityRecordDetailsData.getQualityRecordImage().getImage(), "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png"));
                         BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
                         checkoutNinePhotoLayout.setDelegate(DetailToInstallActivity.this);
                         checkoutNinePhotoLayout.setData(checkoutPhotoList);
@@ -269,6 +282,33 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     }
 
 
+    /**
+     * 获取装车单的文件名
+     */
+    private void fetchDownloadListData() {
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("order_id", ""+mTaskMachineListData.getMachineData().getOrderId());
+        String fetchInstallFileListUrl = URL.HTTP_HEAD + IP + URL.FETCH_DOWNLOADING_FILELIST;
+        Network.Instance(SinSimApp.getApp()).fetchInstallFileList(fetchInstallFileListUrl, mPostValue, new FetchInstallFileListHandler());
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class FetchInstallFileListHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+
+            if (msg.what == Network.OK) {
+                ArrayList<String> mInstallFileList = (ArrayList<String>) msg.obj;
+                Intent intent=new Intent(DetailToInstallActivity.this,InstallListActivity.class);
+                intent.putExtra("mInstallFileList", mInstallFileList);
+                startActivity(intent);
+            } else {
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "FetchInstallFileListHandler handleMessage: "+errorMsg);
+                Toast.makeText(DetailToInstallActivity.this, "网络错误！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     @Override
     public void onClickNinePhotoItem(BGANinePhotoLayout ninePhotoLayout, View view, int position, String model, List<String> models) {
         mCurrentClickNpl = ninePhotoLayout;
@@ -412,9 +452,9 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 @SuppressLint("SimpleDateFormat")
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
                 Date curDate = new Date(System.currentTimeMillis());
-                String strCurTima = formatter.format(curDate);
+                String staCurTime = formatter.format(curDate);
                 //更新当前时间
-                abnormalImageAddData.setCreateTime(strCurTima);
+                abnormalImageAddData.setCreateTime(staCurTime);
                 abnormalImageAddData.setAbnormalRecordId(mAbnormalRecordDetailsData.getId());
                 //上传质检不合格照片
                 String imageJson = gson.toJson(abnormalImageAddData);

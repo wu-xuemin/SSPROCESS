@@ -14,7 +14,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -35,11 +34,9 @@ import java.util.LinkedHashMap;
 public class ProcessToMachineActivity extends AppCompatActivity {
 
     private static String TAG = "nlgProcessToMachineActivity";
+    private String mSearchContent;
     private ArrayList<TaskMachineListData> mProcessToMachineList = new ArrayList<>();
     private TaskRecordAdapter mProcessToMachineAdapter;
-    private FetchProcessDataHandler mFetchProcessDataHandler = new FetchProcessDataHandler();
-    private int mPage;
-    private String mSearchContent;
 
     private ProgressDialog mLoadingProcessDialog;
     private AlertDialog mSearchResultDialog;
@@ -89,7 +86,7 @@ public class ProcessToMachineActivity extends AppCompatActivity {
             mLoadingProcessDialog.setMessage("获取信息中...");
         }
         mLoadingProcessDialog.show();
-        mPage=0;
+        int mPage = 0;
         fetchProcessData(mPage);
     }
 
@@ -99,7 +96,7 @@ public class ProcessToMachineActivity extends AppCompatActivity {
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_BY_SEARCH_TO_ADMIN;
         mPostValue.put("namePlate", mSearchContent);
         mPostValue.put("page", ""+page);
-        Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, mFetchProcessDataHandler);
+        Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessDataHandler());
     }
     
     @SuppressLint("HandlerLeak")
@@ -132,6 +129,7 @@ public class ProcessToMachineActivity extends AppCompatActivity {
             } else {
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(ProcessToMachineActivity.this, "搜索失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+                finish();
             }
         }
     }

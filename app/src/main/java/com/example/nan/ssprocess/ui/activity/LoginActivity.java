@@ -198,9 +198,6 @@ public class LoginActivity extends AppCompatActivity {
                 });
                 mIPSettngDialog.show();
                 break;
-            case R.id.password_settings:
-                Toast.makeText(LoginActivity.this, "不支持密码更改", Toast.LENGTH_SHORT).show();
-                break;
             default:
                 break;
         }

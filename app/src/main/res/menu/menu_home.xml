@@ -5,7 +5,4 @@
     <item
         android:id="@+id/ip_settings"
         android:title="IP设置"/>
-    <item
-        android:id="@+id/password_settings"
-        android:title="修改密码"/>
 </menu>
