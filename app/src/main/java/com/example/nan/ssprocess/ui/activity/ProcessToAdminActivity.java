@@ -29,7 +29,7 @@ import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
-import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
+import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
@@ -46,8 +46,8 @@ import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
 public class ProcessToAdminActivity extends AppCompatActivity implements BGARefreshLayout.BGARefreshLayoutDelegate{
 
     private static String TAG = "nlgProcessToAdminActivity";
-    private ArrayList<TaskMachineListData> mProcessToAdminList = new ArrayList<>();
-    private TaskMachineListData mScanResultListData=new TaskMachineListData();
+    private ArrayList<TaskRecordMachineListData> mProcessToAdminList = new ArrayList<>();
+    private TaskRecordMachineListData mScanResultListData=new TaskRecordMachineListData();
     private TaskRecordAdapter mProcessToAdminAdapter;
     private BGARefreshLayout mRefreshLayout;
 
@@ -98,7 +98,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
             public void onItemClick(int position){
                 Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToAdminList.get(position)));
                 Intent intent=new Intent(ProcessToAdminActivity.this,DetailToAdminActivity.class);
-                intent.putExtra("mTaskMachineListData", mProcessToAdminList.get(position));
+                intent.putExtra("mTaskRecordMachineListData", mProcessToAdminList.get(position));
                 startActivity(intent);
             }
         });
@@ -152,7 +152,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
             mRefreshLayout.endLoadingMore();
 
             if (msg.what == Network.OK) {
-                mProcessToAdminList=(ArrayList<TaskMachineListData>)msg.obj;
+                mProcessToAdminList=(ArrayList<TaskRecordMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToAdminList.size());
                 if (mProcessToAdminList.size()==0){
                     Toast.makeText(ProcessToAdminActivity.this, "没有更多了...", Toast.LENGTH_SHORT).show();
@@ -193,7 +193,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
         @Override
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
-                ArrayList<TaskMachineListData> mScanResultList = (ArrayList<TaskMachineListData>) msg.obj;
+                ArrayList<TaskRecordMachineListData> mScanResultList = (ArrayList<TaskRecordMachineListData>) msg.obj;
                 Log.d(TAG, "handleMessage: size: "+ mScanResultList.size());
                 //结果为空就报错，有结果则取第一条信息位依据
                 if (mScanResultList.size()==0){
@@ -316,6 +316,9 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
         super.onDestroy();
         if(mLoadingProcessDialog != null) {
             mLoadingProcessDialog.dismiss();
+        }
+        if(mUpdatingProcessDialog != null) {
+            mUpdatingProcessDialog.dismiss();
         }
         if(mLocationSettingDialog != null) {
             mLocationSettingDialog.dismiss();

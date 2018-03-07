@@ -651,6 +651,7 @@ public class Network {
                                     } else if (responseData.getCode() == 400) {
                                         msg.obj = responseData.getMessage();
                                     } else {
+                                        msg.obj = responseData.getMessage();
                                         Log.e(TAG, "updateProcessRecordData Format JSON string to object error!");
                                     }
                                 }

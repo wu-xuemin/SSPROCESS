@@ -1,24 +1,26 @@
 package com.example.nan.ssprocess.ui.activity;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.ScanResultAdapter;
-import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
-import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
+import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
@@ -32,8 +34,10 @@ public class ScanResultActivity extends AppCompatActivity {
 
     private static String TAG = "nlgScanResultActivity";
     private ScanResultAdapter mScanResultAdapter;
+    private TaskRecordMachineListData mTaskRecordMachineListData;
     private AlertDialog mInstallDialog=null;
     private AlertDialog mQaDialog=null;
+    private ProgressDialog mUpdatingProcessDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +52,7 @@ public class ScanResultActivity extends AppCompatActivity {
 
         //获取传递过来的信息
         Intent intent = getIntent();
-        final ArrayList<TaskMachineListData> mScanResultList = (ArrayList<TaskMachineListData>) intent.getSerializableExtra("mTaskMachineList");
+        final ArrayList<TaskRecordMachineListData> mScanResultList = (ArrayList<TaskRecordMachineListData>) intent.getSerializableExtra("mTaskRecordMachineList");
 
         //列表
         RecyclerView mScanResultRv = findViewById(R.id.scan_result_rv);
@@ -62,52 +66,74 @@ public class ScanResultActivity extends AppCompatActivity {
         mScanResultAdapter.setOnItemClickListener(new ScanResultAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(final int position){
-                Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mScanResultList.get(position)));
+                mTaskRecordMachineListData = mScanResultList.get(position);
+                Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mTaskRecordMachineListData));
                 switch (SinSimApp.getApp().getRole()){
                     case SinSimApp.LOGIN_FOR_INSTALL:
-                        mInstallDialog = new AlertDialog.Builder(ScanResultActivity.this).create();
-                        mInstallDialog.setMessage("是否现在开始安装？");
-                        mInstallDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "否", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                        if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING) {
+                            mInstallDialog = new AlertDialog.Builder(ScanResultActivity.this).create();
+                            mInstallDialog.setMessage("是否现在开始安装？");
+                            mInstallDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "否", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
-                            }
-                        });
-                        mInstallDialog.setButton(AlertDialog.BUTTON_POSITIVE, "是", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //TODO:先改状态再执行跳转
-                                Intent intent = new Intent();
-                                intent.setClass(ScanResultActivity.this,DetailToInstallActivity.class);
-                                intent.putExtra("mTaskMachineListData", mScanResultList.get(position));
-                                startActivity(intent);
-                                finish();
-                            }
-                        });
-                        mInstallDialog.show();
-
+                                }
+                            });
+                            mInstallDialog.setButton(AlertDialog.BUTTON_POSITIVE, "是", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //先改状态再执行跳转
+                                    if( mUpdatingProcessDialog == null) {
+                                        mUpdatingProcessDialog = new ProgressDialog(ScanResultActivity.this);
+                                        mUpdatingProcessDialog.setCancelable(false);
+                                        mUpdatingProcessDialog.setCanceledOnTouchOutside(false);
+                                        mUpdatingProcessDialog.setMessage("正在开始...");
+                                    }
+                                    mUpdatingProcessDialog.show();
+                                    updateProcessDetailData(SinSimApp.TASK_INSTALLING);
+                                }
+                            });
+                            mInstallDialog.show();
+                        } else {
+                            Intent intent = new Intent();
+                            intent.setClass(ScanResultActivity.this, DetailToInstallActivity.class);
+                            intent.putExtra("mTaskRecordMachineListData", mScanResultList.get(position));
+                            startActivity(intent);
+                            finish();
+                        }
                         break;
                     case SinSimApp.LOGIN_FOR_QA:
-                        mQaDialog = new AlertDialog.Builder(ScanResultActivity.this).create();
-                        mQaDialog.setMessage("是否现在开始质检？");
-                        mQaDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "否", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                        if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED) {
+                            mQaDialog = new AlertDialog.Builder(ScanResultActivity.this).create();
+                            mQaDialog.setMessage("是否现在开始质检？");
+                            mQaDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "否", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
-                            }
-                        });
-                        mQaDialog.setButton(AlertDialog.BUTTON_POSITIVE, "是", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //TODO:先改状态再执行跳转
-                                Intent intent = new Intent();
-                                intent.setClass(ScanResultActivity.this,DetailToCheckoutActivity.class);
-                                intent.putExtra("mTaskMachineListData", mScanResultList.get(position));
-                                startActivity(intent);
-                                finish();
-                            }
-                        });
-                        mQaDialog.show();
+                                }
+                            });
+                            mQaDialog.setButton(AlertDialog.BUTTON_POSITIVE, "是", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //先改状态再执行跳转
+                                    if( mUpdatingProcessDialog == null) {
+                                        mUpdatingProcessDialog = new ProgressDialog(ScanResultActivity.this);
+                                        mUpdatingProcessDialog.setCancelable(false);
+                                        mUpdatingProcessDialog.setCanceledOnTouchOutside(false);
+                                        mUpdatingProcessDialog.setMessage("正在开始...");
+                                    }
+                                    mUpdatingProcessDialog.show();
+                                    updateProcessDetailData(SinSimApp.TASK_INSTALLING);
+                                }
+                            });
+                            mQaDialog.show();
+                        } else {
+                            Intent intent = new Intent();
+                            intent.setClass(ScanResultActivity.this, DetailToCheckoutActivity.class);
+                            intent.putExtra("mTaskRecordMachineListData", mTaskRecordMachineListData);
+                            startActivity(intent);
+                            finish();
+                        }
                         break;
                     default:
                         Toast.makeText(ScanResultActivity.this,"账号错误，请检查登入账号!", Toast.LENGTH_SHORT).show();
@@ -117,6 +143,51 @@ public class ScanResultActivity extends AppCompatActivity {
         });
     }
 
+    private void updateProcessDetailData(int status) {
+        //更新loaction状态
+        mTaskRecordMachineListData.setStatus(status);
+        Gson gson=new Gson();
+        String taskRecordDataToJson = gson.toJson(mTaskRecordMachineListData);
+        Log.d(TAG, "onItemClick: gson :"+ taskRecordDataToJson);
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("taskRecord", taskRecordDataToJson);
+        String updateProcessRecordUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.UPDATE_TASK_RECORD_STATUS;
+        Log.d(TAG, "updateProcessDetailData: "+updateProcessRecordUrl+mPostValue.get("taskRecord"));
+        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, new UpdateProcessDetailDataHandler());
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class UpdateProcessDetailDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if(mUpdatingProcessDialog != null && mUpdatingProcessDialog.isShowing()) {
+                mUpdatingProcessDialog.dismiss();
+            }
+            if (msg.what == Network.OK) {
+                if (SinSimApp.getApp().getRole()==SinSimApp.LOGIN_FOR_INSTALL) {
+                    Intent intent = new Intent();
+                    intent.setClass(ScanResultActivity.this, DetailToInstallActivity.class);
+                    intent.putExtra("mTaskRecordMachineListData", mTaskRecordMachineListData);
+                    startActivity(intent);
+                    finish();
+                    Toast.makeText(ScanResultActivity.this, "请开始安装！", Toast.LENGTH_SHORT).show();
+                } else if (SinSimApp.getApp().getRole()==SinSimApp.LOGIN_FOR_QA){
+                    Intent intent = new Intent();
+                    intent.setClass(ScanResultActivity.this, DetailToCheckoutActivity.class);
+                    intent.putExtra("mTaskRecordMachineListData", mTaskRecordMachineListData);
+                    startActivity(intent);
+                    finish();
+                    Toast.makeText(ScanResultActivity.this, "请开始质检！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ScanResultActivity.this,"账号错误，请检查登入账号!", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: "+errorMsg);
+                Toast.makeText(ScanResultActivity.this, "网络错误，无法开始，请检查网络！", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -126,5 +197,19 @@ public class ScanResultActivity extends AppCompatActivity {
             default:
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mInstallDialog != null) {
+            mInstallDialog.dismiss();
+        }
+        if(mUpdatingProcessDialog != null) {
+            mUpdatingProcessDialog.dismiss();
+        }
+        if(mQaDialog != null) {
+            mQaDialog.dismiss();
+        }
     }
 }

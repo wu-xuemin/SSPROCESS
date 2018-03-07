@@ -21,7 +21,7 @@ import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
-import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
+import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.service.MyMqttService;
 import com.google.gson.Gson;
@@ -42,7 +42,7 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
     private static final int SCAN_QRCODE_START = 1;
     private int mPage;
 
-    private ArrayList<TaskMachineListData> mProcessToCheckoutList = new ArrayList<>();
+    private ArrayList<TaskRecordMachineListData> mProcessToCheckoutList = new ArrayList<>();
     private TaskRecordAdapter mTaskRecordAdapter;
 
     private BGARefreshLayout mRefreshLayout;
@@ -92,7 +92,7 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
                 Log.d(TAG, "onItemClick: position :"+position);
                 Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToCheckoutList.get(position)));
                 Intent intent=new Intent(ProcessToCheckoutActivity.this,DetailToCheckoutActivity.class);
-                intent.putExtra("mTaskMachineListData", mProcessToCheckoutList.get(position));
+                intent.putExtra("mTaskRecordMachineListData", mProcessToCheckoutList.get(position));
                 startActivity(intent);
             }
         });
@@ -128,7 +128,7 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
             mRefreshLayout.endLoadingMore();
 
             if (msg.what == Network.OK) {
-                mProcessToCheckoutList=(ArrayList<TaskMachineListData>)msg.obj;
+                mProcessToCheckoutList=(ArrayList<TaskRecordMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToCheckoutList.size());
                 if (mProcessToCheckoutList.size()==0){
                     Toast.makeText(ProcessToCheckoutActivity.this, "没有更多了...", Toast.LENGTH_SHORT).show();
@@ -186,13 +186,13 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
         @Override
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
-                ArrayList<TaskMachineListData> mScanResultList = (ArrayList<TaskMachineListData>) msg.obj;
+                ArrayList<TaskRecordMachineListData> mScanResultList = (ArrayList<TaskRecordMachineListData>) msg.obj;
                 Log.d(TAG, "handleMessage: size: "+ mScanResultList.size());
                 if (mScanResultList.size()==0){
                     Toast.makeText(ProcessToCheckoutActivity.this, "没有内容!", Toast.LENGTH_LONG).show();
                 } else {
                     Intent intent=new Intent(ProcessToCheckoutActivity.this,ScanResultActivity.class);
-                    intent.putExtra("mTaskMachineList", (Serializable) mScanResultList);
+                    intent.putExtra("mTaskRecordMachineList", (Serializable) mScanResultList);
                     startActivity(intent);
                 }
             } else {

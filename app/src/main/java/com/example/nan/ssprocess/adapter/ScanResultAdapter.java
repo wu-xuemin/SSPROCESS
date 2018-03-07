@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
-import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
+import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 
 import java.util.ArrayList;
 
@@ -23,10 +23,10 @@ import java.util.ArrayList;
 public class ScanResultAdapter extends RecyclerView.Adapter {
 
     private static String TAG = "nlgScanResultAdapter";
-    private ArrayList<TaskMachineListData> mProcessList;
+    private ArrayList<TaskRecordMachineListData> mProcessList;
     private ScanResultAdapter.OnItemClickListener itemClickListener = null;
 
-    public ScanResultAdapter(ArrayList<TaskMachineListData> list) {
+    public ScanResultAdapter(ArrayList<TaskRecordMachineListData> list) {
         mProcessList = list;
     }
 
@@ -131,7 +131,7 @@ public class ScanResultAdapter extends RecyclerView.Adapter {
             processStateTv = itemView.findViewById(R.id.process_state_tv);
         }
     }
-    public void setProcessList(ArrayList<TaskMachineListData> list) {
+    public void setProcessList(ArrayList<TaskRecordMachineListData> list) {
         mProcessList.clear();
         mProcessList.addAll(list);
     }

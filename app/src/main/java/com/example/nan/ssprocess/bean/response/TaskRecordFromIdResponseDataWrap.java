@@ -1,15 +1,15 @@
 package com.example.nan.ssprocess.bean.response;
 
-import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
+import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 
 /**
  * Created by nan on 2017/12/25.
  */
 
 public class TaskRecordFromIdResponseDataWrap extends ResponseData {
-    private TaskMachineListData data;
+    private TaskRecordMachineListData data;
 
-    public TaskMachineListData getData() {
+    public TaskRecordMachineListData getData() {
         return data;
     }
 }

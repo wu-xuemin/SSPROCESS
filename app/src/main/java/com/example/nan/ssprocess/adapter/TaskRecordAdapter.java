@@ -1,7 +1,6 @@
 package com.example.nan.ssprocess.adapter;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,10 +12,9 @@ import android.widget.TextView;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
-import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
+import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 
 
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,10 +26,10 @@ import java.util.Date;
 public class TaskRecordAdapter extends RecyclerView.Adapter {
 
     private static String TAG = "nlgTaskRecordAdapter";
-    private ArrayList<TaskMachineListData> mProcessList;
+    private ArrayList<TaskRecordMachineListData> mProcessList;
     private OnItemClickListener itemClickListener = null;
 
-    public TaskRecordAdapter(ArrayList<TaskMachineListData> list) {
+    public TaskRecordAdapter(ArrayList<TaskRecordMachineListData> list) {
         mProcessList = list;
     }
 
@@ -145,7 +143,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             planDateTv = (TextView) itemView.findViewById(R.id.process_end_date_tv);
         }
     }
-    public void setProcessList(ArrayList<TaskMachineListData> list) {
+    public void setProcessList(ArrayList<TaskRecordMachineListData> list) {
         mProcessList.clear();
         mProcessList.addAll(list);
     }

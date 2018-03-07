@@ -64,4 +64,20 @@ public class TaskRecordData {
     public String getQualityEndTime() {
         return qualityEndTime;
     }
+
+    public void setInstallBeginTime(String installBeginTime) {
+        this.installBeginTime = installBeginTime;
+    }
+
+    public void setInstallEndTime(String installEndTime) {
+        this.installEndTime = installEndTime;
+    }
+
+    public void setQualityBeginTime(String qualityBeginTime) {
+        this.qualityBeginTime = qualityBeginTime;
+    }
+
+    public void setQualityEndTime(String qualityEndTime) {
+        this.qualityEndTime = qualityEndTime;
+    }
 }

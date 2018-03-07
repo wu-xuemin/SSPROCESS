@@ -21,7 +21,7 @@ import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
-import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
+import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.ui.activity.DetailToInstallActivity;
 import com.example.nan.ssprocess.ui.activity.ScanQrcodeActivity;
@@ -46,7 +46,7 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
     private String mParam2;
 
     private static String TAG = "nlgTabInstallPlanFragment";
-    private ArrayList<TaskMachineListData> mProcessToInstallPlanList = new ArrayList<>();
+    private ArrayList<TaskRecordMachineListData> mProcessToInstallPlanList = new ArrayList<>();
     private TaskRecordAdapter mTaskRecordAdapter;
     private ProgressDialog mLoadingProcessDialog;
 
@@ -105,7 +105,7 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
             public void onItemClick(int position){
                 Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToInstallPlanList.get(position)));
                 Intent intent=new Intent(getActivity(),DetailToInstallActivity.class);
-                intent.putExtra("mTaskMachineListData", mProcessToInstallPlanList.get(position));
+                intent.putExtra("mTaskRecordMachineListData", mProcessToInstallPlanList.get(position));
                 startActivity(intent);
             }
         });
@@ -181,7 +181,7 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
             mRefreshLayout.endLoadingMore();
 
             if (msg.what == Network.OK) {
-                mProcessToInstallPlanList=(ArrayList<TaskMachineListData>)msg.obj;
+                mProcessToInstallPlanList=(ArrayList<TaskRecordMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToInstallPlanList.size());
                 if (mProcessToInstallPlanList.size()==0){
                     Toast.makeText(getContext(),"没有更多了...",Toast.LENGTH_SHORT).show();
@@ -224,13 +224,13 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
         @Override
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
-                ArrayList<TaskMachineListData> mScanResultList=(ArrayList<TaskMachineListData>)msg.obj;
+                ArrayList<TaskRecordMachineListData> mScanResultList=(ArrayList<TaskRecordMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mScanResultList.size());
                 if (mScanResultList.size()==0){
                     Toast.makeText(getContext(), "没有内容!", Toast.LENGTH_LONG).show();
                 } else {
                     Intent intent=new Intent(getContext(),ScanResultActivity.class);
-                    intent.putExtra("mTaskMachineList", (Serializable)mScanResultList);
+                    intent.putExtra("mTaskRecordMachineList", (Serializable)mScanResultList);
                     startActivity(intent);
                 }
             } else {

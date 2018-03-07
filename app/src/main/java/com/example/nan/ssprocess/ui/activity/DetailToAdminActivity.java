@@ -1,6 +1,7 @@
 package com.example.nan.ssprocess.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -24,7 +25,7 @@ import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.AbnormalRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.QualityRecordDetailsData;
-import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
+import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
@@ -44,7 +45,7 @@ import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
 public class DetailToAdminActivity extends AppCompatActivity implements BGANinePhotoLayout.Delegate {
 
     private static final String TAG="nlgDetailToAdmin";
-    private TaskMachineListData mTaskMachineListData=new TaskMachineListData();
+    private TaskRecordMachineListData mTaskRecordMachineListData=new TaskRecordMachineListData();
     private TextView locationTv;
     private TextView abnormalReasonTv;
     private TextView abnormalDetailTv;
@@ -53,6 +54,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     private LinearLayout qaNokLayout;
     private LinearLayout installAbnormalLayout;
     private AlertDialog mLocationSettingDialog =null;
+    private ProgressDialog mUpdatingProcessDialog;
 
     private BGANinePhotoLayout mCurrentClickNpl;
 
@@ -95,18 +97,18 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
 
         //获取传递过来的信息
         Intent intent = getIntent();
-        mTaskMachineListData = (TaskMachineListData) intent.getSerializableExtra("mTaskMachineListData");
-        Log.d(TAG, "onCreate: location:"+mTaskMachineListData.getMachineData().getLocation());
+        mTaskRecordMachineListData = (TaskRecordMachineListData) intent.getSerializableExtra("mTaskRecordMachineListData");
+        Log.d(TAG, "onCreate: location:"+mTaskRecordMachineListData.getMachineData().getLocation());
 
         //把数据填入相应位置
-        orderNumberTv.setText(""+mTaskMachineListData.getMachineData().getOrderId());
-        currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskMachineListData.getStatus()));
-        machineNumberTv.setText(mTaskMachineListData.getMachineData().getNameplate());
+        orderNumberTv.setText(""+mTaskRecordMachineListData.getMachineData().getOrderId());
+        currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
+        machineNumberTv.setText(mTaskRecordMachineListData.getMachineData().getNameplate());
         locationTv.setTextColor(Color.BLUE);
-        if (mTaskMachineListData.getMachineData().getLocation().isEmpty()){
+        if (mTaskRecordMachineListData.getMachineData().getLocation().isEmpty()){
             locationTv.setText("点击上传位置");
         }else {
-            locationTv.setText(mTaskMachineListData.getMachineData().getLocation());
+            locationTv.setText(mTaskRecordMachineListData.getMachineData().getLocation());
         }
         locationTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,6 +132,13 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                             Toast.makeText(DetailToAdminActivity.this,"地址不能为空，请确认后重新输入！",Toast.LENGTH_SHORT).show();
                         }else {
                             locationTv.setText(dialogLocationEt.getText().toString());
+                            if( mUpdatingProcessDialog == null) {
+                                mUpdatingProcessDialog = new ProgressDialog(DetailToAdminActivity.this);
+                                mUpdatingProcessDialog.setCancelable(false);
+                                mUpdatingProcessDialog.setCanceledOnTouchOutside(false);
+                                mUpdatingProcessDialog.setMessage("上传信息中...");
+                            }
+                            mUpdatingProcessDialog.show();
                             updateProcessDetailData();
                         }
                     }
@@ -146,7 +155,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
      */
     private void fetchDownloadListData() {
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("order_id", ""+mTaskMachineListData.getMachineData().getOrderId());
+        mPostValue.put("order_id", ""+mTaskRecordMachineListData.getMachineData().getOrderId());
         String fetchInstallFileListUrl = URL.HTTP_HEAD + IP + URL.FETCH_DOWNLOADING_FILELIST;
         Network.Instance(SinSimApp.getApp()).fetchInstallFileList(fetchInstallFileListUrl, mPostValue, new FetchInstallFileListHandler());
     }
@@ -173,7 +182,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
      */
     private void fetchTaskRecordDetailData() {
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("taskRecordId", ""+mTaskMachineListData.getId());
+        mPostValue.put("taskRecordId", ""+mTaskRecordMachineListData.getId());
         String fetchQaProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
         Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, new FetchQaRecordDataHandler());
 
@@ -239,7 +248,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                     int updateTime = mAbnormalRecordList.size()-1;
                     //对比mQualityRecordList.get(update).getCreateTime()取值
                     for (int update = mAbnormalRecordList.size()-2; update >= 0; update--) {
-                        if (mAbnormalRecordList.get(updateTime).getCreateTime() < mAbnormalRecordList.get(update).getCreateTime()) {
+                        if (mAbnormalRecordList.get(updateTime).getId() < mAbnormalRecordList.get(update).getId()) {
                             Log.d(TAG, "handleMessage: " + mAbnormalRecordList.get(update).getCreateTime() + " : " + mAbnormalRecordList.get(update + 1).getCreateTime());
                             updateTime = update;
                         }
@@ -279,9 +288,9 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
 
     private void updateProcessDetailData() {
         //更新loaction状态
-        mTaskMachineListData.getMachineData().setLocation(locationTv.getText().toString());
+        mTaskRecordMachineListData.getMachineData().setLocation(locationTv.getText().toString());
         Gson gson=new Gson();
-        String machineDataToJson = gson.toJson(mTaskMachineListData.getMachineData());
+        String machineDataToJson = gson.toJson(mTaskRecordMachineListData.getMachineData());
         Log.d(TAG, "onItemClick: gson :"+ machineDataToJson);
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("machine", machineDataToJson);
@@ -294,13 +303,15 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     private class UpdateProcessDetailDataHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
-
+            if(mUpdatingProcessDialog != null && mUpdatingProcessDialog.isShowing()) {
+                mUpdatingProcessDialog.dismiss();
+            }
             if (msg.what == Network.OK) {
-                Toast.makeText(DetailToAdminActivity.this, "更新成功！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailToAdminActivity.this, "上传位置成功！", Toast.LENGTH_SHORT).show();
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg);
-                Toast.makeText(DetailToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailToAdminActivity.this, "上传失败："+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -334,6 +345,9 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(mUpdatingProcessDialog != null) {
+            mUpdatingProcessDialog.dismiss();
+        }
         if (mLocationSettingDialog !=null) {
             mLocationSettingDialog.dismiss();
         }

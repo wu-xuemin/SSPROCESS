@@ -21,7 +21,7 @@ import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
-import com.example.nan.ssprocess.bean.basic.TaskMachineListData;
+import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
@@ -35,7 +35,7 @@ public class ProcessToMachineActivity extends AppCompatActivity {
 
     private static String TAG = "nlgProcessToMachineActivity";
     private String mSearchContent;
-    private ArrayList<TaskMachineListData> mProcessToMachineList = new ArrayList<>();
+    private ArrayList<TaskRecordMachineListData> mProcessToMachineList = new ArrayList<>();
     private TaskRecordAdapter mProcessToMachineAdapter;
 
     private ProgressDialog mLoadingProcessDialog;
@@ -72,7 +72,7 @@ public class ProcessToMachineActivity extends AppCompatActivity {
             public void onItemClick(int position){
                 Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mProcessToMachineList.get(position)));
                 Intent intent=new Intent(ProcessToMachineActivity.this,DetailToAdminActivity.class);
-                intent.putExtra("mTaskMachineListData", mProcessToMachineList.get(position));
+                intent.putExtra("mTaskRecordMachineListData", mProcessToMachineList.get(position));
                 startActivity(intent);
                 finish();
             }
@@ -108,7 +108,7 @@ public class ProcessToMachineActivity extends AppCompatActivity {
             }
 
             if (msg.what == Network.OK) {
-                mProcessToMachineList=(ArrayList<TaskMachineListData>)msg.obj;
+                mProcessToMachineList=(ArrayList<TaskRecordMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToMachineList.size());
                 if (mProcessToMachineList.size()==0){
                     mSearchResultDialog = new AlertDialog.Builder(ProcessToMachineActivity.this).create();
