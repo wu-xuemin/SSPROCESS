@@ -243,18 +243,18 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
                 //获取质检结果
-                ArrayList<QualityRecordDetailsData> mQualityRecordList = (ArrayList<QualityRecordDetailsData>) msg.obj;
-                if (mQualityRecordList.size()>0) {
-                    int updateTime = mQualityRecordList.size() - 1;
-                    //根据id取值
-                    for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
-                        if (mQualityRecordList.get(updateTime).getId() < mQualityRecordList.get(update).getId()) {
-                            updateTime = update;
+                if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_ABNORMAL) {
+                    ArrayList<QualityRecordDetailsData> mQualityRecordList = (ArrayList<QualityRecordDetailsData>) msg.obj;
+                    if (mQualityRecordList.size() > 0) {
+                        int updateTime = mQualityRecordList.size() - 1;
+                        //根据id取值
+                        for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
+                            if (mQualityRecordList.get(updateTime).getId() < mQualityRecordList.get(update).getId()) {
+                                updateTime = update;
+                            }
+                            Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                         }
-                        Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
-                    }
-                    QualityRecordDetailsData mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
-                    if (mQualityRecordDetailsData.getStatus() == SinSimApp.TASK_QUALITY_ABNORMAL) {
+                        QualityRecordDetailsData mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
                         nokReasonTv.setText("不合格");
                         qaNokLayout.setVisibility(View.VISIBLE);
                         nokDetailTv.setText(mQualityRecordDetailsData.getComment());
@@ -263,15 +263,15 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
                         checkoutNinePhotoLayout.setDelegate(DetailToInstallActivity.this);
                         checkoutNinePhotoLayout.setData(checkoutPhotoList);
-                    } else if (mQualityRecordDetailsData.getStatus() == SinSimApp.TASK_QUALITY_DONE){
-                        nokReasonTv.setText("合格");
-                        qaNokLayout.setVisibility(View.GONE);
                     } else {
-                        nokReasonTv.setText("暂无");
+                        nokReasonTv.setText("不合格");
                         qaNokLayout.setVisibility(View.GONE);
                     }
-                } else {
-                    nokReasonTv.setText("尚未质检");
+                }else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DONE){
+                    nokReasonTv.setText("合格");
+                    qaNokLayout.setVisibility(View.GONE);
+                }else {
+                    nokReasonTv.setText("暂无");
                     qaNokLayout.setVisibility(View.GONE);
                 }
             } else {

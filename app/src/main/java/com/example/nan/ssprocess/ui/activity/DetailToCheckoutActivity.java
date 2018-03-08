@@ -181,32 +181,32 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
                 //获取质检结果
-                ArrayList<QualityRecordDetailsData> mQualityRecordList = (ArrayList<QualityRecordDetailsData>) msg.obj;
-                if (mQualityRecordList.size()>0) {
-                    int updateTime = mQualityRecordList.size() - 1;
-                    //对比更新时间取值
-                    for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
-                        if (mQualityRecordList.get(updateTime).getId() < mQualityRecordList.get(update).getId()) {
-                            updateTime = update;
+                if (mTaskRecordMachineListData.getStatus()== SinSimApp.TASK_QUALITY_ABNORMAL) {
+                    ArrayList<QualityRecordDetailsData> mQualityRecordList = (ArrayList<QualityRecordDetailsData>) msg.obj;
+                    if (mQualityRecordList.size() > 0) {
+                        int updateTime = mQualityRecordList.size() - 1;
+                        //对比更新时间取值
+                        for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
+                            if (mQualityRecordList.get(updateTime).getId() < mQualityRecordList.get(update).getId()) {
+                                updateTime = update;
+                            }
+                            Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                         }
-                        Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
-                    }
-                    QualityRecordDetailsData mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
-                    Log.d(TAG, "handleMessage: get Json = "+new Gson().toJson(mQualityRecordDetailsData));
-                    if (mQualityRecordDetailsData.getStatus() == SinSimApp.TASK_QUALITY_ABNORMAL) {
+                        QualityRecordDetailsData mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
+                        Log.d(TAG, "handleMessage: get Json = " + new Gson().toJson(mQualityRecordDetailsData));
                         //加载历史照片
                         checkedNokRb.setChecked(true);
                         checkoutNokDetailEt.setText(mQualityRecordDetailsData.getComment());
                         //加载历史照片地址
-                        Log.d(TAG, "handleMessage: photo url: "+mQualityRecordDetailsData.getQualityRecordImage().getImage());
-                        ArrayList<String> installPhotoList=new ArrayList<>(Arrays.asList(mQualityRecordDetailsData.getQualityRecordImage().getImage()));
+                        Log.d(TAG, "handleMessage: photo url: " + mQualityRecordDetailsData.getQualityRecordImage().getImage());
+                        ArrayList<String> installPhotoList = new ArrayList<>(Arrays.asList(mQualityRecordDetailsData.getQualityRecordImage().getImage()));
                         mCheckoutNokPhotosSnpl.addMoreData(installPhotoList);
                     } else {
-                        checkedOkRb.setChecked(true);
-                        checkoutNokDetailEt.setText("");
+                        Log.d(TAG, "handleMessage: 尚未质检");
                     }
-                } else {
-                    Log.d(TAG, "handleMessage: 尚未质检");
+                }else {
+                    checkedOkRb.setChecked(true);
+                    checkoutNokDetailEt.setText("");
                 }
             } else {
                 String errorMsg = (String)msg.obj;

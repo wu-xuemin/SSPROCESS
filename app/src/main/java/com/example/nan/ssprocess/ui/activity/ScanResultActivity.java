@@ -35,6 +35,7 @@ public class ScanResultActivity extends AppCompatActivity {
     private static String TAG = "nlgScanResultActivity";
     private ScanResultAdapter mScanResultAdapter;
     private TaskRecordMachineListData mTaskRecordMachineListData;
+    private int iTaskRecordMachineListDataStatusTemp;
     private AlertDialog mInstallDialog=null;
     private AlertDialog mQaDialog=null;
     private ProgressDialog mUpdatingProcessDialog;
@@ -90,6 +91,7 @@ public class ScanResultActivity extends AppCompatActivity {
                                         mUpdatingProcessDialog.setMessage("正在开始...");
                                     }
                                     mUpdatingProcessDialog.show();
+                                    iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
                                     updateProcessDetailData(SinSimApp.TASK_INSTALLING);
                                 }
                             });
@@ -123,7 +125,8 @@ public class ScanResultActivity extends AppCompatActivity {
                                         mUpdatingProcessDialog.setMessage("正在开始...");
                                     }
                                     mUpdatingProcessDialog.show();
-                                    updateProcessDetailData(SinSimApp.TASK_INSTALLING);
+                                    iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
+                                    updateProcessDetailData(SinSimApp.TASK_QUALITY_DOING);
                                 }
                             });
                             mQaDialog.show();
@@ -182,6 +185,7 @@ public class ScanResultActivity extends AppCompatActivity {
                     Toast.makeText(ScanResultActivity.this,"账号错误，请检查登入账号!", Toast.LENGTH_SHORT).show();
                 }
             } else {
+                mTaskRecordMachineListData.setStatus(iTaskRecordMachineListDataStatusTemp);
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg);
                 Toast.makeText(ScanResultActivity.this, "网络错误，无法开始，请检查网络！", Toast.LENGTH_SHORT).show();

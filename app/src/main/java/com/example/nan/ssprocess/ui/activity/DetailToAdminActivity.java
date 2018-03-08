@@ -196,18 +196,18 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
                 //获取质检结果
-                ArrayList<QualityRecordDetailsData> mQualityRecordList = (ArrayList<QualityRecordDetailsData>) msg.obj;
-                if (mQualityRecordList.size()>0) {
-                    int updateTime = mQualityRecordList.size() - 1;
-                    //根据id取值，因为id是递增的，id越大数据越新
-                    for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
-                        if (mQualityRecordList.get(updateTime).getId() < mQualityRecordList.get(update).getId()) {
-                            updateTime = update;
+                if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_ABNORMAL) {
+                    ArrayList<QualityRecordDetailsData> mQualityRecordList = (ArrayList<QualityRecordDetailsData>) msg.obj;
+                    if (mQualityRecordList.size() > 0) {
+                        int updateTime = mQualityRecordList.size() - 1;
+                        //根据id取值，因为id是递增的，id越大数据越新
+                        for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
+                            if (mQualityRecordList.get(updateTime).getId() < mQualityRecordList.get(update).getId()) {
+                                updateTime = update;
+                            }
+                            Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                         }
-                        Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
-                    }
-                    QualityRecordDetailsData mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
-                    if (mQualityRecordDetailsData.getStatus() == SinSimApp.TASK_QUALITY_ABNORMAL) {
+                        QualityRecordDetailsData mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
                         nokReasonTv.setText("不合格");
                         qaNokLayout.setVisibility(View.VISIBLE);
                         nokDetailTv.setText(mQualityRecordDetailsData.getComment());
@@ -216,15 +216,15 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
                         checkoutNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
                         checkoutNinePhotoLayout.setData(checkoutPhotoList);
-                    } else if (mQualityRecordDetailsData.getStatus() == SinSimApp.TASK_QUALITY_DONE){
-                        nokReasonTv.setText("合格");
-                        qaNokLayout.setVisibility(View.GONE);
                     } else {
-                        nokReasonTv.setText("暂无");
+                        nokReasonTv.setText("不合格");
                         qaNokLayout.setVisibility(View.GONE);
                     }
+                } else if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_QUALITY_DONE) {
+                    nokReasonTv.setText("合格");
+                    qaNokLayout.setVisibility(View.GONE);
                 } else {
-                    nokReasonTv.setText("尚未质检");
+                    nokReasonTv.setText("暂无");
                     qaNokLayout.setVisibility(View.GONE);
                 }
             } else {
@@ -242,18 +242,18 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
                 //获取安装结果
-                ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = (ArrayList<AbnormalRecordDetailsData>) msg.obj;
-                if (mAbnormalRecordList.size()>0) {
-                    int updateTime = mAbnormalRecordList.size()-1;
-                    for (int update = mAbnormalRecordList.size()-2; update >= 0; update--) {
-                        if (mAbnormalRecordList.get(updateTime).getId() < mAbnormalRecordList.get(update).getId()) {
-                            updateTime = update;
+                if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_ABNORMAL) {
+                    ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = (ArrayList<AbnormalRecordDetailsData>) msg.obj;
+                    if (mAbnormalRecordList.size() > 0) {
+                        int updateTime = mAbnormalRecordList.size() - 1;
+                        for (int update = mAbnormalRecordList.size() - 2; update >= 0; update--) {
+                            if (mAbnormalRecordList.get(updateTime).getId() < mAbnormalRecordList.get(update).getId()) {
+                                updateTime = update;
+                            }
+                            Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                         }
-                        Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
-                    }
-                    AbnormalRecordDetailsData mAbnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
-                    //异常，填入异常原因
-                    if (mAbnormalRecordDetailsData.getTaskRecord().getStatus() == SinSimApp.TASK_INSTALL_ABNORMAL) {
+                        AbnormalRecordDetailsData mAbnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
+                        //异常，填入异常原因
                         abnormalReasonTv.setText("异常");
                         installAbnormalLayout.setVisibility(View.VISIBLE);
                         abnormalDetailTv.setText(mAbnormalRecordDetailsData.getComment());
@@ -262,17 +262,17 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         BGANinePhotoLayout installNinePhotoLayout = findViewById(R.id.install_abnormal_photos);
                         installNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
                         installNinePhotoLayout.setData(installPhotoList);
-                    } else if (mAbnormalRecordDetailsData.getTaskRecord().getStatus() == SinSimApp.TASK_INSTALLED){
-                        abnormalReasonTv.setText("正常");
-                        installAbnormalLayout.setVisibility(View.GONE);
                     } else {
-                        abnormalReasonTv.setText("暂无");
+                        abnormalReasonTv.setText("异常");
                         installAbnormalLayout.setVisibility(View.GONE);
+                        Log.d(TAG, "handleMessage: 没有上传安装异常");
                     }
-                } else {
-                    abnormalReasonTv.setText("尚未安装");
+                } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED){
+                    abnormalReasonTv.setText("正常");
                     installAbnormalLayout.setVisibility(View.GONE);
-                    Log.d(TAG, "handleMessage: 没有安装异常");
+                }else {
+                    abnormalReasonTv.setText("暂无");
+                    installAbnormalLayout.setVisibility(View.GONE);
                 }
             } else {
                 abnormalReasonTv.setText("暂无");
