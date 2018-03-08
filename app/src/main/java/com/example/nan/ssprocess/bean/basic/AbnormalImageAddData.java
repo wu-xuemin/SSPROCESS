@@ -5,14 +5,14 @@ package com.example.nan.ssprocess.bean.basic;
  */
 
 public class AbnormalImageAddData {
-    private String createTime;
+    private long createTime;
     private int abnormalRecordId;
 
-    public String getCreateTime() {
+    public long getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(long createTime) {
         this.createTime = createTime;
     }
 

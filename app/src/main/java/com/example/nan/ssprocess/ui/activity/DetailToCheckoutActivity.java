@@ -1,10 +1,13 @@
 package com.example.nan.ssprocess.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +24,8 @@ import android.widget.Toast;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
+import com.example.nan.ssprocess.bean.basic.AbnormalImageAddData;
+import com.example.nan.ssprocess.bean.basic.AbnormalRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.QualityRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.QualityRecordImageAddData;
 import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
@@ -47,19 +52,26 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     private RadioButton checkedOkRb;
     private RadioButton checkedNokRb;
     private EditText checkoutNokDetailEt;
-    private Button installInfoUpdateButton;
+    private Button beginQaButton;
+    private Button endQaButton;
+    private TextView currentStatusTv;
     private LinearLayout QaNokLinearLayout;
 
+    private ProgressDialog mUploadingProcessDialog;
+    private AlertDialog mQaDialog=null;
+    private ProgressDialog mUpdatingProcessDialog;
+
+    private TaskRecordMachineListData mTaskRecordMachineListData;
+    private int iTaskRecordMachineListDataStatusTemp;
+
     private BGASortableNinePhotoLayout mCheckoutNokPhotosSnpl;
-    private TaskRecordMachineListData mTaskRecordMachineListData=new TaskRecordMachineListData();
-    private QualityRecordDetailsData mQualityRecordDetailsData =new QualityRecordDetailsData();
+    private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
 
     private final String IP = SinSimApp.getApp().getServerIP();
+    private static final int SCAN_QRCODE_START = 1;
     private static final int SCAN_QRCODE_END = 0;
     private static final int RC_CHECKOUT_CHOOSE_PHOTO = 3;
     private static final int RC_CHECKOUT_PHOTO_PREVIEW = 4;
-    private static final int PASS = 1;
-    private static final int NO_PASS = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +88,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         TextView locationTv=findViewById(R.id.location_tv);
         TextView orderNumberTv=findViewById(R.id.order_number_tv);
         TextView machineNumberTv=findViewById(R.id.machine_number_tv);
-        TextView currentStatusTv=findViewById(R.id.current_status_tv);
+        currentStatusTv=findViewById(R.id.current_status_tv);
         TextView installListTv=findViewById(R.id.intall_list_tv);
 
         //点击下载装车单
@@ -91,7 +103,8 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         checkedOkRb=findViewById(R.id.checked_ok_rb);
         checkedNokRb=findViewById(R.id.checked_nok_rb);
         checkoutNokDetailEt=findViewById(R.id.checkout_nok_detail_et);
-        installInfoUpdateButton = findViewById(R.id.checkout_upload_button);
+        beginQaButton = findViewById(R.id.checkout_start_button);
+        endQaButton = findViewById(R.id.checkout_end_button);
         QaNokLinearLayout = findViewById(R.id.qa_nok_ll);
 
         //获取传递过来的信息
@@ -120,17 +133,33 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             }
         });
 
-        //获取历史质检数据
-        fetchQARecordData();
-
-        //点击上传质检结果
-        installInfoUpdateButton.setOnClickListener(new View.OnClickListener() {
+        //开始质检
+        beginQaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(DetailToCheckoutActivity.this,ScanQrcodeActivity.class);
-                startActivityForResult(intent,SCAN_QRCODE_END);
+                if (mTaskRecordMachineListData.getStatus()!=SinSimApp.TASK_INSTALLED){
+                    Toast.makeText(DetailToCheckoutActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus())+" ，不能开始安装！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(DetailToCheckoutActivity.this, ScanQrcodeActivity.class);
+                    startActivityForResult(intent, SCAN_QRCODE_START);
+                }
             }
         });
+        //结束质检
+        endQaButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mTaskRecordMachineListData.getStatus()!=SinSimApp.TASK_QUALITY_DOING){
+                    Toast.makeText(DetailToCheckoutActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus())+" ，不能结束安装！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(DetailToCheckoutActivity.this, ScanQrcodeActivity.class);
+                    startActivityForResult(intent, SCAN_QRCODE_END);
+                }
+            }
+        });
+
+        //获取历史质检数据
+        fetchQARecordData();
 
         //九宫格拍照
         mCheckoutNokPhotosSnpl = findViewById(R.id.checkout_nok_add_photos);
@@ -153,17 +182,16 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             if (msg.what == Network.OK) {
                 //获取质检结果
                 ArrayList<QualityRecordDetailsData> mQualityRecordList = (ArrayList<QualityRecordDetailsData>) msg.obj;
-                if (mQualityRecordList !=null && !mQualityRecordList.isEmpty()) {
+                if (mQualityRecordList.size()>0) {
                     int updateTime = mQualityRecordList.size() - 1;
                     //对比更新时间取值
                     for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
-                        if (mQualityRecordList.get(updateTime).getCreateTime() < mQualityRecordList.get(update).getCreateTime()) {
-                            Log.d(TAG, "handleMessage: " + mQualityRecordList.get(updateTime).getCreateTime() + " : " + mQualityRecordList.get(update).getCreateTime());
+                        if (mQualityRecordList.get(updateTime).getId() < mQualityRecordList.get(update).getId()) {
                             updateTime = update;
                         }
                         Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                     }
-                    mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
+                    QualityRecordDetailsData mQualityRecordDetailsData = mQualityRecordList.get(updateTime);
                     Log.d(TAG, "handleMessage: get Json = "+new Gson().toJson(mQualityRecordDetailsData));
                     if (mQualityRecordDetailsData.getStatus() == SinSimApp.TASK_QUALITY_ABNORMAL) {
                         //加载历史照片
@@ -188,57 +216,129 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     }
 
     private void updateQARecordData() {
-        ArrayList<String> imageUrlList;
         Gson gson=new Gson();
+        //获取当前时间
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date curDate = new Date(System.currentTimeMillis());
+        String strCurTime = formatter.format(curDate);
+        long lCurTime=System.currentTimeMillis();
+        mTaskRecordMachineListData.setInstallEndTime(strCurTime);
 
         //读取和更新输入信息
         if(checkedOkRb.isChecked()){
-            mQualityRecordDetailsData.setStatus(PASS);
+            iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
+            updateProcessDetailData(SinSimApp.TASK_QUALITY_DONE);
         } else {
-            mQualityRecordDetailsData.setStatus(NO_PASS);
+            QualityRecordDetailsData qualityRecordDetailsData=new QualityRecordDetailsData(SinSimApp.getApp().getFullName(),mTaskRecordMachineListData.getId(),lCurTime);
+            String qualityRecordDetailsDataToJson = gson.toJson(qualityRecordDetailsData);
+            Log.d(TAG, "updateInstallRecordData: gson :"+ qualityRecordDetailsDataToJson);
             if(checkoutNokDetailEt.getText()!=null && mCheckoutNokPhotosSnpl.getData().size() > 0){
                 //获取质检不合格原因
-                mQualityRecordDetailsData.setComment(checkoutNokDetailEt.getText().toString());
-                //获取图片本地url
-                imageUrlList = mCheckoutNokPhotosSnpl.getData();
-                //添加quality_record_image数据库
-                QualityRecordImageAddData qualityRecordImageAddData = new QualityRecordImageAddData();
-                //获取当前时间
-                @SuppressLint("SimpleDateFormat")
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-                Date curDate = new Date(System.currentTimeMillis());
-                String strCurTima = formatter.format(curDate);
-                //更新当前时间
-                qualityRecordImageAddData.setCreateTime(strCurTima);
-                qualityRecordImageAddData.setTaskQualityRecordId(mQualityRecordDetailsData.getId());
-                //更新质检不合格照片
-                String imageJson = gson.toJson(qualityRecordImageAddData);
-                Log.d(TAG, "updateQARecordData: "+imageJson);
-                String uploadQualityRecordImageUrl = URL.HTTP_HEAD + IP + URL.UPLOAD_QUALITY_RECORD_IMAGE;
-                Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadQualityRecordImageUrl, imageUrlList, "qualityRecordImage", imageJson, new UploadTaskRecordImageHandler());
+                qualityRecordDetailsData.setComment(checkoutNokDetailEt.getText().toString());
+                //上传质检结果
+                String mQualityRecordDetailsDataToJson = gson.toJson(qualityRecordDetailsData);
+                Log.d(TAG, "updateQARecordData: mQualityRecordDetailsDataToJson:"+ mQualityRecordDetailsDataToJson);
+                LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                mPostValue.put("strTaskQualityRecordDetail", mQualityRecordDetailsDataToJson);
+                String updateProcessRecordUrl = URL.HTTP_HEAD + IP + URL.UPDATE_TASK_QUALITY_RECORD_DETAIL;
+                Log.d(TAG, "updateQARecordData: "+updateProcessRecordUrl+mPostValue.get("strTaskQualityRecordDetail"));
+                Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, new UpdateProcessResultDataHandler());
             } else {
                 Toast.makeText(DetailToCheckoutActivity.this,"请拍照并输入质检不合格原因！",Toast.LENGTH_SHORT).show();
             }
         }
-        //上传质检结果
-        String mQualityRecordDetailsDataToJson = gson.toJson(mQualityRecordDetailsData);
-        Log.d(TAG, "updateQARecordData: mQualityRecordDetailsDataToJson:"+ mQualityRecordDetailsDataToJson);
-        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("strTaskQualityRecordDetail", mQualityRecordDetailsDataToJson);
-        String updateProcessRecordUrl = URL.HTTP_HEAD + IP + URL.UPDATE_TASK_QUALITY_RECORD_DETAIL;
-        Log.d(TAG, "updateQARecordData: "+updateProcessRecordUrl+mPostValue.get("machine"));
-        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, new UpdateProcessResultDataHandler());
+        if( mUploadingProcessDialog == null) {
+            mUploadingProcessDialog = new ProgressDialog(DetailToCheckoutActivity.this);
+            mUploadingProcessDialog.setCancelable(false);
+            mUploadingProcessDialog.setCanceledOnTouchOutside(false);
+            mUploadingProcessDialog.setMessage("上传信息中...");
+        }
+        mUploadingProcessDialog.show();
     }
-
     @SuppressLint("HandlerLeak")
-    private class UploadTaskRecordImageHandler extends Handler {
+    private class UpdateProcessResultDataHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
 
             if (msg.what == Network.OK) {
-                Toast.makeText(DetailToCheckoutActivity.this, "上传图片成功！", Toast.LENGTH_SHORT).show();
-                //TODO:是否弹窗
+                Toast.makeText(DetailToCheckoutActivity.this, "质检信息上传成功！", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "handleMessage: 质检信息上传成功");
+                LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                mPostValue.put("taskRecordId", ""+mTaskRecordMachineListData.getId());
+                String fetchProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FATCH_TASK_QUALITY_RECORD_LIST;
+                Network.Instance(SinSimApp.getApp()).fetchProcessInstallRecordData(fetchProcessRecordUrl, mPostValue, new FetchQaNokRecordDataHandler());
+
             } else {
+                if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
+                    mUploadingProcessDialog.dismiss();
+                }
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: "+errorMsg);
+                Toast.makeText(DetailToCheckoutActivity.this, "质检信息上传失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    @SuppressLint("HandlerLeak")
+    private class FetchQaNokRecordDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if (msg.what == Network.OK) {
+                //获取质检结果
+                ArrayList<QualityRecordDetailsData> mQualityRecordList = (ArrayList<QualityRecordDetailsData>) msg.obj;
+                if (mQualityRecordList.size()>0) {
+                    int updateTime = mQualityRecordList.size() - 1;
+                    //对比更新时间取值
+                    for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
+                        if (mQualityRecordList.get(updateTime).getId() < mQualityRecordList.get(update).getId()) {
+                            updateTime = update;
+                        }
+                        Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
+                    }
+                    QualityRecordDetailsData qualityRecordDetailsData = mQualityRecordList.get(updateTime);
+
+                    //获取图片本地url
+                    ArrayList<String> imageUrlList = mCheckoutNokPhotosSnpl.getData();
+                    //添加quality_record_image数据库
+                    QualityRecordImageAddData qualityRecordImageAddData = new QualityRecordImageAddData();
+                    //更新当前时间
+                    qualityRecordImageAddData.setCreateTime(qualityRecordDetailsData.getCreateTime());
+                    qualityRecordImageAddData.setTaskQualityRecordId(qualityRecordDetailsData.getId());
+                    //更新质检不合格照片
+                    Gson gson=new Gson();
+                    String imageJson = gson.toJson(qualityRecordImageAddData);
+                    Log.d(TAG, "updateQARecordData: "+imageJson);
+                    String uploadQualityRecordImageUrl = URL.HTTP_HEAD + IP + URL.UPLOAD_QUALITY_RECORD_IMAGE;
+                    Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadQualityRecordImageUrl, imageUrlList, "qualityRecordImage", imageJson, new UploadTaskRecordImageHandler());
+
+                } else {
+                    if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
+                        mUploadingProcessDialog.dismiss();
+                    }
+                    Log.d(TAG, "handleMessage: 添加安装异常的信息失败");
+                }
+            } else {
+                if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
+                    mUploadingProcessDialog.dismiss();
+                }
+                String errorMsg = (String)msg.obj;
+                Toast.makeText(DetailToCheckoutActivity.this, "上传信息失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    @SuppressLint("HandlerLeak")
+    private class UploadTaskRecordImageHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if (msg.what == Network.OK) {
+                Toast.makeText(DetailToCheckoutActivity.this, "上传图片成功！", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "handleMessage: 照片上传成功！");
+                iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
+                updateProcessDetailData(SinSimApp.TASK_QUALITY_ABNORMAL);
+            } else {
+                if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
+                    mUploadingProcessDialog.dismiss();
+                }
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg);
                 Toast.makeText(DetailToCheckoutActivity.this, "上传图片失败！"+errorMsg, Toast.LENGTH_SHORT).show();
@@ -246,21 +346,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         }
     }
 
-    @SuppressLint("HandlerLeak")
-    private class UpdateProcessResultDataHandler extends Handler {
-        @Override
-        public void handleMessage(final Message msg) {
 
-            if (msg.what == Network.OK) {
-                Toast.makeText(DetailToCheckoutActivity.this, "更新成功！", Toast.LENGTH_SHORT).show();
-                installInfoUpdateButton.setEnabled(false);
-            } else {
-                String errorMsg = (String)msg.obj;
-                Log.d(TAG, "handleMessage: "+errorMsg);
-                Toast.makeText(DetailToCheckoutActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
     /**
      * 获取装车单的文件名
@@ -333,12 +419,68 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
+            case SCAN_QRCODE_START:
+                if(resultCode == RESULT_OK) {
+                    //检验二维码信息是否对应
+                    String mMachineStrId = data.getStringExtra("mMachineStrId");
+                    if(mMachineStrId.equals(mTaskRecordMachineListData.getMachineData().getMachineStrId())){
+                        //update status
+                        if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING) {
+                            mQaDialog = new AlertDialog.Builder(DetailToCheckoutActivity.this).create();
+                            mQaDialog.setMessage("是否现在开始质检？");
+                            mQaDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "否", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            mQaDialog.setButton(AlertDialog.BUTTON_POSITIVE, "是", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //改状态
+                                    if( mUpdatingProcessDialog == null) {
+                                        mUpdatingProcessDialog = new ProgressDialog(DetailToCheckoutActivity.this);
+                                        mUpdatingProcessDialog.setCancelable(false);
+                                        mUpdatingProcessDialog.setCanceledOnTouchOutside(false);
+                                        mUpdatingProcessDialog.setMessage("正在开始...");
+                                    }
+                                    mUpdatingProcessDialog.show();
+                                    //获取当前时间
+                                    @SuppressLint("SimpleDateFormat")
+                                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+                                    Date curDate = new Date(System.currentTimeMillis());
+                                    String staCurTime = formatter.format(curDate);
+                                    mTaskRecordMachineListData.setInstallBeginTime(staCurTime);
+                                    iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
+                                    updateProcessDetailData(SinSimApp.TASK_QUALITY_DOING);
+                                }
+                            });
+                            mQaDialog.show();
+                        } else {
+                            Toast.makeText(this, "失败，当前状态无法开始！", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Log.d(TAG, "onActivityResult: 二维码信息不对应");
+                        Toast.makeText(this, "二维码信息不对应！", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Log.d(TAG, "onActivityResult: scan QRcode fail");
+                }
+                break;
             case SCAN_QRCODE_END:
                 if(resultCode == RESULT_OK) {
                     //检验二维码信息是否对应
                     String mMachineStrId = data.getStringExtra("mMachineStrId");
                     if(mMachineStrId.equals(mTaskRecordMachineListData.getMachineData().getMachineStrId())){
                         Log.d(TAG, "onActivityResult: id 对应");
+                        //update info
+                        if( mUpdatingProcessDialog == null) {
+                            mUpdatingProcessDialog = new ProgressDialog(DetailToCheckoutActivity.this);
+                            mUpdatingProcessDialog.setCancelable(false);
+                            mUpdatingProcessDialog.setCanceledOnTouchOutside(false);
+                            mUpdatingProcessDialog.setMessage("正在结束...");
+                        }
+                        mUpdatingProcessDialog.show();
                         updateQARecordData();
                     } else {
                         Log.d(TAG, "onActivityResult: 二维码信息不对应");
@@ -361,7 +503,39 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                 break;
         }
     }
+    private void updateProcessDetailData(int status) {
+        //更新loaction状态
+        mTaskRecordMachineListData.setStatus(status);
+        Gson gson=new Gson();
+        String taskRecordDataToJson = gson.toJson(mTaskRecordMachineListData);
+        Log.d(TAG, "onItemClick: gson :"+ taskRecordDataToJson);
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("taskRecord", taskRecordDataToJson);
+        String updateProcessRecordUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.UPDATE_TASK_RECORD_STATUS;
+        Log.d(TAG, "updateProcessDetailData: "+updateProcessRecordUrl+mPostValue.get("taskRecord"));
+        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, mUpdateProcessDetailDataHandler);
+    }
 
+    @SuppressLint("HandlerLeak")
+    private class UpdateProcessDetailDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if(mUpdatingProcessDialog != null && mUpdatingProcessDialog.isShowing()) {
+                mUpdatingProcessDialog.dismiss();
+            }
+            if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
+                mUploadingProcessDialog.dismiss();
+            }
+            if (msg.what == Network.OK) {
+                currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
+            } else {
+                mTaskRecordMachineListData.setStatus(iTaskRecordMachineListDataStatusTemp);
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: "+errorMsg+mTaskRecordMachineListData.getStatus());
+                Toast.makeText(DetailToCheckoutActivity.this, "失败，网络错误，请检查网络！", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -371,5 +545,19 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             default:
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mUploadingProcessDialog != null) {
+            mUploadingProcessDialog.dismiss();
+        }
+        if(mQaDialog != null) {
+            mQaDialog.dismiss();
+        }
+        if(mUpdatingProcessDialog != null) {
+            mUpdatingProcessDialog.dismiss();
+        }
     }
 }

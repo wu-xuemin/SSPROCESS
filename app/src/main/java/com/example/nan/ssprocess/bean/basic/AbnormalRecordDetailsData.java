@@ -21,19 +21,19 @@ public class AbnormalRecordDetailsData {
     private int submitUser;
     private TaskRecordData taskRecord;
     private int taskRecordId;
-    private String createTime;//更新时间
+    private long createTime;//更新时间
 
     public AbnormalRecordDetailsData(){}
 
-    public AbnormalRecordDetailsData(int submitUser,int taskRecordId,String createTime){
+    public AbnormalRecordDetailsData(int submitUser,int taskRecordId,long createTime){
         this.abnormalType=0;
         this.comment="";
+        this.id=0;
         this.solution="";
-        this.solutionUser=0;
+        this.solutionUser=1;
         this.submitUser=submitUser;
         this.taskRecordId=taskRecordId;
         this.createTime=createTime;
-        this.abnormalImage=new AbnormalImageData();
     }
     public AbnormalImageData getAbnormalImage() {
         return abnormalImage;
@@ -87,7 +87,7 @@ public class AbnormalRecordDetailsData {
         return taskRecordId;
     }
 
-    public String getCreateTime() {
+    public long getCreateTime() {
         return createTime;
     }
 }

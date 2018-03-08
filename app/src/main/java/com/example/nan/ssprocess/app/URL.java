@@ -23,10 +23,12 @@ public class URL {
     public static final String UPDATE_TASK_RECORD_STATUS = "/task/record/updateTaskInfo";
     public static final String UPDATE_MACHINE_LOCATION = "/machine/update";
     public static final String FATCH_INSTALL_ABNORMAL_RECORD_DETAIL = "/abnormal/record/selectAbnormalRecordDetails";
+    public static final String FATCH_INSTALL_ABNORMAL_RECORD_LIST = "/abnormal/record/list";
     public static final String UPDATE_INSTALL_ABNORMAL_RECORD_DETAIL = "/abnormal/record/add";
     public static final String UPLOAD_INSTALL_ABNORMAL_IMAGE = "/abnormal/image/add";
     public static final String FATCH_TASK_QUALITY_RECORD_DETAIL = "/task/quality/record/selectTaskQualityRecordDetails";
-    public static final String UPDATE_TASK_QUALITY_RECORD_DETAIL = "/task/quality/record/updateTaskQualityRecordDetail";
+    public static final String FATCH_TASK_QUALITY_RECORD_LIST = "/task/quality/record/list";
+    public static final String UPDATE_TASK_QUALITY_RECORD_DETAIL = "/task/quality/record/add";
     public static final String UPLOAD_QUALITY_RECORD_IMAGE = "/quality/record/image/add";
 
 }

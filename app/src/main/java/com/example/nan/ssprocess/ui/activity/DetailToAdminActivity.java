@@ -197,12 +197,11 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
             if (msg.what == Network.OK) {
                 //获取质检结果
                 ArrayList<QualityRecordDetailsData> mQualityRecordList = (ArrayList<QualityRecordDetailsData>) msg.obj;
-                if (mQualityRecordList !=null && !mQualityRecordList.isEmpty()) {
+                if (mQualityRecordList.size()>0) {
                     int updateTime = mQualityRecordList.size() - 1;
-                    //根据CreateTime取值
+                    //根据id取值，因为id是递增的，id越大数据越新
                     for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
-                        if (mQualityRecordList.get(updateTime).getCreateTime() < mQualityRecordList.get(update).getCreateTime()) {
-                            Log.d(TAG, "handleMessage: " + mQualityRecordList.get(updateTime).getCreateTime() + " : " + mQualityRecordList.get(update).getCreateTime());
+                        if (mQualityRecordList.get(updateTime).getId() < mQualityRecordList.get(update).getId()) {
                             updateTime = update;
                         }
                         Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
@@ -242,14 +241,12 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         @Override
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
-                //获取质检结果
+                //获取安装结果
                 ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = (ArrayList<AbnormalRecordDetailsData>) msg.obj;
-                if (mAbnormalRecordList !=null && !mAbnormalRecordList.isEmpty()) {
+                if (mAbnormalRecordList.size()>0) {
                     int updateTime = mAbnormalRecordList.size()-1;
-                    //对比mQualityRecordList.get(update).getCreateTime()取值
                     for (int update = mAbnormalRecordList.size()-2; update >= 0; update--) {
                         if (mAbnormalRecordList.get(updateTime).getId() < mAbnormalRecordList.get(update).getId()) {
-                            Log.d(TAG, "handleMessage: " + mAbnormalRecordList.get(update).getCreateTime() + " : " + mAbnormalRecordList.get(update + 1).getCreateTime());
                             updateTime = update;
                         }
                         Log.d(TAG, "handleMessage: updateTime1:" + updateTime);

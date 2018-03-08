@@ -17,6 +17,17 @@ public class QualityRecordDetailsData {
     private TaskRecordData taskRecord;
     private int taskRecordId;
 
+    public QualityRecordDetailsData(){}
+
+    public QualityRecordDetailsData(String name, int taskRecordId,long createTime){
+        this.comment="";
+        this.createTime=createTime;
+        this.name=name;
+        this.id=0;
+        this.status=0;
+        this.taskRecordId=taskRecordId;
+    }
+
     public String getComment() {
         return comment;
     }
