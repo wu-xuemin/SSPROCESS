@@ -47,7 +47,7 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
 
     private BGARefreshLayout mRefreshLayout;
     private ProgressDialog mLoadingProcessDialog;
-
+    Intent mqttIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +55,8 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
         setContentView(R.layout.activity_process_to_checkout);
 
         //启动MQTT服务
-        Intent startIntent = new Intent(this, MyMqttService.class);
-        startService(startIntent);
+        mqttIntent = new Intent(this, MyMqttService.class);
+        startService(mqttIntent);
 
         mRefreshLayout = findViewById(R.id.refreshLayout);
         mRefreshLayout.setDelegate(this);
@@ -212,6 +212,7 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout:
+                stopService(mqttIntent);
                 SinSimApp.getApp().setLogOut();
                 Intent it = new Intent();
                 it.setClass(ProcessToCheckoutActivity.this, LoginActivity.class);

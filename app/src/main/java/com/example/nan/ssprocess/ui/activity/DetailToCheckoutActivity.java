@@ -223,7 +223,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         Date curDate = new Date(System.currentTimeMillis());
         String strCurTime = formatter.format(curDate);
         long lCurTime=System.currentTimeMillis();
-        mTaskRecordMachineListData.setInstallEndTime(strCurTime);
+        mTaskRecordMachineListData.setQualityEndTime(strCurTime);
 
         //读取和更新输入信息
         if(checkedOkRb.isChecked()){
@@ -287,13 +287,15 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                 //获取质检结果
                 ArrayList<QualityRecordDetailsData> mQualityRecordList = (ArrayList<QualityRecordDetailsData>) msg.obj;
                 if (mQualityRecordList.size()>0) {
-                    int updateTime = mQualityRecordList.size() - 1;
+                    int updateTime = 0;
                     //对比更新时间取值
-                    for (int update = mQualityRecordList.size() - 2; update >= 0; update--) {
-                        if (mQualityRecordList.get(updateTime).getId() < mQualityRecordList.get(update).getId()) {
-                            updateTime = update;
+                    for (int update = mQualityRecordList.size() - 1; update >= 0; update--) {
+                        if (mQualityRecordList.get(update).getTaskRecordId()==mTaskRecordMachineListData.getId()) {
+                            if (mQualityRecordList.get(updateTime).getId() < mQualityRecordList.get(update).getId()) {
+                                updateTime = update;
+                            }
+                            Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                         }
-                        Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
                     }
                     QualityRecordDetailsData qualityRecordDetailsData = mQualityRecordList.get(updateTime);
 
@@ -450,7 +452,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                                     SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
                                     Date curDate = new Date(System.currentTimeMillis());
                                     String staCurTime = formatter.format(curDate);
-                                    mTaskRecordMachineListData.setInstallBeginTime(staCurTime);
+                                    mTaskRecordMachineListData.setQualityBeginTime(staCurTime);
                                     iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
                                     updateProcessDetailData(SinSimApp.TASK_QUALITY_DOING);
                                 }

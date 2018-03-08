@@ -23,7 +23,7 @@ import java.util.ArrayList;
  */
 public class ProcessToInstallActivity extends AppCompatActivity {
     private static String TAG = "nlgProcessToInstall";
-
+    Intent mqttIntent;
     /**
      * tab数据源
      */
@@ -46,8 +46,8 @@ public class ProcessToInstallActivity extends AppCompatActivity {
         setContentView(R.layout.activity_process_to_install);
 
         //启动MQTT服务
-        Intent startIntent = new Intent(this, MyMqttService.class);
-        startService(startIntent);
+        mqttIntent = new Intent(this, MyMqttService.class);
+        startService(mqttIntent);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
@@ -68,6 +68,7 @@ public class ProcessToInstallActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout:
+                stopService(mqttIntent);
                 SinSimApp.getApp().setLogOut();
                 Intent it = new Intent();
                 it.setClass(ProcessToInstallActivity.this, LoginActivity.class);

@@ -220,7 +220,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         installAbnormalDetailEt.setText(abnormalRecordDetailsData.getComment());
                         //加载历史照片地址
                         Log.d(TAG, "handleMessage: photo url: "+abnormalRecordDetailsData.getAbnormalImage().getImage());
-                        ArrayList<String> installPhotoList=new ArrayList<>(Arrays.asList("http://192.168.0.103:8080/images/abnormal/A0M094156575_null_Abnormal_2018-03-08-11-48-58.jpg", "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png"));
+                        ArrayList<String> installPhotoList=new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + IP + abnormalRecordDetailsData.getAbnormalImage().getImage(), "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png"));
                         mInstallAbnormalPhotosSnpl.addMoreData(installPhotoList);
                     } else {
                         installNormalRb.setChecked(true);
@@ -578,12 +578,14 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = (ArrayList<AbnormalRecordDetailsData>) msg.obj;
                 Log.d(TAG, "handleMessage: 质检异常lise size："+mAbnormalRecordList.size());
                 if ( mAbnormalRecordList.size()>0) {
-                    int updateTime = mAbnormalRecordList.size() - 1;
-                    for (int update = mAbnormalRecordList.size() - 2; update >= 0; update--) {
-                        if (mAbnormalRecordList.get(updateTime).getId() < mAbnormalRecordList.get(update).getId()) {
-                            updateTime = update;
+                    int updateTime = 0;
+                    for (int update = mAbnormalRecordList.size() - 1; update >= 0; update--) {
+                        if (mAbnormalRecordList.get(update).getTaskRecordId()==mTaskRecordMachineListData.getId()) {
+                            if (mAbnormalRecordList.get(updateTime).getId() < mAbnormalRecordList.get(update).getId()) {
+                                updateTime = update;
+                            }
+                            Log.d(TAG, "handleMessage: updateTime:" + updateTime);
                         }
-                        Log.d(TAG, "handleMessage: updateTime:" + updateTime);
                     }
                     AbnormalRecordDetailsData abnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
 
