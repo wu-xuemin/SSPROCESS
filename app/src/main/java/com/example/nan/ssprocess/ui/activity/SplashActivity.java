@@ -49,6 +49,11 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
 
     public static String IMEI = null;
 
+    /**
+     * @param 用于表明进入从notification 进入Splash Activity
+     */
+    private Boolean mJumpFromNotification = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +61,8 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
         localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_FULLSCREEN | localLayoutParams.flags);
         setContentView(R.layout.activity_splash);
-
+        Intent it = getIntent();
+        mJumpFromNotification = it.getBooleanExtra(SinSimApp.FROM_NOTIFICATION, false);
         mNetwork = Network.Instance(SinSimApp.getApp());
         mFetchLoginHandler = new FetchLoginHandler();
         //申请权限
@@ -64,40 +70,39 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
     }
 
     @AfterPermissionGranted(REQUEST_SOME_PERMISSIONS)
-    public void requestSomePermissions(){
-        if(!EasyPermissions.hasPermissions(this, APP_NEEDS_PERMISSIONS)){
+    public void requestSomePermissions() {
+        if (!EasyPermissions.hasPermissions(this, APP_NEEDS_PERMISSIONS)) {
             EasyPermissions.requestPermissions(
                     this,
                     "app需要这些权限才能正常运行",
                     REQUEST_SOME_PERMISSIONS,
                     APP_NEEDS_PERMISSIONS);
-        }else {
+        } else {
             init();
         }
 
     }
 
-    private void init(){
+    private void init() {
         //检查机器IMEI
         checkIMEI();
 
         //检查preference中的isLogin状态
         boolean isLogin = SinSimApp.getApp().isLogined();
-        if(isLogin) {
+        if (isLogin) {
             final String account = SinSimApp.getApp().getAccount();
             final String password = SinSimApp.getApp().getPassword();
             final String ip = SinSimApp.getApp().getServerIP();
             //(1)检查账号密码是否存在
-            if(account.isEmpty() || password.isEmpty()) {
+            if (account.isEmpty() || password.isEmpty()) {
                 jumpToLoginAct();
             } else {
                 //(2)检查网络连接是否正常
-                if(!mNetwork.isNetworkConnected()) {
+                if (!mNetwork.isNetworkConnected()) {
                     Toast.makeText(this, "网络无法连接，请检查！", Toast.LENGTH_LONG).show();
                     jumpToLoginAct();
                 } else {
-                    @SuppressLint("StaticFieldLeak")
-                    final AsyncTask task = new AsyncTask() {
+                    @SuppressLint("StaticFieldLeak") final AsyncTask task = new AsyncTask() {
                         @Override
                         protected void onCancelled() {
                             super.onCancelled();
@@ -107,7 +112,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
                         protected Object doInBackground(Object[] params) {
                             //检查账号密码是否正确，正确的话返回流程的状态
                             LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                            Log.d(TAG, "doInBackground: "+ip+account+password+IMEI);
+                            Log.d(TAG, "doInBackground: " + ip + account + password + IMEI);
                             mPostValue.put("account", account);
                             mPostValue.put("password", password);
                             mPostValue.put("meid", IMEI);
@@ -130,7 +135,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
                             jumpToLoginAct();
                         }
                     };
-                    mTimeoutHandler.postDelayed(mTimeOutRunnable,8000);
+                    mTimeoutHandler.postDelayed(mTimeOutRunnable, 8000);
                 }
             }
         } else {
@@ -139,7 +144,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
     }
 
     private void jumpToLoginAct() {
-        final TextView logoText = (TextView)findViewById(R.id.crh_text);
+        final TextView logoText = (TextView) findViewById(R.id.crh_text);
         // 设置加载动画透明度渐变从（0.1不显示-1.0完全显示）
         AlphaAnimation animation = new AlphaAnimation(1.0f, 0.1f);
         // 设置动画时间5s
@@ -152,11 +157,13 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
             public void onAnimationStart(Animation animation) {
 
             }
+
             // 动画重复时执行
             @Override
             public void onAnimationRepeat(Animation animation) {
 
             }
+
             // 动画结束时执行
             @Override
             public void onAnimationEnd(Animation animation) {
@@ -178,16 +185,21 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
             //网络请求返回，移除超时的Runnable
             mTimeoutHandler.removeCallbacks(mTimeOutRunnable);
             if (msg.what == Network.OK) {
-                onFetchProcessDataSuccess((LoginResponseData)msg.obj);
+                //TODO:为了在点击notification进入splash activity时有较好的体验，不显示动画
+                if (mJumpFromNotification) {
+                    startActivityByRole();
+                } else {
+                    onFetchProcessDataSuccess((LoginResponseData) msg.obj);
+                }
             } else {
-                String errorMsg = (String)msg.obj;
+                String errorMsg = (String) msg.obj;
                 onFetchProcessDataFailed(errorMsg);
             }
         }
     }
 
     private void onFetchProcessDataSuccess(LoginResponseData data) {
-        final TextView logoText = (TextView)findViewById(R.id.crh_text);
+        final TextView logoText = (TextView) findViewById(R.id.crh_text);
         // 设置加载动画透明度渐变从（0.1不显示-1.0完全显示）
         AlphaAnimation animation = new AlphaAnimation(1.0f, 0.1f);
         // 设置动画时间5s
@@ -200,38 +212,43 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
             public void onAnimationStart(Animation animation) {
 
             }
+
             // 动画重复时执行
             @Override
             public void onAnimationRepeat(Animation animation) {
 
             }
+
             // 动画结束时执行
             @Override
             public void onAnimationEnd(Animation animation) {
                 logoText.setVisibility(View.INVISIBLE);
-                if(SinSimApp.LOGIN_FOR_ADMIN == SinSimApp.getApp().getRole()) {
-                    Intent it = new Intent();
-                    it.setClass(SplashActivity.this, ProcessToAdminActivity.class);
-                    startActivity(it);
-                    finish();
-                }else if(SinSimApp.LOGIN_FOR_QA == SinSimApp.getApp().getRole()){
-                    Intent it2 = new Intent();
-                    it2.setClass(SplashActivity.this, ProcessToCheckoutActivity.class);
-                    startActivity(it2);
-                    finish();
-                }else if(SinSimApp.LOGIN_FOR_INSTALL == SinSimApp.getApp().getRole()){
-                    Intent it3 = new Intent();
-                    it3.setClass(SplashActivity.this, ProcessToInstallActivity.class);
-                    startActivity(it3);
-                    finish();
-                }
-                else {
-                    Toast.makeText(SplashActivity.this,"您无权限操作!", Toast.LENGTH_SHORT).show();
-                    jumpToLoginAct();
-                }
+                startActivityByRole();
             }
         });
         logoText.startAnimation(animation);
+    }
+
+    private void startActivityByRole() {
+        if (SinSimApp.LOGIN_FOR_ADMIN == SinSimApp.getApp().getRole()) {
+            Intent it = new Intent();
+            it.setClass(SplashActivity.this, ProcessToAdminActivity.class);
+            startActivity(it);
+            finish();
+        } else if (SinSimApp.LOGIN_FOR_QA == SinSimApp.getApp().getRole()) {
+            Intent it2 = new Intent();
+            it2.setClass(SplashActivity.this, ProcessToCheckoutActivity.class);
+            startActivity(it2);
+            finish();
+        } else if (SinSimApp.LOGIN_FOR_INSTALL == SinSimApp.getApp().getRole()) {
+            Intent it3 = new Intent();
+            it3.setClass(SplashActivity.this, ProcessToInstallActivity.class);
+            startActivity(it3);
+            finish();
+        } else {
+            Toast.makeText(SplashActivity.this, "您无权限操作!", Toast.LENGTH_SHORT).show();
+            jumpToLoginAct();
+        }
     }
 
     private void onFetchProcessDataFailed(String errorMsg) {
@@ -240,7 +257,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
 
     private void checkIMEI() {
         IMEI = getIMEI();
-        Log.d(TAG, "checkIMEI: "+IMEI);
+        Log.d(TAG, "checkIMEI: " + IMEI);
     }
 
     @SuppressLint({"MissingPermission", "HardwareIds"})
@@ -249,14 +266,14 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
         if (telephonyManager != null) {
             idIMEI = telephonyManager.getDeviceId();
-        }else {
+        } else {
             Log.d(TAG, "getIMEI: have some error");
         }
         return idIMEI;
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,@NonNull String[] permissions,@NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         // EasyPermissions handles the request result.
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
@@ -274,7 +291,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         // This will display a dialog directing them to enable the permission in app settings.
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             new AppSettingsDialog.Builder(this).build().show();
-        }else {
+        } else {
             requestSomePermissions();
         }
     }

@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -13,6 +14,7 @@ import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.ui.activity.LoginActivity;
+import com.example.nan.ssprocess.ui.activity.SplashActivity;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions;
@@ -29,7 +31,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
  */
 public class MyMqttService extends Service {
 
-    private static final String TAG="nlgMqttService";
+    private static final String TAG = "nlgMqttService";
     private final String clientId = "ExampleAndroidClient";
     private final String subscriptionTopic = "exampleAndroidPublishTopic";
     private static final String publishTopic = "exampleAndroidPublishTopic";
@@ -51,71 +53,72 @@ public class MyMqttService extends Service {
         super.onCreate();
         Log.d(TAG, "MqttService onCreate executed");
         String serverIp = SinSimApp.getApp().getServerIP();
-        final String serverUri = URL.TCP_HEAD + serverIp.substring(0,serverIp.indexOf(":")) + ":1883";
+        final String serverUri = URL.TCP_HEAD + serverIp.substring(0, serverIp.indexOf(":")) + ":1883";
         mqttAndroidClient = new MqttAndroidClient(MyMqttService.this, serverUri, clientId);
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
-                                          @Override
-                                          public void connectComplete(boolean reconnect, String serverURI) {
-                                              if (reconnect) {
-                                                  Log.d(TAG, "connectComplete: " + serverURI);
-                                                  // Because Clean Session is true, we need to re-subscribe
-                                                  subscribeToTopic();
-                                              } else {
-                                                  Log.d(TAG, "connectComplete: " + serverURI);
-                                              }
-                                          }
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+                if (reconnect) {
+                    Log.d(TAG, "connectComplete: " + serverURI);
+                    // Because Clean Session is true, we need to re-subscribe
+                    subscribeToTopic();
+                } else {
+                    Log.d(TAG, "connectComplete: " + serverURI);
+                }
+            }
 
-                                          @Override
-                                          public void connectionLost(Throwable cause) {
-                                              Log.d(TAG, "connectionLost: connection was lost");
-                                          }
+            @Override
+            public void connectionLost(Throwable cause) {
+                Log.d(TAG, "connectionLost: connection was lost");
+            }
 
-                                          @Override
-                                          public void messageArrived(String topic, MqttMessage message) throws Exception {
-                                              String content = new String(message.getPayload());
-                                              Log.d(TAG, "messageArrived: " + content);
-                                          }
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                String content = new String(message.getPayload());
+                Log.d(TAG, "messageArrived: " + content);
+            }
 
-                                          @Override
-                                          public void deliveryComplete(IMqttDeliveryToken token) {
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
 
-                                          }
-                                      });
+            }
+        });
         MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
         mqttConnectOptions.setAutomaticReconnect(true);
         mqttConnectOptions.setCleanSession(false);
         try {
             Log.d(TAG, "onCreate: Connecting to " + serverUri);
             mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
-                        @Override
-                        public void onSuccess(IMqttToken asyncActionToken) {
-                            Log.d(TAG, "onSuccess: Success to connect to "+serverUri);
-                            DisconnectedBufferOptions disconnectedBufferOptions = new DisconnectedBufferOptions();
-                            disconnectedBufferOptions.setBufferEnabled(true);
-                            disconnectedBufferOptions.setBufferSize(100);
-                            disconnectedBufferOptions.setPersistBuffer(false);
-                            disconnectedBufferOptions.setDeleteOldestMessages(false);
-                            mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
-                            subscribeToTopic();
-                        }
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d(TAG, "onSuccess: Success to connect to " + serverUri);
+                    DisconnectedBufferOptions disconnectedBufferOptions = new DisconnectedBufferOptions();
+                    disconnectedBufferOptions.setBufferEnabled(true);
+                    disconnectedBufferOptions.setBufferSize(100);
+                    disconnectedBufferOptions.setPersistBuffer(false);
+                    disconnectedBufferOptions.setDeleteOldestMessages(false);
+                    mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
+                    subscribeToTopic();
+                }
 
-                        @Override
-                        public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                            Log.d(TAG, "onFailure: Failed to connect to " + serverUri);
-                            exception.printStackTrace();
-                        }
-                    });
-        } catch (MqttException ex){
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.d(TAG, "onFailure: Failed to connect to " + serverUri);
+                    exception.printStackTrace();
+                }
+            });
+        } catch (MqttException ex) {
             ex.printStackTrace();
         }
 
 
-
-        Intent intent = new Intent(this, LoginActivity.class);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
+        Intent intent = new Intent(this, SplashActivity.class);
+        intent.putExtra(SinSimApp.FROM_NOTIFICATION, true);
+        //这边设置“FLAG_UPDATE_CURRENT”是为了让后面的Activity接收pendingIntent中Extra的数据
+        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         Notification notification = new NotificationCompat.Builder(this)
-                .setContentTitle("This is content title")
-                .setContentText("This is content text")
+                .setContentTitle("浙江信胜")
+                .setContentText("作业流程管理系统")
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
@@ -140,7 +143,7 @@ public class MyMqttService extends Service {
                     Log.d(TAG, "onFailure: Failed to subscribe");
                 }
             });
-        }catch (MqttException ex){
+        } catch (MqttException ex) {
             Log.d(TAG, "subscribeToTopic: Exception whilst subscribing");
             ex.printStackTrace();
         }
@@ -149,7 +152,7 @@ public class MyMqttService extends Service {
     /**
      * 发布消息
      */
-    public void publishMessage(String msg){
+    public void publishMessage(String msg) {
         try {
             MqttMessage message = new MqttMessage();
             message.setPayload(msg.getBytes());

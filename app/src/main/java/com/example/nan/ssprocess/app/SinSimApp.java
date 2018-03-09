@@ -32,6 +32,8 @@ public class SinSimApp extends Application {
     public static final int LOGIN_FOR_QA = 11;
     public static final int LOGIN_FOR_INSTALL = 3;
 
+    public static final String FROM_NOTIFICATION = "1";
+
     /**
      * Task(工序)安装状态
      * "0" --> 初始化状态
