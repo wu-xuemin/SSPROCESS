@@ -427,7 +427,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                     String mMachineStrId = data.getStringExtra("mMachineStrId");
                     if(mMachineStrId.equals(mTaskRecordMachineListData.getMachineData().getMachineStrId())){
                         //update status
-                        if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING) {
+                        if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED) {
                             mQaDialog = new AlertDialog.Builder(DetailToCheckoutActivity.this).create();
                             mQaDialog.setMessage("是否现在开始质检？");
                             mQaDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "否", new DialogInterface.OnClickListener() {
