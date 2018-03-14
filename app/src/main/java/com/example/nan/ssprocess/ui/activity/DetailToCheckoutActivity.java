@@ -198,8 +198,10 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                         checkedNokRb.setChecked(true);
                         checkoutNokDetailEt.setText(mQualityRecordDetailsData.getComment());
                         //加载历史照片地址
-                        Log.d(TAG, "handleMessage: photo url: " + mQualityRecordDetailsData.getQualityRecordImage().getImage());
-                        ArrayList<String> installPhotoList = new ArrayList<>(Arrays.asList(mQualityRecordDetailsData.getQualityRecordImage().getImage()));
+                        String picName=mQualityRecordDetailsData.getQualityRecordImage().getImage();
+                        String picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.QA_PIC_DIR + picName.substring(picName.lastIndexOf("/"));
+                        Log.d(TAG, "handleMessage: 质检照片地址："+picUrl);
+                        ArrayList<String> installPhotoList = new ArrayList<>(Arrays.asList(picUrl));
                         mCheckoutNokPhotosSnpl.addMoreData(installPhotoList);
                     } else {
                         Log.d(TAG, "handleMessage: 尚未质检");

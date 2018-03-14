@@ -219,8 +219,10 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         failReasonSpinner.setSelection(abnormalRecordDetailsData.getAbnormalType());
                         installAbnormalDetailEt.setText(abnormalRecordDetailsData.getComment());
                         //加载历史照片地址
-                        Log.d(TAG, "handleMessage: photo url: "+abnormalRecordDetailsData.getAbnormalImage().getImage());
-                        ArrayList<String> installPhotoList=new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + IP + abnormalRecordDetailsData.getAbnormalImage().getImage(), "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png"));
+                        String picName=abnormalRecordDetailsData.getAbnormalImage().getImage();
+                        String picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.INSTALL_PIC_DIR + picName.substring(picName.lastIndexOf("/"));
+                        Log.d(TAG, "handleMessage: 异常照片地址："+picUrl);
+                        ArrayList<String> installPhotoList=new ArrayList<>(Arrays.asList(picUrl));
                         mInstallAbnormalPhotosSnpl.addMoreData(installPhotoList);
                     } else {
                         installNormalRb.setChecked(true);
@@ -258,8 +260,11 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         nokReasonTv.setText("不合格");
                         qaNokLayout.setVisibility(View.VISIBLE);
                         nokDetailTv.setText(mQualityRecordDetailsData.getComment());
+                        String picName=mQualityRecordDetailsData.getQualityRecordImage().getImage();
+                        String picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.QA_PIC_DIR + picName.substring(picName.lastIndexOf("/"));
+                        Log.d(TAG, "handleMessage: 质检照片地址："+picUrl);
                         //照片地址
-                        ArrayList<String> checkoutPhotoList = new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + IP + mQualityRecordDetailsData.getQualityRecordImage().getImage(), "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png"));
+                        ArrayList<String> checkoutPhotoList = new ArrayList<>(Arrays.asList(picUrl));
                         BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
                         checkoutNinePhotoLayout.setDelegate(DetailToInstallActivity.this);
                         checkoutNinePhotoLayout.setData(checkoutPhotoList);

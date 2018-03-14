@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
@@ -19,11 +20,13 @@ import com.example.nan.ssprocess.bean.response.QualityRecordReponseDataWrap;
 import com.example.nan.ssprocess.bean.response.ResponseData;
 import com.example.nan.ssprocess.bean.response.TaskRecordFromIdResponseDataWrap;
 import com.example.nan.ssprocess.bean.response.TaskRecordResponseDataWrap;
+import com.example.nan.ssprocess.ui.activity.DetailToCheckoutActivity;
 import com.example.nan.ssprocess.util.ShowMessage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -35,6 +38,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -541,76 +546,122 @@ public class Network {
             msg.what = NG;
             msg.obj = mCtx.getString(R.string.network_not_connect);
             handler.sendMessage(msg);
+            Log.d(TAG, "downloadFile: 没有网络");
         } else {
             InputStream is = null;
             RandomAccessFile savedFile = null;
-            File file = null;
-            try {
+            final File file;
+            Log.d(TAG, "downloadFile: 有网络");
+//            try {
                 long downloadedLength = 0; // 记录已下载的文件长度
-                String fileName = url.substring(url.lastIndexOf("/"));
-                String directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
+                final String fileName = url.substring(url.lastIndexOf("/"));
+                final String directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
                 file = new File(directory + fileName);
                 if (file.exists()) {
                     downloadedLength = file.length();
                 }
 
-                OkHttpClient client = new OkHttpClient();
-                Request request = new Request.Builder()
-                        // 断点下载，指定从哪个字节开始下载
-                        .addHeader("RANGE", "bytes=" + downloadedLength + "-")
-                        .url(url)
-                        .build();
-                Response response = client.newCall(request).execute();
-                if (response != null) {
-                    long contentLength = response.body().contentLength();
-                    if (contentLength == 0) {
-                        msg.what = NG;
-                        msg.obj = "装车单为空！";
-                    } else if (contentLength == downloadedLength) {
-                        // 已下载字节和文件总字节相等，说明已经下载完成了
-                        msg.what = OK;
-                        msg.obj = "装车单已存在！";
+                Log.d(TAG, "downloadFile: 开始okhttp");
+                OkHttpClient mOkHttpClient = new OkHttpClient();
+                Log.d(TAG, "downloadFile: 开始同步call");
+                final Request request = new Request.Builder().url(url).build();
+                final Call call = mOkHttpClient.newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.e(TAG, e.toString());
                     }
-                    is = response.body().byteStream();
-                    Log.d(TAG, "LocalFile: "+file);
-                    savedFile = new RandomAccessFile(file, "rw");
-                    // 跳过已下载的字节
-                    savedFile.seek(downloadedLength);
-                    byte[] b = new byte[1024];
-                    int total = 0;
-                    int len;
-                    while ((len = is.read(b)) != -1) {
 
-                        total += len;
-                        savedFile.write(b, 0, len);
-                        // 计算已下载的百分比
-                        int progress = (int) ((total + downloadedLength) * 100 / contentLength);
-
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        InputStream is = null;
+                        byte[] buf = new byte[2048];
+                        int len = 0;
+                        FileOutputStream fos = null;
+                        try {
+                            long total = response.body().contentLength();
+                            Log.e(TAG, "total------>" + total);
+                            long current = 0;
+                            is = response.body().byteStream();
+                            fos = new FileOutputStream(file);
+                            while ((len = is.read(buf)) != -1) {
+                                current += len;
+                                fos.write(buf, 0, len);
+                                Log.e(TAG, "current------>" + current);
+                            }
+                            fos.flush();
+                            Log.d(TAG, "onResponse: 下载成功！");
+                            msg.what = OK;
+                            msg.obj = directory + fileName;
+                        } catch (IOException e) {
+                            Log.e(TAG, e.toString());
+                            Log.d(TAG, "onResponse: catch 下载失败");
+                        } finally {
+                            handler.sendMessage(msg);
+                            try {
+                                if (is != null) {
+                                    is.close();
+                                }
+                                if (fos != null) {
+                                    fos.close();
+                                }
+                            } catch (IOException e) {
+                                Log.e(TAG, e.toString());
+                            }
+                        }
                     }
-                    response.body().close();
-                    msg.what = OK;
-                    msg.obj = directory + fileName;
-                    Log.d(TAG, "downloadFile: 成功下载："+fileName);
-                }
-            } catch (Exception e) {
-                msg.what = NG;
-                msg.obj = "下载失败！";
-                e.printStackTrace();
-            } finally {
-                handler.sendMessage(msg);
-                try {
-                    if (is != null) {
-                        is.close();
-                    }
-                    if (savedFile != null) {
-                        savedFile.close();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
+                });
+//                if (response != null) {
+//                    long contentLength = response.body().contentLength();
+//                    if (contentLength == 0) {
+//                        msg.what = NG;
+//                        msg.obj = "装车单为空！";
+//                    } else if (contentLength == downloadedLength) {
+//                        // 已下载字节和文件总字节相等，说明已经下载完成了
+//                        msg.what = OK;
+//                        msg.obj = "装车单已存在！";
+//                    }
+//                    is = response.body().byteStream();
+//                    Log.d(TAG, "LocalFile: "+file);
+//                    savedFile = new RandomAccessFile(file, "rw");
+//                    // 跳过已下载的字节
+//                    savedFile.seek(downloadedLength);
+//                    byte[] b = new byte[1024];
+//                    int total = 0;
+//                    int len;
+//                    while ((len = is.read(b)) != -1) {
+//
+//                        total += len;
+//                        savedFile.write(b, 0, len);
+//                        // 计算已下载的百分比
+//                        int progress = (int) ((total + downloadedLength) * 100 / contentLength);
+//
+//                    }
+//                    response.body().close();
+//                    msg.what = OK;
+//                    msg.obj = directory + fileName;
+//                    Log.d(TAG, "downloadFile: 成功下载："+fileName);
+//                }
+//            } catch (Exception e) {
+//                msg.what = NG;
+//                msg.obj = "下载失败！";
+//                e.printStackTrace();
+//                Log.d(TAG, "downloadFile: catch报错："+e);
+//            } finally {
+//                handler.sendMessage(msg);
+//                try {
+//                    if (is != null) {
+//                        is.close();
+//                    }
+//                    if (savedFile != null) {
+//                        savedFile.close();
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+       }
     }
     /**
      * 更新位置数据

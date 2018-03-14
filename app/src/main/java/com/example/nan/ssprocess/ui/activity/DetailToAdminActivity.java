@@ -211,8 +211,11 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         nokReasonTv.setText("不合格");
                         qaNokLayout.setVisibility(View.VISIBLE);
                         nokDetailTv.setText(mQualityRecordDetailsData.getComment());
+                        String picName=mQualityRecordDetailsData.getQualityRecordImage().getImage();
+                        String picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.QA_PIC_DIR + picName.substring(picName.lastIndexOf("/"));
+                        Log.d(TAG, "handleMessage: 质检照片地址："+picUrl);
                         //九宫格显示照片
-                        ArrayList<String> checkoutPhotoList = new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + IP + mQualityRecordDetailsData.getQualityRecordImage().getImage(), "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered11.png"));
+                        ArrayList<String> checkoutPhotoList = new ArrayList<>(Arrays.asList(picUrl));
                         BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
                         checkoutNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
                         checkoutNinePhotoLayout.setData(checkoutPhotoList);
@@ -257,8 +260,12 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         abnormalReasonTv.setText("异常");
                         installAbnormalLayout.setVisibility(View.VISIBLE);
                         abnormalDetailTv.setText(mAbnormalRecordDetailsData.getComment());
+
+                        String picName=mAbnormalRecordDetailsData.getAbnormalImage().getImage();
+                        String picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.INSTALL_PIC_DIR + picName.substring(picName.lastIndexOf("/"));
+                        Log.d(TAG, "handleMessage: 异常照片地址："+picUrl);
                         //九宫格显示照片
-                        ArrayList<String> installPhotoList = new ArrayList<>(Arrays.asList(URL.HTTP_HEAD + IP + mAbnormalRecordDetailsData.getAbnormalImage().getImage(), "http://7xk9dj.com1.z0.glb.clouddn.com/refreshlayout/images/staggered1.png"));
+                        ArrayList<String> installPhotoList = new ArrayList<>(Arrays.asList(picUrl));
                         BGANinePhotoLayout installNinePhotoLayout = findViewById(R.id.install_abnormal_photos);
                         installNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
                         installNinePhotoLayout.setData(installPhotoList);
