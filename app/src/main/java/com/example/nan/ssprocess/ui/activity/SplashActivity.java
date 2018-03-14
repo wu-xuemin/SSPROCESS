@@ -41,7 +41,13 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
     private static final String TAG = "nlgSplashActivity";
     private static final int REQUEST_SOME_PERMISSIONS = 111;
     private static final String[] APP_NEEDS_PERMISSIONS =
-            {Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            { Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN
+            };
     private Network mNetwork;
     private FetchLoginHandler mFetchLoginHandler;
     private Handler mTimeoutHandler;

@@ -63,7 +63,10 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                login();
+//                login();
+                Intent it = new Intent(LoginActivity.this, PrintQRCodeActivity.class);
+                it.putExtra(PrintQRCodeActivity.PRINT_CODE, "12345678");
+                startActivity(it);
             }
         });
     }
