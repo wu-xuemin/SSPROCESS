@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -184,6 +185,14 @@ public class PrintQRCodeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_print_qrcode);
+
+        //返回前页按钮
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         Intent it = getIntent();
         mPrintContentTv = findViewById(R.id.tv_print_content);
         AppCompatButton printBtn = findViewById(R.id.btn_print2dbarcode);
@@ -221,6 +230,16 @@ public class PrintQRCodeActivity extends AppCompatActivity {
         recycle();
 
         super.onDestroy();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish(); // back button
+                return true;
+            default:
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
