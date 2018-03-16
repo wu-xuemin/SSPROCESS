@@ -14,7 +14,7 @@ public class URL {
     public static final String USER_LOGIN = "/user/requestLogin";
     public static final String FETCH_TASK_RECORD_DETAIL = "/task/record/selectTaskRecordDetail";
     public static final String FETCH_TASK_RECORD_TO_ADMIN = "/task/record/selectAllTaskRecordDetail";
-    public static final String FETCH_TASK_RECORD_BY_SEARCH_TO_ADMIN = "/task/record/selectTaskRecordByMachineNameplate";
+    public static final String FETCH_TASK_RECORD_BY_SEARCH_TO_ADMIN = "/machine/selectMachinesByNameplate";
     public static final String FETCH_DOWNLOADING_FILELIST = "/order/loading/list/selectOrderLoadingFileNameByOrderId";
     public static final String FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_ADMIN = "/task/record/selectTaskRecordByMachineStrId";
     public static final String FETCH_TASK_RECORD_TO_QA = "/task/record/selectAllQaTaskRecordDetailByUserAccount";

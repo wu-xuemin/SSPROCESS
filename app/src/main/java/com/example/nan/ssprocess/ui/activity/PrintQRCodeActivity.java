@@ -1,5 +1,8 @@
 package com.example.nan.ssprocess.ui.activity;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,10 +11,12 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,8 +31,15 @@ import android.widget.Toast;
 import com.dothantech.lpapi.LPAPI;
 import com.dothantech.printer.IDzPrinter;
 import com.example.nan.ssprocess.R;
+import com.example.nan.ssprocess.app.SinSimApp;
+import com.example.nan.ssprocess.app.URL;
+import com.example.nan.ssprocess.bean.basic.MachineData;
+import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
+import com.example.nan.ssprocess.net.Network;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class PrintQRCodeActivity extends AppCompatActivity {
@@ -92,10 +104,20 @@ public class PrintQRCodeActivity extends AppCompatActivity {
 
     // 状态提示框
     private AlertDialog stateAlertDialog = null;
+    private AlertDialog mSearchResultDialog=null;
+    private AlertDialog mUpdatingProcessDialog;
 
+    private LPAPI api;
+    private static String TAG = "nlgPrintQRCodeActivity";
+    private final String IP = SinSimApp.getApp().getServerIP();
+    private MachineData mMachineByNameplate;
+    private String location;
+
+    private String mSearchContent = "";
     private String mPrintContent = "";
     public static final String PRINT_CODE = "num";
     private TextView mPrintContentTv;
+    private EditText locationEt;
 
     /********************************************************************************************************************************************/
     // DzPrinter连接打印功能相关
@@ -179,7 +201,6 @@ public class PrintQRCodeActivity extends AppCompatActivity {
         }
     };
 
-    private LPAPI api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,17 +214,18 @@ public class PrintQRCodeActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        Intent it = getIntent();
         mPrintContentTv = findViewById(R.id.tv_print_content);
         AppCompatButton printBtn = findViewById(R.id.btn_print2dbarcode);
-        if(it.getStringExtra(PRINT_CODE) != null) {
-            mPrintContent = it.getStringExtra(PRINT_CODE);
+        locationEt = findViewById(R.id.location_et);
+
+        //获取搜索内容
+        Intent intent = getIntent();
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            mPrintContent = intent.getStringExtra(SearchManager.QUERY);
             mPrintContentTv.setText(mPrintContent);
-            printBtn.setEnabled(true);
-        } else {
-            mPrintContentTv.setText("打印内容有误!");
-            printBtn.setEnabled(false);
+            Log.d(TAG, "onCreate: "+mPrintContent);
         }
+        fetchProcessData();
 
         // 初始化界面
         initialView();
@@ -219,8 +241,91 @@ public class PrintQRCodeActivity extends AppCompatActivity {
                 return;
             }
         }
+
+    }
+    private void fetchProcessData() {
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        String fetchProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FETCH_TASK_RECORD_BY_SEARCH_TO_ADMIN;
+        mPostValue.put("nameplate", mPrintContent);
+        Network.Instance(SinSimApp.getApp()).fetchMachineByNameplate(fetchProcessRecordUrl, mPostValue, new FetchMachineDataHandler());
     }
 
+    @SuppressLint("HandlerLeak")
+    private class FetchMachineDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+
+            if (msg.what == Network.OK) {
+                mMachineByNameplate=(MachineData)msg.obj;
+                locationEt.setText(mMachineByNameplate.getLocation());
+            } else {
+                String errorMsg = (String)msg.obj;
+                mSearchResultDialog = new AlertDialog.Builder(PrintQRCodeActivity.this).create();
+                mSearchResultDialog.setCancelable(false);
+                mSearchResultDialog.setCanceledOnTouchOutside(false);
+                mSearchResultDialog.setTitle("搜索失败");
+                mSearchResultDialog.setMessage(errorMsg);
+                mSearchResultDialog.setButton(AlertDialog.BUTTON_POSITIVE, "重新搜索",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //关闭当前activity
+                                finish();
+                            }
+                        });
+                mSearchResultDialog.show();
+            }
+        }
+    }
+
+    public void updateLocationOnClick(View view) {
+        //获取dialog的输入信息，并上传到服务器
+        if (TextUtils.isEmpty(locationEt.getText())) {
+            Toast.makeText(PrintQRCodeActivity.this,"地址不能为空，请确认后重新输入！",Toast.LENGTH_SHORT).show();
+        }else {
+            location=locationEt.getText().toString();
+            if( mUpdatingProcessDialog == null) {
+                mUpdatingProcessDialog = new AlertDialog.Builder(PrintQRCodeActivity.this).create();
+                mUpdatingProcessDialog.setCancelable(false);
+                mUpdatingProcessDialog.setCanceledOnTouchOutside(false);
+                mUpdatingProcessDialog.setMessage("上传信息中...");
+            }
+            mUpdatingProcessDialog.show();
+            updateProcessDetailData();
+        }
+    }
+    /**
+     * 更新上传机器location
+     */
+    private void updateProcessDetailData() {
+        //更新location状态
+        mMachineByNameplate.setLocation(location);
+        Gson gson=new Gson();
+        String machineDataToJson = gson.toJson(mMachineByNameplate);
+        Log.d(TAG, "onItemClick: gson :"+ machineDataToJson);
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("machine", machineDataToJson);
+        String updateProcessRecordUrl = URL.HTTP_HEAD + IP + URL.UPDATE_MACHINE_LOCATION;
+        Log.d(TAG, "updateProcessDetailData: "+updateProcessRecordUrl+mPostValue.get("machine"));
+        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, new UpdateProcessDetailDataHandler());
+    }
+    @SuppressLint("HandlerLeak")
+    private class UpdateProcessDetailDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+
+            if(mUpdatingProcessDialog != null && mUpdatingProcessDialog.isShowing()) {
+                mUpdatingProcessDialog.dismiss();
+            }
+            if (msg.what == Network.OK) {
+                Toast.makeText(PrintQRCodeActivity.this, "上传位置成功！", Toast.LENGTH_SHORT).show();
+            } else {
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: "+errorMsg);
+                Toast.makeText(PrintQRCodeActivity.this, "上传失败："+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     @Override
     protected void onDestroy() {
         // 应用退出时，调用LPAPI对象的quit方法断开打印机连接
@@ -228,6 +333,13 @@ public class PrintQRCodeActivity extends AppCompatActivity {
 
         // 应用退出时需要的操作
         recycle();
+
+        if(mSearchResultDialog != null) {
+            mSearchResultDialog.dismiss();
+        }
+        if(mUpdatingProcessDialog != null) {
+            mUpdatingProcessDialog.dismiss();
+        }
 
         super.onDestroy();
     }
@@ -468,32 +580,8 @@ public class PrintQRCodeActivity extends AppCompatActivity {
      */
     public void print2DBarcodeOnClick(View view) {
         if(mPrintContent.equals("")) {
-
+            Log.d(TAG, "print2DBarcodeOnClick: 打印内容为空");
         } else {
-//            TextView tx = new TextView(PrintQRCodeActivity.this);
-//            tx.setTextColor(getResources().getColor(R.color.red_add_to_cart_p));
-//            tx.setTextScaleX(2);
-//            tx.setText(mPrintContent);
-//            // 显示打印数据设置界面
-//            AlertDialog.Builder builder = new AlertDialog.Builder(PrintQRCodeActivity.this);
-//            builder.setTitle(R.string.print2dbarcode);
-//            builder.setView(tx);
-//            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    // 获取打印数据并进行打印
-//                    if (isPrinterConnected()) {
-//                        if (print2dBarcode(mPrintContent, getPrintParam(1, 0))) {
-//                            onPrintStart();
-//                        } else {
-//                            onPrintFailed();
-//                        }
-//                    }
-//                }
-//            });
-//            builder.setNegativeButton(R.string.cancel, null);
-//            builder.show();
-
             /// 获取打印数据并进行打印
             if (isPrinterConnected()) {
                 if (print2dBarcode(mPrintContent, getPrintParam(1, 0))) {

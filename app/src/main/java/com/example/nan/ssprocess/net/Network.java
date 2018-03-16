@@ -13,9 +13,11 @@ import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
+import com.example.nan.ssprocess.bean.basic.MachineData;
 import com.example.nan.ssprocess.bean.response.AbnormalRecordReponseDataWrap;
 import com.example.nan.ssprocess.bean.response.ListDataWrap;
 import com.example.nan.ssprocess.bean.response.LoginResponseDataWrap;
+import com.example.nan.ssprocess.bean.response.MachineResponseDataWrap;
 import com.example.nan.ssprocess.bean.response.QualityRecordReponseDataWrap;
 import com.example.nan.ssprocess.bean.response.ResponseData;
 import com.example.nan.ssprocess.bean.response.TaskRecordFromIdResponseDataWrap;
@@ -249,9 +251,9 @@ public class Network {
     }
 
     /**
-     * 获取单个machineTaskRecordDetail
+     * 获取单个machineByNameplate
      */
-    public void fetchTaskProcessFromId(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
+    public void fetchMachineByNameplate(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
         final Message msg = handler.obtainMessage();
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
@@ -280,21 +282,26 @@ public class Network {
                             boolean success = false;
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
-                                TaskRecordFromIdResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<TaskRecordFromIdResponseDataWrap>(){}.getType());
+                                MachineResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<MachineResponseDataWrap>(){}.getType());
                                 if (responseData != null) {
-                                    Log.d(TAG, "fetchTaskProcessFromId run: "+responseData.getCode());
+                                    Log.d(TAG, "fetchMachineByNameplate run: "+responseData.getData());
                                     if (responseData.getCode() == 200) {
-                                        success = true;
-                                        msg.obj = responseData.getData();
+                                        if (responseData.getData()!=null) {
+                                            success = true;
+                                            msg.obj = responseData.getData();
+                                        } else {
+                                            msg.what = NG;
+                                            msg.obj = "没有这个钢印号的机器信息！";
+                                        }
                                     } else if (responseData.getCode() == 400) {
                                         Log.e(TAG, responseData.getMessage());
                                         msg.obj = responseData.getMessage();
                                     } else if (responseData.getCode() == 500) {
                                         Log.e(TAG, responseData.getMessage());
-                                        Log.d(TAG, "fetchTaskProcessFromId run: error 500 :"+responseData.getMessage());
+                                        Log.d(TAG, "fetchMachineByNameplate run: error 500 :"+responseData.getMessage());
                                         msg.obj = responseData.getMessage();
                                     } else {
-                                        Log.e(TAG, "fetchTaskProcessFromId Format JSON string to object error!");
+                                        Log.e(TAG, "fetchMachineByNameplate Format JSON string to object error!");
                                     }
                                 }
                                 if (success) {

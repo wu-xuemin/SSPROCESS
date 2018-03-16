@@ -3,7 +3,7 @@
     <string name="start_service">Start Service</string>
     <string name="stop_service">Stop Service</string>
     <string name="qr_scan">二维码扫描</string>
-    <string name="search_hint">搜机器编号查看详情</string>
+    <string name="search_hint">搜钢印号打印二维码</string>
     <string name="search_result">搜索机器编号结果</string>
 
     <string name="system_name">SINSIM</string>

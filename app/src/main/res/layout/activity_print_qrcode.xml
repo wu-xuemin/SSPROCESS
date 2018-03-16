@@ -20,45 +20,31 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_marginTop="5dp"
             android:textSize="20sp"
-            android:text="钢印号信息:"/>
+            android:text="钢印号:"/>
 
         <TextView
-            android:id="@+id/tv_search_content"
+            android:id="@+id/tv_print_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
             android:textSize="50sp"
             android:textColor="@color/border_color_on_light"
             android:text="暂无"/>
 
     </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
-        android:textSize="20sp"
-        android:text="二维码信息："/>
-    <TextView
-        android:id="@+id/tv_print_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:textSize="50sp"
-        android:text="TESTTESTTEST"/>
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/btn_print2dbarcode"
@@ -111,7 +97,7 @@
         android:textColor="#ffffff"
         android:background="@color/colorPrimary"
         android:gravity="center"
-        android:onClick="print2DBarcodeOnClick"
+        android:onClick="updateLocationOnClick"
         android:text="上传机器位置" />
 
 </LinearLayout>

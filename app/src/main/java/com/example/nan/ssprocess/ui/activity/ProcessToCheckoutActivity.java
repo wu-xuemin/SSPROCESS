@@ -131,6 +131,8 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
                 mProcessToCheckoutList=(ArrayList<TaskRecordMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToCheckoutList.size());
                 if (mProcessToCheckoutList.size()==0){
+                    mTaskRecordAdapter.setProcessList(mProcessToCheckoutList);
+                    mTaskRecordAdapter.notifyDataSetChanged();
                     Toast.makeText(ProcessToCheckoutActivity.this, "没有更多了...", Toast.LENGTH_SHORT).show();
                 }else {
                     mTaskRecordAdapter.setProcessList(mProcessToCheckoutList);

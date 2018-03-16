@@ -63,10 +63,10 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-//                login();
-                Intent it = new Intent(LoginActivity.this, PrintQRCodeActivity.class);
-                it.putExtra(PrintQRCodeActivity.PRINT_CODE, "12345678");
-                startActivity(it);
+                login();
+//                Intent it = new Intent(LoginActivity.this, PrintQRCodeActivity.class);
+//                it.putExtra(PrintQRCodeActivity.PRINT_CODE, "12345678");
+//                startActivity(it);
             }
         });
     }
@@ -102,10 +102,6 @@ public class LoginActivity extends AppCompatActivity {
             mNetwork.fetchLoginData(loginUrl, mPostValue, mLoginHandler);
         }
 
-//        Intent intent = new Intent(LoginActivity.this,ProcessToInstallActivity.class);
-//        Intent intent = new Intent(LoginActivity.this,DetailToAdminActivity.class);
-//        startActivity(intent);
-//        finish();
     }
 
     @SuppressLint("HandlerLeak")

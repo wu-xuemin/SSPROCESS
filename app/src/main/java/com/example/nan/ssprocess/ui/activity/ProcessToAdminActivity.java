@@ -155,6 +155,8 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
                 mProcessToAdminList=(ArrayList<TaskRecordMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToAdminList.size());
                 if (mProcessToAdminList.size()==0){
+                    mProcessToAdminAdapter.setProcessList(mProcessToAdminList);
+                    mProcessToAdminAdapter.notifyDataSetChanged();
                     Toast.makeText(ProcessToAdminActivity.this, "没有更多了...", Toast.LENGTH_SHORT).show();
                 } else {
                     mProcessToAdminAdapter.setProcessList(mProcessToAdminList);

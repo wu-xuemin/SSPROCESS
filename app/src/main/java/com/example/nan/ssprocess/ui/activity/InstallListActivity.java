@@ -3,6 +3,7 @@ package com.example.nan.ssprocess.ui.activity;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
@@ -110,7 +111,7 @@ public class InstallListActivity extends AppCompatActivity {
     public static String getMIMEType(File file) {
         String type = "*/*";
         String name = file.getName();
-        int index = name.lastIndexOf('.');
+        int index = name.lastIndexOf(".");
         if (index < 0) {
             return type;
         }
@@ -169,20 +170,21 @@ public class InstallListActivity extends AppCompatActivity {
                 mDownloadingDialog.dismiss();
             }
             if (msg.what == Network.OK) {
-                String downloadFile = (String) msg.obj;
-                Toast.makeText(InstallListActivity.this, downloadFile, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                File file = new File(downloadFile);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setAction(Intent.ACTION_VIEW);
-                String type = getMIMEType(file);
-                //设置intent的data和Type属性。
-                intent.setDataAndType(Uri.fromFile(file), type);
                 try {
+                    String downloadFile = (String) msg.obj;
+                    Toast.makeText(InstallListActivity.this, downloadFile, Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent();
+                    File file = new File(downloadFile);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setAction(Intent.ACTION_VIEW);
+                    String type = getMIMEType(file);
+                    //设置intent的data和Type属性。
+                    intent.setDataAndType(Uri.fromFile(file), type);
                     InstallListActivity.this.startActivity(intent);
                 } catch (ActivityNotFoundException e) {
                     Toast.makeText(InstallListActivity.this, "您没有安装Office文件", Toast.LENGTH_SHORT).show();
                 }
+
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "DownloadFileHandler handleMessage: "+errorMsg);

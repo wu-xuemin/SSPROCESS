@@ -52,6 +52,7 @@ public class ProcessToMachineActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        //搜索内容
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             mSearchContent = intent.getStringExtra(SearchManager.QUERY);
