@@ -6,8 +6,10 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -138,6 +140,12 @@ public class InstallListActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        //取消打开文件的严格模式
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy( builder.build() );
+        }
+
         //获取传递过来的信息
         Intent intent = getIntent();
         final ArrayList<String> mInstallFileList = (ArrayList<String>) intent.getSerializableExtra("mInstallFileList");
@@ -170,6 +178,7 @@ public class InstallListActivity extends AppCompatActivity {
                 mDownloadingDialog.dismiss();
             }
             if (msg.what == Network.OK) {
+                Log.d(TAG, "handleMessage: 下载完成，地址："+msg.obj);
                 try {
                     String downloadFile = (String) msg.obj;
                     Toast.makeText(InstallListActivity.this, downloadFile, Toast.LENGTH_SHORT).show();
@@ -179,10 +188,12 @@ public class InstallListActivity extends AppCompatActivity {
                     intent.setAction(Intent.ACTION_VIEW);
                     String type = getMIMEType(file);
                     //设置intent的data和Type属性。
-                    intent.setDataAndType(Uri.fromFile(file), type);
-                    InstallListActivity.this.startActivity(intent);
+                    Uri uri = Uri.fromFile(file);
+                    Log.d(TAG, "handleMessage: 实际地址："+uri);
+                    intent.setDataAndType(uri, type);
+                    startActivity(intent);
                 } catch (ActivityNotFoundException e) {
-                    Toast.makeText(InstallListActivity.this, "您没有安装Office文件", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(InstallListActivity.this, "您没有安装Office文件", Toast.LENGTH_LONG).show();
                 }
 
             } else {

@@ -560,12 +560,16 @@ public class Network {
             final File file;
             Log.d(TAG, "downloadFile: 有网络");
 //            try {
-                long downloadedLength = 0; // 记录已下载的文件长度
-                final String fileName = url.substring(url.lastIndexOf("/"));
-                final String directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
+//                long downloadedLength = 0; // 记录已下载的文件长度
+                String fileName = url.substring(url.lastIndexOf("/"));
+                String directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
                 file = new File(directory + fileName);
                 if (file.exists()) {
-                    downloadedLength = file.length();
+                    msg.what=OK;
+                    msg.obj=""+file;
+                    handler.sendMessage(msg);
+                    return;
+//                    downloadedLength = file.length();
                 }
 
                 Log.d(TAG, "downloadFile: 开始okhttp");
@@ -599,7 +603,9 @@ public class Network {
                             fos.flush();
                             Log.d(TAG, "onResponse: 下载成功！");
                             msg.what = OK;
-                            msg.obj = directory + fileName;
+                            Log.d(TAG, "onResponse: file: "+file);
+                            msg.obj = ""+file;
+                            Log.d(TAG, "onResponse: obj : "+msg.obj);
                         } catch (IOException e) {
                             Log.e(TAG, e.toString());
                             Log.d(TAG, "onResponse: catch 下载失败");

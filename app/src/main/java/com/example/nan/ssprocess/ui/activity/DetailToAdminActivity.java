@@ -101,7 +101,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         Log.d(TAG, "onCreate: location:"+mTaskRecordMachineListData.getMachineData().getLocation());
 
         //把数据填入相应位置
-        orderNumberTv.setText(""+mTaskRecordMachineListData.getMachineData().getOrderId());
+        orderNumberTv.setText(""+mTaskRecordMachineListData.getMachineOrderData().getOrderNum());
         currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
         machineNumberTv.setText(mTaskRecordMachineListData.getMachineData().getNameplate());
         locationTv.setTextColor(Color.BLUE);
