@@ -46,7 +46,7 @@ public class ScanResultAdapter extends RecyclerView.Adapter {
         //itemView.setIsRecyclable(false);//禁止复用
         if (mProcessList!=null && !mProcessList.isEmpty() && position < mProcessList.size()) {
             Log.d(TAG, "onBindViewHolder: 有数据"+position);
-            itemView.machineIdTv.setText("" + mProcessList.get(position).getMachineData().getMachineStrId());
+            itemView.machineIdTv.setText("" + mProcessList.get(position).getMachineData().getNameplate());
             itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
             switch (mProcessList.get(position).getStatus()){
                 case SinSimApp.TASK_INITIAL:

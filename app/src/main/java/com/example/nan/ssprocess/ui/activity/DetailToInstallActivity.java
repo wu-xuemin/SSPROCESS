@@ -387,7 +387,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     // 检验二维码信息是否对应
                     String mMachineStrId = data.getStringExtra("mMachineStrId");
 
-                    if(mMachineStrId.equals(mTaskRecordMachineListData.getMachineData().getMachineStrId())){
+                    if(mMachineStrId.equals(mTaskRecordMachineListData.getMachineData().getNameplate())){
                         Log.d(TAG, "onActivityResult: id 对应");
                         //update status
                         if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING) {
@@ -438,7 +438,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     // 检验二维码信息是否对应
                     String mMachineStrId = data.getStringExtra("mMachineStrId");
 
-                    if(mMachineStrId.equals(mTaskRecordMachineListData.getMachineData().getMachineStrId())){
+                    if(mMachineStrId.equals(mTaskRecordMachineListData.getMachineData().getNameplate())){
                         Log.d(TAG, "onActivityResult: id 对应");
                         //update info
                         if( mUpdatingProcessDialog == null) {
