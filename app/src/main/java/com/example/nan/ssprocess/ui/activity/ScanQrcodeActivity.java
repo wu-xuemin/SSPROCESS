@@ -82,7 +82,7 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
                     public void onClick(DialogInterface dialog, int which) {
                         //根据result获取对应taskRecordDetail
                         Intent intent = getIntent();
-                        intent.putExtra("mMachineStrId", result);
+                        intent.putExtra("mMachineNamePlate", result);
                         ScanQrcodeActivity.this.setResult(RESULT_OK, intent);
                         ScanQrcodeActivity.this.finish();
                     }

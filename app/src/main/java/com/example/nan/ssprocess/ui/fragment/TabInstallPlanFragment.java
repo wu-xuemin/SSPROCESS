@@ -205,12 +205,12 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
                 if (resultCode == RESULT_OK)
                 {
                     // 取出Intent里的扫码结果去执行机器查找
-                    String mMachineStrId = data.getStringExtra("mMachineStrId");
+                    String mMachineNamePlate = data.getStringExtra("mMachineNamePlate");
                     final String ip = SinSimApp.getApp().getServerIP();
                     LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
                     String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_INSTALL;
                     mPostValue.put("page", ""+mPage);
-                    mPostValue.put("machineStrId", ""+mMachineStrId);
+                    mPostValue.put("namePlate", ""+mMachineNamePlate);
                     mPostValue.put("account", ""+SinSimApp.getApp().getAccount());
                     Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessListDataHandler());
                 }

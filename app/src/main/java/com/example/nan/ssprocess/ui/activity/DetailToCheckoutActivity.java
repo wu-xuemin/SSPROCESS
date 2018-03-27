@@ -426,8 +426,8 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             case SCAN_QRCODE_START:
                 if(resultCode == RESULT_OK) {
                     //检验二维码信息是否对应
-                    String mMachineStrId = data.getStringExtra("mMachineStrId");
-                    if(mMachineStrId.equals(mTaskRecordMachineListData.getMachineData().getNameplate())){
+                    String mMachineNamePlate = data.getStringExtra("mMachineNamePlate");
+                    if(mMachineNamePlate.equals(mTaskRecordMachineListData.getMachineData().getNameplate())){
                         //update status
                         if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED) {
                             mQaDialog = new AlertDialog.Builder(DetailToCheckoutActivity.this).create();
@@ -474,8 +474,8 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             case SCAN_QRCODE_END:
                 if(resultCode == RESULT_OK) {
                     //检验二维码信息是否对应
-                    String mMachineStrId = data.getStringExtra("mMachineStrId");
-                    if(mMachineStrId.equals(mTaskRecordMachineListData.getMachineData().getNameplate())){
+                    String mMachineNamePlate = data.getStringExtra("mMachineNamePlate");
+                    if(mMachineNamePlate.equals(mTaskRecordMachineListData.getMachineData().getNameplate())){
                         Log.d(TAG, "onActivityResult: id 对应");
                         //update info
                         if( mUpdatingProcessDialog == null) {

@@ -75,14 +75,14 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
         mRefreshLayout.setRefreshViewHolder(moocStyleRefreshViewHolder);
 
         //点击扫码
-        Button scanQrcodeBotton = findViewById(R.id.admin_scan_qrcode_button);
-        scanQrcodeBotton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(ProcessToAdminActivity.this,ScanQrcodeActivity.class);
-                startActivityForResult(intent,SCAN_QRCODE_START);
-            }
-        });
+//        Button scanQrcodeBotton = findViewById(R.id.admin_scan_qrcode_button);
+//        scanQrcodeBotton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent=new Intent(ProcessToAdminActivity.this,ScanQrcodeActivity.class);
+//                startActivityForResult(intent,SCAN_QRCODE_START);
+//            }
+//        });
 
         //列表
         RecyclerView mProcessToAdminRV = findViewById(R.id.process_to_admin_rv);
@@ -170,26 +170,26 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-            case SCAN_QRCODE_START:
-                if (resultCode == RESULT_OK)
-                {
-                    // 取出Intent里的扫码结果去执行机器查找
-                    String mMachineStrId = data.getStringExtra("mMachineStrId");
-                    LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                    String fetchProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_ADMIN;
-                    mPostValue.put("page", ""+mPage);
-                    mPostValue.put("machineStrId", ""+mMachineStrId);
-                    Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessListDataHandler());
-                }
-                break;
-            default:
-                break;
-        }
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        switch (requestCode){
+//            case SCAN_QRCODE_START:
+//                if (resultCode == RESULT_OK)
+//                {
+//                    // 取出Intent里的扫码结果去执行机器查找
+//                    String mMachineNamePlate = data.getStringExtra("mMachineNamePlate");
+//                    LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+//                    String fetchProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_ADMIN;
+//                    mPostValue.put("page", ""+mPage);
+//                    mPostValue.put("machineStrId", ""+mMachineNamePlate);
+//                    Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessListDataHandler());
+//                }
+//                break;
+//            default:
+//                break;
+//        }
+//    }
     @SuppressLint("HandlerLeak")
     private class FetchProcessListDataHandler extends Handler {
         @Override

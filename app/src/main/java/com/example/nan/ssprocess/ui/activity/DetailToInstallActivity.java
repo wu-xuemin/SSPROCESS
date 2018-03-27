@@ -385,9 +385,9 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             case SCAN_QRCODE_START:
                 if(resultCode == RESULT_OK) {
                     // 检验二维码信息是否对应
-                    String mMachineStrId = data.getStringExtra("mMachineStrId");
+                    String mMachineNamePlate = data.getStringExtra("mMachineNamePlate");
 
-                    if(mMachineStrId.equals(mTaskRecordMachineListData.getMachineData().getNameplate())){
+                    if(mMachineNamePlate.equals(mTaskRecordMachineListData.getMachineData().getNameplate())){
                         Log.d(TAG, "onActivityResult: id 对应");
                         //update status
                         if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING) {
@@ -436,9 +436,9 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             case SCAN_QRCODE_END:
                 if(resultCode == RESULT_OK) {
                     // 检验二维码信息是否对应
-                    String mMachineStrId = data.getStringExtra("mMachineStrId");
+                    String mMachineNamePlate = data.getStringExtra("mMachineNamePlate");
 
-                    if(mMachineStrId.equals(mTaskRecordMachineListData.getMachineData().getNameplate())){
+                    if(mMachineNamePlate.equals(mTaskRecordMachineListData.getMachineData().getNameplate())){
                         Log.d(TAG, "onActivityResult: id 对应");
                         //update info
                         if( mUpdatingProcessDialog == null) {
