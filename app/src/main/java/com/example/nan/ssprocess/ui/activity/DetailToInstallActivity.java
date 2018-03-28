@@ -29,6 +29,7 @@ import com.example.nan.ssprocess.bean.basic.AbnormalImageAddData;
 import com.example.nan.ssprocess.bean.basic.AbnormalRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.QualityRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
+import com.example.nan.ssprocess.bean.basic.UserData;
 import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
@@ -61,11 +62,13 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private TextView nokReasonTv;
     private TextView nokDetailTv;
     private TextView currentStatusTv;
+    private TextView chooseInstallerTv;
     private LinearLayout installAbnormalLayout;
     private LinearLayout qaNokLayout;
 
     private ProgressDialog mUploadingProcessDialog;
     private AlertDialog mInstallDialog=null;
+    private AlertDialog mInstallerListDialog=null;
     private ProgressDialog mUpdatingProcessDialog;
 
     private TaskRecordMachineListData mTaskRecordMachineListData;
@@ -81,6 +84,9 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private static final int SCAN_QRCODE_END = 0;
     private static final int RC_INSTALL_CHOOSE_PHOTO = 3;
     private static final int RC_INSTALL_PHOTO_PREVIEW = 4;
+
+    private String[] items={};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +114,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         installInfoUpdateButton = findViewById(R.id.install_info_update_button);
         nokReasonTv=findViewById(R.id.nok_reason_tv);
         nokDetailTv=findViewById(R.id.nok_detail_tv);
+        chooseInstallerTv=findViewById(R.id.choose_installer_tv);
         installAbnormalLayout=findViewById(R.id.install_abnormal_ll);
         qaNokLayout=findViewById(R.id.checked_nok_layout);
 
@@ -127,6 +134,14 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             @Override
             public void onClick(View v) {
                 fetchDownloadListData();
+            }
+        });
+
+        //点击选择安装工人
+        chooseInstallerTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchInstallerListData();
             }
         });
 
@@ -174,7 +189,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
         //九宫格拍照
         mInstallAbnormalPhotosSnpl = findViewById(R.id.install_abnormal_add_photos);
-        mInstallAbnormalPhotosSnpl.setMaxItemCount(9);
+        mInstallAbnormalPhotosSnpl.setMaxItemCount(3);
         mInstallAbnormalPhotosSnpl.setPlusEnable(true);
         mInstallAbnormalPhotosSnpl.setDelegate(this);
 
@@ -311,6 +326,82 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "FetchInstallFileListHandler handleMessage: "+errorMsg);
+                Toast.makeText(DetailToInstallActivity.this, "网络错误！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+     /**
+     * 获取安装组员名单
+     */
+    private void fetchInstallerListData() {
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("id", ""+SinSimApp.getApp().getUserId());
+        String fetchInstallerListUrl = URL.HTTP_HEAD + IP + URL.FATCH_GROUP_BY_USERID;
+        Network.Instance(SinSimApp.getApp()).fetchInstallerList(fetchInstallerListUrl, mPostValue, new FetchInstallerListHandler());
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class FetchInstallerListHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+
+            if (msg.what == Network.OK) {
+                ArrayList<UserData> mInstallerList = (ArrayList<UserData>) msg.obj;
+                Log.d(TAG, "handleMessage: "+mInstallerList.size());
+
+                for (int i=0;i<mInstallerList.size();i++){
+                    items[i]=mInstallerList.get(i).getName();
+                }
+                // 创建一个AlertDialog建造者
+                AlertDialog.Builder alertDialogBuilder= new AlertDialog.Builder(getApplicationContext());
+                // 设置标题
+                alertDialogBuilder.setTitle("安装人员：");
+                // 参数介绍
+                // 第一个参数：弹出框的信息集合，一般为字符串集合
+                // 第二个参数：被默认选中的，一个布尔类型的数组
+                // 第三个参数：勾选事件监听
+                alertDialogBuilder.setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        // dialog：不常使用，弹出框接口
+                        // which：勾选或取消的是第几个
+                        // isChecked：是否勾选
+                        if (isChecked) {
+                            // 选中
+                            Toast.makeText(DetailToInstallActivity.this, "选中"+items[which], Toast.LENGTH_SHORT).show();
+                        }else {
+                            // 取消选中
+                            Toast.makeText(DetailToInstallActivity.this, "取消选中"+items[which], Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+                alertDialogBuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        //TODO 业务逻辑代码
+
+                        // 关闭提示框
+                        mInstallerListDialog.dismiss();
+                    }
+                });
+                alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        // TODO 业务逻辑代码
+
+                        // 关闭提示框
+                        mInstallerListDialog.dismiss();
+                    }
+                });
+                mInstallerListDialog = alertDialogBuilder.create();
+                mInstallerListDialog.show();
+
+        } else {
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "FetchInstalerListHandler handleMessage: "+errorMsg);
                 Toast.makeText(DetailToInstallActivity.this, "网络错误！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }

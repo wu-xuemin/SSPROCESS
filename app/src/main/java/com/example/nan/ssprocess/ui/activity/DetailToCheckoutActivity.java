@@ -163,7 +163,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 
         //九宫格拍照
         mCheckoutNokPhotosSnpl = findViewById(R.id.checkout_nok_add_photos);
-        mCheckoutNokPhotosSnpl.setMaxItemCount(9);
+        mCheckoutNokPhotosSnpl.setMaxItemCount(3);
         mCheckoutNokPhotosSnpl.setPlusEnable(true);
         mCheckoutNokPhotosSnpl.setDelegate(this);
     }

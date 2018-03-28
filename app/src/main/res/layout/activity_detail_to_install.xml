@@ -30,6 +30,28 @@
                 android:text="安装结果："
                 android:textColor="@color/black"
                 android:background="@color/windowBackground"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="安装人员："
+                    android:textSize="16sp"
+                    android:textColor="#000000"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/choose_installer_tv"
+                    android:text="点击选择安装人员"
+                    android:textColor="@color/blue"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+
             <RadioGroup
                 android:id="@+id/resalt_for_install_label"
                 android:layout_width="match_parent"
@@ -51,6 +73,7 @@
                     android:layout_weight="1"
                     android:text="异常" />
             </RadioGroup>
+
 
 
             <LinearLayout

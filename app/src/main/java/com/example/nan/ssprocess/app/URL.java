@@ -33,5 +33,6 @@ public class URL {
     public static final String FATCH_TASK_QUALITY_RECORD_LIST = "/task/quality/record/list";
     public static final String UPDATE_TASK_QUALITY_RECORD_DETAIL = "/task/quality/record/add";
     public static final String UPLOAD_QUALITY_RECORD_IMAGE = "/quality/record/image/add";
+    public static final String FATCH_GROUP_BY_USERID = "/user/selectAllInstallGroupByUserId";
 
 }
