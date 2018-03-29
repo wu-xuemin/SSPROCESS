@@ -85,7 +85,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private static final int RC_INSTALL_CHOOSE_PHOTO = 3;
     private static final int RC_INSTALL_PHOTO_PREVIEW = 4;
 
-    private String[] items={};
+//    private String[] items={};
 
 
     @Override
@@ -189,7 +189,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
         //九宫格拍照
         mInstallAbnormalPhotosSnpl = findViewById(R.id.install_abnormal_add_photos);
-        mInstallAbnormalPhotosSnpl.setMaxItemCount(3);
+        mInstallAbnormalPhotosSnpl.setMaxItemCount(9);
         mInstallAbnormalPhotosSnpl.setPlusEnable(true);
         mInstallAbnormalPhotosSnpl.setDelegate(this);
 
@@ -234,10 +234,15 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         failReasonSpinner.setSelection(abnormalRecordDetailsData.getAbnormalType());
                         installAbnormalDetailEt.setText(abnormalRecordDetailsData.getComment());
                         //加载历史照片地址
-                        String picName=abnormalRecordDetailsData.getAbnormalImage().getImage();
-                        String picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.INSTALL_PIC_DIR + picName.substring(picName.lastIndexOf("/"));
-                        Log.d(TAG, "handleMessage: 异常照片地址："+picUrl);
-                        ArrayList<String> installPhotoList=new ArrayList<>(Arrays.asList(picUrl));
+                        String picsName=abnormalRecordDetailsData.getAbnormalImage().getImage();
+                        String[] picName=picsName.split(",");
+                        String picUrl;
+                        ArrayList<String> installPhotoList=new ArrayList<>();
+                        for (int i = 0; i < picName.length; i ++){
+                            picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.INSTALL_PIC_DIR + picName[i].substring(picName[i].lastIndexOf("/"));
+                            Log.d(TAG, "handleMessage: 异常照片地址："+picUrl);
+                            installPhotoList.add(picUrl);
+                        }
                         mInstallAbnormalPhotosSnpl.addMoreData(installPhotoList);
                     } else {
                         installNormalRb.setChecked(true);
@@ -249,7 +254,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 }
             } else {
                 String errorMsg = (String)msg.obj;
-                Toast.makeText(DetailToInstallActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailToInstallActivity.this, "1更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -275,11 +280,15 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         nokReasonTv.setText("不合格");
                         qaNokLayout.setVisibility(View.VISIBLE);
                         nokDetailTv.setText(mQualityRecordDetailsData.getComment());
-                        String picName=mQualityRecordDetailsData.getQualityRecordImage().getImage();
-                        String picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.QA_PIC_DIR + picName.substring(picName.lastIndexOf("/"));
-                        Log.d(TAG, "handleMessage: 质检照片地址："+picUrl);
-                        //照片地址
-                        ArrayList<String> checkoutPhotoList = new ArrayList<>(Arrays.asList(picUrl));
+                        String picsName=mQualityRecordDetailsData.getQualityRecordImage().getImage();
+                        String[] picName=picsName.split(",");
+                        String picUrl;
+                        ArrayList<String> checkoutPhotoList=new ArrayList<>();
+                        for (int i = 0; i < picName.length; i ++){
+                            picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.QA_PIC_DIR + picName[i].substring(picName[i].lastIndexOf("/"));
+                            Log.d(TAG, "handleMessage: 异常照片地址："+picUrl);
+                            checkoutPhotoList.add(picUrl);
+                        }
                         BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
                         checkoutNinePhotoLayout.setDelegate(DetailToInstallActivity.this);
                         checkoutNinePhotoLayout.setData(checkoutPhotoList);
@@ -348,18 +357,21 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             if (msg.what == Network.OK) {
                 ArrayList<UserData> mInstallerList = (ArrayList<UserData>) msg.obj;
                 Log.d(TAG, "handleMessage: "+mInstallerList.size());
-
+                String[] items={};
                 for (int i=0;i<mInstallerList.size();i++){
-                    items[i]=mInstallerList.get(i).getName();
+                    items = Arrays.copyOf(items, items.length+1);
+                    items[items.length-1] = mInstallerList.get(i).getName();
                 }
+                Log.d(TAG, "handleMessage: "+items);
                 // 创建一个AlertDialog建造者
-                AlertDialog.Builder alertDialogBuilder= new AlertDialog.Builder(getApplicationContext());
+                AlertDialog.Builder alertDialogBuilder= new AlertDialog.Builder(DetailToInstallActivity.this);
                 // 设置标题
                 alertDialogBuilder.setTitle("安装人员：");
                 // 参数介绍
                 // 第一个参数：弹出框的信息集合，一般为字符串集合
                 // 第二个参数：被默认选中的，一个布尔类型的数组
                 // 第三个参数：勾选事件监听
+                final String[] finalItems = items;
                 alertDialogBuilder.setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
@@ -368,10 +380,11 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         // isChecked：是否勾选
                         if (isChecked) {
                             // 选中
-                            Toast.makeText(DetailToInstallActivity.this, "选中"+items[which], Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "onClick: "+which);
+                            Toast.makeText(DetailToInstallActivity.this, "选中"+ finalItems[which], Toast.LENGTH_SHORT).show();
                         }else {
                             // 取消选中
-                            Toast.makeText(DetailToInstallActivity.this, "取消选中"+items[which], Toast.LENGTH_SHORT).show();
+                            Toast.makeText(DetailToInstallActivity.this, "取消选中"+ finalItems[which], Toast.LENGTH_SHORT).show();
                         }
 
                     }

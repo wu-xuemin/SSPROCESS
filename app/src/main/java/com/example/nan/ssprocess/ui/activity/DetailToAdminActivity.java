@@ -211,11 +211,15 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         nokReasonTv.setText("不合格");
                         qaNokLayout.setVisibility(View.VISIBLE);
                         nokDetailTv.setText(mQualityRecordDetailsData.getComment());
-                        String picName=mQualityRecordDetailsData.getQualityRecordImage().getImage();
-                        String picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.QA_PIC_DIR + picName.substring(picName.lastIndexOf("/"));
-                        Log.d(TAG, "handleMessage: 质检照片地址："+picUrl);
-                        //九宫格显示照片
-                        ArrayList<String> checkoutPhotoList = new ArrayList<>(Arrays.asList(picUrl));
+                        String picsName=mQualityRecordDetailsData.getQualityRecordImage().getImage();
+                        String[] picName=picsName.split(",");
+                        String picUrl;
+                        ArrayList<String> checkoutPhotoList=new ArrayList<>();
+                        for (int i = 0; i < picName.length; i ++){
+                            picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.QA_PIC_DIR + picName[i].substring(picName[i].lastIndexOf("/"));
+                            Log.d(TAG, "handleMessage: 异常照片地址："+picUrl);
+                            checkoutPhotoList.add(picUrl);
+                        }
                         BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
                         checkoutNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
                         checkoutNinePhotoLayout.setData(checkoutPhotoList);
@@ -261,11 +265,16 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         installAbnormalLayout.setVisibility(View.VISIBLE);
                         abnormalDetailTv.setText(mAbnormalRecordDetailsData.getComment());
 
-                        String picName=mAbnormalRecordDetailsData.getAbnormalImage().getImage();
-                        String picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.INSTALL_PIC_DIR + picName.substring(picName.lastIndexOf("/"));
-                        Log.d(TAG, "handleMessage: 异常照片地址："+picUrl);
+                        String picsName=mAbnormalRecordDetailsData.getAbnormalImage().getImage();
+                        String[] picName=picsName.split(",");
+                        String picUrl;
+                        ArrayList<String> installPhotoList=new ArrayList<>();
+                        for (int i = 0; i < picName.length; i ++){
+                            picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.INSTALL_PIC_DIR + picName[i].substring(picName[i].lastIndexOf("/"));
+                            Log.d(TAG, "handleMessage: 异常照片地址："+picUrl);
+                            installPhotoList.add(picUrl);
+                        }
                         //九宫格显示照片
-                        ArrayList<String> installPhotoList = new ArrayList<>(Arrays.asList(picUrl));
                         BGANinePhotoLayout installNinePhotoLayout = findViewById(R.id.install_abnormal_photos);
                         installNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
                         installNinePhotoLayout.setData(installPhotoList);

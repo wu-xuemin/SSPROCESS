@@ -96,7 +96,15 @@ public class LoginActivity extends AppCompatActivity {
             mLoginButton.setEnabled(true);
             Toast.makeText(this, "服务端IP为空，请设置IP地址", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "login: 服务端IP为空，请设置IP地址");
-        } else {
+        } else if (SplashActivity.IMEI==null){
+            if(mLoadingProcessDialog.isShowing()) {
+                mLoadingProcessDialog.dismiss();
+            }
+            mLoginButton.setEnabled(true);
+            Toast.makeText(this, "未获取到手机IMEI", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "login: 未获取到手机IMEI");
+        }
+        else {
             String loginUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.USER_LOGIN;
             Log.d(TAG, "login: url: "+loginUrl);
             mNetwork.fetchLoginData(loginUrl, mPostValue, mLoginHandler);

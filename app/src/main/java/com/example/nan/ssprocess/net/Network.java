@@ -460,6 +460,7 @@ public class Network {
                         } catch (Exception e) {
                             msg.what = NG;
                             msg.obj = "网络请求错误！";
+                            Log.d(TAG, "run: "+e);
                         } finally {
                             handler.sendMessage(msg);
                             if(response != null) {
@@ -836,7 +837,7 @@ public class Network {
                         for (int i = 0; i <imageUrlList.size() ; i++) {
                             Log.d(TAG, "uploadImgUrl: "+imageUrlList.get(i));
                             File file=new File(imageUrlList.get(i));
-                            builder.addFormDataPart("file1", file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
+                            builder.addFormDataPart("file", file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
                         }
                         //添加其它信息
                         Log.d(TAG, "uploadTaskRecordImage: addImageSql: "+imageJson);
