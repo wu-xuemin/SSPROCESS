@@ -15,6 +15,7 @@ import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.bean.basic.MachineData;
 import com.example.nan.ssprocess.bean.response.AbnormalRecordReponseDataWrap;
+import com.example.nan.ssprocess.bean.response.AbnormalTypeResponseDataWrap;
 import com.example.nan.ssprocess.bean.response.ListDataWrap;
 import com.example.nan.ssprocess.bean.response.LoginResponseDataWrap;
 import com.example.nan.ssprocess.bean.response.MachineResponseDataWrap;
@@ -506,6 +507,78 @@ public class Network {
                             if (response.isSuccessful()) {
                                 Gson gson = new Gson();
                                 UserResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<UserResponseDataWrap>(){}.getType());
+                                if (responseData != null) {
+                                    Log.d(TAG, "fetchProcessInstallRecordData run: getCode: "+responseData.getCode());
+                                    if (responseData.getCode() == 200) {
+                                        success = true;
+                                        msg.obj = responseData.getData().getList();
+                                    } else if (responseData.getCode() == 400) {
+                                        Log.e(TAG, responseData.getMessage());
+                                        msg.obj = responseData.getMessage();
+                                    } else if (responseData.getCode() == 500) {
+                                        Log.e(TAG, responseData.getMessage());
+                                        Log.d(TAG, "fetchProcessInstallRecordData run: error 500 :"+responseData.getMessage());
+                                        msg.obj = responseData.getMessage();
+                                    } else {
+                                        Log.e(TAG, "Format JSON string to object error!");
+                                    }
+                                }
+                                if (success) {
+                                    msg.what = OK;
+                                }
+                            } else {
+                                msg.what = NG;
+                                msg.obj = "网络请求失败！";
+                            }
+                            response.close();
+                        } catch (Exception e) {
+                            msg.what = NG;
+                            msg.obj = "网络请求错误！";
+                        } finally {
+                            handler.sendMessage(msg);
+                            if(response != null) {
+                                response.close();
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * 获取安装异常类型
+     */
+    public void fetchAbnormalTypeList(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
+        final Message msg = handler.obtainMessage();
+        if (!isNetworkConnected()) {
+            ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
+            msg.what = NG;
+            msg.obj = mCtx.getString(R.string.network_not_connect);
+            handler.sendMessage(msg);
+        } else {
+            if (url != null && values != null) {
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        RequestBody requestBody;
+                        FormBody.Builder builder = new FormBody.Builder();
+                        for (Object o : values.entrySet()) {
+                            HashMap.Entry entry = (HashMap.Entry) o;
+                            builder.add((String) entry.getKey(), (String) entry.getValue());
+                        }
+                        requestBody = builder.build();
+                        //Post method
+                        Request request = new Request.Builder().url(url).post(requestBody).build();
+                        OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
+                        Response response = null;
+                        try {
+                            //同步网络请求
+                            response = client.newCall(request).execute();
+                            boolean success = false;
+                            if (response.isSuccessful()) {
+                                Gson gson = new Gson();
+                                AbnormalTypeResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<AbnormalTypeResponseDataWrap>(){}.getType());
                                 if (responseData != null) {
                                     Log.d(TAG, "fetchProcessInstallRecordData run: getCode: "+responseData.getCode());
                                     if (responseData.getCode() == 200) {

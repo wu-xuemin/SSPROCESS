@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
+import com.example.nan.ssprocess.bean.basic.AbnormalData;
 import com.example.nan.ssprocess.bean.basic.AbnormalImageAddData;
 import com.example.nan.ssprocess.bean.basic.AbnormalRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.QualityRecordDetailsData;
@@ -79,6 +81,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
     private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
 
+    private ArrayList<AbnormalData> mAbnormalTypeList;
     private final String IP = SinSimApp.getApp().getServerIP();
     private static final int SCAN_QRCODE_START = 1;
     private static final int SCAN_QRCODE_END = 0;
@@ -206,6 +209,10 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
         String fetchQaProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
         Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, new FetchQaRecordDataHandler());
+
+        String fetchAbnormalTypeUrl = URL.HTTP_HEAD + IP + URL.FATCH_INSTALL_ABNORMAL_TYPE_LIST;
+        Network.Instance(SinSimApp.getApp()).fetchAbnormalTypeList(fetchAbnormalTypeUrl, mPostValue, new FetchAbnormalTypeListHandler());
+
     }
 
 
@@ -235,6 +242,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         installAbnormalDetailEt.setText(abnormalRecordDetailsData.getComment());
                         //加载历史照片地址
                         String picsName=abnormalRecordDetailsData.getAbnormalImage().getImage();
+                        //TODO:为什么值为[]
                         if (picsName.isEmpty()|| "[]".equals(picsName)) {
                             Log.d(TAG, "安装异常照片: 无拍照地址");
                         } else {
@@ -323,6 +331,35 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 qaNokLayout.setVisibility(View.GONE);
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(DetailToInstallActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class FetchAbnormalTypeListHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if (msg.what == Network.OK) {
+                //获取异常类型
+                mAbnormalTypeList = (ArrayList<AbnormalData>) msg.obj;
+                if (mAbnormalTypeList.size() > 0) {
+                    //数据
+                    List<String> data_list = new ArrayList<String>();
+                    for (int i = 0; i < mAbnormalTypeList.size(); i++) {
+                        data_list.add(mAbnormalTypeList.get(i).getAbnormalName());
+                    }
+                    //适配器
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(DetailToInstallActivity.this, android.R.layout.simple_spinner_item, data_list);
+                    //设置样式
+                    arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    //加载适配器
+                    failReasonSpinner.setAdapter(arrayAdapter);
+                }else {
+                    Log.d(TAG, "获取异常类型为空");
+                }
+            } else {
+                String errorMsg = (String)msg.obj;
+                Toast.makeText(DetailToInstallActivity.this, "获取异常类型失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -647,6 +684,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             if(installAbnormalDetailEt.getText()!=null && mInstallAbnormalPhotosSnpl.getData().size()>0){
                 //获取安装异常的原因
                 abnormalRecordAddData.setComment(installAbnormalDetailEt.getText().toString());
+                //TODO:异常类型的获取
                 abnormalRecordAddData.setAbnormalType( failReasonSpinner.getSelectedItemPosition()+1);
                 //上传安装结果
                 String nAbnormalRecordDetailsDataToJson = gson.toJson(abnormalRecordAddData);

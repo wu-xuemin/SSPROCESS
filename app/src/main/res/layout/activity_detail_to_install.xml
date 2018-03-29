@@ -102,8 +102,7 @@
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@+id/abnormal_detail_label"
                         android:layout_toEndOf="@+id/abnormal_detail_label"
-                        android:layout_alignBaseline="@+id/abnormal_detail_label"
-                        android:entries="@array/fail_reason" />
+                        android:layout_alignBaseline="@+id/abnormal_detail_label"/>
                 </RelativeLayout>
 
                 <EditText

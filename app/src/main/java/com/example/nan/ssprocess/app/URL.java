@@ -25,6 +25,7 @@ public class URL {
     public static final String FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_UNPLANNED_INSTALL = "/task/record/selectUnPlannedTaskRecordByNamePlateAndAccount";
     public static final String UPDATE_TASK_RECORD_STATUS = "/task/record/updateTaskInfo";
     public static final String UPDATE_MACHINE_LOCATION = "/machine/update";
+    public static final String FATCH_INSTALL_ABNORMAL_TYPE_LIST = "/abnormal/list";
     public static final String FATCH_INSTALL_ABNORMAL_RECORD_DETAIL = "/abnormal/record/selectAbnormalRecordDetails";
     public static final String FATCH_INSTALL_ABNORMAL_RECORD_LIST = "/abnormal/record/list";
     public static final String UPDATE_INSTALL_ABNORMAL_RECORD_DETAIL = "/abnormal/record/add";
