@@ -215,10 +215,15 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         String[] picName=picsName.split(",");
                         String picUrl;
                         ArrayList<String> checkoutPhotoList=new ArrayList<>();
-                        for (int i = 0; i < picName.length; i ++){
-                            picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.QA_PIC_DIR + picName[i].substring(picName[i].lastIndexOf("/"));
-                            Log.d(TAG, "handleMessage: 异常照片地址："+picUrl);
+                        if (picName.length==1){
+                            picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.QA_PIC_DIR + picsName.substring(picsName.lastIndexOf("/"));
                             checkoutPhotoList.add(picUrl);
+                        }else {
+                            for (String aPicName : picName) {
+                                picUrl = URL.HTTP_HEAD + IP.substring(0, IP.indexOf(":")) + URL.QA_PIC_DIR + aPicName.substring(aPicName.lastIndexOf("/"));
+                                Log.d(TAG, "handleMessage: 异常照片地址：" + picUrl);
+                                checkoutPhotoList.add(picUrl);
+                            }
                         }
                         BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
                         checkoutNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
@@ -269,10 +274,15 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         String[] picName=picsName.split(",");
                         String picUrl;
                         ArrayList<String> installPhotoList=new ArrayList<>();
-                        for (int i = 0; i < picName.length; i ++){
-                            picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.INSTALL_PIC_DIR + picName[i].substring(picName[i].lastIndexOf("/"));
-                            Log.d(TAG, "handleMessage: 异常照片地址："+picUrl);
+                        if (picName.length==1){
+                            picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.INSTALL_PIC_DIR + picsName.substring(picsName.lastIndexOf("/"));
                             installPhotoList.add(picUrl);
+                        }else {
+                            for (String aPicName : picName) {
+                                picUrl = URL.HTTP_HEAD + IP.substring(0, IP.indexOf(":")) + URL.INSTALL_PIC_DIR + aPicName.substring(aPicName.lastIndexOf("/"));
+                                Log.d(TAG, "handleMessage: 异常照片地址：" + picUrl);
+                                installPhotoList.add(picUrl);
+                            }
                         }
                         //九宫格显示照片
                         BGANinePhotoLayout installNinePhotoLayout = findViewById(R.id.install_abnormal_photos);

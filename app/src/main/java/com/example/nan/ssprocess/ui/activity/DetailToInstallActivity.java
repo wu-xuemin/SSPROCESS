@@ -216,45 +216,55 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             if (msg.what == Network.OK) {
                 //获取安装结果
                 ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = (ArrayList<AbnormalRecordDetailsData>) msg.obj;
-                Log.d(TAG, "handleMessage: mAbnormalRecordList.size:"+mAbnormalRecordList.size());
+                Log.d(TAG, "安装异常: mAbnormalRecordList.size:"+mAbnormalRecordList.size());
                 if (mAbnormalRecordList.size()>0) {
                     int updateTime = mAbnormalRecordList.size() - 1;
                     for (int update = mAbnormalRecordList.size() - 2; update >= 0; update--) {
                         if (mAbnormalRecordList.get(updateTime).getId() < mAbnormalRecordList.get(update).getId()) {
-                            Log.d(TAG, "handleMessage: " + mAbnormalRecordList.get(update).getCreateTime() + " : " + mAbnormalRecordList.get(update + 1).getCreateTime());
+                            Log.d(TAG, "安装异常: " + mAbnormalRecordList.get(update).getCreateTime() + " : " + mAbnormalRecordList.get(update + 1).getCreateTime());
                             updateTime = update;
                         }
-                        Log.d(TAG, "handleMessage: updateTime:" + updateTime);
+                        Log.d(TAG, "安装异常: updateTime:" + updateTime);
                     }
                     AbnormalRecordDetailsData abnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
                     //如果安装异常，填入异常的原因
-                    Log.d(TAG, "handleMessage: 流程："+abnormalRecordDetailsData.getTaskRecord().getStatus()+" 异常类型："+abnormalRecordDetailsData.getAbnormalType());
+                    Log.d(TAG, "安装异常: 流程："+abnormalRecordDetailsData.getTaskRecord().getStatus()+" 异常类型："+abnormalRecordDetailsData.getAbnormalType());
                     if (abnormalRecordDetailsData.getTaskRecord().getStatus()  == SinSimApp.TASK_INSTALL_ABNORMAL) {
                         installAbnormalRb.setChecked(true);
                         failReasonSpinner.setSelection(abnormalRecordDetailsData.getAbnormalType());
                         installAbnormalDetailEt.setText(abnormalRecordDetailsData.getComment());
                         //加载历史照片地址
                         String picsName=abnormalRecordDetailsData.getAbnormalImage().getImage();
-                        String[] picName=picsName.split(",");
-                        String picUrl;
-                        ArrayList<String> installPhotoList=new ArrayList<>();
-                        for (int i = 0; i < picName.length; i ++){
-                            picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.INSTALL_PIC_DIR + picName[i].substring(picName[i].lastIndexOf("/"));
-                            Log.d(TAG, "handleMessage: 异常照片地址："+picUrl);
-                            installPhotoList.add(picUrl);
+                        if (picsName.isEmpty()|| "[]".equals(picsName)) {
+                            Log.d(TAG, "安装异常照片: 无拍照地址");
+                        } else {
+                            String[] picName = picsName.split(",");
+                            String picUrl;
+                            ArrayList<String> installPhotoList = new ArrayList<>();
+                            Log.d(TAG, "安装异常: pic长度：" + picName.length);
+                            if (picName.length == 1) {
+                                picUrl = URL.HTTP_HEAD + IP.substring(0, IP.indexOf(":")) + URL.INSTALL_PIC_DIR + picsName.substring(picsName.lastIndexOf("/"));
+                                installPhotoList.add(picUrl);
+                            } else {
+                                for (String aPicName : picName) {
+                                    picUrl = URL.HTTP_HEAD + IP.substring(0, IP.indexOf(":")) + URL.INSTALL_PIC_DIR + aPicName.substring(aPicName.lastIndexOf("/"));
+                                    Log.d(TAG, "安装异常: 异常照片地址：" + picUrl);
+                                    installPhotoList.add(picUrl);
+                                }
+                            }
+                            mInstallAbnormalPhotosSnpl.addMoreData(installPhotoList);
                         }
-                        mInstallAbnormalPhotosSnpl.addMoreData(installPhotoList);
                     } else {
                         installNormalRb.setChecked(true);
                         failReasonSpinner.setSelection(0);
                         installAbnormalDetailEt.setText("");
                     }
                 } else {
-                    Log.d(TAG, "handleMessage: 没有安装异常的信息");
+                    Log.d(TAG, "安装异常: 没有安装异常的信息");
                 }
             } else {
                 String errorMsg = (String)msg.obj;
-                Toast.makeText(DetailToInstallActivity.this, "1更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailToInstallActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -284,10 +294,15 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         String[] picName=picsName.split(",");
                         String picUrl;
                         ArrayList<String> checkoutPhotoList=new ArrayList<>();
-                        for (int i = 0; i < picName.length; i ++){
-                            picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.QA_PIC_DIR + picName[i].substring(picName[i].lastIndexOf("/"));
-                            Log.d(TAG, "handleMessage: 异常照片地址："+picUrl);
+                        if (picName.length==1){
+                            picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.QA_PIC_DIR + picsName.substring(picsName.lastIndexOf("/"));
                             checkoutPhotoList.add(picUrl);
+                        }else {
+                            for (String aPicName : picName) {
+                                picUrl = URL.HTTP_HEAD + IP.substring(0, IP.indexOf(":")) + URL.QA_PIC_DIR + aPicName.substring(aPicName.lastIndexOf("/"));
+                                Log.d(TAG, "handleMessage: 异常照片地址：" + picUrl);
+                                checkoutPhotoList.add(picUrl);
+                            }
                         }
                         BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
                         checkoutNinePhotoLayout.setDelegate(DetailToInstallActivity.this);
