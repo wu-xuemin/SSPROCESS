@@ -191,7 +191,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
             //网络请求返回，移除超时的Runnable
             mTimeoutHandler.removeCallbacks(mTimeOutRunnable);
             if (msg.what == Network.OK) {
-                //TODO:为了在点击notification进入splash activity时有较好的体验，不显示动画
+                //为了在点击notification进入splash activity时有较好的体验，不显示动画
                 if (mJumpFromNotification) {
                     startActivityByRole();
                 } else {

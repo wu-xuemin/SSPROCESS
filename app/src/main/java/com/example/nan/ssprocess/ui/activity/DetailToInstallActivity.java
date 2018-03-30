@@ -81,6 +81,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
     private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
 
+    private ArrayAdapter<String> arrayAdapter;
     private ArrayList<AbnormalData> mAbnormalTypeList;
     private ArrayList<Integer> checkedNameList;
     private String checkedName;
@@ -165,16 +166,21 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 installAbnormalLayout.setVisibility(View.GONE);
             }
         });
-
-        if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING){
-            begainInstallButton.setVisibility(View.VISIBLE);
-            installInfoUpdateButton.setVisibility(View.GONE);
-        } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING){
-            begainInstallButton.setVisibility(View.GONE);
-            installInfoUpdateButton.setVisibility(View.VISIBLE);
-        } else {
+        if (mTaskRecordMachineListData.getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED||mTaskRecordMachineListData.getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED) {
             begainInstallButton.setVisibility(View.GONE);
             installInfoUpdateButton.setVisibility(View.GONE);
+            Toast.makeText(DetailToInstallActivity.this, "正在改单/拆单，不能安装！", Toast.LENGTH_SHORT).show();
+        }else {
+            if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALL_WAITING) {
+                begainInstallButton.setVisibility(View.VISIBLE);
+                installInfoUpdateButton.setVisibility(View.GONE);
+            } else if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALLING) {
+                begainInstallButton.setVisibility(View.GONE);
+                installInfoUpdateButton.setVisibility(View.VISIBLE);
+            } else {
+                begainInstallButton.setVisibility(View.GONE);
+                installInfoUpdateButton.setVisibility(View.GONE);
+            }
         }
 
         fetchInstallRecordData();
@@ -210,18 +216,45 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private void fetchInstallRecordData() {
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("taskRecordId", ""+mTaskRecordMachineListData.getId());
+
+        String fetchAbnormalTypeUrl = URL.HTTP_HEAD + IP + URL.FATCH_INSTALL_ABNORMAL_TYPE_LIST;
+        Network.Instance(SinSimApp.getApp()).fetchAbnormalTypeList(fetchAbnormalTypeUrl, mPostValue, new FetchAbnormalTypeListHandler());
+
         String fetchProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FATCH_INSTALL_ABNORMAL_RECORD_DETAIL;
         Network.Instance(SinSimApp.getApp()).fetchProcessInstallRecordData(fetchProcessRecordUrl, mPostValue, new FetchInstallRecordDataHandler());
 
         String fetchQaProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FATCH_TASK_QUALITY_RECORD_DETAIL;
         Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchQaProcessRecordUrl, mPostValue, new FetchQaRecordDataHandler());
-
-        String fetchAbnormalTypeUrl = URL.HTTP_HEAD + IP + URL.FATCH_INSTALL_ABNORMAL_TYPE_LIST;
-        Network.Instance(SinSimApp.getApp()).fetchAbnormalTypeList(fetchAbnormalTypeUrl, mPostValue, new FetchAbnormalTypeListHandler());
-
     }
 
-
+    @SuppressLint("HandlerLeak")
+    private class FetchAbnormalTypeListHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if (msg.what == Network.OK) {
+                //获取异常类型
+                mAbnormalTypeList = (ArrayList<AbnormalData>) msg.obj;
+                if (mAbnormalTypeList.size() > 0) {
+                    //数据
+                    List<String> dataList = new ArrayList<String>();
+                    for (int i = 0; i < mAbnormalTypeList.size(); i++) {
+                        dataList.add(mAbnormalTypeList.get(i).getAbnormalName());
+                    }
+                    //适配器
+                    arrayAdapter = new ArrayAdapter<String>(DetailToInstallActivity.this, android.R.layout.simple_spinner_item, dataList);
+                    //设置样式
+                    arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    //加载适配器
+                    failReasonSpinner.setAdapter(arrayAdapter);
+                }else {
+                    Log.d(TAG, "获取异常类型为空");
+                }
+            } else {
+                String errorMsg = (String)msg.obj;
+                Toast.makeText(DetailToInstallActivity.this, "获取异常类型失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     @SuppressLint("HandlerLeak")
     private class FetchInstallRecordDataHandler extends Handler {
@@ -247,7 +280,13 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     Log.d(TAG, "安装异常: 流程："+abnormalRecordDetailsData.getTaskRecord().getStatus()+" 异常类型："+abnormalRecordDetailsData.getAbnormalType());
                     if (abnormalRecordDetailsData.getTaskRecord().getStatus()  == SinSimApp.TASK_INSTALL_ABNORMAL) {
                         installAbnormalRb.setChecked(true);
-                        failReasonSpinner.setSelection(abnormalRecordDetailsData.getAbnormalType());
+                        //TODO:待验证
+                        if(arrayAdapter.isEmpty()){
+                            Log.d(TAG, "安装异常信息: 空");
+                        }else {
+                            int position = arrayAdapter.getPosition(abnormalRecordDetailsData.getAbnormal().getAbnormalName());   //根据该选项获取位置
+                            failReasonSpinner.setSelection(position);
+                        }
                         installAbnormalDetailEt.setText(abnormalRecordDetailsData.getComment());
                         //加载历史照片地址
                         String picsName=abnormalRecordDetailsData.getAbnormalImage().getImage();
@@ -274,7 +313,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         }
                     } else {
                         installNormalRb.setChecked(true);
-                        failReasonSpinner.setSelection(0);
                         installAbnormalDetailEt.setText("");
                     }
                 } else {
@@ -347,35 +385,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 qaNokLayout.setVisibility(View.GONE);
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(DetailToInstallActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    @SuppressLint("HandlerLeak")
-    private class FetchAbnormalTypeListHandler extends Handler {
-        @Override
-        public void handleMessage(final Message msg) {
-            if (msg.what == Network.OK) {
-                //获取异常类型
-                mAbnormalTypeList = (ArrayList<AbnormalData>) msg.obj;
-                if (mAbnormalTypeList.size() > 0) {
-                    //数据
-                    List<String> dataList = new ArrayList<String>();
-                    for (int i = 0; i < mAbnormalTypeList.size(); i++) {
-                        dataList.add(mAbnormalTypeList.get(i).getAbnormalName());
-                    }
-                    //适配器
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(DetailToInstallActivity.this, android.R.layout.simple_spinner_item, dataList);
-                    //设置样式
-                    arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    //加载适配器
-                    failReasonSpinner.setAdapter(arrayAdapter);
-                }else {
-                    Log.d(TAG, "获取异常类型为空");
-                }
-            } else {
-                String errorMsg = (String)msg.obj;
-                Toast.makeText(DetailToInstallActivity.this, "获取异常类型失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }
     }
