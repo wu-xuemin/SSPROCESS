@@ -212,22 +212,28 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         qaNokLayout.setVisibility(View.VISIBLE);
                         nokDetailTv.setText(mQualityRecordDetailsData.getComment());
                         String picsName=mQualityRecordDetailsData.getQualityRecordImage().getImage();
-                        String[] picName=picsName.split(",");
-                        String picUrl;
-                        ArrayList<String> checkoutPhotoList=new ArrayList<>();
-                        if (picName.length==1){
-                            picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.QA_PIC_DIR + picsName.substring(picsName.lastIndexOf("/"));
-                            checkoutPhotoList.add(picUrl);
-                        }else {
-                            for (String aPicName : picName) {
-                                picUrl = URL.HTTP_HEAD + IP.substring(0, IP.indexOf(":")) + URL.QA_PIC_DIR + aPicName.substring(aPicName.lastIndexOf("/"));
-                                Log.d(TAG, "handleMessage: 异常照片地址：" + picUrl);
+                        picsName=picsName.substring(1,picsName.indexOf("]"));
+                        Log.d(TAG, "照片地址："+picsName);
+                        if (picsName.isEmpty()) {
+                            Log.d(TAG, "质检异常照片: 无拍照地址");
+                        } else {
+                            String[] picName = picsName.split(",");
+                            String picUrl;
+                            ArrayList<String> checkoutPhotoList = new ArrayList<>();
+                            if (picName.length == 1) {
+                                picUrl = URL.HTTP_HEAD + IP.substring(0, IP.indexOf(":")) + URL.QA_PIC_DIR + picsName.substring(picsName.lastIndexOf("/"));
                                 checkoutPhotoList.add(picUrl);
+                            } else {
+                                for (String aPicName : picName) {
+                                    picUrl = URL.HTTP_HEAD + IP.substring(0, IP.indexOf(":")) + URL.QA_PIC_DIR + aPicName.substring(aPicName.lastIndexOf("/"));
+                                    Log.d(TAG, "handleMessage: 异常照片地址：" + picUrl);
+                                    checkoutPhotoList.add(picUrl);
+                                }
                             }
+                            BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
+                            checkoutNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
+                            checkoutNinePhotoLayout.setData(checkoutPhotoList);
                         }
-                        BGANinePhotoLayout checkoutNinePhotoLayout = findViewById(R.id.checkout_nok_photos);
-                        checkoutNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
-                        checkoutNinePhotoLayout.setData(checkoutPhotoList);
                     } else {
                         nokReasonTv.setText("不合格");
                         qaNokLayout.setVisibility(View.GONE);
@@ -271,23 +277,29 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         abnormalDetailTv.setText(mAbnormalRecordDetailsData.getComment());
 
                         String picsName=mAbnormalRecordDetailsData.getAbnormalImage().getImage();
-                        String[] picName=picsName.split(",");
-                        String picUrl;
-                        ArrayList<String> installPhotoList=new ArrayList<>();
-                        if (picName.length==1){
-                            picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.INSTALL_PIC_DIR + picsName.substring(picsName.lastIndexOf("/"));
-                            installPhotoList.add(picUrl);
-                        }else {
-                            for (String aPicName : picName) {
-                                picUrl = URL.HTTP_HEAD + IP.substring(0, IP.indexOf(":")) + URL.INSTALL_PIC_DIR + aPicName.substring(aPicName.lastIndexOf("/"));
-                                Log.d(TAG, "handleMessage: 异常照片地址：" + picUrl);
+                        picsName=picsName.substring(1,picsName.indexOf("]"));
+                        Log.d(TAG, "照片地址："+picsName);
+                        if (picsName.isEmpty()) {
+                            Log.d(TAG, "安装异常照片: 无拍照地址");
+                        } else {
+                            String[] picName = picsName.split(",");
+                            String picUrl;
+                            ArrayList<String> installPhotoList = new ArrayList<>();
+                            if (picName.length == 1) {
+                                picUrl = URL.HTTP_HEAD + IP.substring(0, IP.indexOf(":")) + URL.INSTALL_PIC_DIR + picsName.substring(picsName.lastIndexOf("/"));
                                 installPhotoList.add(picUrl);
+                            } else {
+                                for (String aPicName : picName) {
+                                    picUrl = URL.HTTP_HEAD + IP.substring(0, IP.indexOf(":")) + URL.INSTALL_PIC_DIR + aPicName.substring(aPicName.lastIndexOf("/"));
+                                    Log.d(TAG, "handleMessage: 异常照片地址：" + picUrl);
+                                    installPhotoList.add(picUrl);
+                                }
                             }
+                            //九宫格显示照片
+                            BGANinePhotoLayout installNinePhotoLayout = findViewById(R.id.install_abnormal_photos);
+                            installNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
+                            installNinePhotoLayout.setData(installPhotoList);
                         }
-                        //九宫格显示照片
-                        BGANinePhotoLayout installNinePhotoLayout = findViewById(R.id.install_abnormal_photos);
-                        installNinePhotoLayout.setDelegate(DetailToAdminActivity.this);
-                        installNinePhotoLayout.setData(installPhotoList);
                     } else {
                         abnormalReasonTv.setText("异常");
                         installAbnormalLayout.setVisibility(View.GONE);

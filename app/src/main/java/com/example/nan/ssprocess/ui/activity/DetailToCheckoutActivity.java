@@ -198,11 +198,27 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                         checkedNokRb.setChecked(true);
                         checkoutNokDetailEt.setText(mQualityRecordDetailsData.getComment());
                         //加载历史照片地址
-                        String picName=mQualityRecordDetailsData.getQualityRecordImage().getImage();
-                        String picUrl=URL.HTTP_HEAD + IP.substring(0,IP.indexOf(":")) + URL.QA_PIC_DIR + picName.substring(picName.lastIndexOf("/"));
-                        Log.d(TAG, "handleMessage: 质检照片地址："+picUrl);
-                        ArrayList<String> installPhotoList = new ArrayList<>(Arrays.asList(picUrl));
-                        mCheckoutNokPhotosSnpl.addMoreData(installPhotoList);
+                        String picsName=mQualityRecordDetailsData.getQualityRecordImage().getImage();
+                        picsName=picsName.substring(1,picsName.indexOf("]"));
+                        Log.d(TAG, "照片地址："+picsName);
+                        if (picsName.isEmpty()) {
+                            Log.d(TAG, "安装异常照片: 无拍照地址");
+                        } else {
+                            String[] picName = picsName.split(",");
+                            String picUrl;
+                            ArrayList<String> checkoutPhotoList = new ArrayList<>();
+                            if (picName.length == 1) {
+                                picUrl = URL.HTTP_HEAD + IP.substring(0, IP.indexOf(":")) + URL.QA_PIC_DIR + picsName.substring(picsName.lastIndexOf("/"));
+                                checkoutPhotoList.add(picUrl);
+                            } else {
+                                for (String aPicName : picName) {
+                                    picUrl = URL.HTTP_HEAD + IP.substring(0, IP.indexOf(":")) + URL.QA_PIC_DIR + aPicName.substring(aPicName.lastIndexOf("/"));
+                                    Log.d(TAG, "handleMessage: 异常照片地址：" + picUrl);
+                                    checkoutPhotoList.add(picUrl);
+                                }
+                            }
+                            mCheckoutNokPhotosSnpl.addMoreData(checkoutPhotoList);
+                        }
                     } else {
                         Log.d(TAG, "handleMessage: 尚未质检");
                     }
@@ -313,7 +329,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                     String imageJson = gson.toJson(qualityRecordImageAddData);
                     Log.d(TAG, "updateQARecordData: "+imageJson);
                     String uploadQualityRecordImageUrl = URL.HTTP_HEAD + IP + URL.UPLOAD_QUALITY_RECORD_IMAGE;
-                    Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadQualityRecordImageUrl, imageUrlList, "qualityRecordImage", imageJson, new UploadTaskRecordImageHandler());
+//                    Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadQualityRecordImageUrl, imageUrlList, "qualityRecordImage", imageJson, new UploadTaskRecordImageHandler());
 
                 } else {
                     if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {

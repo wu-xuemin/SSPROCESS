@@ -892,7 +892,7 @@ public class Network {
     /**
      * 上传图片
      */
-    public void uploadTaskRecordImage(final String url, final ArrayList<String> imageUrlList, final String key, final String imageJson, final Handler handler) {
+    public void uploadTaskRecordImage(final String url, final ArrayList<String> imageUrlList, final LinkedHashMap<String, String> values, final Handler handler) {
         final Message msg = handler.obtainMessage();
         if (!isNetworkConnected()) {
             ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
@@ -900,7 +900,7 @@ public class Network {
             msg.obj = mCtx.getString(R.string.network_not_connect);
             handler.sendMessage(msg);
         } else {
-            if (url != null && imageUrlList != null && imageJson != null) {
+            if (url != null && imageUrlList != null && values != null) {
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -910,11 +910,13 @@ public class Network {
                         for (int i = 0; i <imageUrlList.size() ; i++) {
                             Log.d(TAG, "uploadImgUrl: "+imageUrlList.get(i));
                             File file=new File(imageUrlList.get(i));
-                            builder.addFormDataPart("file", file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
+                            builder.addFormDataPart("files", file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
                         }
                         //添加其它信息
-                        Log.d(TAG, "uploadTaskRecordImage: addImageSql: "+imageJson);
-                        builder.addFormDataPart(key,imageJson);
+                        for (Object o : values.entrySet()) {
+                            HashMap.Entry entry = (HashMap.Entry) o;
+                            builder.addFormDataPart((String) entry.getKey(), (String) entry.getValue());
+                        }
                         requestBody = builder.build();
                         //Post method
                         Request request = new Request.Builder().url(url).post(requestBody).build();

@@ -33,7 +33,11 @@ public class MyMqttService extends Service {
 
     private static final String TAG = "nlgMqttService";
     private final String clientId = "ExampleAndroidClient";
-    private final String subscriptionTopic = "exampleAndroidPublishTopic";
+    private final String topicMachineStatusChange = "/s2c/machine_status_change";
+    private final String topicToQa = "/s2c/task_quality/";
+    private final String topicToNextInstall = "/s2c/task_install/";
+    private final String topicInstallAbnormalResolve = "/s2c/install_abnormal_resolve/";
+    private final String topicQaAbnormalResolve = "/s2c/quality_abnormal_resolve/";
     private static final String publishTopic = "exampleAndroidPublishTopic";
 
     private MqttAndroidClient mqttAndroidClient;
@@ -61,7 +65,7 @@ public class MyMqttService extends Service {
                 if (reconnect) {
                     Log.d(TAG, "connectComplete: " + serverURI);
                     // Because Clean Session is true, we need to re-subscribe
-                    subscribeToTopic();
+                    subscribeToTopic(topicMachineStatusChange);
                 } else {
                     Log.d(TAG, "connectComplete: " + serverURI);
                 }
@@ -98,7 +102,7 @@ public class MyMqttService extends Service {
                     disconnectedBufferOptions.setPersistBuffer(false);
                     disconnectedBufferOptions.setDeleteOldestMessages(false);
                     mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
-                    subscribeToTopic();
+                    subscribeToTopic(topicMachineStatusChange);
                 }
 
                 @Override
@@ -130,7 +134,7 @@ public class MyMqttService extends Service {
     /**
      * 订阅消息
      */
-    public void subscribeToTopic() {
+    public void subscribeToTopic(String subscriptionTopic) {
         try {
             mqttAndroidClient.subscribe(subscriptionTopic, 2, null, new IMqttActionListener() {
                 @Override

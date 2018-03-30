@@ -35,6 +35,26 @@ public class SinSimApp extends Application {
     public static final String FROM_NOTIFICATION = "1";
 
     /**
+     * 机器状态:
+     * "0" --> 签核完成,机器创建的初始化状态
+     * "1" --> 配置完成，待计划
+     * "2" --> 已加入计划生产
+     * "3" --> 安装中
+     * "4" --> 安装完成
+     * "5" --> 改单
+     * "6" --> 拆单
+     * "7" --> 取消
+     */
+    public static final int MACHINE_INITIAL = 0;
+    public static final int MACHINE_CONFIGURED = 1;
+    public static final int MACHINE_PLANING = 2;
+    public static final int MACHINE_INSTALLING = 3;
+    public static final int MACHINE_INSTALLED = 4;
+    public static final int MACHINE_CHANGED = 5;
+    public static final int MACHINE_SPLITED = 6;
+    public static final int MACHINE_CANCELED = 7;
+
+    /**
      * Task(工序)安装状态
      * "0" --> 初始化状态
      * "1" --> 已计划

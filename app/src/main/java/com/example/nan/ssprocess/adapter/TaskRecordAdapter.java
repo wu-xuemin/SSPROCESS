@@ -56,48 +56,57 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             itemView.planDateTv.setText(formatter.format(planDate));
             itemView.machineIdTv.setText("" + mProcessList.get(position).getMachineData().getNameplate());
             itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
-            switch (mProcessList.get(position).getStatus()){
-                case SinSimApp.TASK_INITIAL:
-                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INITIAL));
-                    itemView.processStateTv.setTextColor(Color.YELLOW);
-                    break;
-                case SinSimApp.TASK_PLANED:
-                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_PLANED));
-                    itemView.processStateTv.setTextColor(Color.YELLOW);
-                    break;
-                case SinSimApp.TASK_INSTALL_WAITING:
-                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALL_WAITING));
-                    itemView.processStateTv.setTextColor(Color.GREEN);
-                    break;
-                case SinSimApp.TASK_INSTALLING:
-                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALLING));
-                    itemView.processStateTv.setTextColor(Color.BLUE);
-                    break;
-                case SinSimApp.TASK_INSTALLED:
-                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALLED));
-                    itemView.processStateTv.setTextColor(Color.GREEN);
-                    break;
-                case SinSimApp.TASK_QUALITY_DOING:
-                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DOING));
-                    itemView.processStateTv.setTextColor(Color.BLUE);
-                    break;
-                case SinSimApp.TASK_QUALITY_DONE:
-                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DONE));
-                    itemView.processStateTv.setTextColor(Color.GREEN);
-                    break;
-                case SinSimApp.TASK_INSTALL_ABNORMAL:
-                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALL_ABNORMAL));
-                    itemView.processStateTv.setTextColor(Color.RED);
-                    break;
-                case SinSimApp.TASK_QUALITY_ABNORMAL:
-                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_ABNORMAL));
-                    itemView.processStateTv.setTextColor(Color.RED);
-                    break;
-                default:
-                    break;
+            if (mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED||mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED){
+                itemView.processStateTv.setText("改单拆单中");
+                itemView.processStateTv.setTextColor(Color.RED);
+                itemView.processStateTv.setBackgroundColor(Color.RED);
+            }else {
+                switch (mProcessList.get(position).getStatus()) {
+                    case SinSimApp.TASK_INITIAL:
+                        itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INITIAL));
+                        itemView.processStateTv.setTextColor(Color.YELLOW);
+                        break;
+                    case SinSimApp.TASK_PLANED:
+                        itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_PLANED));
+                        itemView.processStateTv.setTextColor(Color.YELLOW);
+                        break;
+                    case SinSimApp.TASK_INSTALL_WAITING:
+                        itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALL_WAITING));
+                        itemView.processStateTv.setTextColor(Color.GREEN);
+                        break;
+                    case SinSimApp.TASK_INSTALLING:
+                        itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALLING));
+                        itemView.processStateTv.setTextColor(Color.BLUE);
+                        break;
+                    case SinSimApp.TASK_INSTALLED:
+                        itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALLED));
+                        itemView.processStateTv.setTextColor(Color.GREEN);
+                        break;
+                    case SinSimApp.TASK_QUALITY_DOING:
+                        itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DOING));
+                        itemView.processStateTv.setTextColor(Color.BLUE);
+                        break;
+                    case SinSimApp.TASK_QUALITY_DONE:
+                        itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DONE));
+                        itemView.processStateTv.setTextColor(Color.GREEN);
+                        break;
+                    case SinSimApp.TASK_INSTALL_ABNORMAL:
+                        itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALL_ABNORMAL));
+                        itemView.processStateTv.setTextColor(Color.RED);
+                        break;
+                    case SinSimApp.TASK_QUALITY_ABNORMAL:
+                        itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_ABNORMAL));
+                        itemView.processStateTv.setTextColor(Color.RED);
+                        break;
+                    case SinSimApp.TASK_SKIP:
+                        itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_SKIP));
+                        itemView.processStateTv.setTextColor(Color.RED);
+                        break;
+                    default:
+                        break;
 
+                }
             }
-
             itemView.itemLinearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

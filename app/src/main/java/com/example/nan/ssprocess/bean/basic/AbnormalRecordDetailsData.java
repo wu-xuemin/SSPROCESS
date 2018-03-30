@@ -26,7 +26,7 @@ public class AbnormalRecordDetailsData {
     public AbnormalRecordDetailsData(){}
 
     public AbnormalRecordDetailsData(int submitUser,int taskRecordId,long createTime){
-        this.abnormalType=0;
+        this.abnormalType=1;
         this.comment="";
         this.id=0;
         this.solution="";

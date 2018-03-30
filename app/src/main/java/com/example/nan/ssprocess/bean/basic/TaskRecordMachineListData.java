@@ -93,4 +93,16 @@ public class TaskRecordMachineListData implements Serializable {
     public void setStatus(int status) {
         this.status = status;
     }
+
+    public String getWorkerList() {
+        return workerList;
+    }
+
+    public void setWorkerList(String workerList) {
+        this.workerList = workerList;
+    }
+
+    public void setLeader(String leader) {
+        this.leader = leader;
+    }
 }
