@@ -133,30 +133,16 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             }
         });
 
-        //开始质检
-        beginQaButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mTaskRecordMachineListData.getStatus()!=SinSimApp.TASK_INSTALLED){
-                    Toast.makeText(DetailToCheckoutActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus())+" ，不能开始安装！", Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent intent = new Intent(DetailToCheckoutActivity.this, ScanQrcodeActivity.class);
-                    startActivityForResult(intent, SCAN_QRCODE_START);
-                }
-            }
-        });
-        //结束质检
-        endQaButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mTaskRecordMachineListData.getStatus()!=SinSimApp.TASK_QUALITY_DOING){
-                    Toast.makeText(DetailToCheckoutActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus())+" ，不能结束安装！", Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent intent = new Intent(DetailToCheckoutActivity.this, ScanQrcodeActivity.class);
-                    startActivityForResult(intent, SCAN_QRCODE_END);
-                }
-            }
-        });
+        if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED) {
+            beginQaButton.setVisibility(View.VISIBLE);
+            endQaButton.setVisibility(View.GONE);
+        }else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DOING) {
+            beginQaButton.setVisibility(View.GONE);
+            endQaButton.setVisibility(View.VISIBLE);
+        }else {
+            beginQaButton.setVisibility(View.GONE);
+            endQaButton.setVisibility(View.GONE);
+        }
 
         //获取历史质检数据
         fetchQARecordData();
@@ -166,6 +152,24 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         mCheckoutNokPhotosSnpl.setMaxItemCount(3);
         mCheckoutNokPhotosSnpl.setPlusEnable(true);
         mCheckoutNokPhotosSnpl.setDelegate(this);
+    }
+
+    public void onStartQa(View view) {
+        if (mTaskRecordMachineListData.getStatus()!=SinSimApp.TASK_INSTALLED){
+            Toast.makeText(DetailToCheckoutActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus())+" ，不能开始质检！", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(DetailToCheckoutActivity.this, ScanQrcodeActivity.class);
+            startActivityForResult(intent, SCAN_QRCODE_START);
+        }
+    }
+
+    public void onStopQa(View view) {
+        if (mTaskRecordMachineListData.getStatus()!=SinSimApp.TASK_QUALITY_DOING){
+            Toast.makeText(DetailToCheckoutActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus())+" ，不能结束质检！", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(DetailToCheckoutActivity.this, ScanQrcodeActivity.class);
+            startActivityForResult(intent, SCAN_QRCODE_END);
+        }
     }
 
     private void fetchQARecordData() {

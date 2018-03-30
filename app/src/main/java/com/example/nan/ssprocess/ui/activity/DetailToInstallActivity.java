@@ -166,30 +166,16 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             }
         });
 
-        //开始安装
-        begainInstallButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mTaskRecordMachineListData.getStatus()!=SinSimApp.TASK_INSTALL_WAITING){
-                    Toast.makeText(DetailToInstallActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus())+" ，不能开始安装！", Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent intent = new Intent(DetailToInstallActivity.this, ScanQrcodeActivity.class);
-                    startActivityForResult(intent, SCAN_QRCODE_START);
-                }
-            }
-        });
-        //结束安装
-        installInfoUpdateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mTaskRecordMachineListData.getStatus()!=SinSimApp.TASK_INSTALLING){
-                    Toast.makeText(DetailToInstallActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus())+" ，不能结束安装！", Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent intent = new Intent(DetailToInstallActivity.this, ScanQrcodeActivity.class);
-                    startActivityForResult(intent, SCAN_QRCODE_END);
-                }
-            }
-        });
+        if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING){
+            begainInstallButton.setVisibility(View.VISIBLE);
+            installInfoUpdateButton.setVisibility(View.GONE);
+        } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING){
+            begainInstallButton.setVisibility(View.GONE);
+            installInfoUpdateButton.setVisibility(View.VISIBLE);
+        } else {
+            begainInstallButton.setVisibility(View.GONE);
+            installInfoUpdateButton.setVisibility(View.GONE);
+        }
 
         fetchInstallRecordData();
 
@@ -201,6 +187,23 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
     }
 
+    public void onStartInstall(View view) {
+        if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING) {
+            Intent intent = new Intent(DetailToInstallActivity.this, ScanQrcodeActivity.class);
+            startActivityForResult(intent, SCAN_QRCODE_START);
+        }else{
+            Toast.makeText(DetailToInstallActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus())+" ，不能开始安装！", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onStopInstall(View view) {
+        if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING) {
+            Intent intent = new Intent(DetailToInstallActivity.this, ScanQrcodeActivity.class);
+            startActivityForResult(intent, SCAN_QRCODE_END);
+        }else {
+            Toast.makeText(DetailToInstallActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus())+" ，不能结束安装！", Toast.LENGTH_SHORT).show();
+        }
+    }
     /**
      * 根据taskRecordId获取当前abnormal信息
      */
@@ -219,6 +222,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     }
 
 
+
     @SuppressLint("HandlerLeak")
     private class FetchInstallRecordDataHandler extends Handler {
         @Override
@@ -226,6 +230,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             if (msg.what == Network.OK) {
                 //获取安装结果
                 ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = (ArrayList<AbnormalRecordDetailsData>) msg.obj;
+                Log.d(TAG, "安装异常信息: "+new Gson().toJson(mAbnormalRecordList));
                 Log.d(TAG, "安装异常: mAbnormalRecordList.size:"+mAbnormalRecordList.size());
                 if (mAbnormalRecordList.size()>0) {
                     int updateTime = mAbnormalRecordList.size() - 1;
@@ -237,6 +242,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         Log.d(TAG, "安装异常: updateTime:" + updateTime);
                     }
                     AbnormalRecordDetailsData abnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
+                    Log.d(TAG, "安装异常信息: "+new Gson().toJson(abnormalRecordDetailsData));
                     //如果安装异常，填入异常的原因
                     Log.d(TAG, "安装异常: 流程："+abnormalRecordDetailsData.getTaskRecord().getStatus()+" 异常类型："+abnormalRecordDetailsData.getAbnormalType());
                     if (abnormalRecordDetailsData.getTaskRecord().getStatus()  == SinSimApp.TASK_INSTALL_ABNORMAL) {
@@ -670,6 +676,17 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             }
             if (msg.what == Network.OK) {
                 currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
+
+                if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING){
+                    begainInstallButton.setVisibility(View.VISIBLE);
+                    installInfoUpdateButton.setVisibility(View.GONE);
+                } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING){
+                    begainInstallButton.setVisibility(View.GONE);
+                    installInfoUpdateButton.setVisibility(View.VISIBLE);
+                } else {
+                    begainInstallButton.setVisibility(View.GONE);
+                    installInfoUpdateButton.setVisibility(View.GONE);
+                }
             } else {
                 mTaskRecordMachineListData.setStatus(iTaskRecordMachineListDataStatusTemp);
                 String errorMsg = (String)msg.obj;
@@ -690,8 +707,9 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         String strCurTime = formatter.format(curDate);
         long lCurTime=System.currentTimeMillis();
         mTaskRecordMachineListData.setLeader(SinSimApp.getApp().getFullName());
-        if (checkedName.isEmpty()||"".equals(checkedName)){
+        if ("".equals(checkedName)){
             Log.d(TAG, "安装人员为空");
+            mTaskRecordMachineListData.setWorkerList("无");
         }else {
             mTaskRecordMachineListData.setWorkerList(checkedName);
         }
@@ -731,11 +749,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 String uploadInstallAbnormalDetailUrl = URL.HTTP_HEAD + IP + URL.UPLOAD_INSTALL_ABNORMAL_DETAIL;
                 Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadInstallAbnormalDetailUrl, imageUrlList, mPostValue, new UploadTaskRecordImageHandler());
 
-//
-//
-//                String updateProcessRecordUrl = URL.HTTP_HEAD + IP + URL.UPDATE_INSTALL_ABNORMAL_RECORD_DETAIL;
-//                Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, new UpdateProcessResultDataHandler());
-
             } else {
                 Toast.makeText(this, "异常原因和异常照片不能为空！", Toast.LENGTH_SHORT).show();
             }
@@ -751,78 +764,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
     }
     @SuppressLint("HandlerLeak")
-    private class UpdateProcessResultDataHandler extends Handler {
-        @Override
-        public void handleMessage(final Message msg) {
-            if (msg.what == Network.OK) {
-                Toast.makeText(DetailToInstallActivity.this, "异常信息上传成功！", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "handleMessage: 异常信息上传成功");
-                LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                mPostValue.put("taskRecordId", ""+mTaskRecordMachineListData.getId());
-                String fetchProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FATCH_INSTALL_ABNORMAL_RECORD_LIST;
-                Network.Instance(SinSimApp.getApp()).fetchProcessInstallRecordData(fetchProcessRecordUrl, mPostValue, new FetchAbnormalRecordDataHandler());
-                //TODO:发送mqtt消息，更新安装状态，跳转回list界面
-            } else {
-                if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
-                    mUploadingProcessDialog.dismiss();
-                }
-                String errorMsg = (String)msg.obj;
-                Log.d(TAG, "handleMessage: "+errorMsg);
-                Toast.makeText(DetailToInstallActivity.this, "异常信息上传失败！"+errorMsg, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    @SuppressLint("HandlerLeak")
-    private class FetchAbnormalRecordDataHandler extends Handler {
-        @Override
-        public void handleMessage(final Message msg) {
-            if (msg.what == Network.OK) {
-                //获取安装结果
-                ArrayList<AbnormalRecordDetailsData> mAbnormalRecordList = (ArrayList<AbnormalRecordDetailsData>) msg.obj;
-                Log.d(TAG, "handleMessage: 质检异常lise size："+mAbnormalRecordList.size());
-                if ( mAbnormalRecordList.size()>0) {
-                    int updateTime = 0;
-                    for (int update = mAbnormalRecordList.size() - 1; update >= 0; update--) {
-                        if (mAbnormalRecordList.get(update).getTaskRecordId()==mTaskRecordMachineListData.getId()) {
-                            if (mAbnormalRecordList.get(updateTime).getId() < mAbnormalRecordList.get(update).getId()) {
-                                updateTime = update;
-                            }
-                            Log.d(TAG, "handleMessage: updateTime:" + updateTime);
-                        }
-                    }
-                    AbnormalRecordDetailsData abnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
-
-                    //获取图片本地url
-                    ArrayList<String> imageUrlList = mInstallAbnormalPhotosSnpl.getData();
-                    //添加quality_record_image数据库
-                    AbnormalImageAddData abnormalImageAddData = new AbnormalImageAddData();
-                    //更新当前时间
-                    abnormalImageAddData.setCreateTime(abnormalRecordDetailsData.getCreateTime());
-                    abnormalImageAddData.setAbnormalRecordId(abnormalRecordDetailsData.getId());
-                    //上传质检不合格照片
-                    Gson gson=new Gson();
-                    String imageJson = gson.toJson(abnormalImageAddData);
-                    Log.d(TAG, "updateInstallRecordData: "+imageJson);
-                    String uploadQualityRecordImageUrl = URL.HTTP_HEAD + IP + URL.UPLOAD_INSTALL_ABNORMAL_IMAGE;
-//                    Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadQualityRecordImageUrl, imageUrlList, "abnormalImage", imageJson, new UploadTaskRecordImageHandler());
-
-                } else {
-                    if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
-                        mUploadingProcessDialog.dismiss();
-                    }
-                    Log.d(TAG, "handleMessage: 添加安装异常的信息失败");
-                }
-            } else {
-                if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
-                    mUploadingProcessDialog.dismiss();
-                }
-                String errorMsg = (String)msg.obj;
-                Toast.makeText(DetailToInstallActivity.this, "上传信息失败！"+errorMsg, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-    @SuppressLint("HandlerLeak")
     private class UploadTaskRecordImageHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
@@ -834,10 +775,10 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             }
             if (msg.what == Network.OK) {
                 currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
+                begainInstallButton.setVisibility(View.GONE);
+                installInfoUpdateButton.setVisibility(View.GONE);
                 Toast.makeText(DetailToInstallActivity.this, "异常信息和照片上传成功！", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "handleMessage: 异常信息和照片上传成功！");
-//                iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
-//                updateProcessDetailData(SinSimApp.TASK_INSTALL_ABNORMAL);
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "UploadTaskRecordImageHandler: "+errorMsg);
