@@ -42,6 +42,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import id.zelory.compressor.Compressor;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -909,7 +910,15 @@ public class Network {
                         Log.d(TAG, "uploadTaskRecordImage: "+imageUrlList.size());
                         for (int i = 0; i <imageUrlList.size() ; i++) {
                             Log.d(TAG, "uploadImgUrl: "+imageUrlList.get(i));
-                            File file=new File(imageUrlList.get(i));
+                            File file= null;
+                            try {
+                                //图片质量压缩一半
+                                file = new Compressor(mCtx).setMaxHeight(1920).compressToFile(new File(imageUrlList.get(i)));
+                            } catch (IOException e) {
+                                ///默认大小
+                                file = new File(imageUrlList.get(i));
+                                e.printStackTrace();
+                            }
                             builder.addFormDataPart("files", file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
                         }
                         //添加其它信息

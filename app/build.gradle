@@ -51,6 +51,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.9.1'
     implementation 'com.orhanobut:logger:1.13'
     implementation 'com.blankj:utilcode:1.9.8'
+    compile 'id.zelory:compressor:2.1.0'
 //A super util package, please refer to "https://github.com/Blankj/AndroidUtilCode"
 
 }
