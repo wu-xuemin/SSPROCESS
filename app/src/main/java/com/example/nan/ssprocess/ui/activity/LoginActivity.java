@@ -134,7 +134,8 @@ public class LoginActivity extends AppCompatActivity {
         mLoginButton.setEnabled(true);
         if( data != null) {
             //Store to memory and preference
-            mApp.setIsLogined(true, data.getAccount(), data.getFullName(), mPassword, data.getRole().getId(),data.getId());
+            mApp.setIsLogined(true, data.getAccount(), data.getFullName(),
+                    mPassword, data.getRole().getId(),data.getId(), data.getGroup()!= null ? data.getGroup().getId():0);
 
             //在登陆完成后检查人员role进入不同界面：生产部管理员：2，质检员：11, 安装组长：3
             Log.d(TAG, "onLoginSuccess: role id "+SinSimApp.getApp().getRole());
