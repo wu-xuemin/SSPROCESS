@@ -2,11 +2,13 @@ package com.example.nan.ssprocess.adapter;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -60,43 +62,51 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
                     ||mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED
                     ||mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CANCELED){
                 itemView.processStateTv.setText("改单拆单中");
-                itemView.processStateTv.setTextColor(Color.RED);
-                itemView.processStateTv.setBackgroundColor(Color.YELLOW);
+                itemView.taskStatusIv.setImageResource(R.mipmap.change);
             }else {
                 switch (mProcessList.get(position).getStatus()) {
                     case SinSimApp.TASK_INITIAL:
+                        itemView.taskStatusIv.setImageResource(R.mipmap.initial);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INITIAL));
                         itemView.processStateTv.setTextColor(Color.YELLOW);
                         break;
                     case SinSimApp.TASK_PLANED:
+                        itemView.taskStatusIv.setImageResource(R.mipmap.initial);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_PLANED));
                         itemView.processStateTv.setTextColor(Color.YELLOW);
                         break;
                     case SinSimApp.TASK_INSTALL_WAITING:
+                        itemView.taskStatusIv.setImageResource(R.mipmap.install_waiting);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALL_WAITING));
                         itemView.processStateTv.setTextColor(Color.GREEN);
                         break;
                     case SinSimApp.TASK_INSTALLING:
+                        itemView.taskStatusIv.setImageResource(R.mipmap.to_install);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALLING));
                         itemView.processStateTv.setTextColor(Color.BLUE);
                         break;
                     case SinSimApp.TASK_INSTALLED:
+                        itemView.taskStatusIv.setImageResource(R.mipmap.quality_waiting);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALLED));
                         itemView.processStateTv.setTextColor(Color.GREEN);
                         break;
                     case SinSimApp.TASK_QUALITY_DOING:
+                        itemView.taskStatusIv.setImageResource(R.mipmap.to_quality);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DOING));
                         itemView.processStateTv.setTextColor(Color.BLUE);
                         break;
                     case SinSimApp.TASK_QUALITY_DONE:
+                        itemView.taskStatusIv.setImageResource(R.mipmap.quality_waiting);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DONE));
                         itemView.processStateTv.setTextColor(Color.GREEN);
                         break;
                     case SinSimApp.TASK_INSTALL_ABNORMAL:
+                        itemView.taskStatusIv.setImageResource(R.mipmap.install_abnormal);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALL_ABNORMAL));
                         itemView.processStateTv.setTextColor(Color.RED);
                         break;
                     case SinSimApp.TASK_QUALITY_ABNORMAL:
+                        itemView.taskStatusIv.setImageResource(R.mipmap.quality_abnormal);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_ABNORMAL));
                         itemView.processStateTv.setTextColor(Color.RED);
                         break;
@@ -137,7 +147,8 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
     }
 
     public class ItemView extends RecyclerView.ViewHolder {
-        LinearLayout itemLinearLayout;
+        CardView itemLinearLayout;
+        ImageView taskStatusIv;
         TextView machineIdTv;
         TextView processNameTv;
         TextView processStateTv;
@@ -147,6 +158,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
         ItemView(View itemView) {
             super(itemView);
             itemLinearLayout=itemView.findViewById(R.id.item_linear_layout);
+            taskStatusIv=itemView.findViewById(R.id.task_status_iv);
             machineIdTv = (TextView) itemView.findViewById(R.id.process_machine_id_tv);
             processNameTv = (TextView) itemView.findViewById(R.id.process_name_tv);
             processStateTv = (TextView) itemView.findViewById(R.id.process_state_tv);
