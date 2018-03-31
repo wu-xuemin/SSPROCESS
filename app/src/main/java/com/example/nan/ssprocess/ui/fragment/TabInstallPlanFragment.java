@@ -229,7 +229,9 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
                 if (mScanResultList.size()==0){
                     Toast.makeText(getContext(), "没有内容!", Toast.LENGTH_LONG).show();
                 } else {
-                    if (mScanResultList.get(0).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED||mScanResultList.get(0).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED) {
+                    if (mScanResultList.get(0).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
+                            ||mScanResultList.get(0).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED
+                            ||mScanResultList.get(0).getMachineData().getStatus()==SinSimApp.MACHINE_CANCELED) {
                         Toast.makeText(getContext(), "正在改单/拆单中!", Toast.LENGTH_LONG).show();
                     }else {
                         Intent intent = new Intent(getContext(), ScanResultActivity.class);

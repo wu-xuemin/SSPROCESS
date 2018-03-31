@@ -101,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
                 mLoadingProcessDialog.dismiss();
             }
             mLoginButton.setEnabled(true);
-            Toast.makeText(this, "未获取到手机IMEI", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "未获取到手机IMEI,请重启软件", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "login: 未获取到手机IMEI");
         }
         else {

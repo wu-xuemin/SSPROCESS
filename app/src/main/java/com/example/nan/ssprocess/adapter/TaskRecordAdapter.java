@@ -56,10 +56,12 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             itemView.planDateTv.setText(formatter.format(planDate));
             itemView.machineIdTv.setText("" + mProcessList.get(position).getMachineData().getNameplate());
             itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
-            if (mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED||mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED){
+            if (mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
+                    ||mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED
+                    ||mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CANCELED){
                 itemView.processStateTv.setText("改单拆单中");
                 itemView.processStateTv.setTextColor(Color.RED);
-                itemView.processStateTv.setBackgroundColor(Color.RED);
+                itemView.processStateTv.setBackgroundColor(Color.YELLOW);
             }else {
                 switch (mProcessList.get(position).getStatus()) {
                     case SinSimApp.TASK_INITIAL:

@@ -166,7 +166,9 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 installAbnormalLayout.setVisibility(View.GONE);
             }
         });
-        if (mTaskRecordMachineListData.getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED||mTaskRecordMachineListData.getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED) {
+        if (mTaskRecordMachineListData.getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
+                ||mTaskRecordMachineListData.getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED
+                ||mTaskRecordMachineListData.getMachineData().getStatus()==SinSimApp.MACHINE_CANCELED) {
             begainInstallButton.setVisibility(View.GONE);
             installInfoUpdateButton.setVisibility(View.GONE);
             Toast.makeText(DetailToInstallActivity.this, "正在改单/拆单，不能安装！", Toast.LENGTH_SHORT).show();
@@ -279,6 +281,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     //如果安装异常，填入异常的原因
                     Log.d(TAG, "安装异常: 流程："+abnormalRecordDetailsData.getTaskRecord().getStatus()+" 异常类型："+abnormalRecordDetailsData.getAbnormalType());
                     if (abnormalRecordDetailsData.getTaskRecord().getStatus()  == SinSimApp.TASK_INSTALL_ABNORMAL) {
+                        chooseInstallerTv.setText(abnormalRecordDetailsData.getTaskRecord().getWorkerList());
                         installAbnormalRb.setChecked(true);
                         //TODO:待验证
                         if(arrayAdapter.isEmpty()){
@@ -747,6 +750,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
                 mPostValue.put("abnormalRecord", nAbnormalRecordDetailsDataToJson);
 
+                iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
                 mTaskRecordMachineListData.setStatus(SinSimApp.TASK_INSTALL_ABNORMAL);
                 String taskRecordDataToJson =gson.toJson(mTaskRecordMachineListData);
                 Log.d(TAG, "updateInstallRecordData: taskRecord: "+taskRecordDataToJson);
@@ -789,6 +793,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 Toast.makeText(DetailToInstallActivity.this, "异常信息和照片上传成功！", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "handleMessage: 异常信息和照片上传成功！");
             } else {
+                mTaskRecordMachineListData.setStatus(iTaskRecordMachineListDataStatusTemp);
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "UploadTaskRecordImageHandler: "+errorMsg);
                 Toast.makeText(DetailToInstallActivity.this, "上传失败！请重新上传", Toast.LENGTH_SHORT).show();

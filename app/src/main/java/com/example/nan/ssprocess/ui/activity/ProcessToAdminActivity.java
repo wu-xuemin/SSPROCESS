@@ -31,6 +31,7 @@ import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 import com.example.nan.ssprocess.net.Network;
+import com.example.nan.ssprocess.service.MyMqttService;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
  */
 public class ProcessToAdminActivity extends AppCompatActivity implements BGARefreshLayout.BGARefreshLayoutDelegate{
 
+    private Intent mqttIntent;
     private static String TAG = "nlgProcessToAdminActivity";
     private ArrayList<TaskRecordMachineListData> mProcessToAdminList = new ArrayList<>();
     private TaskRecordMachineListData mScanResultListData=new TaskRecordMachineListData();
@@ -64,6 +66,10 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_to_admin);
+
+        //启动MQTT服务
+        mqttIntent = new Intent(this, MyMqttService.class);
+        startService(mqttIntent);
 
         mRefreshLayout = findViewById(R.id.refreshLayout);
         mRefreshLayout.setDelegate(this);
@@ -301,6 +307,7 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout:
+                stopService(mqttIntent);
                 SinSimApp.getApp().setLogOut();
                 Intent it = new Intent();
                 it.setClass(ProcessToAdminActivity.this, LoginActivity.class);

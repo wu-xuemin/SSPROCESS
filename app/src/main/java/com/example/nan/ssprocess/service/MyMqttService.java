@@ -106,6 +106,7 @@ public class MyMqttService extends Service {
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                                 Notification notify = builder.setSmallIcon(R.mipmap.to_quality)
+                                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.to_quality))
                                         .setPriority(Notification.DEFAULT_VIBRATE)
                                         .setContentTitle("待质检")
                                         .setAutoCancel(true)
@@ -122,6 +123,7 @@ public class MyMqttService extends Service {
                             PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                             NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                             Notification notify = builder.setSmallIcon(R.mipmap.quality_abnormal_resolve)
+                                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.quality_abnormal_resolve))
                                     .setPriority(Notification.DEFAULT_VIBRATE)
                                     .setContentTitle("质检异常解决")
                                     .setAutoCancel(true)
@@ -141,6 +143,7 @@ public class MyMqttService extends Service {
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                                 Notification notify = builder.setSmallIcon(R.mipmap.to_install)
+                                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.to_install))
                                         .setPriority(Notification.DEFAULT_VIBRATE)
                                         .setContentTitle("待安装")
                                         .setAutoCancel(true)
@@ -156,6 +159,7 @@ public class MyMqttService extends Service {
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                                 Notification notify = builder.setSmallIcon(R.mipmap.install_abnormall_resolve)
+                                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.install_abnormall_resolve))
                                         .setPriority(Notification.DEFAULT_VIBRATE)
                                         .setContentTitle("安装异常解决")
                                         .setAutoCancel(true)
@@ -184,6 +188,7 @@ public class MyMqttService extends Service {
                                 if(title != null) {
                                     NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                                     Notification notify = builder.setSmallIcon(iconId)
+                                            .setLargeIcon(BitmapFactory.decodeResource(getResources(), iconId))
                                             .setPriority(Notification.DEFAULT_VIBRATE)
                                             .setContentTitle(title)
                                             .setAutoCancel(true)
@@ -205,6 +210,7 @@ public class MyMqttService extends Service {
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                                 Notification notify = builder.setSmallIcon(R.mipmap.to_install)
+                                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.to_install))
                                         .setPriority(Notification.DEFAULT_VIBRATE)
                                         .setContentTitle("待安装")
                                         .setAutoCancel(true)
@@ -220,6 +226,7 @@ public class MyMqttService extends Service {
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                                 Notification notify = builder.setSmallIcon(R.mipmap.install_abnormall_resolve)
+                                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.install_abnormall_resolve))
                                         .setPriority(Notification.DEFAULT_VIBRATE)
                                         .setContentTitle("安装异常解决")
                                         .setAutoCancel(true)
@@ -245,9 +252,11 @@ public class MyMqttService extends Service {
                                     title = "机器取消";
                                     iconId = R.mipmap.order_cancel;
                                 }
+                                Log.d(TAG, "messageArrived: "+title);
                                 if(title != null) {
                                     NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                                     Notification notify = builder.setSmallIcon(iconId)
+                                            .setLargeIcon(BitmapFactory.decodeResource(getResources(), iconId))
                                             .setPriority(Notification.DEFAULT_VIBRATE)
                                             .setContentTitle(title)
                                             .setAutoCancel(true)
@@ -328,9 +337,9 @@ public class MyMqttService extends Service {
             subscribeToTopic(TOPIC_MACHINE_STATUS_CHANGE);
             if(SinSimApp.getApp().getRole() == SinSimApp.LOGIN_FOR_ADMIN) {
                 //生产部管理员订阅全部安装消息
-                subscribeToTopic(TOPIC_TO_NEXT_INSTALL + "*");
+                subscribeToTopic(TOPIC_TO_NEXT_INSTALL + "#");
                 //生产部管理员订阅全部安装异常恢复消息
-                subscribeToTopic(TOPIC_INSTALL_ABNORMAL_RESOLVE + "*");
+                subscribeToTopic(TOPIC_INSTALL_ABNORMAL_RESOLVE + "#");
             }
             if(SinSimApp.getApp().getRole() == SinSimApp.LOGIN_FOR_INSTALL) {
                 if(SinSimApp.getApp().getGroupId() > 0) {
