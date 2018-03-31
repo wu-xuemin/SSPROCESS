@@ -107,14 +107,13 @@ public class MyMqttService extends Service {
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                                 Notification notify = builder.setSmallIcon(R.mipmap.to_quality)
                                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.to_quality))
-                                        .setPriority(Notification.DEFAULT_VIBRATE)
+                                        .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
                                         .setContentTitle("待质检")
                                         .setAutoCancel(true)
                                         .setContentIntent(pi)
                                         .setVisibility(Notification.VISIBILITY_PUBLIC)
                                         .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
                                         //不设置此项不会悬挂,false 不会出现悬挂
-                                        .setFullScreenIntent(pi, true)
                                         .build();
                                 mNotificationManager.notify(1,notify);
                             }
@@ -124,14 +123,13 @@ public class MyMqttService extends Service {
                             NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                             Notification notify = builder.setSmallIcon(R.mipmap.quality_abnormal_resolve)
                                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.quality_abnormal_resolve))
-                                    .setPriority(Notification.DEFAULT_VIBRATE)
+                                    .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
                                     .setContentTitle("质检异常解决")
                                     .setAutoCancel(true)
                                     .setContentIntent(pi)
                                     .setVisibility(Notification.VISIBILITY_PUBLIC)
                                     .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
                                     //不设置此项不会悬挂,false 不会出现悬挂
-                                    .setFullScreenIntent(pi, true)
                                     .build();
                             mNotificationManager.notify(2,notify);
                         }
@@ -144,14 +142,13 @@ public class MyMqttService extends Service {
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                                 Notification notify = builder.setSmallIcon(R.mipmap.to_install)
                                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.to_install))
-                                        .setPriority(Notification.DEFAULT_VIBRATE)
+                                        .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
                                         .setContentTitle("待安装")
                                         .setAutoCancel(true)
                                         .setContentIntent(pi)
                                         .setVisibility(Notification.VISIBILITY_PUBLIC)
                                         .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
                                         //不设置此项不会悬挂,false 不会出现悬挂
-                                        .setFullScreenIntent(pi, true)
                                         .build();
                                 mNotificationManager.notify(3,notify);
                             }else if(topic.contains(TOPIC_INSTALL_ABNORMAL_RESOLVE)) {
@@ -160,14 +157,13 @@ public class MyMqttService extends Service {
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                                 Notification notify = builder.setSmallIcon(R.mipmap.install_abnormall_resolve)
                                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.install_abnormall_resolve))
-                                        .setPriority(Notification.DEFAULT_VIBRATE)
+                                        .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
                                         .setContentTitle("安装异常解决")
                                         .setAutoCancel(true)
                                         .setContentIntent(pi)
                                         .setVisibility(Notification.VISIBILITY_PUBLIC)
                                         .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
                                         //不设置此项不会悬挂,false 不会出现悬挂
-                                        .setFullScreenIntent(pi, true)
                                         .build();
                                 mNotificationManager.notify(4,notify);
                             } else if(topic.equals(TOPIC_MACHINE_STATUS_CHANGE)) {
@@ -189,14 +185,13 @@ public class MyMqttService extends Service {
                                     NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                                     Notification notify = builder.setSmallIcon(iconId)
                                             .setLargeIcon(BitmapFactory.decodeResource(getResources(), iconId))
-                                            .setPriority(Notification.DEFAULT_VIBRATE)
+                                            .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
                                             .setContentTitle(title)
                                             .setAutoCancel(true)
                                             .setContentIntent(pi)
                                             .setVisibility(Notification.VISIBILITY_PUBLIC)
                                             .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
                                             //不设置此项不会悬挂,false 不会出现悬挂
-                                            .setFullScreenIntent(pi, true)
                                             .build();
                                     mNotificationManager.notify(5,notify);
                                 }
@@ -211,14 +206,13 @@ public class MyMqttService extends Service {
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                                 Notification notify = builder.setSmallIcon(R.mipmap.to_install)
                                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.to_install))
-                                        .setPriority(Notification.DEFAULT_VIBRATE)
+                                        .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
                                         .setContentTitle("待安装")
                                         .setAutoCancel(true)
                                         .setContentIntent(pi)
                                         .setVisibility(Notification.VISIBILITY_PUBLIC)
                                         .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
                                         //不设置此项不会悬挂,false 不会出现悬挂
-                                        .setFullScreenIntent(pi, true)
                                         .build();
                                 mNotificationManager.notify(6,notify);
                             }else if(topic.equals(TOPIC_INSTALL_ABNORMAL_RESOLVE + SinSimApp.getApp().getGroupId())) {
@@ -227,14 +221,13 @@ public class MyMqttService extends Service {
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                                 Notification notify = builder.setSmallIcon(R.mipmap.install_abnormall_resolve)
                                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.install_abnormall_resolve))
-                                        .setPriority(Notification.DEFAULT_VIBRATE)
+                                        .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
                                         .setContentTitle("安装异常解决")
                                         .setAutoCancel(true)
                                         .setContentIntent(pi)
                                         .setVisibility(Notification.VISIBILITY_PUBLIC)
                                         .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
                                         //不设置此项不会悬挂,false 不会出现悬挂
-                                        .setFullScreenIntent(pi, true)
                                         .build();
                                 mNotificationManager.notify(7,notify);
                             }else if(topic.equals(TOPIC_MACHINE_STATUS_CHANGE)) {
@@ -257,14 +250,13 @@ public class MyMqttService extends Service {
                                     NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
                                     Notification notify = builder.setSmallIcon(iconId)
                                             .setLargeIcon(BitmapFactory.decodeResource(getResources(), iconId))
-                                            .setPriority(Notification.DEFAULT_VIBRATE)
+                                            .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
                                             .setContentTitle(title)
                                             .setAutoCancel(true)
                                             .setContentIntent(pi)
                                             .setVisibility(Notification.VISIBILITY_PUBLIC)
                                             .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
                                             //不设置此项不会悬挂,false 不会出现悬挂
-                                            .setFullScreenIntent(pi, true)
                                             .build();
                                     mNotificationManager.notify(8,notify);
                                 }
