@@ -104,9 +104,9 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         orderNumberTv.setText(""+mTaskRecordMachineListData.getMachineOrderData().getOrderNum());
         currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
         machineNumberTv.setText(mTaskRecordMachineListData.getMachineData().getNameplate());
-        locationTv.setTextColor(Color.BLUE);
+        ///locationTv.setTextColor(Color.BLUE);
         if (mTaskRecordMachineListData.getMachineData().getLocation().isEmpty()){
-            locationTv.setText("点击上传位置");
+            locationTv.setText("点击上传");
         }else {
             locationTv.setText(mTaskRecordMachineListData.getMachineData().getLocation());
         }
