@@ -51,68 +51,71 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
         //itemView.setIsRecyclable(false);//禁止复用
         if (mProcessList!=null && !mProcessList.isEmpty() && position < mProcessList.size()) {
             @SuppressLint("SimpleDateFormat")
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             Date planShipDate = new Date(mProcessList.get(position).getMachineOrderData().getPlanShipDate());
-            itemView.planShipDateTv.setText(formatter.format(planShipDate));
+            if(mProcessList.get(position).getMachineOrderData().getPlanShipDate() == 0) {
+                itemView.planShipDateTv.setVisibility(View.INVISIBLE);
+            }else {
+                itemView.planShipDateTv.setText(formatter.format(planShipDate));
+            }
             Date planDate = new Date(mProcessList.get(position).getTaskPlan().getPlanTime());
-            itemView.planDateTv.setText(formatter.format(planDate));
+            if(mProcessList.get(position).getTaskPlan().getPlanTime() == 0) {
+                itemView.planDateTv.setVisibility(View.INVISIBLE);
+            } else {
+                itemView.planDateTv.setText(formatter.format(planDate));
+            }
             itemView.machineIdTv.setText("" + mProcessList.get(position).getMachineData().getNameplate());
             itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
-            if (mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
-                    ||mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED
-                    ||mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CANCELED){
-                itemView.processStateTv.setText("改单拆单中");
+            if (mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED){
+                itemView.processStateTv.setText("改单中");
                 itemView.taskStatusIv.setImageResource(R.mipmap.change);
-            }else {
+            }else if(mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED) {
+                itemView.processStateTv.setText("拆单中");
+                itemView.taskStatusIv.setImageResource(R.mipmap.split);
+            } else if(mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CANCELED) {
+                itemView.processStateTv.setText("已取消");
+                itemView.taskStatusIv.setImageResource(R.mipmap.cancel);
+            } else {
                 switch (mProcessList.get(position).getStatus()) {
                     case SinSimApp.TASK_INITIAL:
                         itemView.taskStatusIv.setImageResource(R.mipmap.initial);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INITIAL));
-                        itemView.processStateTv.setTextColor(Color.YELLOW);
                         break;
                     case SinSimApp.TASK_PLANED:
                         itemView.taskStatusIv.setImageResource(R.mipmap.initial);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_PLANED));
-                        itemView.processStateTv.setTextColor(Color.YELLOW);
                         break;
                     case SinSimApp.TASK_INSTALL_WAITING:
-                        itemView.taskStatusIv.setImageResource(R.mipmap.install_waiting);
+                        itemView.taskStatusIv.setImageResource(R.mipmap.install);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALL_WAITING));
-                        itemView.processStateTv.setTextColor(Color.GREEN);
                         break;
                     case SinSimApp.TASK_INSTALLING:
-                        itemView.taskStatusIv.setImageResource(R.mipmap.to_install);
+                        itemView.taskStatusIv.setImageResource(R.mipmap.install);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALLING));
-                        itemView.processStateTv.setTextColor(Color.BLUE);
                         break;
                     case SinSimApp.TASK_INSTALLED:
-                        itemView.taskStatusIv.setImageResource(R.mipmap.quality_waiting);
+                        itemView.taskStatusIv.setImageResource(R.mipmap.quality);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALLED));
-                        itemView.processStateTv.setTextColor(Color.GREEN);
                         break;
                     case SinSimApp.TASK_QUALITY_DOING:
-                        itemView.taskStatusIv.setImageResource(R.mipmap.to_quality);
+                        itemView.taskStatusIv.setImageResource(R.mipmap.quality);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DOING));
-                        itemView.processStateTv.setTextColor(Color.BLUE);
                         break;
                     case SinSimApp.TASK_QUALITY_DONE:
-                        itemView.taskStatusIv.setImageResource(R.mipmap.quality_waiting);
+                        itemView.taskStatusIv.setImageResource(R.mipmap.quality);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DONE));
-                        itemView.processStateTv.setTextColor(Color.GREEN);
                         break;
                     case SinSimApp.TASK_INSTALL_ABNORMAL:
-                        itemView.taskStatusIv.setImageResource(R.mipmap.install_abnormal);
+                        itemView.taskStatusIv.setImageResource(R.mipmap.abnormal);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALL_ABNORMAL));
-                        itemView.processStateTv.setTextColor(Color.RED);
                         break;
                     case SinSimApp.TASK_QUALITY_ABNORMAL:
-                        itemView.taskStatusIv.setImageResource(R.mipmap.quality_abnormal);
+                        itemView.taskStatusIv.setImageResource(R.mipmap.abnormal);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_ABNORMAL));
-                        itemView.processStateTv.setTextColor(Color.RED);
                         break;
                     case SinSimApp.TASK_SKIP:
+                        itemView.taskStatusIv.setImageResource(R.mipmap.jump);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_SKIP));
-                        itemView.processStateTv.setTextColor(Color.RED);
                         break;
                     default:
                         break;

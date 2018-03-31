@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardUseCompatPadding="true"
     android:id="@+id/item_linear_layout">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:paddingLeft="12dp"
+        android:layout_height="72dp"
         android:orientation="horizontal">
         <ImageView
             android:id="@+id/task_status_iv"
             android:layout_gravity="center_vertical"
-            android:layout_width="56dp"
-            android:layout_height="56dp" />
+            android:layout_width="72dp"
+            android:layout_height="72dp" />
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -21,17 +21,16 @@
             android:layout_weight="3"
             android:orientation="horizontal">
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="5"
+                android:layout_width="match_parent"
                 android:orientation="horizontal"
                 android:layout_height="match_parent">
                 <TextView
                     android:id="@+id/process_machine_id_tv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:textSize="22sp"
                     android:textStyle="bold"
-                    android:layout_weight="3"
+                    android:layout_weight="2"
                     android:layout_gravity="center_vertical"
                     android:hint="机器编号"
                     android:gravity="start" />
@@ -39,40 +38,49 @@
                     android:id="@+id/process_name_tv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10sp"
                     android:layout_weight="2"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
                     android:layout_gravity="center_vertical"
                     android:hint="工序名称" />
             </LinearLayout>
-            <TextView
-                android:id="@+id/process_state_tv"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginLeft="10dp"
-                android:gravity="end"
-                android:hint="工序状态"/>
         </LinearLayout>
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
             android:layout_marginRight="10dp"
-            android:layout_gravity="end">
+            android:layout_marginTop="5dp"
+            android:gravity="end">
+            <TextView
+                android:id="@+id/process_state_tv"
+                android:layout_width="wrap_content"
+                android:background="@drawable/textview_style"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:hint="工序状态"/>
             <TextView
                 android:id="@+id/process_begin_date_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/lightgray"
-                android:gravity="end"/>
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:gravity="end"
+                android:layout_marginTop="24dp"/>
             <TextView
                 android:id="@+id/process_end_date_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/lightgray"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:visibility="gone"
                 android:gravity="end"/>
         </LinearLayout>
     </LinearLayout>
