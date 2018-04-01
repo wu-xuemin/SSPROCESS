@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:orientation="vertical">
 
     <ScrollView
@@ -41,22 +40,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="安装人员："
-                    android:textSize="16sp"
-                    android:textColor="#000000"/>
+                    android:textStyle="bold"
+                    android:textSize="15sp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/choose_installer_tv"
-                    android:text="点击选择安装人员"
-                    android:textColor="@color/blue"
-                    android:textSize="16sp"/>
+                    android:text="选择人员"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:background="@drawable/textview_button"
+                    android:textSize="13sp"/>
             </LinearLayout>
 
             <RadioGroup
                 android:id="@+id/resalt_for_install_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
+                android:minHeight="48dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginLeft="16dp"
                 android:orientation="horizontal">
@@ -82,20 +84,18 @@
                 android:id="@+id/install_abnormal_ll"
                 android:orientation="vertical"
                 android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp">
+                android:layout_marginLeft="16dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="36dp">
                     <TextView
                         android:id="@+id/abnormal_detail_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textSize="16sp"
-                        android:text="异常描述："
-                        android:textColor="#000000"/>
+                        android:textSize="15sp"
+                        android:text="异常类型："
+                        android:textStyle="bold"/>
                     <Spinner
                         android:id="@+id/fail_reason_spinner"
                         android:layout_width="wrap_content"
@@ -105,24 +105,32 @@
                         android:layout_alignBaseline="@+id/abnormal_detail_label"/>
                 </RelativeLayout>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="异常描述："
+                    android:layout_marginTop="8dp"
+                    android:textStyle="bold"/>
                 <EditText
                     android:id="@+id/abnormal_detail_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:lines="3"
+                    android:layout_marginTop="4dp"
+                    android:minLines="4"
+                    android:padding="4dp"
                     android:gravity="start"
                     android:hint="请输入异常信息..."
                     android:textSize="16sp"
-                    android:background="@color/hintColor"/>
+                    android:background="@drawable/editview_bg"/>
                 <TextView
                     android:id="@+id/take_photos_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:text="拍照上传："
-                    android:textColor="@color/black"/>
+                    android:textStyle="bold"/>
 
                 <cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout
                     android:id="@+id/install_abnormal_add_photos"
@@ -154,7 +162,7 @@
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/begin_install_button"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="64dp"
             android:layout_weight="1"
             android:onClick="onStartInstall"
             android:textColor="#ffffff"
@@ -164,7 +172,7 @@
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/install_info_update_button"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="64dp"
             android:layout_weight="1"
             android:onClick="onStopInstall"
             android:textColor="#ffffff"

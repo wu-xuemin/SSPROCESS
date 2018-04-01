@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -83,7 +84,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
     private ArrayAdapter<String> arrayAdapter;
     private ArrayList<AbnormalData> mAbnormalTypeList;
-    private ArrayList<Integer> checkedNameList;
+    private ArrayList<Integer> checkedNameList = new ArrayList<>();
     private String checkedName;
 
     private final String IP = SinSimApp.getApp().getServerIP();
@@ -148,7 +149,13 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         chooseInstallerTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fetchInstallerListData();
+                if(mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALLING) {
+                    fetchInstallerListData();
+                } else {
+                    Toast toast =Toast.makeText(DetailToInstallActivity.this, "请在安装结束前进行安装人员选择！", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                }
             }
         });
 
@@ -171,7 +178,9 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 ||mTaskRecordMachineListData.getMachineData().getStatus()==SinSimApp.MACHINE_CANCELED) {
             begainInstallButton.setVisibility(View.GONE);
             installInfoUpdateButton.setVisibility(View.GONE);
-            Toast.makeText(DetailToInstallActivity.this, "正在改单/拆单，不能安装！", Toast.LENGTH_SHORT).show();
+            Toast toast = Toast.makeText(DetailToInstallActivity.this, "正在改单/拆单，不能安装！", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
         }else {
             if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALL_WAITING) {
                 begainInstallButton.setVisibility(View.VISIBLE);
@@ -438,10 +447,21 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 ArrayList<UserData> mInstallerList = (ArrayList<UserData>) msg.obj;
                 Log.d(TAG, "安装组人数: "+mInstallerList.size());
                 String[] items={};
+                boolean[] checkedItemsArray = new boolean[mInstallerList.size()];
                 for (int i=0;i<mInstallerList.size();i++){
                     items = Arrays.copyOf(items, items.length+1);
                     items[items.length-1] = mInstallerList.get(i).getName();
+                    //初始化是否选择的boolean数组
+                    checkedItemsArray[i] = false;
                 }
+                for (int i = 0; i < checkedNameList.size(); i++) {
+                    for (int j = 0; j < checkedItemsArray.length; j++) {
+                        if(checkedNameList.get(i) == j) {
+                            checkedItemsArray[j] = true;
+                        }
+                    }
+                }
+
                 // 创建一个AlertDialog建造者
                 AlertDialog.Builder alertDialogBuilder= new AlertDialog.Builder(DetailToInstallActivity.this);
                 // 设置标题
@@ -451,8 +471,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 // 第二个参数：被默认选中的，一个布尔类型的数组
                 // 第三个参数：勾选事件监听
                 final String[] finalItems = items;
-                checkedNameList =new ArrayList<>();
-                alertDialogBuilder.setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
+
+                alertDialogBuilder.setMultiChoiceItems(items, checkedItemsArray, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                         // dialog：不常使用，弹出框接口
@@ -482,9 +502,13 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     public void onClick(DialogInterface arg0, int arg1) {
                         checkedName="";
                         for (int i=0;i<checkedNameList.size();i++){
-                            checkedName += finalItems[checkedNameList.get(i)]+",";
-                            chooseInstallerTv.setText(checkedName);
+                            if(i != checkedNameList.size()-1) {
+                                checkedName += finalItems[checkedNameList.get(i)]+", ";
+                            } else {
+                                checkedName += finalItems[checkedNameList.get(i)];
+                            }
                         }
+                        chooseInstallerTv.setText(checkedName);
                         // 关闭提示框
                         mInstallerListDialog.dismiss();
                     }
