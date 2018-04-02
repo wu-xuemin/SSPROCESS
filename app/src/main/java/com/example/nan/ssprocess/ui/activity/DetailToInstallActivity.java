@@ -344,10 +344,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         installAbnormalDetailEt.setText("");
                     }
                 } else {
-                    failReasonSpinner.setClickable(true);
-                    installAbnormalDetailEt.setFocusableInTouchMode(true);
-                    installAbnormalDetailEt.setFocusable(true);
-                    installAbnormalDetailEt.requestFocus();
                     Log.d(TAG, "安装异常: 没有安装异常的信息");
                 }
             } else {

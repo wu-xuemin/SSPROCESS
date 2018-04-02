@@ -136,12 +136,23 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED) {
             beginQaButton.setVisibility(View.VISIBLE);
             endQaButton.setVisibility(View.GONE);
+            checkedOkRb.setEnabled(false);
+            checkedNokRb.setEnabled(false);
         }else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DOING) {
             beginQaButton.setVisibility(View.GONE);
             endQaButton.setVisibility(View.VISIBLE);
+            checkedOkRb.setEnabled(true);
+            checkedNokRb.setEnabled(true);
+        }else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_ABNORMAL){
+            beginQaButton.setVisibility(View.GONE);
+            endQaButton.setVisibility(View.GONE);
+            checkedOkRb.setEnabled(false);
+            checkedNokRb.setEnabled(true);
         }else {
             beginQaButton.setVisibility(View.GONE);
             endQaButton.setVisibility(View.GONE);
+            checkedOkRb.setEnabled(true);
+            checkedNokRb.setEnabled(false);
         }
 
         //获取历史质检数据
@@ -200,7 +211,11 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                         Log.d(TAG, "handleMessage: get Json = " + new Gson().toJson(mQualityRecordDetailsData));
                         //加载历史照片
                         checkedNokRb.setChecked(true);
+                        checkedNokRb.setEnabled(true);
+                        checkedOkRb.setEnabled(false);
                         checkoutNokDetailEt.setText(mQualityRecordDetailsData.getComment());
+                        checkoutNokDetailEt.setFocusable(false);
+                        checkoutNokDetailEt.setFocusableInTouchMode(false);
                         //加载历史照片地址
                         String picsName=mQualityRecordDetailsData.getQualityRecordImage().getImage();
                         picsName=picsName.substring(1,picsName.indexOf("]"));
@@ -502,6 +517,8 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                 }else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DOING) {
                     beginQaButton.setVisibility(View.GONE);
                     endQaButton.setVisibility(View.VISIBLE);
+                    checkedNokRb.setEnabled(true);
+                    checkedOkRb.setEnabled(true);
                 }else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DONE) {
                     beginQaButton.setVisibility(View.GONE);
                     endQaButton.setVisibility(View.VISIBLE);
