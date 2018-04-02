@@ -136,6 +136,11 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
         machineNumberTv.setText(mTaskRecordMachineListData.getMachineData().getNameplate());
         locationTv.setText(mTaskRecordMachineListData.getMachineData().getLocation());
+        if(mTaskRecordMachineListData.getWorkerList().isEmpty()|| mTaskRecordMachineListData.getWorkerList() == null || "".equals(mTaskRecordMachineListData.getWorkerList())){
+            Log.d(TAG, "没有安装人员");
+        }else {
+            chooseInstallerTv.setText(mTaskRecordMachineListData.getWorkerList());
+        }
 
         //点击下载装车单
         installListTv.setOnClickListener(new View.OnClickListener() {
@@ -185,12 +190,18 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALL_WAITING) {
                 begainInstallButton.setVisibility(View.VISIBLE);
                 installInfoUpdateButton.setVisibility(View.GONE);
+                installAbnormalRb.setEnabled(false);
+                installNormalRb.setEnabled(false);
             } else if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALLING) {
                 begainInstallButton.setVisibility(View.GONE);
                 installInfoUpdateButton.setVisibility(View.VISIBLE);
+                installAbnormalRb.setEnabled(true);
+                installNormalRb.setEnabled(true);
             } else {
                 begainInstallButton.setVisibility(View.GONE);
                 installInfoUpdateButton.setVisibility(View.GONE);
+                installAbnormalRb.setEnabled(false);
+                installNormalRb.setEnabled(true);
             }
         }
 
@@ -289,17 +300,22 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     Log.d(TAG, "安装异常信息: "+new Gson().toJson(abnormalRecordDetailsData));
                     //如果安装异常，填入异常的原因
                     Log.d(TAG, "安装异常: 流程："+abnormalRecordDetailsData.getTaskRecord().getStatus()+" 异常类型："+abnormalRecordDetailsData.getAbnormalType());
-                    if (abnormalRecordDetailsData.getTaskRecord().getStatus()  == SinSimApp.TASK_INSTALL_ABNORMAL) {
-                        chooseInstallerTv.setText(abnormalRecordDetailsData.getTaskRecord().getWorkerList());
+                    if (mTaskRecordMachineListData.getStatus()  == SinSimApp.TASK_INSTALL_ABNORMAL) {
                         installAbnormalRb.setChecked(true);
+                        installAbnormalRb.setEnabled(true);
+                        installNormalRb.setEnabled(false);
                         //TODO:待验证
                         if(arrayAdapter.isEmpty()){
                             Log.d(TAG, "安装异常信息: 空");
                         }else {
-                            int position = arrayAdapter.getPosition(abnormalRecordDetailsData.getAbnormal().getAbnormalName());   //根据该选项获取位置
+                            //根据该选项获取位置
+                            int position = arrayAdapter.getPosition(abnormalRecordDetailsData.getAbnormal().getAbnormalName());
                             failReasonSpinner.setSelection(position);
                         }
+                        failReasonSpinner.setClickable(false);
                         installAbnormalDetailEt.setText(abnormalRecordDetailsData.getComment());
+                        installAbnormalDetailEt.setFocusable(false);
+                        installAbnormalDetailEt.setFocusableInTouchMode(false);
                         //加载历史照片地址
                         String picsName=abnormalRecordDetailsData.getAbnormalImage().getImage();
                         picsName=picsName.substring(1,picsName.indexOf("]"));
@@ -328,6 +344,10 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         installAbnormalDetailEt.setText("");
                     }
                 } else {
+                    failReasonSpinner.setClickable(true);
+                    installAbnormalDetailEt.setFocusableInTouchMode(true);
+                    installAbnormalDetailEt.setFocusable(true);
+                    installAbnormalDetailEt.requestFocus();
                     Log.d(TAG, "安装异常: 没有安装异常的信息");
                 }
             } else {
@@ -716,9 +736,16 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING){
                     begainInstallButton.setVisibility(View.VISIBLE);
                     installInfoUpdateButton.setVisibility(View.GONE);
+                    installAbnormalRb.setEnabled(false);
+                    installNormalRb.setEnabled(false);
                 } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING){
                     begainInstallButton.setVisibility(View.GONE);
                     installInfoUpdateButton.setVisibility(View.VISIBLE);
+                    installAbnormalRb.setEnabled(true);
+                    installNormalRb.setEnabled(true);
+                } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED){
+                    Toast.makeText(DetailToInstallActivity.this, "该工序已安装完成！", Toast.LENGTH_SHORT).show();
+                    DetailToInstallActivity.this.finish();
                 } else {
                     begainInstallButton.setVisibility(View.GONE);
                     installInfoUpdateButton.setVisibility(View.GONE);
@@ -743,9 +770,11 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         String strCurTime = formatter.format(curDate);
         long lCurTime=System.currentTimeMillis();
         mTaskRecordMachineListData.setLeader(SinSimApp.getApp().getFullName());
-        if ("".equals(checkedName)){
-            Log.d(TAG, "安装人员为空");
-            mTaskRecordMachineListData.setWorkerList("无");
+        if ("".equals(checkedName) || checkedName.isEmpty()){
+            Toast toast = Toast.makeText(DetailToInstallActivity.this, "请勾选安装人员！", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            return;
         }else {
             mTaskRecordMachineListData.setWorkerList(checkedName);
         }
@@ -811,11 +840,9 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 mUploadingProcessDialog.dismiss();
             }
             if (msg.what == Network.OK) {
-                currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
-                begainInstallButton.setVisibility(View.GONE);
-                installInfoUpdateButton.setVisibility(View.GONE);
                 Toast.makeText(DetailToInstallActivity.this, "异常信息和照片上传成功！", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "handleMessage: 异常信息和照片上传成功！");
+                DetailToInstallActivity.this.finish();
             } else {
                 mTaskRecordMachineListData.setStatus(iTaskRecordMachineListDataStatusTemp);
                 String errorMsg = (String)msg.obj;

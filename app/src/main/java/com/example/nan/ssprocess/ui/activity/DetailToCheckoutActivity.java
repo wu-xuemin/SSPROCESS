@@ -245,11 +245,11 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         Date curDate = new Date(System.currentTimeMillis());
         String strCurTime = formatter.format(curDate);
         long lCurTime=System.currentTimeMillis();
-        mTaskRecordMachineListData.setQualityEndTime(strCurTime);
 
         //读取和更新输入信息
         if(checkedOkRb.isChecked()){
             iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
+            mTaskRecordMachineListData.setQualityEndTime(strCurTime);
             updateProcessDetailData(SinSimApp.TASK_QUALITY_DONE);
         } else {
             QualityRecordDetailsData qualityRecordDetailsData=new QualityRecordDetailsData(SinSimApp.getApp().getFullName(),mTaskRecordMachineListData.getId(),lCurTime);
@@ -260,12 +260,24 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                 qualityRecordDetailsData.setComment(checkoutNokDetailEt.getText().toString());
                 //上传质检结果
                 String mQualityRecordDetailsDataToJson = gson.toJson(qualityRecordDetailsData);
-                Log.d(TAG, "updateQARecordData: mQualityRecordDetailsDataToJson:"+ mQualityRecordDetailsDataToJson);
+                Log.d(TAG, "updateQARecordData: taskQualityRecord:"+ mQualityRecordDetailsDataToJson);
                 LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                mPostValue.put("strTaskQualityRecordDetail", mQualityRecordDetailsDataToJson);
-                String updateProcessRecordUrl = URL.HTTP_HEAD + IP + URL.UPDATE_TASK_QUALITY_RECORD_DETAIL;
-                Log.d(TAG, "updateQARecordData: "+updateProcessRecordUrl+mPostValue.get("strTaskQualityRecordDetail"));
-                Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, new UpdateProcessResultDataHandler());
+//                mPostValue.put("strTaskQualityRecordDetail", mQualityRecordDetailsDataToJson);
+                mPostValue.put("taskQualityRecord", mQualityRecordDetailsDataToJson);
+
+                iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
+                mTaskRecordMachineListData.setStatus(SinSimApp.TASK_QUALITY_ABNORMAL);
+                String mTaskRecordDataToJson = gson.toJson(mTaskRecordMachineListData);
+                Log.d(TAG, "updateQARecordData: taskRecord:"+mTaskRecordDataToJson);
+                mPostValue.put("taskRecord", mTaskRecordDataToJson);
+
+                //获取图片本地url
+                ArrayList<String> imageUrlList = mCheckoutNokPhotosSnpl.getData();
+                Log.d(TAG, "异常图片: "+imageUrlList.size());
+
+                String uploadQaAbnormalDetailUrl = URL.HTTP_HEAD + IP + URL.UPLOAD_INSTALL_QA_DETAIL;
+//                Log.d(TAG, "updateQARecordData: "+updateProcessRecordUrl+mPostValue.get("strTaskQualityRecordDetail"));
+                Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadQaAbnormalDetailUrl, imageUrlList, mPostValue, new UploadTaskRecordImageHandler());
             } else {
                 Toast.makeText(DetailToCheckoutActivity.this,"请拍照并输入质检不合格原因！",Toast.LENGTH_SHORT).show();
             }
@@ -278,91 +290,23 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         }
         mUploadingProcessDialog.show();
     }
-    @SuppressLint("HandlerLeak")
-    private class UpdateProcessResultDataHandler extends Handler {
-        @Override
-        public void handleMessage(final Message msg) {
 
-            if (msg.what == Network.OK) {
-                Toast.makeText(DetailToCheckoutActivity.this, "质检信息上传成功！", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "handleMessage: 质检信息上传成功");
-                LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                mPostValue.put("taskRecordId", ""+mTaskRecordMachineListData.getId());
-                String fetchProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FATCH_TASK_QUALITY_RECORD_LIST;
-                Network.Instance(SinSimApp.getApp()).fetchProcessInstallRecordData(fetchProcessRecordUrl, mPostValue, new FetchQaNokRecordDataHandler());
-
-            } else {
-                if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
-                    mUploadingProcessDialog.dismiss();
-                }
-                String errorMsg = (String)msg.obj;
-                Log.d(TAG, "handleMessage: "+errorMsg);
-                Toast.makeText(DetailToCheckoutActivity.this, "质检信息上传失败！"+errorMsg, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-    @SuppressLint("HandlerLeak")
-    private class FetchQaNokRecordDataHandler extends Handler {
-        @Override
-        public void handleMessage(final Message msg) {
-            if (msg.what == Network.OK) {
-                //获取质检结果
-                ArrayList<QualityRecordDetailsData> mQualityRecordList = (ArrayList<QualityRecordDetailsData>) msg.obj;
-                if (mQualityRecordList.size()>0) {
-                    int updateTime = 0;
-                    //对比更新时间取值
-                    for (int update = mQualityRecordList.size() - 1; update >= 0; update--) {
-                        if (mQualityRecordList.get(update).getTaskRecordId()==mTaskRecordMachineListData.getId()) {
-                            if (mQualityRecordList.get(updateTime).getId() < mQualityRecordList.get(update).getId()) {
-                                updateTime = update;
-                            }
-                            Log.d(TAG, "handleMessage: updateTime1:" + updateTime);
-                        }
-                    }
-                    QualityRecordDetailsData qualityRecordDetailsData = mQualityRecordList.get(updateTime);
-
-                    //获取图片本地url
-                    ArrayList<String> imageUrlList = mCheckoutNokPhotosSnpl.getData();
-                    //添加quality_record_image数据库
-                    QualityRecordImageAddData qualityRecordImageAddData = new QualityRecordImageAddData();
-                    //更新当前时间
-                    qualityRecordImageAddData.setCreateTime(qualityRecordDetailsData.getCreateTime());
-                    qualityRecordImageAddData.setTaskQualityRecordId(qualityRecordDetailsData.getId());
-                    //更新质检不合格照片
-                    Gson gson=new Gson();
-                    String imageJson = gson.toJson(qualityRecordImageAddData);
-                    Log.d(TAG, "updateQARecordData: "+imageJson);
-                    String uploadQualityRecordImageUrl = URL.HTTP_HEAD + IP + URL.UPLOAD_QUALITY_RECORD_IMAGE;
-//                    Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadQualityRecordImageUrl, imageUrlList, "qualityRecordImage", imageJson, new UploadTaskRecordImageHandler());
-
-                } else {
-                    if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
-                        mUploadingProcessDialog.dismiss();
-                    }
-                    Log.d(TAG, "handleMessage: 添加安装异常的信息失败");
-                }
-            } else {
-                if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
-                    mUploadingProcessDialog.dismiss();
-                }
-                String errorMsg = (String)msg.obj;
-                Toast.makeText(DetailToCheckoutActivity.this, "上传信息失败！"+errorMsg, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
     @SuppressLint("HandlerLeak")
     private class UploadTaskRecordImageHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
+            if(mUpdatingProcessDialog != null && mUpdatingProcessDialog.isShowing()) {
+                mUpdatingProcessDialog.dismiss();
+            }
+            if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
+                mUploadingProcessDialog.dismiss();
+            }
             if (msg.what == Network.OK) {
-                Toast.makeText(DetailToCheckoutActivity.this, "上传图片成功！", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "handleMessage: 照片上传成功！");
-                iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
-                updateProcessDetailData(SinSimApp.TASK_QUALITY_ABNORMAL);
+                Toast.makeText(DetailToCheckoutActivity.this, "上传质检不合格信息成功！", Toast.LENGTH_SHORT).show();
+                DetailToCheckoutActivity.this.finish();
+                Log.d(TAG, "handleMessage: 上传质检不合格信息成功！");
             } else {
-                if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
-                    mUploadingProcessDialog.dismiss();
-                }
+                mTaskRecordMachineListData.setStatus(iTaskRecordMachineListDataStatusTemp);
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg);
                 Toast.makeText(DetailToCheckoutActivity.this, "上传图片失败！"+errorMsg, Toast.LENGTH_SHORT).show();
@@ -552,6 +496,21 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             }
             if (msg.what == Network.OK) {
                 currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
+                if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED) {
+                    beginQaButton.setVisibility(View.VISIBLE);
+                    endQaButton.setVisibility(View.GONE);
+                }else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DOING) {
+                    beginQaButton.setVisibility(View.GONE);
+                    endQaButton.setVisibility(View.VISIBLE);
+                }else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DONE) {
+                    beginQaButton.setVisibility(View.GONE);
+                    endQaButton.setVisibility(View.VISIBLE);
+                    Toast.makeText(DetailToCheckoutActivity.this, "质检信息上传成功！", Toast.LENGTH_SHORT).show();
+                    DetailToCheckoutActivity.this.finish();
+                }else {
+                    beginQaButton.setVisibility(View.GONE);
+                    endQaButton.setVisibility(View.GONE);
+                }
             } else {
                 mTaskRecordMachineListData.setStatus(iTaskRecordMachineListDataStatusTemp);
                 String errorMsg = (String)msg.obj;

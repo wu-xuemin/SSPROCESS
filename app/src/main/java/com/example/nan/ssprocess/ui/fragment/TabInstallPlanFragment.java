@@ -133,8 +133,8 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         //第一次进入刷新页面， 加载loading页面
         if( mLoadingProcessDialog == null) {
             mLoadingProcessDialog = new ProgressDialog(getActivity());

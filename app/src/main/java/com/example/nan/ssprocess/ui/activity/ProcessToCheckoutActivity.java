@@ -96,6 +96,11 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         //第一次进入刷新页面， 加载loading页面
         if( mLoadingProcessDialog == null) {
             mLoadingProcessDialog = new ProgressDialog(ProcessToCheckoutActivity.this);
