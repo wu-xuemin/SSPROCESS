@@ -31,37 +31,125 @@
                 android:text="安装信息："
                 android:textColor="@color/black"
                 android:background="@color/windowBackground"/>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="64dp"
-                android:orientation="horizontal"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:gravity="center_vertical">
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/result_for_install_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="安装结果："
-                    android:textStyle="bold"
-                    android:textSize="15sp"/>
-                <TextView
-                    android:id="@+id/abnormal_reason_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="暂无"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"/>
+                        <TextView
+                            android:id="@+id/result_for_install_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="安装结果："
+                            android:textStyle="bold"
+                            android:textSize="15sp"/>
+                        <TextView
+                            android:id="@+id/abnormal_reason_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="暂无"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="安装人员："
+                            android:textStyle="bold"
+                            android:textSize="15sp"/>
+                        <TextView
+                            android:id="@+id/install_persons"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="暂无"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"/>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="8dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/install_start_time_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="开始："
+                            android:textSize="10sp"/>
+                        <TextView
+                            android:id="@+id/install_start_time_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="暂无"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginRight="8dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/install_end_time_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="结束："
+                            android:textSize="10sp"/>
+                        <TextView
+                            android:id="@+id/install_end_time_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="暂无"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"/>
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/abnormal_detail_layout"
+                android:visibility="gone"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:orientation="vertical">
@@ -79,9 +167,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:hint="暂无"
-                    android:minLines="3"
+                    android:minLines="4"
+                    android:padding="5dp"
                     android:textSize="15sp"
-                    android:background="@color/hintColor" />
+                    android:background="@drawable/editview_bg" />
                 <TextView
                     android:id="@+id/take_photos_label"
                     android:layout_width="match_parent"

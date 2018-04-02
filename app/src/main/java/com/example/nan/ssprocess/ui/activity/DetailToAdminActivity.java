@@ -30,8 +30,10 @@ import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -48,6 +50,9 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     private TaskRecordMachineListData mTaskRecordMachineListData=new TaskRecordMachineListData();
     private TextView locationTv;
     private TextView abnormalReasonTv;
+    private TextView mInstallPersonsTv;
+    private TextView mInstallBeginTv;
+    private TextView mInstallEndTv;
     private TextView abnormalDetailTv;
     private TextView nokReasonTv;
     private TextView nokDetailTv;
@@ -89,6 +94,9 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         });
 
         abnormalReasonTv=findViewById(R.id.abnormal_reason_tv);
+        mInstallPersonsTv=findViewById(R.id.install_persons);
+        mInstallBeginTv=findViewById(R.id.install_start_time_tv);
+        mInstallEndTv=findViewById(R.id.install_end_time_tv);
         abnormalDetailTv=findViewById(R.id.abnormal_detail_tv);
         installAbnormalLayout=findViewById(R.id.abnormal_detail_layout);
         nokReasonTv=findViewById(R.id.nok_reason_tv);
@@ -317,6 +325,19 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                 installAbnormalLayout.setVisibility(View.GONE);
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(DetailToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+            if(mTaskRecordMachineListData.getWorkerList() != null && mTaskRecordMachineListData.getWorkerList() != "") {
+                mInstallPersonsTv.setText(mTaskRecordMachineListData.getWorkerList());
+            }
+            SimpleDateFormat formatter = new SimpleDateFormat("yy/MM/dd HH:mm");
+            if(mTaskRecordMachineListData.getInstallBeginTime() != null) {
+                long timestamp = Long.valueOf(mTaskRecordMachineListData.getInstallBeginTime());
+                mInstallBeginTv.setText(formatter.format(new Date(timestamp)));
+            }
+            if(mTaskRecordMachineListData.getInstallEndTime() != null) {
+                long endTimestamp = Long.valueOf(mTaskRecordMachineListData.getInstallEndTime());
+                mInstallEndTv.setText(formatter.format(new Date(endTimestamp)));
+
             }
         }
     }
