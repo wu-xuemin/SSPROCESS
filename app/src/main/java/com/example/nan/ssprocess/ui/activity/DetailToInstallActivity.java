@@ -28,7 +28,6 @@ import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.AbnormalData;
-import com.example.nan.ssprocess.bean.basic.AbnormalImageAddData;
 import com.example.nan.ssprocess.bean.basic.AbnormalRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.QualityRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
@@ -124,7 +123,9 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         nokDetailTv=findViewById(R.id.nok_detail_tv);
         chooseInstallerTv=findViewById(R.id.choose_installer_tv);
         installAbnormalLayout=findViewById(R.id.install_abnormal_ll);
+        //质检信息默认隐藏，只有在质检异常的状态显示
         qaNokLayout=findViewById(R.id.checked_nok_layout);
+        qaNokLayout.setVisibility(View.GONE);
 
         //获取传递过来的信息
         Intent intent = getIntent();
@@ -197,6 +198,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 installInfoUpdateButton.setVisibility(View.VISIBLE);
                 installAbnormalRb.setEnabled(true);
                 installNormalRb.setEnabled(true);
+                //异常解决返回安装中的状态时，不从数据库获取信息
+                chooseInstallerTv.setText("选择人员");
             } else {
                 begainInstallButton.setVisibility(View.GONE);
                 installInfoUpdateButton.setVisibility(View.GONE);
@@ -312,7 +315,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                             int position = arrayAdapter.getPosition(abnormalRecordDetailsData.getAbnormal().getAbnormalName());
                             failReasonSpinner.setSelection(position);
                         }
-                        failReasonSpinner.setClickable(false);
+                        failReasonSpinner.setEnabled(false);
                         installAbnormalDetailEt.setText(abnormalRecordDetailsData.getComment());
                         installAbnormalDetailEt.setFocusable(false);
                         installAbnormalDetailEt.setFocusableInTouchMode(false);
@@ -338,6 +341,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                                 }
                             }
                             mInstallAbnormalPhotosSnpl.addMoreData(installPhotoList);
+                            mInstallAbnormalPhotosSnpl.setEditable(false);
                         }
                     } else {
                         installNormalRb.setChecked(true);
@@ -498,7 +502,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                             // 选中
                             Log.d(TAG, "onClick: "+which);
                             checkedNameList.add(which);
-                            Toast.makeText(DetailToInstallActivity.this, "选中"+ finalItems[which], Toast.LENGTH_SHORT).show();
                         }else {
                             // 取消选中
                             for (int i=0;i<checkedNameList.size();i++){
@@ -507,7 +510,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                                     break;
                                 }
                             }
-                            Toast.makeText(DetailToInstallActivity.this, "取消选中"+ finalItems[which], Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -766,7 +768,10 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         String strCurTime = formatter.format(curDate);
         long lCurTime=System.currentTimeMillis();
         mTaskRecordMachineListData.setLeader(SinSimApp.getApp().getFullName());
-        if ("".equals(checkedName) || checkedName.isEmpty()){
+        if ("".equals(checkedName) || checkedName==null){
+            if(mUpdatingProcessDialog != null && mUpdatingProcessDialog.isShowing()) {
+                mUpdatingProcessDialog.dismiss();
+            }
             Toast toast = Toast.makeText(DetailToInstallActivity.this, "请勾选安装人员！", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();

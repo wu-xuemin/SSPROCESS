@@ -152,6 +152,7 @@ public class TabInstallPlanFragment extends Fragment implements BGARefreshLayout
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("userAccount", account);
         mPostValue.put("page", ""+page);
+        Log.d(TAG, "fetchProcessData: 登入名字："+account);
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_INSTALL;
         Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessDataHandler());
     }

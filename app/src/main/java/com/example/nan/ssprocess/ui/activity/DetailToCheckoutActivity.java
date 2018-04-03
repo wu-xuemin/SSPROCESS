@@ -24,10 +24,7 @@ import android.widget.Toast;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
-import com.example.nan.ssprocess.bean.basic.AbnormalImageAddData;
-import com.example.nan.ssprocess.bean.basic.AbnormalRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.QualityRecordDetailsData;
-import com.example.nan.ssprocess.bean.basic.QualityRecordImageAddData;
 import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
@@ -35,7 +32,6 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
@@ -237,6 +233,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                                 }
                             }
                             mCheckoutNokPhotosSnpl.addMoreData(checkoutPhotoList);
+                            mCheckoutNokPhotosSnpl.setEditable(false);
                         }
                     } else {
                         Log.d(TAG, "handleMessage: 尚未质检");

@@ -10,21 +10,20 @@ import com.example.nan.ssprocess.bean.basic.TaskRecordData;
 public class QualityRecordDetailsData {
     private String comment;//不合格描述
     private long createTime;
+    private long solveTime;
     private int id;
-    private String name;
+    private String submitUser;
     private QualityRecordImageData qualityRecordImage;
-    private int status;//检验结果
     private TaskRecordData taskRecord;
     private int taskRecordId;
+    private String solution;
 
     public QualityRecordDetailsData(){}
 
-    public QualityRecordDetailsData(String name, int taskRecordId,long createTime){
-        this.comment="";
+    public QualityRecordDetailsData(String submitUser, int taskRecordId, long createTime){
         this.createTime=createTime;
-        this.name=name;
+        this.submitUser=submitUser;
         this.id=0;
-        this.status=0;
         this.taskRecordId=taskRecordId;
     }
 
@@ -40,16 +39,12 @@ public class QualityRecordDetailsData {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getSubmitUser() {
+        return submitUser;
     }
 
     public QualityRecordImageData getQualityRecordImage() {
         return qualityRecordImage;
-    }
-
-    public int getStatus() {
-        return status;
     }
 
     public TaskRecordData getTaskRecord() {
@@ -60,11 +55,19 @@ public class QualityRecordDetailsData {
         return taskRecordId;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
     }
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public long getSolveTime() {
+        return solveTime;
+    }
+
+    public String getSolution() {
+        return solution;
     }
 }

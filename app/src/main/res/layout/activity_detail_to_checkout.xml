@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginLeft="16dp">
 
@@ -67,19 +67,20 @@
                     android:layout_marginLeft="16dp"
                     android:textSize="16sp"
                     android:text="不合格原因："
-                    android:textColor="@color/black"/>
+                    android:textStyle="bold"/>
                 <EditText
                     android:id="@+id/checkout_nok_detail_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginLeft="16dp"
                     android:hint="输入不合格原因"
-                    android:lines="3"
+                    android:minLines="4"
+                    android:padding="4dp"
                     android:gravity="start"
                     android:textSize="16sp"
-                    android:background="@color/hintColor" />
+                    android:background="@drawable/editview_bg" />
                 <TextView
                     android:id="@+id/take_photos_label"
                     android:layout_width="match_parent"
@@ -89,7 +90,7 @@
                     android:layout_marginLeft="16dp"
                     android:textSize="16sp"
                     android:text="拍照上传："
-                    android:textColor="@color/black"/>
+                    android:textStyle="bold"/>
 
                 <cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout
                     android:id="@+id/checkout_nok_add_photos"
@@ -119,7 +120,7 @@
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/checkout_start_button"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="64dp"
             android:layout_weight="1"
             android:onClick="onStartQa"
             android:textColor="#ffffff"
@@ -129,7 +130,7 @@
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/checkout_end_button"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="64dp"
             android:layout_weight="1"
             android:onClick="onStopQa"
             android:textColor="#ffffff"
