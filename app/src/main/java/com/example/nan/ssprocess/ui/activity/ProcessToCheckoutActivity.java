@@ -174,13 +174,28 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
                 {
                     // 取出Intent里的扫码结果去执行机器查找
                     String mMachineNamePlate = data.getStringExtra("mMachineNamePlate");
-                    final String ip = SinSimApp.getApp().getServerIP();
-                    LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                    String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_QA;
-                    mPostValue.put("page", ""+mPage);
-                    mPostValue.put("namePlate", ""+mMachineNamePlate);
-                    mPostValue.put("account", ""+SinSimApp.getApp().getAccount());
-                    Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessListDataHandler());
+                    ArrayList<TaskRecordMachineListData> mScanResultList = new ArrayList<>();
+                    for (int i=0;i<mProcessToCheckoutList.size();i++){
+                        if (mProcessToCheckoutList.get(i).getMachineData().getNameplate().equals(mMachineNamePlate)){
+                            mScanResultList.add(mProcessToCheckoutList.get(i));
+                        }
+                    }
+                    if (mScanResultList.isEmpty()||mScanResultList.size()<1){
+                        Toast.makeText(ProcessToCheckoutActivity.this, "没有内容!", Toast.LENGTH_LONG).show();
+                        return;
+                    }else {
+                        Intent intent = new Intent(ProcessToCheckoutActivity.this, ScanResultActivity.class);
+                        intent.putExtra("mTaskRecordMachineList", (Serializable) mScanResultList);
+                        startActivity(intent);
+                    }
+//
+//                    final String ip = SinSimApp.getApp().getServerIP();
+//                    LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+//                    String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_QA;
+//                    mPostValue.put("page", ""+mPage);
+//                    mPostValue.put("namePlate", ""+mMachineNamePlate);
+//                    mPostValue.put("account", ""+SinSimApp.getApp().getAccount());
+//                    Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessListDataHandler());
                 }
                 break;
             default:

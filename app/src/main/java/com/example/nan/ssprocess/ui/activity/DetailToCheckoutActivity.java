@@ -274,7 +274,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                 String mQualityRecordDetailsDataToJson = gson.toJson(qualityRecordDetailsData);
                 Log.d(TAG, "updateQARecordData: taskQualityRecord:"+ mQualityRecordDetailsDataToJson);
                 LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-//                mPostValue.put("strTaskQualityRecordDetail", mQualityRecordDetailsDataToJson);
                 mPostValue.put("taskQualityRecord", mQualityRecordDetailsDataToJson);
 
                 iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
@@ -288,7 +287,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                 Log.d(TAG, "异常图片: "+imageUrlList.size());
 
                 String uploadQaAbnormalDetailUrl = URL.HTTP_HEAD + IP + URL.UPLOAD_INSTALL_QA_DETAIL;
-//                Log.d(TAG, "updateQARecordData: "+updateProcessRecordUrl+mPostValue.get("strTaskQualityRecordDetail"));
                 Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadQaAbnormalDetailUrl, imageUrlList, mPostValue, new UploadTaskRecordImageHandler());
             } else {
                 Toast.makeText(DetailToCheckoutActivity.this,"请拍照并输入质检不合格原因！",Toast.LENGTH_SHORT).show();

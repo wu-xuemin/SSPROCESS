@@ -32,7 +32,7 @@ public class ScanResultAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_status_of_matchine,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_status_of_scan_result,parent,false);
         return new ScanResultAdapter.ItemView(view);
 
     }
@@ -84,6 +84,10 @@ public class ScanResultAdapter extends RecyclerView.Adapter {
                 case SinSimApp.TASK_QUALITY_ABNORMAL:
                     itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_ABNORMAL));
                     itemView.processStateTv.setTextColor(Color.RED);
+                    break;
+                case SinSimApp.TASK_SKIP:
+                    itemView.processStateTv.setTextColor(Color.RED);
+                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_SKIP));
                     break;
                 default:
                     break;

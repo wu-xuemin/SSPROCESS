@@ -313,7 +313,10 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         installAbnormalLayout.setVisibility(View.GONE);
                         Log.d(TAG, "handleMessage: 没有上传安装异常");
                     }
-                } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED){
+                } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED
+                        ||mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DOING
+                        ||mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_ABNORMAL
+                        ||mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DONE){
                     abnormalReasonTv.setText("正常");
                     installAbnormalLayout.setVisibility(View.GONE);
                 }else {

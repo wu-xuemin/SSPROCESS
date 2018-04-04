@@ -212,7 +212,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
         //九宫格拍照
         mInstallAbnormalPhotosSnpl = findViewById(R.id.install_abnormal_add_photos);
-        mInstallAbnormalPhotosSnpl.setMaxItemCount(9);
+        mInstallAbnormalPhotosSnpl.setMaxItemCount(3);
         mInstallAbnormalPhotosSnpl.setPlusEnable(true);
         mInstallAbnormalPhotosSnpl.setDelegate(this);
 
