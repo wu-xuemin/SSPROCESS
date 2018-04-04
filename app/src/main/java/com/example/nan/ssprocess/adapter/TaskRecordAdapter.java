@@ -51,7 +51,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
         //itemView.setIsRecyclable(false);//禁止复用
         if (mProcessList!=null && !mProcessList.isEmpty() && position < mProcessList.size()) {
             @SuppressLint("SimpleDateFormat")
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
             Date planShipDate = new Date(mProcessList.get(position).getMachineOrderData().getPlanShipDate());
             if(mProcessList.get(position).getMachineOrderData().getPlanShipDate() == 0) {
                 itemView.planShipDateTv.setVisibility(View.INVISIBLE);

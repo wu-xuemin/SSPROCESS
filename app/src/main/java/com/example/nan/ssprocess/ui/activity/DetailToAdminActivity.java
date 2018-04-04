@@ -112,6 +112,19 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         orderNumberTv.setText(""+mTaskRecordMachineListData.getMachineOrderData().getOrderNum());
         currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
         machineNumberTv.setText(mTaskRecordMachineListData.getMachineData().getNameplate());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yy/MM/dd HH:mm");
+        if(mTaskRecordMachineListData.getInstallBeginTime() != null) {
+            long timestamp = Long.valueOf(mTaskRecordMachineListData.getInstallBeginTime());
+            mInstallBeginTv.setText(formatter.format(new Date(timestamp)));
+        }
+        if(mTaskRecordMachineListData.getInstallEndTime() != null) {
+            long endTimestamp = Long.valueOf(mTaskRecordMachineListData.getInstallEndTime());
+            mInstallEndTv.setText(formatter.format(new Date(endTimestamp)));
+            if(mTaskRecordMachineListData.getWorkerList() != null && mTaskRecordMachineListData.getWorkerList() != "") {
+                mInstallPersonsTv.setText(mTaskRecordMachineListData.getWorkerList());
+            }
+        }
         ///locationTv.setTextColor(Color.BLUE);
         if (mTaskRecordMachineListData.getMachineData().getLocation().isEmpty()){
             locationTv.setText("点击上传");
@@ -328,19 +341,6 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                 installAbnormalLayout.setVisibility(View.GONE);
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(DetailToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
-            }
-            if(mTaskRecordMachineListData.getWorkerList() != null && mTaskRecordMachineListData.getWorkerList() != "") {
-                mInstallPersonsTv.setText(mTaskRecordMachineListData.getWorkerList());
-            }
-            SimpleDateFormat formatter = new SimpleDateFormat("yy/MM/dd HH:mm");
-            if(mTaskRecordMachineListData.getInstallBeginTime() != null) {
-                long timestamp = Long.valueOf(mTaskRecordMachineListData.getInstallBeginTime());
-                mInstallBeginTv.setText(formatter.format(new Date(timestamp)));
-            }
-            if(mTaskRecordMachineListData.getInstallEndTime() != null) {
-                long endTimestamp = Long.valueOf(mTaskRecordMachineListData.getInstallEndTime());
-                mInstallEndTv.setText(formatter.format(new Date(endTimestamp)));
-
             }
         }
     }

@@ -137,7 +137,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
         machineNumberTv.setText(mTaskRecordMachineListData.getMachineData().getNameplate());
         locationTv.setText(mTaskRecordMachineListData.getMachineData().getLocation());
-        if(mTaskRecordMachineListData.getWorkerList().isEmpty()|| mTaskRecordMachineListData.getWorkerList() == null || "".equals(mTaskRecordMachineListData.getWorkerList())){
+        if(mTaskRecordMachineListData.getWorkerList() == null || "".equals(mTaskRecordMachineListData.getWorkerList())){
             Log.d(TAG, "没有安装人员");
         }else {
             chooseInstallerTv.setText(mTaskRecordMachineListData.getWorkerList());
