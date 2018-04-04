@@ -112,26 +112,26 @@ public class MyMqttService extends Service {
                                         .setAutoCancel(true)
                                         .setContentIntent(pi)
                                         .setVisibility(Notification.VISIBILITY_PUBLIC)
-                                        .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
+                                        .setContentText("需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate())
                                         //不设置此项不会悬挂,false 不会出现悬挂
                                         .build();
-                                mNotificationManager.notify(1,notify);
+                                mNotificationManager.notify(9,notify);
+                            } else if(topic.equals(TOPIC_QA_ABNORMAL_RESOLVE + SinSimApp.getApp().getUserId())) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToCheckoutActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
+                                Notification notify = builder.setSmallIcon(R.mipmap.quality_abnormal_resolve)
+                                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.quality_abnormal_resolve))
+                                        .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
+                                        .setContentTitle("质检异常解决")
+                                        .setAutoCancel(true)
+                                        .setContentIntent(pi)
+                                        .setVisibility(Notification.VISIBILITY_PUBLIC)
+                                        .setContentText("需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate())
+                                        //不设置此项不会悬挂,false 不会出现悬挂
+                                        .build();
+                                mNotificationManager.notify(2,notify);
                             }
-                        }else if(topic.equals(TOPIC_QA_ABNORMAL_RESOLVE + SinSimApp.getApp().getUserId())) {
-                            Intent intent = new Intent(MyMqttService.this, ProcessToCheckoutActivity.class);
-                            PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
-                            NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
-                            Notification notify = builder.setSmallIcon(R.mipmap.quality_abnormal_resolve)
-                                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.quality_abnormal_resolve))
-                                    .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
-                                    .setContentTitle("质检异常解决")
-                                    .setAutoCancel(true)
-                                    .setContentIntent(pi)
-                                    .setVisibility(Notification.VISIBILITY_PUBLIC)
-                                    .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
-                                    //不设置此项不会悬挂,false 不会出现悬挂
-                                    .build();
-                            mNotificationManager.notify(2,notify);
                         }
                     } else if(roleId == SinSimApp.LOGIN_FOR_ADMIN) {
                         //生产部管理员接受消息
@@ -147,7 +147,7 @@ public class MyMqttService extends Service {
                                         .setAutoCancel(true)
                                         .setContentIntent(pi)
                                         .setVisibility(Notification.VISIBILITY_PUBLIC)
-                                        .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
+                                        .setContentText("需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate())
                                         //不设置此项不会悬挂,false 不会出现悬挂
                                         .build();
                                 mNotificationManager.notify(3,notify);
@@ -162,7 +162,7 @@ public class MyMqttService extends Service {
                                         .setAutoCancel(true)
                                         .setContentIntent(pi)
                                         .setVisibility(Notification.VISIBILITY_PUBLIC)
-                                        .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
+                                        .setContentText("需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate())
                                         //不设置此项不会悬挂,false 不会出现悬挂
                                         .build();
                                 mNotificationManager.notify(4,notify);
@@ -190,7 +190,7 @@ public class MyMqttService extends Service {
                                             .setAutoCancel(true)
                                             .setContentIntent(pi)
                                             .setVisibility(Notification.VISIBILITY_PUBLIC)
-                                            .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
+                                            .setContentText("需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate())
                                             //不设置此项不会悬挂,false 不会出现悬挂
                                             .build();
                                     mNotificationManager.notify(5,notify);
@@ -211,7 +211,7 @@ public class MyMqttService extends Service {
                                         .setAutoCancel(true)
                                         .setContentIntent(pi)
                                         .setVisibility(Notification.VISIBILITY_PUBLIC)
-                                        .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
+                                        .setContentText("需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate())
                                         //不设置此项不会悬挂,false 不会出现悬挂
                                         .build();
                                 mNotificationManager.notify(6,notify);
@@ -226,7 +226,7 @@ public class MyMqttService extends Service {
                                         .setAutoCancel(true)
                                         .setContentIntent(pi)
                                         .setVisibility(Notification.VISIBILITY_PUBLIC)
-                                        .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
+                                        .setContentText("需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate())
                                         //不设置此项不会悬挂,false 不会出现悬挂
                                         .build();
                                 mNotificationManager.notify(7,notify);
@@ -255,7 +255,7 @@ public class MyMqttService extends Service {
                                             .setAutoCancel(true)
                                             .setContentIntent(pi)
                                             .setVisibility(Notification.VISIBILITY_PUBLIC)
-                                            .setContentText("需求单号：" + msg.getOrderNum() + "| 机器编号：" + msg.getNameplate())
+                                            .setContentText("需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate())
                                             //不设置此项不会悬挂,false 不会出现悬挂
                                             .build();
                                     mNotificationManager.notify(8,notify);
@@ -322,7 +322,7 @@ public class MyMqttService extends Service {
                 //质检员订阅质检消息
                 subscribeToTopic(TOPIC_TO_QA + SinSimApp.getApp().getUserId());
                 //质检员订阅质检异常恢复消息
-                subscribeToTopic(TOPIC_QA_ABNORMAL_RESOLVE + SinSimApp.getApp().getGroupId());
+                subscribeToTopic(TOPIC_QA_ABNORMAL_RESOLVE + SinSimApp.getApp().getUserId());
             }
         } else {
             //安装组长和安装部管理员订阅改单、拆单消息
