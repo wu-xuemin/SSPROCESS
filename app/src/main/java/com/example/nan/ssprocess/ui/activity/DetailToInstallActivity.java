@@ -818,6 +818,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
             } else {
                 Toast.makeText(this, "异常原因和异常照片不能为空！", Toast.LENGTH_SHORT).show();
+                return;
             }
         }
 

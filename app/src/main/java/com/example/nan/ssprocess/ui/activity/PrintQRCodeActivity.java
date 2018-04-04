@@ -497,10 +497,6 @@ public class PrintQRCodeActivity extends AppCompatActivity {
     // 初始化界面
     private void initialView() {
         btnConnectDevice = (Button) findViewById(R.id.btn_printer);
-//        btnPrintQuality = (Button) findViewById(R.id.btn_printquality);
-//        btnGapType = (Button) findViewById(R.id.btn_gaptype);
-//        btnPrintDensity = (Button) findViewById(R.id.btn_printdensity);
-//        btnPrintSpeed = (Button) findViewById(R.id.btn_printspeed);
         SharedPreferences sharedPreferences = getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
         String lastPrinterMac = sharedPreferences.getString(KeyLastPrinterMac, null);
         String lastPrinterName = sharedPreferences.getString(KeyLastPrinterName, null);
@@ -519,10 +515,6 @@ public class PrintQRCodeActivity extends AppCompatActivity {
         defaultText2 = sharedPreferences.getString(KeyDefaultText2, "SINSIM");
         default1dBarcode = sharedPreferences.getString(KeyDefault1dBarcode, "SINSIM");
         default2dBarcode = sharedPreferences.getString(KeyDefault2dBarcode,"SINSIM");
-//        btnPrintDensity.setText(getResources().getString(R.string.printdensity) + printDensityList[printDensity + 1]);
-//        btnPrintQuality.setText(getResources().getString(R.string.printquality) + printQualityList[printQuality + 1]);
-//        btnPrintSpeed.setText(getResources().getString(R.string.printspeed) + printSpeedList[printSpeed + 1]);
-//        btnGapType.setText(getResources().getString(R.string.gaptype) + gapTypeList[gapType + 1]);
     }
 
     // 应用退出时需要的操作
@@ -805,95 +797,5 @@ public class PrintQRCodeActivity extends AppCompatActivity {
             return convertView;
         }
     }
-
-//    // 设置打印质量的每项点击事件
-//    private class PrintQualityItemClicker implements DialogInterface.OnClickListener {
-//        @Override
-//        public void onClick(DialogInterface dialog, int which) {
-//            printQuality = which - 1;
-//            btnPrintQuality.setText(getResources().getString(R.string.printquality) + printQualityList[which]);
-//        }
-//    }
-//
-//    // 设置打印浓度的每项点击事件
-//    private class PrintDensityItemClicker implements DialogInterface.OnClickListener {
-//        @Override
-//        public void onClick(DialogInterface dialog, int which) {
-//            printDensity = which - 1;
-//            btnPrintDensity.setText(getResources().getString(R.string.printdensity) + printDensityList[which]);
-//        }
-//    }
-//
-//    // 设置打印速度的每项点击事件
-//    private class PrintSpeedItemClicker implements DialogInterface.OnClickListener {
-//        @Override
-//        public void onClick(DialogInterface dialog, int which) {
-//            printSpeed = which - 1;
-//            btnPrintSpeed.setText(getResources().getString(R.string.printspeed) + printSpeedList[which]);
-//        }
-//    }
-//
-//    // 设置间隔类型的每项点击事件
-//    private class GapTypeItemClicker implements DialogInterface.OnClickListener {
-//        @Override
-//        public void onClick(DialogInterface dialog, int which) {
-//            gapType = which - 1;
-//            btnGapType.setText(getResources().getString(R.string.gaptype) + gapTypeList[which]);
-//        }
-//    }
-//
-//    // 打印图片的示例图片列表的每项点击事件
-//    private class BitmapListItemClicker implements DialogInterface.OnClickListener {
-//        @Override
-//        public void onClick(DialogInterface dialog, int which) {
-//            if (isPrinterConnected()) {
-//                int orientation = 0;
-//                if (bitmapOrientations != null && bitmapOrientations.length > which) {
-//                    orientation = bitmapOrientations[which];
-//                }
-//
-//                // 获取打印数据并进行打印
-//                Bitmap bmp = printBitmaps.get(which);
-//                if (bmp != null) {
-//                    if (printBitmap(bmp, getPrintParam(1, orientation))) {
-//                        onPrintStart();
-//                        return;
-//                    }
-//                }
-//
-//                onPrintFailed();
-//            }
-//        }
-//    }
-
-    /**
-     *     初始化并获得设置打印数据的界面（一项数据）
-     */
-//    private View initView(int title1, String text1) {
-//        View view = View.inflate(PrintQRCodeActivity.this, R.layout.setvalue_item, null);
-//        ((TextView) view.findViewById(R.id.tv_title1)).setText(title1);
-//        et1 = (EditText) view.findViewById(R.id.et_value1);
-//        et1.setText(text1 == null ? "" : text1);
-//        et1.setSelection(et1.getText().toString().length());
-//        return view;
-//    }
-
-    /**
-     *     初始化并获得设置打印数据的界面（两项数据）
-     */
-//    private View initView(int title1, String text1, int title2, String text2) {
-//        View view = View.inflate(PrintQRCodeActivity.this, R.layout.setvalue_item, null);
-//        ((LinearLayout) view.findViewById(R.id.ll_2)).setVisibility(View.VISIBLE);
-//        ((TextView) view.findViewById(R.id.tv_title1)).setText(title1);
-//        et1 = (EditText) view.findViewById(R.id.et_value1);
-//        et1.setText(text1 == null ? "" : text1);
-//        et1.setSelection(et1.getText().length());
-//        ((TextView) view.findViewById(R.id.tv_title2)).setText(title2);
-//        et2 = (EditText) view.findViewById(R.id.et_value2);
-//        et2.setText(text2 == null ? "" : text2);
-//        et2.setSelection(et2.getText().toString().length());
-//        return view;
-//    }
-
 
 }

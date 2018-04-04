@@ -188,39 +188,10 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
                         intent.putExtra("mTaskRecordMachineList", (Serializable) mScanResultList);
                         startActivity(intent);
                     }
-//
-//                    final String ip = SinSimApp.getApp().getServerIP();
-//                    LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-//                    String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_QA;
-//                    mPostValue.put("page", ""+mPage);
-//                    mPostValue.put("namePlate", ""+mMachineNamePlate);
-//                    mPostValue.put("account", ""+SinSimApp.getApp().getAccount());
-//                    Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessListDataHandler());
                 }
                 break;
             default:
                 break;
-        }
-    }
-
-    @SuppressLint("HandlerLeak")
-    private class FetchProcessListDataHandler extends Handler {
-        @Override
-        public void handleMessage(final Message msg) {
-            if (msg.what == Network.OK) {
-                ArrayList<TaskRecordMachineListData> mScanResultList = (ArrayList<TaskRecordMachineListData>) msg.obj;
-                Log.d(TAG, "handleMessage: size: "+ mScanResultList.size());
-                if (mScanResultList.size()==0){
-                    Toast.makeText(ProcessToCheckoutActivity.this, "没有内容!", Toast.LENGTH_LONG).show();
-                } else {
-                    Intent intent=new Intent(ProcessToCheckoutActivity.this,ScanResultActivity.class);
-                    intent.putExtra("mTaskRecordMachineList", (Serializable) mScanResultList);
-                    startActivity(intent);
-                }
-            } else {
-                String errorMsg = (String)msg.obj;
-                Toast.makeText(ProcessToCheckoutActivity.this, "网络错误！"+errorMsg, Toast.LENGTH_SHORT).show();
-            }
         }
     }
 

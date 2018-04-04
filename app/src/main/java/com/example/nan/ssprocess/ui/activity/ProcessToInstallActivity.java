@@ -54,22 +54,6 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
     private int mPage;
     private BGARefreshLayout mRefreshLayout;
 
-//    /**
-//     * tab数据源
-//     */
-//    private ArrayList<String> titleList = new ArrayList<String>() {{
-//        add("计划安装");
-//        add("非计划安装");
-//    }};
-//
-//    /**
-//     * 页面数据源
-//     */
-//    private ArrayList<Fragment> fragmentList = new ArrayList<Fragment>() {{
-//        add(new TabInstallPlanFragment());
-//        add(new TabInstallReadyFragment());
-//    }};
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,15 +62,6 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
         //启动MQTT服务
         mqttIntent = new Intent(this, MyMqttService.class);
         startService(mqttIntent);
-
-//        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-//        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-//        //ViewPager的适配器
-//        ProcessToInstallAdapter adapter = new ProcessToInstallAdapter(getSupportFragmentManager(), titleList, fragmentList);
-//        viewPager.setAdapter(adapter);
-//        //绑定
-//        tabLayout.setupWithViewPager(viewPager,true);
-
 
         //列表
         RecyclerView mProcessToAdminRV = findViewById(R.id.process_to_install_rv);
@@ -218,44 +193,10 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                         intent.putExtra("mTaskRecordMachineList", (Serializable) mScanResultList);
                         startActivity(intent);
                     }
-//
-//                    final String ip = SinSimApp.getApp().getServerIP();
-//                    LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-//                    String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_INSTALL;
-//                    mPostValue.put("page", ""+mPage);
-//                    mPostValue.put("namePlate", ""+mMachineNamePlate);
-//                    mPostValue.put("account", ""+SinSimApp.getApp().getAccount());
-//                    Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessListDataHandler());
                 }
                 break;
             default:
                 break;
-        }
-    }
-    @SuppressLint("HandlerLeak")
-    private class FetchProcessListDataHandler extends Handler {
-        @Override
-        public void handleMessage(final Message msg) {
-            if (msg.what == Network.OK) {
-                ArrayList<TaskRecordMachineListData> mScanResultList=(ArrayList<TaskRecordMachineListData>)msg.obj;
-                Log.d(TAG, "handleMessage: size: "+mScanResultList.size());
-                if (mScanResultList.size()==0){
-                    Toast.makeText(ProcessToInstallActivity.this, "没有内容!", Toast.LENGTH_LONG).show();
-                } else {
-                    if (mScanResultList.get(0).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
-                            ||mScanResultList.get(0).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED
-                            ||mScanResultList.get(0).getMachineData().getStatus()==SinSimApp.MACHINE_CANCELED) {
-                        Toast.makeText(ProcessToInstallActivity.this, "正在改单/拆单中!", Toast.LENGTH_LONG).show();
-                    }else {
-                        Intent intent = new Intent(ProcessToInstallActivity.this, ScanResultActivity.class);
-                        intent.putExtra("mTaskRecordMachineList", (Serializable) mScanResultList);
-                        startActivity(intent);
-                    }
-                }
-            } else {
-                String errorMsg = (String)msg.obj;
-                Toast.makeText(ProcessToInstallActivity.this, "网络错误！"+errorMsg, Toast.LENGTH_SHORT).show();
-            }
         }
     }
 

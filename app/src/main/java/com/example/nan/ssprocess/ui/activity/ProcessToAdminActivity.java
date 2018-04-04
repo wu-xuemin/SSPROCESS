@@ -57,7 +57,6 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
     private ProgressDialog mLoadingProcessDialog;
     private ProgressDialog mUpdatingProcessDialog;
 
-    private static final int SCAN_QRCODE_START = 1;
     private final String IP = SinSimApp.getApp().getServerIP();
     private int mPage;
     private String location;
@@ -79,16 +78,6 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
         moocStyleRefreshViewHolder.setOriginalImage(R.drawable.bga_refresh_moooc);
         moocStyleRefreshViewHolder.setUltimateColor(R.color.colorAccent);
         mRefreshLayout.setRefreshViewHolder(moocStyleRefreshViewHolder);
-
-        //点击扫码
-//        Button scanQrcodeBotton = findViewById(R.id.admin_scan_qrcode_button);
-//        scanQrcodeBotton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent=new Intent(ProcessToAdminActivity.this,ScanQrcodeActivity.class);
-//                startActivityForResult(intent,SCAN_QRCODE_START);
-//            }
-//        });
 
         //列表
         RecyclerView mProcessToAdminRV = findViewById(R.id.process_to_admin_rv);
@@ -172,85 +161,6 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
             } else {
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(ProcessToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        switch (requestCode){
-//            case SCAN_QRCODE_START:
-//                if (resultCode == RESULT_OK)
-//                {
-//                    // 取出Intent里的扫码结果去执行机器查找
-//                    String mMachineNamePlate = data.getStringExtra("mMachineNamePlate");
-//                    LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-//                    String fetchProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_ADMIN;
-//                    mPostValue.put("page", ""+mPage);
-//                    mPostValue.put("machineStrId", ""+mMachineNamePlate);
-//                    Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessListDataHandler());
-//                }
-//                break;
-//            default:
-//                break;
-//        }
-//    }
-    @SuppressLint("HandlerLeak")
-    private class FetchProcessListDataHandler extends Handler {
-        @Override
-        public void handleMessage(final Message msg) {
-            if (msg.what == Network.OK) {
-                ArrayList<TaskRecordMachineListData> mScanResultList = (ArrayList<TaskRecordMachineListData>) msg.obj;
-                Log.d(TAG, "handleMessage: size: "+ mScanResultList.size());
-                //结果为空就报错，有结果则取第一条信息位依据
-                if (mScanResultList.size()==0){
-                    Toast.makeText(ProcessToAdminActivity.this, "该机器编号没有内容!", Toast.LENGTH_LONG).show();
-                } else {
-                    //弹窗上传机器位置
-                    LinearLayout layout = (LinearLayout) View.inflate(ProcessToAdminActivity.this, R.layout.dialog_location_seting, null);
-                    final EditText dialogLocationEt = layout.findViewById(R.id.dialog_location_et);
-                    mLocationSettingDialog = new AlertDialog.Builder(ProcessToAdminActivity.this).create();
-                    mLocationSettingDialog.setView(layout);
-                    //获取原有location信息
-                    mScanResultListData= mScanResultList.get(0);
-                    location = mScanResultListData.getMachineData().getLocation();
-                    if (location.isEmpty()|| "".equals(location)){
-                        dialogLocationEt.setText("");
-                    } else {
-                        dialogLocationEt.setText(location);
-                    }
-                    mLocationSettingDialog.setTitle("请输入 "+mScanResultListData.getMachineData().getNameplate()+" 的位置：");
-                    mLocationSettingDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-                    mLocationSettingDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //获取dialog的输入信息，并上传到服务器
-                            if (TextUtils.isEmpty(dialogLocationEt.getText())) {
-                                Toast.makeText(ProcessToAdminActivity.this,"地址不能为空，请确认后重新输入！",Toast.LENGTH_SHORT).show();
-                            }else {
-                                location=dialogLocationEt.getText().toString();
-                                if( mUpdatingProcessDialog == null) {
-                                    mUpdatingProcessDialog = new ProgressDialog(ProcessToAdminActivity.this);
-                                    mUpdatingProcessDialog.setCancelable(false);
-                                    mUpdatingProcessDialog.setCanceledOnTouchOutside(false);
-                                    mUpdatingProcessDialog.setMessage("上传信息中...");
-                                }
-                                mUpdatingProcessDialog.show();
-                                updateProcessDetailData();
-                            }
-                        }
-                    });
-                    mLocationSettingDialog.show();
-                }
-            } else {
-                String errorMsg = (String)msg.obj;
-                Toast.makeText(ProcessToAdminActivity.this, "网络错误！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
         }
     }

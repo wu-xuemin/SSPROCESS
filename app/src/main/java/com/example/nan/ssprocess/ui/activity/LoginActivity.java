@@ -64,9 +64,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 login();
-//                Intent it = new Intent(LoginActivity.this, PrintQRCodeActivity.class);
-//                it.putExtra(PrintQRCodeActivity.PRINT_CODE, "12345678");
-//                startActivity(it);
             }
         });
     }
@@ -101,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                 mLoadingProcessDialog.dismiss();
             }
             mLoginButton.setEnabled(true);
-            Toast.makeText(this, "未获取到手机IMEI,请重启软件", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "未获取到手机识别码,请重启软件", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "login: 未获取到手机IMEI");
         }
         else {

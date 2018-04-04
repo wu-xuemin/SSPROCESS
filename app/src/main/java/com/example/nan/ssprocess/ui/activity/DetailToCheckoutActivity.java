@@ -290,6 +290,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                 Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadQaAbnormalDetailUrl, imageUrlList, mPostValue, new UploadTaskRecordImageHandler());
             } else {
                 Toast.makeText(DetailToCheckoutActivity.this,"请拍照并输入质检不合格原因！",Toast.LENGTH_SHORT).show();
+                return;
             }
         }
         if( mUploadingProcessDialog == null) {
