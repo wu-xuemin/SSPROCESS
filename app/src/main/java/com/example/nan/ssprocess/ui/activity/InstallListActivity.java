@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
@@ -156,16 +157,24 @@ public class InstallListActivity extends AppCompatActivity {
         fileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String downloadFileUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.DOWNLOAD_DIR + "/" + mInstallFileList.get(position);
-                Network.Instance(SinSimApp.getApp()).downloadFile(downloadFileUrl, new DownloadFileHandler());
-                //第一次进入刷新页面， 加载loading页面
-                if( mDownloadingDialog == null) {
-                    mDownloadingDialog = new ProgressDialog(InstallListActivity.this);
-                    mDownloadingDialog.setCancelable(false);
-                    mDownloadingDialog.setCanceledOnTouchOutside(false);
-                    mDownloadingDialog.setMessage("下载中...");
+                String IPStr = "";
+                if(SinSimApp.getApp().getServerIP() != null && SinSimApp.getApp().getServerIP().contains(":")) {
+                    IPStr = SinSimApp.getApp().getServerIP().split(":")[0];
                 }
-                mDownloadingDialog.show();
+                if(!IPStr.equals("")) {
+                    String downloadFileUrl = URL.HTTP_HEAD + IPStr + URL.DOWNLOAD_DIR + "/" + mInstallFileList.get(position);
+                    Network.Instance(SinSimApp.getApp()).downloadFile(downloadFileUrl, new DownloadFileHandler());
+                    //第一次进入刷新页面， 加载loading页面
+                    if( mDownloadingDialog == null) {
+                        mDownloadingDialog = new ProgressDialog(InstallListActivity.this);
+                        mDownloadingDialog.setCancelable(false);
+                        mDownloadingDialog.setCanceledOnTouchOutside(false);
+                        mDownloadingDialog.setMessage("下载中...");
+                    }
+                    mDownloadingDialog.show();
+                } else {
+                    ToastUtils.showShort("IP地址不正确！");
+                }
             }
         });
     }

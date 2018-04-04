@@ -712,13 +712,13 @@ public class Network {
                 String fileName = url.substring(url.lastIndexOf("/"));
                 String directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
                 file = new File(directory + fileName);
-                if (file.exists()) {
-                    msg.what=OK;
-                    msg.obj=""+file;
-                    handler.sendMessage(msg);
-                    return;
-//                    downloadedLength = file.length();
-                }
+//                if (file.exists()) {
+//                    msg.what=OK;
+//                    msg.obj=""+file;
+//                    handler.sendMessage(msg);
+//                    return;
+////                    downloadedLength = file.length();
+//                }
 
                 Log.d(TAG, "downloadFile: 开始okhttp");
                 OkHttpClient mOkHttpClient = new OkHttpClient();
