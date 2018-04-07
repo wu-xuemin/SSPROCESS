@@ -47,6 +47,9 @@ public class MyMqttService extends Service {
     private static final String TOPIC_TO_NEXT_INSTALL = "/s2c/task_install/";
     private static final String TOPIC_INSTALL_ABNORMAL_RESOLVE = "/s2c/install_abnormal_resolve/";
     private static final String TOPIC_QA_ABNORMAL_RESOLVE = "/s2c/quality_abnormal_resolve/";
+    public static final String TOPIC_INSTALL_ABNORMAL = "/s2c/install_abnormal/";
+    public static final String TOPIC_QUALITY_ABNORMAL = "/s2c/quality_abnormal/";
+
     private static final String publishTopic = "exampleAndroidPublishTopic";
 
     private MqttAndroidClient mqttAndroidClient;
@@ -119,7 +122,7 @@ public class MyMqttService extends Service {
                             } else if(topic.equals(TOPIC_QA_ABNORMAL_RESOLVE + SinSimApp.getApp().getUserId())) {
                                 Intent intent = new Intent(MyMqttService.this, ProcessToCheckoutActivity.class);
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
-                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_QA_ABNORMAL_RESOLVE);
                                 Notification notify = builder.setSmallIcon(R.mipmap.quality_abnormal_resolve)
                                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.quality_abnormal_resolve))
                                         .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
@@ -139,7 +142,7 @@ public class MyMqttService extends Service {
                             if(topic.contains(TOPIC_TO_NEXT_INSTALL)) {
                                 Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
-                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_NEXT_INSTALL);
                                 Notification notify = builder.setSmallIcon(R.mipmap.to_install)
                                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.to_install))
                                         .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
@@ -154,7 +157,7 @@ public class MyMqttService extends Service {
                             }else if(topic.contains(TOPIC_INSTALL_ABNORMAL_RESOLVE)) {
                                 Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
-                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_INSTALL_ABNORMAL_RESOLVE);
                                 Notification notify = builder.setSmallIcon(R.mipmap.install_abnormall_resolve)
                                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.install_abnormall_resolve))
                                         .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
@@ -182,7 +185,7 @@ public class MyMqttService extends Service {
                                     iconId = R.mipmap.order_cancel;
                                 }
                                 if(title != null) {
-                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
+                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_MACHINE_STATUS_CHANGE);
                                     Notification notify = builder.setSmallIcon(iconId)
                                             .setLargeIcon(BitmapFactory.decodeResource(getResources(), iconId))
                                             .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
@@ -195,6 +198,36 @@ public class MyMqttService extends Service {
                                             .build();
                                     mNotificationManager.notify(5,notify);
                                 }
+                            } else if(topic.equals(TOPIC_INSTALL_ABNORMAL)) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_INSTALL_ABNORMAL);
+                                Notification notify = builder.setSmallIcon(R.mipmap.install_abnormal)
+                                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.install_abnormal))
+                                        .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
+                                        .setContentTitle("安装异常")
+                                        .setAutoCancel(true)
+                                        .setContentIntent(pi)
+                                        .setVisibility(Notification.VISIBILITY_PUBLIC)
+                                        .setContentText("需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate())
+                                        //不设置此项不会悬挂,false 不会出现悬挂
+                                        .build();
+                                mNotificationManager.notify(10,notify);
+                            }else if(topic.equals(TOPIC_QUALITY_ABNORMAL)) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_QUALITY_ABNORMAL);
+                                Notification notify = builder.setSmallIcon(R.mipmap.quality_abnormal)
+                                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.quality_abnormal))
+                                        .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
+                                        .setContentTitle("质检异常")
+                                        .setAutoCancel(true)
+                                        .setContentIntent(pi)
+                                        .setVisibility(Notification.VISIBILITY_PUBLIC)
+                                        .setContentText("需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate())
+                                        //不设置此项不会悬挂,false 不会出现悬挂
+                                        .build();
+                                mNotificationManager.notify(11,notify);
                             }
                         }
                     } else if(roleId == SinSimApp.LOGIN_FOR_INSTALL) {
@@ -319,6 +352,10 @@ public class MyMqttService extends Service {
         if(SinSimApp.getApp().getRole() == SinSimApp.LOGIN_FOR_QA) {
             //User ID不为零则有效
             if(SinSimApp.getApp().getUserId() != 0) {
+                //发生安装异常时，通知生产部管理员
+                subscribeToTopic(TOPIC_INSTALL_ABNORMAL + "#");
+                //发生质检异常时，通知生产部管理员
+                subscribeToTopic(TOPIC_QUALITY_ABNORMAL + "#");
                 //质检员订阅质检消息
                 subscribeToTopic(TOPIC_TO_QA + SinSimApp.getApp().getUserId());
                 //质检员订阅质检异常恢复消息
