@@ -142,8 +142,8 @@ public class MyMqttService extends Service {
                                 Intent intent = new Intent(MyMqttService.this, ProcessToCheckoutActivity.class);
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_INSTALL_ABNORMAL_TO_QUALITY);
-                                Notification notify = builder.setSmallIcon(R.mipmap.quality_abnormal)
-                                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.quality_abnormal))
+                                Notification notify = builder.setSmallIcon(R.mipmap.install_abnormal)
+                                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.install_abnormal))
                                         .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
                                         .setContentTitle("安装异常")
                                         .setAutoCancel(true)
@@ -188,6 +188,21 @@ public class MyMqttService extends Service {
                                         //不设置此项不会悬挂,false 不会出现悬挂
                                         .build();
                                 mNotificationManager.notify(4,notify);
+                            }else if(topic.contains(TOPIC_QA_ABNORMAL_RESOLVE)) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_QA_ABNORMAL_RESOLVE);
+                                Notification notify = builder.setSmallIcon(R.mipmap.quality_abnormal_resolve)
+                                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.quality_abnormal_resolve))
+                                        .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
+                                        .setContentTitle("质检异常解决")
+                                        .setAutoCancel(true)
+                                        .setContentIntent(pi)
+                                        .setVisibility(Notification.VISIBILITY_PUBLIC)
+                                        .setContentText("需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate())
+                                        //不设置此项不会悬挂,false 不会出现悬挂
+                                        .build();
+                                mNotificationManager.notify(14,notify);
                             } else if(topic.equals(TOPIC_MACHINE_STATUS_CHANGE)) {
                                 Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
@@ -217,7 +232,7 @@ public class MyMqttService extends Service {
                                             .build();
                                     mNotificationManager.notify(5,notify);
                                 }
-                            } else if(topic.equals(TOPIC_INSTALL_ABNORMAL)) {
+                            } else if(topic.contains(TOPIC_INSTALL_ABNORMAL)) {
                                 Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_INSTALL_ABNORMAL);
@@ -232,7 +247,7 @@ public class MyMqttService extends Service {
                                         //不设置此项不会悬挂,false 不会出现悬挂
                                         .build();
                                 mNotificationManager.notify(10,notify);
-                            }else if(topic.equals(TOPIC_QUALITY_ABNORMAL)) {
+                            }else if(topic.contains(TOPIC_QUALITY_ABNORMAL)) {
                                 Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_QUALITY_ABNORMAL);
@@ -401,8 +416,10 @@ public class MyMqttService extends Service {
                 subscribeToTopic(TOPIC_TO_NEXT_INSTALL + "#");
                 //生产部管理员订阅全部安装异常恢复消息
                 subscribeToTopic(TOPIC_INSTALL_ABNORMAL_RESOLVE + "#");
+                //生产部管理员订阅质检异常恢复消息
+                subscribeToTopic(TOPIC_QA_ABNORMAL_RESOLVE + "#");
                 //发生安装异常时，通知生产部管理员
-                subscribeToTopic(TOPIC_INSTALL_ABNORMAL + "#");
+                subscribeToTopic(TOPIC_INSTALL_ABNORMAL_TO_QUALITY + "#");
                 //发生质检异常时，通知生产部管理员
                 subscribeToTopic(TOPIC_QUALITY_ABNORMAL + "#");
             }
