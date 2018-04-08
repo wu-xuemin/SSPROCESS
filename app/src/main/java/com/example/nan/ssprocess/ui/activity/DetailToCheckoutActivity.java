@@ -306,9 +306,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     private class UploadTaskRecordImageHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
-            if(mUpdatingProcessDialog != null && mUpdatingProcessDialog.isShowing()) {
-                mUpdatingProcessDialog.dismiss();
-            }
             if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
                 mUploadingProcessDialog.dismiss();
             }
@@ -452,14 +449,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                     String mMachineNamePlate = data.getStringExtra("mMachineNamePlate");
                     if(mMachineNamePlate.equals(mTaskRecordMachineListData.getMachineData().getNameplate())){
                         Log.d(TAG, "onActivityResult: id 对应");
-                        //update info
-                        if( mUpdatingProcessDialog == null) {
-                            mUpdatingProcessDialog = new ProgressDialog(DetailToCheckoutActivity.this);
-                            mUpdatingProcessDialog.setCancelable(false);
-                            mUpdatingProcessDialog.setCanceledOnTouchOutside(false);
-                            mUpdatingProcessDialog.setMessage("正在结束...");
-                        }
-                        mUpdatingProcessDialog.show();
                         updateQARecordData();
                     } else {
                         Log.d(TAG, "onActivityResult: 二维码信息不对应");
@@ -501,9 +490,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         public void handleMessage(final Message msg) {
             if(mUpdatingProcessDialog != null && mUpdatingProcessDialog.isShowing()) {
                 mUpdatingProcessDialog.dismiss();
-            }
-            if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
-                mUploadingProcessDialog.dismiss();
             }
             if (msg.what == Network.OK) {
                 currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));

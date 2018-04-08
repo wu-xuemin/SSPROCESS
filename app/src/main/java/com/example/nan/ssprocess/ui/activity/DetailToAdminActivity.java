@@ -99,9 +99,11 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         mInstallEndTv=findViewById(R.id.install_end_time_tv);
         abnormalDetailTv=findViewById(R.id.abnormal_detail_tv);
         installAbnormalLayout=findViewById(R.id.abnormal_detail_layout);
+        installAbnormalLayout.setVisibility(View.GONE);
         nokReasonTv=findViewById(R.id.nok_reason_tv);
         nokDetailTv=findViewById(R.id.nok_detail_tv);
         qaNokLayout=findViewById(R.id.checked_nok_layout);
+        qaNokLayout.setVisibility(View.GONE);
 
         //获取传递过来的信息
         Intent intent = getIntent();
@@ -257,18 +259,15 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         }
                     } else {
                         nokReasonTv.setText("不合格");
-                        qaNokLayout.setVisibility(View.GONE);
+                        Toast.makeText(DetailToAdminActivity.this, "获取到不合格信息失败！", Toast.LENGTH_SHORT).show();
                     }
                 } else if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_QUALITY_DONE) {
                     nokReasonTv.setText("合格");
-                    qaNokLayout.setVisibility(View.GONE);
                 } else {
                     nokReasonTv.setText("暂无");
-                    qaNokLayout.setVisibility(View.GONE);
                 }
             } else {
                 nokReasonTv.setText("暂无");
-                qaNokLayout.setVisibility(View.GONE);
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(DetailToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }
@@ -323,7 +322,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         }
                     } else {
                         abnormalReasonTv.setText("异常");
-                        installAbnormalLayout.setVisibility(View.GONE);
+                        Toast.makeText(DetailToAdminActivity.this, "获取异常信息失败！", Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "handleMessage: 没有上传安装异常");
                     }
                 } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED
@@ -331,14 +330,11 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         ||mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_ABNORMAL
                         ||mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DONE){
                     abnormalReasonTv.setText("正常");
-                    installAbnormalLayout.setVisibility(View.GONE);
                 }else {
                     abnormalReasonTv.setText("暂无");
-                    installAbnormalLayout.setVisibility(View.GONE);
                 }
             } else {
                 abnormalReasonTv.setText("暂无");
-                installAbnormalLayout.setVisibility(View.GONE);
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(DetailToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
             }

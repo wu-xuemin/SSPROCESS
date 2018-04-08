@@ -47,8 +47,8 @@ public class MyMqttService extends Service {
     private static final String TOPIC_TO_NEXT_INSTALL = "/s2c/task_install/";
     private static final String TOPIC_INSTALL_ABNORMAL_RESOLVE = "/s2c/install_abnormal_resolve/";
     private static final String TOPIC_QA_ABNORMAL_RESOLVE = "/s2c/quality_abnormal_resolve/";
-    public static final String TOPIC_INSTALL_ABNORMAL = "/s2c/install_abnormal/";
-    public static final String TOPIC_QUALITY_ABNORMAL = "/s2c/quality_abnormal/";
+    private static final String TOPIC_INSTALL_ABNORMAL = "/s2c/install_abnormal/";
+    private static final String TOPIC_QUALITY_ABNORMAL = "/s2c/quality_abnormal/";
     /**
      * 发生安装异常时，通知对应质检员
      */
@@ -91,6 +91,7 @@ public class MyMqttService extends Service {
 
             @Override
             public void connectionLost(Throwable cause) {
+
                 Log.d(TAG, "connectionLost: connection was lost");
             }
 
@@ -482,6 +483,7 @@ public class MyMqttService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
         Log.d(TAG, "MqttService onDestroy executed");
     }
 }

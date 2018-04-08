@@ -674,14 +674,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
                     if(mMachineNamePlate.equals(mTaskRecordMachineListData.getMachineData().getNameplate())){
                         Log.d(TAG, "onActivityResult: id 对应");
-                        //update info
-                        if( mUpdatingProcessDialog == null) {
-                            mUpdatingProcessDialog = new ProgressDialog(DetailToInstallActivity.this);
-                            mUpdatingProcessDialog.setCancelable(false);
-                            mUpdatingProcessDialog.setCanceledOnTouchOutside(false);
-                            mUpdatingProcessDialog.setMessage("正在结束...");
-                        }
-                        mUpdatingProcessDialog.show();
                         updateInstallRecordData();
                     } else {
                         Log.d(TAG, "onActivityResult: 二维码信息不对应");
@@ -769,9 +761,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         long lCurTime=System.currentTimeMillis();
         mTaskRecordMachineListData.setLeader(SinSimApp.getApp().getFullName());
         if ("".equals(checkedName) || checkedName==null){
-            if(mUpdatingProcessDialog != null && mUpdatingProcessDialog.isShowing()) {
-                mUpdatingProcessDialog.dismiss();
-            }
             Toast toast = Toast.makeText(DetailToInstallActivity.this, "请勾选安装人员！", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
@@ -835,9 +824,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private class UploadTaskRecordImageHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
-            if(mUpdatingProcessDialog != null && mUpdatingProcessDialog.isShowing()) {
-                mUpdatingProcessDialog.dismiss();
-            }
             if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
                 mUploadingProcessDialog.dismiss();
             }

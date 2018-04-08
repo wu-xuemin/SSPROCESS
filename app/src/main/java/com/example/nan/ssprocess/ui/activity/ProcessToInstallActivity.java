@@ -5,9 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -21,15 +18,12 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.adapter.ProcessToInstallAdapter;
 import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.service.MyMqttService;
-import com.example.nan.ssprocess.ui.fragment.TabInstallPlanFragment;
-import com.example.nan.ssprocess.ui.fragment.TabInstallReadyFragment;
 import com.google.gson.Gson;
 
 import java.io.Serializable;
@@ -44,7 +38,7 @@ import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
  */
 public class ProcessToInstallActivity extends AppCompatActivity implements BGARefreshLayout.BGARefreshLayoutDelegate{
     private static String TAG = "nlgProcessToInstall";
-    Intent mqttIntent;
+    private Intent mqttIntent;
     private ArrayList<TaskRecordMachineListData> mProcessToInstallPlanList = new ArrayList<>();
     private TaskRecordAdapter mTaskRecordAdapter;
     private ProgressDialog mLoadingProcessDialog;
@@ -142,6 +136,8 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 mProcessToInstallPlanList=(ArrayList<TaskRecordMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToInstallPlanList.size());
                 if (mProcessToInstallPlanList.size()==0){
+                    mTaskRecordAdapter.setProcessList(mProcessToInstallPlanList);
+                    mTaskRecordAdapter.notifyDataSetChanged();
                     Toast.makeText(ProcessToInstallActivity.this,"没有更多了...",Toast.LENGTH_SHORT).show();
                 } else {
                     mTaskRecordAdapter.setProcessList(mProcessToInstallPlanList);
