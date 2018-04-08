@@ -49,6 +49,10 @@ public class MyMqttService extends Service {
     private static final String TOPIC_QA_ABNORMAL_RESOLVE = "/s2c/quality_abnormal_resolve/";
     public static final String TOPIC_INSTALL_ABNORMAL = "/s2c/install_abnormal/";
     public static final String TOPIC_QUALITY_ABNORMAL = "/s2c/quality_abnormal/";
+    /**
+     * 发生安装异常时，通知对应质检员
+     */
+    public static final String TOPIC_INSTALL_ABNORMAL_TO_QUALITY = "/s2c/install_abnormal/quality/";
 
     private static final String publishTopic = "exampleAndroidPublishTopic";
 
@@ -134,6 +138,21 @@ public class MyMqttService extends Service {
                                         //不设置此项不会悬挂,false 不会出现悬挂
                                         .build();
                                 mNotificationManager.notify(2,notify);
+                            }else if(topic.equals(TOPIC_INSTALL_ABNORMAL_TO_QUALITY + SinSimApp.getApp().getUserId())) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToCheckoutActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_INSTALL_ABNORMAL_TO_QUALITY);
+                                Notification notify = builder.setSmallIcon(R.mipmap.quality_abnormal)
+                                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.quality_abnormal))
+                                        .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
+                                        .setContentTitle("安装异常")
+                                        .setAutoCancel(true)
+                                        .setContentIntent(pi)
+                                        .setVisibility(Notification.VISIBILITY_PUBLIC)
+                                        .setContentText("需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate())
+                                        //不设置此项不会悬挂,false 不会出现悬挂
+                                        .build();
+                                mNotificationManager.notify(13,notify);
                             }
                         }
                     } else if(roleId == SinSimApp.LOGIN_FOR_ADMIN) {
@@ -293,6 +312,21 @@ public class MyMqttService extends Service {
                                             .build();
                                     mNotificationManager.notify(8,notify);
                                 }
+                            }else if(topic.equals(TOPIC_QUALITY_ABNORMAL + SinSimApp.getApp().getGroupId())) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
+                                Notification notify = builder.setSmallIcon(R.mipmap.quality_abnormal)
+                                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.quality_abnormal))
+                                        .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
+                                        .setContentTitle("质检异常")
+                                        .setAutoCancel(true)
+                                        .setContentIntent(pi)
+                                        .setVisibility(Notification.VISIBILITY_PUBLIC)
+                                        .setContentText("需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate())
+                                        //不设置此项不会悬挂,false 不会出现悬挂
+                                        .build();
+                                mNotificationManager.notify(12,notify);
                             }
                         }
                     }
@@ -352,14 +386,12 @@ public class MyMqttService extends Service {
         if(SinSimApp.getApp().getRole() == SinSimApp.LOGIN_FOR_QA) {
             //User ID不为零则有效
             if(SinSimApp.getApp().getUserId() != 0) {
-                //发生安装异常时，通知生产部管理员
-                subscribeToTopic(TOPIC_INSTALL_ABNORMAL + "#");
-                //发生质检异常时，通知生产部管理员
-                subscribeToTopic(TOPIC_QUALITY_ABNORMAL + "#");
                 //质检员订阅质检消息
                 subscribeToTopic(TOPIC_TO_QA + SinSimApp.getApp().getUserId());
                 //质检员订阅质检异常恢复消息
                 subscribeToTopic(TOPIC_QA_ABNORMAL_RESOLVE + SinSimApp.getApp().getUserId());
+                //质检员订阅安装异常
+                subscribeToTopic(TOPIC_INSTALL_ABNORMAL_TO_QUALITY + SinSimApp.getApp().getUserId());
             }
         } else {
             //安装组长和安装部管理员订阅改单、拆单消息
@@ -369,6 +401,10 @@ public class MyMqttService extends Service {
                 subscribeToTopic(TOPIC_TO_NEXT_INSTALL + "#");
                 //生产部管理员订阅全部安装异常恢复消息
                 subscribeToTopic(TOPIC_INSTALL_ABNORMAL_RESOLVE + "#");
+                //发生安装异常时，通知生产部管理员
+                subscribeToTopic(TOPIC_INSTALL_ABNORMAL + "#");
+                //发生质检异常时，通知生产部管理员
+                subscribeToTopic(TOPIC_QUALITY_ABNORMAL + "#");
             }
             if(SinSimApp.getApp().getRole() == SinSimApp.LOGIN_FOR_INSTALL) {
                 if(SinSimApp.getApp().getGroupId() > 0) {
@@ -376,6 +412,8 @@ public class MyMqttService extends Service {
                     subscribeToTopic(TOPIC_TO_NEXT_INSTALL + SinSimApp.getApp().getGroupId());
                     //安装组长订阅自己租的安装异常恢复消息
                     subscribeToTopic(TOPIC_INSTALL_ABNORMAL_RESOLVE + SinSimApp.getApp().getGroupId());
+                    //发生质检异常时，通知对应安装组长
+                    subscribeToTopic(TOPIC_QUALITY_ABNORMAL + SinSimApp.getApp().getGroupId());
                 }
             }
         }
