@@ -16,8 +16,6 @@ import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.ServerToClientMsg;
-import com.example.nan.ssprocess.bean.response.LoginResponseDataWrap;
-import com.example.nan.ssprocess.ui.activity.LoginActivity;
 import com.example.nan.ssprocess.ui.activity.ProcessToAdminActivity;
 import com.example.nan.ssprocess.ui.activity.ProcessToCheckoutActivity;
 import com.example.nan.ssprocess.ui.activity.ProcessToInstallActivity;
@@ -351,12 +349,22 @@ public class MyMqttService extends Service {
 
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
-
+                //即服务器成功delivery消息
             }
         });
         MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
+        //断开后，是否自动连接
         mqttConnectOptions.setAutomaticReconnect(true);
+        //是否清空客户端的连接记录。若为true，则断开后，broker将自动清除该客户端连接信息
         mqttConnectOptions.setCleanSession(false);
+        //设置超时时间，单位为秒
+        //mqttConnectOptions.setConnectionTimeout(60);
+        //心跳时间，单位为秒。即多长时间确认一次Client端是否在线
+        //mqttConnectOptions.setKeepAliveInterval(60);
+        //允许同时发送几条消息（未收到broker确认信息）
+        //mqttConnectOptions.setMaxInflight(10);
+        //选择MQTT版本
+        //mqttConnectOptions.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
         try {
             Log.d(TAG, "onCreate: Connecting to " + serverUri);
             mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
@@ -483,7 +491,13 @@ public class MyMqttService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        try {
+            if(mqttAndroidClient!=null){
+                mqttAndroidClient.disconnect();
+            }
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
         Log.d(TAG, "MqttService onDestroy executed");
     }
 }
