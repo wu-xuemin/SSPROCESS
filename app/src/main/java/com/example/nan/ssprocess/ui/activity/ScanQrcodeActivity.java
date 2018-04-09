@@ -100,6 +100,10 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
     @Override
     public void onScanQRCodeSuccess(final String result) {
         showDialog(result);
+        //扫码成功，取消之前设置的20秒后的task
+        if(!mStopScanTimer.isShutdown() ) {
+            mStopScanTimer.shutdownNow();
+        }
     }
 
     @Override
@@ -120,6 +124,10 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
 
     private void showDialog(final String result) {
         Log.d(TAG, "result:" + result);
+        if(scanQrResultDialog != null && scanQrResultDialog.isShowing()) {
+            scanQrResultDialog.dismiss();
+            scanQrResultDialog = null;
+        }
         scanQrResultDialog = new AlertDialog.Builder(ScanQrcodeActivity.this).create();
         scanQrResultDialog.setTitle("扫描结果");
         final EditText et = new EditText(this);
@@ -158,6 +166,7 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
                     public void onClick(DialogInterface dialog, int which) {
                         //重新扫描
                         mQRCodeView.startSpot();
+                        mStopScanTimer = new ScheduledThreadPoolExecutor(1);
                         mStopScanTimer.schedule(new Runnable() {
                             @Override
                             public void run() {
