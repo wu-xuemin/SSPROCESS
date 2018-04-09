@@ -74,7 +74,7 @@ public class MyMqttService extends Service {
         String serverIp = SinSimApp.getApp().getServerIP();
         final String serverUri = URL.TCP_HEAD + serverIp.substring(0, serverIp.indexOf(":")) + URL.MQTT_PORT;
         //以用户ID作为client ID
-        mqttAndroidClient = new MqttAndroidClient(MyMqttService.this, serverUri, String.valueOf(SinSimApp.getApp().getUserId()));
+        mqttAndroidClient = new MqttAndroidClient(MyMqttService.this, serverUri, SinSimApp.getApp().getIMEI());
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
@@ -358,13 +358,13 @@ public class MyMqttService extends Service {
         //是否清空客户端的连接记录。若为true，则断开后，broker将自动清除该客户端连接信息
         mqttConnectOptions.setCleanSession(false);
         //设置超时时间，单位为秒
-        //mqttConnectOptions.setConnectionTimeout(60);
+        //mqttConnectOptions.setConnectionTimeout(2);
         //心跳时间，单位为秒。即多长时间确认一次Client端是否在线
-        //mqttConnectOptions.setKeepAliveInterval(60);
+        //mqttConnectOptions.setKeepAliveInterval(2);
         //允许同时发送几条消息（未收到broker确认信息）
         //mqttConnectOptions.setMaxInflight(10);
         //选择MQTT版本
-        //mqttConnectOptions.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
+        mqttConnectOptions.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
         try {
             Log.d(TAG, "onCreate: Connecting to " + serverUri);
             mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.blankj.utilcode.util.CacheUtils;
@@ -125,6 +126,7 @@ public class SinSimApp extends Application {
     private String ip;
     private int userId;
     private int groupId;
+    private String IMEI;
     private static SinSimApp mApp;
 
     /**
@@ -213,7 +215,17 @@ public class SinSimApp extends Application {
             this.groupId = Integer.valueOf(readValue(PersistentValueType.GROUP_ID, "0"));
         }
     }
-
+    @SuppressLint({"MissingPermission", "HardwareIds"})
+    public String getIMEI() {
+        String idIMEI = null;
+        TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
+        if (telephonyManager != null) {
+            idIMEI = telephonyManager.getDeviceId();
+        } else {
+            Log.d(TAG, "getIMEI: have some error");
+        }
+        return idIMEI;
+    }
     /**
      * 由片段调用，设置登录信息
      *

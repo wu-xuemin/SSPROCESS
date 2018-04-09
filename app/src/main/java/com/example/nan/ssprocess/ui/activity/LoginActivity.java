@@ -83,8 +83,8 @@ public class LoginActivity extends AppCompatActivity {
         mPassword=mPasswordText.getText().toString();
         mPostValue.put("account", mAccountText.getText().toString());
         mPostValue.put("password", mPassword);
-        mPostValue.put("meid", SplashActivity.IMEI);
-        Log.d(TAG, "login: IMEI: "+SplashActivity.IMEI);
+        mPostValue.put("meid", SinSimApp.getApp().getIMEI());
+        Log.d(TAG, "login: IMEI: "+SinSimApp.getApp().getIMEI());
         Log.d(TAG, "login: IP: "+SinSimApp.getApp().getServerIP());
         if(TextUtils.isEmpty(SinSimApp.getApp().getServerIP())){
             if(mLoadingProcessDialog.isShowing()) {
@@ -93,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
             mLoginButton.setEnabled(true);
             Toast.makeText(this, "服务端IP为空，请设置IP地址", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "login: 服务端IP为空，请设置IP地址");
-        } else if (SplashActivity.IMEI==null){
+        } else if (SinSimApp.getApp().getIMEI()==null){
             if(mLoadingProcessDialog.isShowing()) {
                 mLoadingProcessDialog.dismiss();
             }

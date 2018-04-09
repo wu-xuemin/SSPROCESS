@@ -55,7 +55,6 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
     private Handler mTimeoutHandler;
     private Runnable mTimeOutRunnable;
 
-    public static String IMEI = null;
 
     /**
      * @param 用于表明进入从notification 进入Splash Activity
@@ -92,8 +91,6 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
     }
 
     private void init() {
-        //检查机器IMEI
-        checkIMEI();
 
         //检查preference中的isLogin状态
         boolean isLogin = SinSimApp.getApp().isLogined();
@@ -120,10 +117,10 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
                         protected Object doInBackground(Object[] params) {
                             //检查账号密码是否正确，正确的话返回流程的状态
                             LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                            Log.d(TAG, "doInBackground: " + ip + account + password + IMEI);
+                            Log.d(TAG, "doInBackground: " + ip + account + password + SinSimApp.getApp().getIMEI());
                             mPostValue.put("account", account);
                             mPostValue.put("password", password);
-                            mPostValue.put("meid", IMEI);
+                            mPostValue.put("meid", SinSimApp.getApp().getIMEI());
                             String loginUrl = URL.HTTP_HEAD + ip + URL.USER_LOGIN;
                             mNetwork.fetchLoginData(loginUrl, mPostValue, mFetchLoginHandler);
                             return null;
@@ -263,22 +260,6 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
         jumpToLoginAct();
     }
 
-    private void checkIMEI() {
-        IMEI = getIMEI();
-        Log.d(TAG, "checkIMEI: " + IMEI);
-    }
-
-    @SuppressLint({"MissingPermission", "HardwareIds"})
-    private String getIMEI() {
-        String idIMEI = null;
-        TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
-        if (telephonyManager != null) {
-            idIMEI = telephonyManager.getDeviceId();
-        } else {
-            Log.d(TAG, "getIMEI: have some error");
-        }
-        return idIMEI;
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
