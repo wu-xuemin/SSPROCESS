@@ -126,6 +126,7 @@ public class SinSimApp extends Application {
     private String ip;
     private int userId;
     private int groupId;
+
     private String IMEI;
     private static SinSimApp mApp;
 
@@ -215,16 +216,17 @@ public class SinSimApp extends Application {
             this.groupId = Integer.valueOf(readValue(PersistentValueType.GROUP_ID, "0"));
         }
     }
+
     @SuppressLint({"MissingPermission", "HardwareIds"})
     public String getIMEI() {
-        String idIMEI = null;
+        IMEI = null;
         TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
         if (telephonyManager != null) {
-            idIMEI = telephonyManager.getDeviceId();
+            IMEI = telephonyManager.getDeviceId();
         } else {
             Log.d(TAG, "getIMEI: have some error");
         }
-        return idIMEI;
+        return IMEI;
     }
     /**
      * 由片段调用，设置登录信息
