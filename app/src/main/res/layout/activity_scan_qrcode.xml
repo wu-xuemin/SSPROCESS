@@ -30,13 +30,13 @@
         app:qrcv_isTipTextBelowRect="false"
         app:qrcv_maskColor="#33FFFFFF"
         app:qrcv_qrCodeTipText="将二维码放入框内，即可自动扫描"
-        app:qrcv_rectWidth="150dp"
+        app:qrcv_rectWidth="300dp"
         app:qrcv_scanLineColor="@color/colorPrimaryDark"
         app:qrcv_scanLineMargin="0dp"
         app:qrcv_scanLineSize="0.5dp"
         app:qrcv_tipTextColor="@android:color/white"
         app:qrcv_tipTextSize="12sp"
         app:qrcv_toolbarHeight="100dp"
-        app:qrcv_topOffset="20dp"/>
+        app:qrcv_topOffset="10dp"/>
 
 </android.support.constraint.ConstraintLayout>
