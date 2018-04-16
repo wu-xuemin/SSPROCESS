@@ -614,5 +614,8 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         if(mUpdatingProcessDialog != null) {
             mUpdatingProcessDialog.dismiss();
         }
+        if(mLocationSettingDialog != null) {
+            mLocationSettingDialog.dismiss();
+        }
     }
 }
