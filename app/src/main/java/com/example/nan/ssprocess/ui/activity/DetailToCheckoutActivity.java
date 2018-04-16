@@ -10,6 +10,7 @@ import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +46,7 @@ import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
 
 public class DetailToCheckoutActivity extends AppCompatActivity implements BGASortableNinePhotoLayout.Delegate{
     private static final String TAG="nlgDetailToCheckout";
+    private TextView locationTv;
     private RadioButton checkedOkRb;
     private RadioButton checkedNokRb;
     private EditText checkoutNokDetailEt;
@@ -56,6 +58,8 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     private ProgressDialog mUploadingProcessDialog;
     private AlertDialog mQaDialog=null;
     private ProgressDialog mUpdatingProcessDialog;
+    private AlertDialog mLocationSettingDialog =null;
+
 
     private TaskRecordMachineListData mTaskRecordMachineListData;
     private int iTaskRecordMachineListDataStatusTemp;
@@ -81,7 +85,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        TextView locationTv=findViewById(R.id.location_tv);
+        locationTv=findViewById(R.id.location_tv);
         TextView orderNumberTv=findViewById(R.id.order_number_tv);
         TextView machineNumberTv=findViewById(R.id.machine_number_tv);
         currentStatusTv=findViewById(R.id.current_status_tv);
@@ -112,8 +116,49 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         orderNumberTv.setText(""+mTaskRecordMachineListData.getMachineOrderData().getOrderNum());
         currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
         machineNumberTv.setText(mTaskRecordMachineListData.getMachineData().getNameplate());
-        locationTv.setText(mTaskRecordMachineListData.getMachineData().getLocation());
 
+        //locationTv.setText(mTaskRecordMachineListData.getMachineData().getLocation());
+        if (mTaskRecordMachineListData.getMachineData().getLocation().isEmpty()){
+            locationTv.setText("点击上传");
+        }else {
+            locationTv.setText(mTaskRecordMachineListData.getMachineData().getLocation());
+        }
+        locationTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LinearLayout layout = (LinearLayout) View.inflate(DetailToCheckoutActivity.this, R.layout.dialog_location_seting, null);
+                final EditText dialogLocationEt = layout.findViewById(R.id.dialog_location_et);
+                mLocationSettingDialog = new AlertDialog.Builder(DetailToCheckoutActivity.this).create();
+                mLocationSettingDialog.setTitle("输入机器的位置：");
+                mLocationSettingDialog.setView(layout);
+                mLocationSettingDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                mLocationSettingDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //获取dialog的输入信息，并上传到服务器
+                        if (TextUtils.isEmpty(dialogLocationEt.getText())) {
+                            Toast.makeText(DetailToCheckoutActivity.this,"地址不能为空，请确认后重新输入！",Toast.LENGTH_SHORT).show();
+                        }else {
+                            locationTv.setText(dialogLocationEt.getText().toString());
+                            if( mUpdatingProcessDialog == null) {
+                                mUpdatingProcessDialog = new ProgressDialog(DetailToCheckoutActivity.this);
+                                mUpdatingProcessDialog.setCancelable(false);
+                                mUpdatingProcessDialog.setCanceledOnTouchOutside(false);
+                                mUpdatingProcessDialog.setMessage("上传信息中...");
+                            }
+                            mUpdatingProcessDialog.show();
+                            updateLocationData();
+                        }
+                    }
+                });
+                mLocationSettingDialog.show();
+            }
+        });
         checkedOkRb.setChecked(true);
         QaNokLinearLayout.setVisibility(View.GONE);
         checkedOkRb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -178,7 +223,35 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             startActivityForResult(intent, SCAN_QRCODE_END);
         }
     }
+    private void updateLocationData() {
+        //更新loaction状态
+        mTaskRecordMachineListData.getMachineData().setLocation(locationTv.getText().toString());
+        Gson gson=new Gson();
+        String machineDataToJson = gson.toJson(mTaskRecordMachineListData.getMachineData());
+        Log.d(TAG, "onItemClick: gson :"+ machineDataToJson);
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("machine", machineDataToJson);
+        String updateProcessRecordUrl = URL.HTTP_HEAD + IP + URL.UPDATE_MACHINE_LOCATION;
+        Log.d(TAG, "updateProcessDetailData: "+updateProcessRecordUrl+mPostValue.get("machine"));
+        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateProcessRecordUrl, mPostValue, new UpdateLocationDataHandler());
+    }
 
+    @SuppressLint("HandlerLeak")
+    private class UpdateLocationDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if(mUpdatingProcessDialog != null && mUpdatingProcessDialog.isShowing()) {
+                mUpdatingProcessDialog.dismiss();
+            }
+            if (msg.what == Network.OK) {
+                Toast.makeText(DetailToCheckoutActivity.this, "上传位置成功！", Toast.LENGTH_SHORT).show();
+            } else {
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: "+errorMsg);
+                Toast.makeText(DetailToCheckoutActivity.this, "上传失败："+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     private void fetchQARecordData() {
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("taskRecordId", ""+mTaskRecordMachineListData.getId());
