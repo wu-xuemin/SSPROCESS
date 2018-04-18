@@ -773,7 +773,13 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         if(installNormalRb.isChecked()){
             mTaskRecordMachineListData.setInstallEndTime(strCurTime);
             iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
-            updateProcessDetailData(SinSimApp.TASK_INSTALLED);
+            if (mTaskRecordMachineListData.getTaskData().getQualityUserId()>0) {
+                updateProcessDetailData(SinSimApp.TASK_INSTALLED);
+            } else {
+                mTaskRecordMachineListData.setQualityBeginTime(strCurTime);
+                mTaskRecordMachineListData.setQualityEndTime(strCurTime);
+                updateProcessDetailData(SinSimApp.TASK_QUALITY_DONE);
+            }
         }else if(installAbnormalRb.isChecked()){
             AbnormalRecordDetailsData abnormalRecordAddData=new AbnormalRecordDetailsData(SinSimApp.getApp().getUserId(),mTaskRecordMachineListData.getId(),lCurTime);
             String bnormalRecordDetailsDataToJson = gson.toJson(abnormalRecordAddData);
