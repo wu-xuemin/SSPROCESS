@@ -20,6 +20,7 @@ public class TaskRecordMachineListData implements Serializable {
     private MachineData machine;
     private MachineOrderData machineOrder;
     private TaskPlanData taskPlan;
+    private TaskData task;
     private String workerList;
 
     public int getId() {
@@ -104,5 +105,9 @@ public class TaskRecordMachineListData implements Serializable {
 
     public void setLeader(String leader) {
         this.leader = leader;
+    }
+
+    public TaskData getTaskData() {
+        return task;
     }
 }
