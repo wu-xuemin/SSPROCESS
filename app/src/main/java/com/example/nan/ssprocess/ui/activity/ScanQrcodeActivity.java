@@ -9,12 +9,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.nan.ssprocess.R;
 
-import java.util.Timer;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -71,6 +69,7 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
             }
         }, 20, TimeUnit.SECONDS);
     }
+
 
     @Override
     protected void onStop() {
@@ -130,6 +129,7 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
         }
         scanQrResultDialog = new AlertDialog.Builder(ScanQrcodeActivity.this).create();
         scanQrResultDialog.setTitle("扫描结果");
+        scanQrResultDialog.setCancelable(false);
         final EditText et = new EditText(this);
         if(result != null) {
             scanQrResultDialog.setMessage("扫描结果： "+result);
@@ -148,6 +148,7 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
                         }
                         if("".equals(machineIDStr)) {
                             ToastUtils.showShort("机器编号不能为空！");
+                            ScanQrcodeActivity.this.finish();
                         } else {
                             //根据result获取对应taskRecordDetail
                             Intent intent = getIntent();
