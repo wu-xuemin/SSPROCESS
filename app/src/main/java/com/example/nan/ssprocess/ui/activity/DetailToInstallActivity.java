@@ -525,7 +525,11 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                                 checkedName += finalItems[checkedNameList.get(i)];
                             }
                         }
-                        chooseInstallerTv.setText(checkedName);
+                        if(!"".equals(checkedName)) {
+                            chooseInstallerTv.setText(checkedName);
+                        }else {
+                            chooseInstallerTv.setText("选择人员");
+                        }
                         // 关闭提示框
                         mInstallerListDialog.dismiss();
                     }
