@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
@@ -35,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "nlgLoginActivity";
 
+    private TextView mSystemVersionTv;
     private EditText mAccountText;
     private EditText mPasswordText;
     private Button mLoginButton;
@@ -58,6 +62,8 @@ public class LoginActivity extends AppCompatActivity {
         mLoginButton = (Button) findViewById(R.id.btn_login);
         mPasswordText = (EditText) findViewById(R.id.input_password);
         mAccountText = (EditText) findViewById(R.id.input_account);
+        mSystemVersionTv = findViewById(R.id.system_version);
+        mSystemVersionTv.setText(getVersion());
 
         mLoginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -66,6 +72,22 @@ public class LoginActivity extends AppCompatActivity {
                 login();
             }
         });
+    }
+
+    /**
+     * 获取版本号
+     * @return 当前应用的版本号
+     */
+    public String getVersion() {
+        try {
+            PackageManager manager = this.getPackageManager();
+            PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
+            String version = info.versionName;
+            return "V" + version;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "无版本信息";
+        }
     }
 
     private void login() {
