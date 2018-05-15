@@ -307,7 +307,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         installAbnormalRb.setChecked(true);
                         installAbnormalRb.setEnabled(true);
                         installNormalRb.setEnabled(false);
-                        //TODO:待验证
                         if(arrayAdapter.isEmpty()){
                             Log.d(TAG, "安装异常信息: 空");
                         }else {
