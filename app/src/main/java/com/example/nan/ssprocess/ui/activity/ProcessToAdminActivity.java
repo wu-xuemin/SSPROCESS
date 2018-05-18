@@ -149,6 +149,12 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
             if (msg.what == Network.OK) {
                 mProcessToAdminList=(ArrayList<TaskRecordMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToAdminList.size());
+                int iListSize=mProcessToAdminList.size();
+                for(int position=iListSize-1;position>=0;position--) {
+                    if (mProcessToAdminList.get(position).getMachineData().getStatus() == SinSimApp.MACHINE_CANCELED) {
+                        mProcessToAdminList.remove(position);
+                    }
+                }
                 if (mProcessToAdminList.size()==0){
                     mProcessToAdminAdapter.setProcessList(mProcessToAdminList);
                     mProcessToAdminAdapter.notifyDataSetChanged();

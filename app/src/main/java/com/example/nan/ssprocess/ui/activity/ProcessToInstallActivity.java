@@ -135,6 +135,12 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
             if (msg.what == Network.OK) {
                 mProcessToInstallPlanList=(ArrayList<TaskRecordMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToInstallPlanList.size());
+                int iListSize=mProcessToInstallPlanList.size();
+                for(int position=iListSize-1;position>=0;position--) {
+                    if (mProcessToInstallPlanList.get(position).getMachineData().getStatus() == SinSimApp.MACHINE_CANCELED) {
+                        mProcessToInstallPlanList.remove(position);
+                    }
+                }
                 if (mProcessToInstallPlanList.size()==0){
                     mTaskRecordAdapter.setProcessList(mProcessToInstallPlanList);
                     mTaskRecordAdapter.notifyDataSetChanged();

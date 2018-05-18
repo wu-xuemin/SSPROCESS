@@ -135,6 +135,12 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
             if (msg.what == Network.OK) {
                 mProcessToCheckoutList=(ArrayList<TaskRecordMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToCheckoutList.size());
+                int iListSize=mProcessToCheckoutList.size();
+                for(int position=iListSize-1;position>=0;position--) {
+                    if (mProcessToCheckoutList.get(position).getMachineData().getStatus() == SinSimApp.MACHINE_CANCELED) {
+                        mProcessToCheckoutList.remove(position);
+                    }
+                }
                 if (mProcessToCheckoutList.size()==0){
                     mTaskRecordAdapter.setProcessList(mProcessToCheckoutList);
                     mTaskRecordAdapter.notifyDataSetChanged();

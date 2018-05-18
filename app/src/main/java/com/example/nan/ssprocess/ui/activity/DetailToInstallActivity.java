@@ -186,12 +186,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             Toast toast = Toast.makeText(DetailToInstallActivity.this, "正在改单/拆单，不能安装！", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
-        }else if (mTaskRecordMachineListData.getMachineData().getStatus()==SinSimApp.MACHINE_CANCELED) {
-            begainInstallButton.setVisibility(View.GONE);
-            installInfoUpdateButton.setVisibility(View.GONE);
-            Toast toast = Toast.makeText(DetailToInstallActivity.this, "该机器订单已取消！", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
         }else {
             if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALL_WAITING) {
                 begainInstallButton.setVisibility(View.VISIBLE);
