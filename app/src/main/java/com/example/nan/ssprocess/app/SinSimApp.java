@@ -260,7 +260,7 @@ public class SinSimApp extends Application {
     public void setLogOut() {
 
         writePreferenceValue(PersistentValueType.IS_LOGIN, "");
-        writePreferenceValue(PersistentValueType.ACCOUNT, "");
+        //writePreferenceValue(PersistentValueType.ACCOUNT, "");
         writePreferenceValue(PersistentValueType.FULL_NAME, "");
         writePreferenceValue(PersistentValueType.PASSWORD, "");
         writePreferenceValue(PersistentValueType.ROLE, "");
@@ -269,7 +269,7 @@ public class SinSimApp extends Application {
         try {
             commitValues();
             this.isLogined = false;
-            this.account = "";
+            //this.account = "";
             this.fullname = "";
             this.password = "";
             this.role = -1;

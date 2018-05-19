@@ -62,6 +62,9 @@ public class LoginActivity extends AppCompatActivity {
         mLoginButton = (Button) findViewById(R.id.btn_login);
         mPasswordText = (EditText) findViewById(R.id.input_password);
         mAccountText = (EditText) findViewById(R.id.input_account);
+        if(SinSimApp.getApp().getAccount() != null && !"".equals(SinSimApp.getApp().getAccount())) {
+            mAccountText.setText(SinSimApp.getApp().getAccount());
+        }
         mSystemVersionTv = findViewById(R.id.system_version);
         mSystemVersionTv.setText(getVersion());
 

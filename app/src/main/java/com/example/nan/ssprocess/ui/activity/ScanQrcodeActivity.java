@@ -67,7 +67,7 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
                     }
                 });
             }
-        }, 20, TimeUnit.SECONDS);
+        }, 10, TimeUnit.SECONDS);
     }
 
 
@@ -180,7 +180,7 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
                                     }
                                 });
                             }
-                        }, 20, TimeUnit.SECONDS);
+                        }, 10, TimeUnit.SECONDS);
                     }
                 });
         // 显示
