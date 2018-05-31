@@ -139,8 +139,11 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         locationTv.setText(mTaskRecordMachineListData.getMachineData().getLocation());
         if(mTaskRecordMachineListData.getWorkerList() == null || "".equals(mTaskRecordMachineListData.getWorkerList())){
             Log.d(TAG, "没有安装人员");
+            chooseInstallerTv.setText("选择人员");
         }else {
             chooseInstallerTv.setText(mTaskRecordMachineListData.getWorkerList());
+            checkedName=mTaskRecordMachineListData.getWorkerList();
+            chooseInstallerTv.setEnabled(false);
         }
 
         //点击下载装车单
@@ -197,8 +200,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 installInfoUpdateButton.setVisibility(View.VISIBLE);
                 installAbnormalRb.setEnabled(true);
                 installNormalRb.setEnabled(true);
-                //异常解决返回安装中的状态时，不从数据库获取信息
-                chooseInstallerTv.setText("选择人员");
             } else {
                 begainInstallButton.setVisibility(View.GONE);
                 installInfoUpdateButton.setVisibility(View.GONE);
