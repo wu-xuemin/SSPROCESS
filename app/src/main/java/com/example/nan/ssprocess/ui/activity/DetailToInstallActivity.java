@@ -307,8 +307,9 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         installAbnormalRb.setChecked(true);
                         installAbnormalRb.setEnabled(true);
                         installNormalRb.setEnabled(false);
-                        if(arrayAdapter.isEmpty()){
-                            Log.d(TAG, "安装异常信息: 空");
+                        if(arrayAdapter==null){
+                            Log.d(TAG, "安装异常信息: 空!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                            fetchInstallRecordData();
                         }else {
                             //根据该选项获取位置
                             int position = arrayAdapter.getPosition(abnormalRecordDetailsData.getAbnormal().getAbnormalName());

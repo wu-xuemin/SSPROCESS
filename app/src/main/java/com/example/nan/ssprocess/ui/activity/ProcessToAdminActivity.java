@@ -149,11 +149,48 @@ public class ProcessToAdminActivity extends AppCompatActivity implements BGARefr
             if (msg.what == Network.OK) {
                 mProcessToAdminList=(ArrayList<TaskRecordMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToAdminList.size());
-                int iListSize=mProcessToAdminList.size();
-                for(int position=iListSize-1;position>=0;position--) {
-                    if (mProcessToAdminList.get(position).getMachineData().getStatus() == SinSimApp.MACHINE_CANCELED) {
-                        mProcessToAdminList.remove(position);
+
+                if (mProcessToAdminList.size() > 0) {
+                    ArrayList<TaskRecordMachineListData> abnormalList = new ArrayList<>();
+                    ArrayList<TaskRecordMachineListData> orderChangeList = new ArrayList<>();
+                    ArrayList<TaskRecordMachineListData> skipList = new ArrayList<>();
+                    ArrayList<TaskRecordMachineListData> normalList = new ArrayList<>();
+                    for (int position = 0; position < mProcessToAdminList.size(); position++) {
+                        if (mProcessToAdminList.get(position).getMachineData().getStatus() == SinSimApp.MACHINE_CANCELED) {
+                            mProcessToAdminList.remove(position);
+                        }else if (mProcessToAdminList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
+                                ||mProcessToAdminList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED) {
+                            orderChangeList.add(mProcessToAdminList.get(position));
+                        } else {
+                            switch (mProcessToAdminList.get(position).getStatus()) {
+                                case SinSimApp.TASK_INITIAL:
+                                case SinSimApp.TASK_PLANED:
+                                case SinSimApp.TASK_INSTALL_WAITING:
+                                case SinSimApp.TASK_INSTALLING:
+                                case SinSimApp.TASK_INSTALLED:
+                                case SinSimApp.TASK_QUALITY_DOING:
+                                case SinSimApp.TASK_QUALITY_DONE:
+                                    normalList.add(mProcessToAdminList.get(position));
+                                    break;
+                                case SinSimApp.TASK_INSTALL_ABNORMAL:
+                                case SinSimApp.TASK_QUALITY_ABNORMAL:
+                                    abnormalList.add(mProcessToAdminList.get(position));
+                                    break;
+                                case SinSimApp.TASK_SKIP:
+                                    skipList.add(mProcessToAdminList.get(position));
+                                    break;
+                                default:
+                                    break;
+
+                            }
+                        }
                     }
+                    Log.d(TAG, "handleMessage: 机器状态排序!");
+                    //排序：异常-》改单拆单-》跳过-》正常
+                    abnormalList.addAll(orderChangeList);
+                    abnormalList.addAll(skipList);
+                    abnormalList.addAll(normalList);
+                    mProcessToAdminList=abnormalList;
                 }
                 if (mProcessToAdminList.size()==0){
                     mProcessToAdminAdapter.setProcessList(mProcessToAdminList);

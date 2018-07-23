@@ -135,11 +135,48 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
             if (msg.what == Network.OK) {
                 mProcessToInstallPlanList=(ArrayList<TaskRecordMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToInstallPlanList.size());
-                int iListSize=mProcessToInstallPlanList.size();
-                for(int position=iListSize-1;position>=0;position--) {
-                    if (mProcessToInstallPlanList.get(position).getMachineData().getStatus() == SinSimApp.MACHINE_CANCELED) {
-                        mProcessToInstallPlanList.remove(position);
+
+                if (mProcessToInstallPlanList.size() > 0) {
+                    ArrayList<TaskRecordMachineListData> abnormalList = new ArrayList<>();
+                    ArrayList<TaskRecordMachineListData> orderChangeList = new ArrayList<>();
+                    ArrayList<TaskRecordMachineListData> skipList = new ArrayList<>();
+                    ArrayList<TaskRecordMachineListData> normalList = new ArrayList<>();
+                    for (int position = 0; position < mProcessToInstallPlanList.size(); position++) {
+                        if (mProcessToInstallPlanList.get(position).getMachineData().getStatus() == SinSimApp.MACHINE_CANCELED) {
+                            mProcessToInstallPlanList.remove(position);
+                        }else if (mProcessToInstallPlanList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
+                                ||mProcessToInstallPlanList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED) {
+                            orderChangeList.add(mProcessToInstallPlanList.get(position));
+                        } else {
+                            switch (mProcessToInstallPlanList.get(position).getStatus()) {
+                                case SinSimApp.TASK_INITIAL:
+                                case SinSimApp.TASK_PLANED:
+                                case SinSimApp.TASK_INSTALL_WAITING:
+                                case SinSimApp.TASK_INSTALLING:
+                                case SinSimApp.TASK_INSTALLED:
+                                case SinSimApp.TASK_QUALITY_DOING:
+                                case SinSimApp.TASK_QUALITY_DONE:
+                                    normalList.add(mProcessToInstallPlanList.get(position));
+                                    break;
+                                case SinSimApp.TASK_INSTALL_ABNORMAL:
+                                case SinSimApp.TASK_QUALITY_ABNORMAL:
+                                    abnormalList.add(mProcessToInstallPlanList.get(position));
+                                    break;
+                                case SinSimApp.TASK_SKIP:
+                                    skipList.add(mProcessToInstallPlanList.get(position));
+                                    break;
+                                default:
+                                    break;
+
+                            }
+                        }
                     }
+                    Log.d(TAG, "handleMessage: 机器状态排序!");
+                    //排序：异常-》改单拆单-》跳过-》正常
+                    abnormalList.addAll(orderChangeList);
+                    abnormalList.addAll(skipList);
+                    abnormalList.addAll(normalList);
+                    mProcessToInstallPlanList=abnormalList;
                 }
                 if (mProcessToInstallPlanList.size()==0){
                     mTaskRecordAdapter.setProcessList(mProcessToInstallPlanList);

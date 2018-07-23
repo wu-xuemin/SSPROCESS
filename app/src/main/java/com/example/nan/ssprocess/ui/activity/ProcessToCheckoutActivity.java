@@ -135,11 +135,48 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
             if (msg.what == Network.OK) {
                 mProcessToCheckoutList=(ArrayList<TaskRecordMachineListData>)msg.obj;
                 Log.d(TAG, "handleMessage: size: "+mProcessToCheckoutList.size());
-                int iListSize=mProcessToCheckoutList.size();
-                for(int position=iListSize-1;position>=0;position--) {
-                    if (mProcessToCheckoutList.get(position).getMachineData().getStatus() == SinSimApp.MACHINE_CANCELED) {
-                        mProcessToCheckoutList.remove(position);
+
+                if (mProcessToCheckoutList.size() > 0) {
+                    ArrayList<TaskRecordMachineListData> abnormalList = new ArrayList<>();
+                    ArrayList<TaskRecordMachineListData> orderChangeList = new ArrayList<>();
+                    ArrayList<TaskRecordMachineListData> skipList = new ArrayList<>();
+                    ArrayList<TaskRecordMachineListData> normalList = new ArrayList<>();
+                    for (int position = 0; position < mProcessToCheckoutList.size(); position++) {
+                        if (mProcessToCheckoutList.get(position).getMachineData().getStatus() == SinSimApp.MACHINE_CANCELED) {
+                            mProcessToCheckoutList.remove(position);
+                        }else if (mProcessToCheckoutList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
+                                ||mProcessToCheckoutList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED) {
+                            orderChangeList.add(mProcessToCheckoutList.get(position));
+                        } else {
+                            switch (mProcessToCheckoutList.get(position).getStatus()) {
+                                case SinSimApp.TASK_INITIAL:
+                                case SinSimApp.TASK_PLANED:
+                                case SinSimApp.TASK_INSTALL_WAITING:
+                                case SinSimApp.TASK_INSTALLING:
+                                case SinSimApp.TASK_INSTALLED:
+                                case SinSimApp.TASK_QUALITY_DOING:
+                                case SinSimApp.TASK_QUALITY_DONE:
+                                    normalList.add(mProcessToCheckoutList.get(position));
+                                    break;
+                                case SinSimApp.TASK_INSTALL_ABNORMAL:
+                                case SinSimApp.TASK_QUALITY_ABNORMAL:
+                                    abnormalList.add(mProcessToCheckoutList.get(position));
+                                    break;
+                                case SinSimApp.TASK_SKIP:
+                                    skipList.add(mProcessToCheckoutList.get(position));
+                                    break;
+                                default:
+                                    break;
+
+                            }
+                        }
                     }
+                    Log.d(TAG, "handleMessage: 机器状态排序!");
+                    //排序：异常-》改单拆单-》跳过-》正常
+                    abnormalList.addAll(orderChangeList);
+                    abnormalList.addAll(skipList);
+                    abnormalList.addAll(normalList);
+                    mProcessToCheckoutList=abnormalList;
                 }
                 if (mProcessToCheckoutList.size()==0){
                     mTaskRecordAdapter.setProcessList(mProcessToCheckoutList);

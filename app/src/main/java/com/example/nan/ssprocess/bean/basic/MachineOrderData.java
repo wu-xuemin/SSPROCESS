@@ -9,14 +9,9 @@ import java.io.Serializable;
 public class MachineOrderData implements Serializable {
     private int id;
     private String orderNum;
-    private int headNum;//头数
     private int machineType;//类型
     private String contractShipDate;//合同日期
     private long planShipDate;//计划日期
-
-    public int getHeadNum() {
-        return headNum;
-    }
 
     public int getMachineType() {
         return machineType;
