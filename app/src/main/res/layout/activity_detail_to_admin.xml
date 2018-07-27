@@ -65,30 +65,6 @@
                             android:textStyle="bold"
                             android:textColor="@color/black"/>
                     </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="48dp"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:gravity="center_vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="安装人员："
-                            android:textStyle="bold"
-                            android:textSize="15sp"/>
-                        <TextView
-                            android:id="@+id/install_persons"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="暂无"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/black"/>
-                    </LinearLayout>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="0dp"
@@ -143,6 +119,30 @@
                             android:textColor="@color/black"/>
                     </LinearLayout>
                 </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:orientation="horizontal"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="安装人员："
+                    android:textStyle="bold"
+                    android:textSize="15sp"/>
+                <TextView
+                    android:id="@+id/install_persons"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="暂无"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
             </LinearLayout>
 
             <LinearLayout

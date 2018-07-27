@@ -123,9 +123,9 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         if(mTaskRecordMachineListData.getInstallEndTime() != null) {
             long endTimestamp = Long.valueOf(mTaskRecordMachineListData.getInstallEndTime());
             mInstallEndTv.setText(formatter.format(new Date(endTimestamp)));
-            if(mTaskRecordMachineListData.getWorkerList() != null && mTaskRecordMachineListData.getWorkerList() != "") {
-                mInstallPersonsTv.setText(mTaskRecordMachineListData.getWorkerList());
-            }
+        }
+        if(mTaskRecordMachineListData.getWorkerList() != null && mTaskRecordMachineListData.getWorkerList() != "") {
+            mInstallPersonsTv.setText(mTaskRecordMachineListData.getWorkerList());
         }
         ///locationTv.setTextColor(Color.BLUE);
         if (mTaskRecordMachineListData.getMachineData().getLocation().isEmpty()){

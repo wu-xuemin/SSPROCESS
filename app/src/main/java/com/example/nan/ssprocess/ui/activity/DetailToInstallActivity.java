@@ -143,7 +143,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         }else {
             chooseInstallerTv.setText(mTaskRecordMachineListData.getWorkerList());
             checkedName=mTaskRecordMachineListData.getWorkerList();
-            chooseInstallerTv.setEnabled(false);
         }
 
         //点击下载装车单
@@ -764,17 +763,17 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         String strCurTime = formatter.format(curDate);
         long lCurTime=System.currentTimeMillis();
         mTaskRecordMachineListData.setLeader(SinSimApp.getApp().getFullName());
-        if ("".equals(checkedName) || checkedName==null){
-            Toast toast = Toast.makeText(DetailToInstallActivity.this, "请勾选安装人员！", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
-            return;
-        }else {
-            mTaskRecordMachineListData.setWorkerList(checkedName);
-        }
 
         //读取和更新输入信息
         if(installNormalRb.isChecked()){
+            if ("".equals(checkedName) || checkedName==null){
+                Toast toast = Toast.makeText(DetailToInstallActivity.this, "请勾选安装人员！", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return;
+            }else {
+                mTaskRecordMachineListData.setWorkerList(checkedName);
+            }
             mTaskRecordMachineListData.setInstallEndTime(strCurTime);
             iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
             if (mTaskRecordMachineListData.getTaskData().getQualityUserId()>0) {
