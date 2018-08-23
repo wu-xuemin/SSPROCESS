@@ -24,7 +24,9 @@ import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 
 /**
@@ -91,6 +93,12 @@ public class ScanResultActivity extends AppCompatActivity {
                                         mUpdatingProcessDialog.setMessage("正在开始...");
                                     }
                                     mUpdatingProcessDialog.show();
+                                    //获取当前时间
+                                    @SuppressLint("SimpleDateFormat")
+                                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+                                    Date curDate = new Date(System.currentTimeMillis());
+                                    String staCurTime = formatter.format(curDate);
+                                    mTaskRecordMachineListData.setInstallBeginTime(staCurTime);
                                     iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
                                     updateProcessDetailData(SinSimApp.TASK_INSTALLING);
                                 }
@@ -125,6 +133,12 @@ public class ScanResultActivity extends AppCompatActivity {
                                         mUpdatingProcessDialog.setMessage("正在开始...");
                                     }
                                     mUpdatingProcessDialog.show();
+                                    //获取当前时间
+                                    @SuppressLint("SimpleDateFormat")
+                                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+                                    Date curDate = new Date(System.currentTimeMillis());
+                                    String staCurTime = formatter.format(curDate);
+                                    mTaskRecordMachineListData.setQualityBeginTime(staCurTime);
                                     iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
                                     updateProcessDetailData(SinSimApp.TASK_QUALITY_DOING);
                                 }

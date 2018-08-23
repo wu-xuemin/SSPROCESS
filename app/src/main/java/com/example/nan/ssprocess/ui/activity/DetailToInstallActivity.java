@@ -261,6 +261,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 if (mAbnormalTypeList.size() > 0) {
                     //数据
                     List<String> dataList = new ArrayList<String>();
+                    dataList.add("请选择");
                     for (int i = 0; i < mAbnormalTypeList.size(); i++) {
                         dataList.add(mAbnormalTypeList.get(i).getAbnormalName());
                     }
@@ -787,7 +788,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             AbnormalRecordDetailsData abnormalRecordAddData=new AbnormalRecordDetailsData(SinSimApp.getApp().getUserId(),mTaskRecordMachineListData.getId(),lCurTime);
             String bnormalRecordDetailsDataToJson = gson.toJson(abnormalRecordAddData);
             Log.d(TAG, "updateInstallRecordData: gson :"+ bnormalRecordDetailsDataToJson);
-            if(installAbnormalDetailEt.getText()!=null && mInstallAbnormalPhotosSnpl.getData().size()>0){
+            if(installAbnormalDetailEt.getText()!=null && mInstallAbnormalPhotosSnpl.getData().size()>0 && !failReasonSpinner.getSelectedItem().equals("请选择")){
                 //获取安装异常的原因
                 abnormalRecordAddData.setComment(installAbnormalDetailEt.getText().toString());
                 //异常类型的获取
@@ -815,7 +816,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadInstallAbnormalDetailUrl, imageUrlList, mPostValue, new UploadTaskRecordImageHandler());
 
             } else {
-                Toast.makeText(this, "异常原因和异常照片不能为空！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "异常类型、原因和照片都不能为空！", Toast.LENGTH_SHORT).show();
                 return;
             }
         }
