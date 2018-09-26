@@ -1,7 +1,9 @@
 package com.example.nan.ssprocess.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Environment;
 import android.os.Vibrator;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +15,10 @@ import android.widget.EditText;
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.nan.ssprocess.R;
 
+import java.io.File;
+import java.io.RandomAccessFile;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -99,6 +105,7 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
     @Override
     public void onScanQRCodeSuccess(final String result) {
         showDialog(result);
+
         //扫码成功，取消之前设置的20秒后的task
         if(!mStopScanTimer.isShutdown() ) {
             mStopScanTimer.shutdownNow();
@@ -150,6 +157,30 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
                             ToastUtils.showShort("机器编号不能为空！");
                             ScanQrcodeActivity.this.finish();
                         } else {
+                            // 扫码完写入时间和结果到本地
+                            String path = Environment.getExternalStorageDirectory().getPath() + "/Xiaomi";
+                            String name = "/ScanResultRecorder.txt";
+                            String strFilePath = path + name;
+                            try{
+                                File filePath=null;
+                                filePath = new File(strFilePath);
+                                if (!filePath.exists()) {
+                                    filePath.getParentFile().mkdirs();
+                                    filePath.createNewFile();
+                                }
+                                //获取当前时间
+                                @SuppressLint("SimpleDateFormat")
+                                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+                                Date curDate = new Date(System.currentTimeMillis());
+                                String scanResultRecord = curDate + ":  " + machineIDStr + "\r\n";
+                                RandomAccessFile raf = new RandomAccessFile(filePath, "rwd");
+                                raf.seek(filePath.length());
+                                raf.write(scanResultRecord.getBytes());
+                                raf.close();
+                            } catch (Exception e) {
+                                Log.i("error:", e+"");
+                            }
+
                             //根据result获取对应taskRecordDetail
                             Intent intent = getIntent();
                             intent.putExtra("mMachineNamePlate", machineIDStr);
