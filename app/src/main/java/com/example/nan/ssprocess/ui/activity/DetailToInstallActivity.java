@@ -717,7 +717,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                             SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
                             Date curDate = new Date(System.currentTimeMillis());
                             String staCurTime = formatter.format(curDate);
-                            String scanResultRecord = curDate + ":  " + mTaskRecordMachineListData.getMachineData().getNameplate() + mTaskRecordMachineListData.getTaskName() + " [start]！\r\n";
+                            String scanResultRecord = curDate + ":  " + mTaskRecordMachineListData.getMachineData().getNameplate() + mTaskRecordMachineListData.getTaskName() + " [over]！\r\n";
                             RandomAccessFile raf = new RandomAccessFile(filePath, "rwd");
                             raf.seek(filePath.length());
                             raf.write(scanResultRecord.getBytes());

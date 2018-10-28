@@ -116,7 +116,7 @@ public class ScanResultActivity extends AppCompatActivity {
                                             filePath.getParentFile().mkdirs();
                                             filePath.createNewFile();
                                         }
-                                        String scanResultRecord = curDate + ":  " + mTaskRecordMachineListData.getMachineData().getNameplate() + mTaskRecordMachineListData.getTaskName() + " [over]！\r\n";
+                                        String scanResultRecord = curDate + ":  " + mTaskRecordMachineListData.getMachineData().getNameplate() + mTaskRecordMachineListData.getTaskName() + " [start]！\r\n";
                                         RandomAccessFile raf = new RandomAccessFile(filePath, "rwd");
                                         raf.seek(filePath.length());
                                         raf.write(scanResultRecord.getBytes());
