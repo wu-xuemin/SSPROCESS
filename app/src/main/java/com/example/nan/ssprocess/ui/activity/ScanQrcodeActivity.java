@@ -157,30 +157,6 @@ public class ScanQrcodeActivity extends AppCompatActivity implements QRCodeView.
                             ToastUtils.showShort("机器编号不能为空！");
                             ScanQrcodeActivity.this.finish();
                         } else {
-                            // 扫码完写入时间和结果到本地
-                            String path = Environment.getExternalStorageDirectory().getPath() + "/Xiaomi";
-                            String name = "/ScanResultRecorder.txt";
-                            String strFilePath = path + name;
-                            try{
-                                File filePath=null;
-                                filePath = new File(strFilePath);
-                                if (!filePath.exists()) {
-                                    filePath.getParentFile().mkdirs();
-                                    filePath.createNewFile();
-                                }
-                                //获取当前时间
-                                @SuppressLint("SimpleDateFormat")
-                                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-                                Date curDate = new Date(System.currentTimeMillis());
-                                String scanResultRecord = curDate + ":  " + machineIDStr + "\r\n";
-                                RandomAccessFile raf = new RandomAccessFile(filePath, "rwd");
-                                raf.seek(filePath.length());
-                                raf.write(scanResultRecord.getBytes());
-                                raf.close();
-                            } catch (Exception e) {
-                                Log.i("error:", e+"");
-                            }
-
                             //根据result获取对应taskRecordDetail
                             Intent intent = getIntent();
                             intent.putExtra("mMachineNamePlate", machineIDStr);

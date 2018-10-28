@@ -36,6 +36,7 @@ import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -656,6 +657,26 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                                     mTaskRecordMachineListData.setInstallBeginTime(staCurTime);
                                     iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
                                     updateProcessDetailData(SinSimApp.TASK_INSTALLING);
+
+                                    // 扫码完写入时间和结果到本地
+                                    String path = Environment.getExternalStorageDirectory().getPath() + "/Xiaomi";
+                                    String name = "/ScanResultRecorder.txt";
+                                    String strFilePath = path + name;
+                                    try{
+                                        File filePath=null;
+                                        filePath = new File(strFilePath);
+                                        if (!filePath.exists()) {
+                                            filePath.getParentFile().mkdirs();
+                                            filePath.createNewFile();
+                                        }
+                                        String scanResultRecord = curDate + ":  " + mTaskRecordMachineListData.getMachineData().getNameplate() + mTaskRecordMachineListData.getTaskName() + " [start]！\r\n";
+                                        RandomAccessFile raf = new RandomAccessFile(filePath, "rwd");
+                                        raf.seek(filePath.length());
+                                        raf.write(scanResultRecord.getBytes());
+                                        raf.close();
+                                    } catch (Exception e) {
+                                        Log.i("error:", e+"");
+                                    }
                                 }
                             });
                             mInstallDialog.show();
@@ -679,6 +700,31 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     if(mMachineNamePlate.equals(mTaskRecordMachineListData.getMachineData().getNameplate())){
                         Log.d(TAG, "onActivityResult: id 对应");
                         updateInstallRecordData();
+
+                        // 扫码完写入时间和结果到本地
+                        String path = Environment.getExternalStorageDirectory().getPath() + "/Xiaomi";
+                        String name = "/ScanResultRecorder.txt";
+                        String strFilePath = path + name;
+                        try{
+                            File filePath=null;
+                            filePath = new File(strFilePath);
+                            if (!filePath.exists()) {
+                                filePath.getParentFile().mkdirs();
+                                filePath.createNewFile();
+                            }
+                            //获取当前时间
+                            @SuppressLint("SimpleDateFormat")
+                            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+                            Date curDate = new Date(System.currentTimeMillis());
+                            String staCurTime = formatter.format(curDate);
+                            String scanResultRecord = curDate + ":  " + mTaskRecordMachineListData.getMachineData().getNameplate() + mTaskRecordMachineListData.getTaskName() + " [start]！\r\n";
+                            RandomAccessFile raf = new RandomAccessFile(filePath, "rwd");
+                            raf.seek(filePath.length());
+                            raf.write(scanResultRecord.getBytes());
+                            raf.close();
+                        } catch (Exception e) {
+                            Log.i("error:", e+"");
+                        }
                     } else {
                         Log.d(TAG, "onActivityResult: 二维码信息不对应");
                         Toast.makeText(this, "二维码信息不对应！", Toast.LENGTH_LONG).show();

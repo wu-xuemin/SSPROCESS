@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
@@ -24,6 +25,8 @@ import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
+import java.io.File;
+import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -101,6 +104,26 @@ public class ScanResultActivity extends AppCompatActivity {
                                     mTaskRecordMachineListData.setInstallBeginTime(staCurTime);
                                     iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
                                     updateProcessDetailData(SinSimApp.TASK_INSTALLING);
+
+                                    // 扫码完写入时间和结果到本地
+                                    String path = Environment.getExternalStorageDirectory().getPath() + "/Xiaomi";
+                                    String name = "/ScanResultRecorder.txt";
+                                    String strFilePath = path + name;
+                                    try{
+                                        File filePath=null;
+                                        filePath = new File(strFilePath);
+                                        if (!filePath.exists()) {
+                                            filePath.getParentFile().mkdirs();
+                                            filePath.createNewFile();
+                                        }
+                                        String scanResultRecord = curDate + ":  " + mTaskRecordMachineListData.getMachineData().getNameplate() + mTaskRecordMachineListData.getTaskName() + " [over]！\r\n";
+                                        RandomAccessFile raf = new RandomAccessFile(filePath, "rwd");
+                                        raf.seek(filePath.length());
+                                        raf.write(scanResultRecord.getBytes());
+                                        raf.close();
+                                    } catch (Exception e) {
+                                        Log.i("error:", e+"");
+                                    }
                                 }
                             });
                             mInstallDialog.show();
