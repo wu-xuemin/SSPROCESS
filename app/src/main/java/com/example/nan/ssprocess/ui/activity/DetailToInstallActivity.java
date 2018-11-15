@@ -701,30 +701,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         Log.d(TAG, "onActivityResult: id 对应");
                         updateInstallRecordData();
 
-                        // 扫码完写入时间和结果到本地
-                        String path = Environment.getExternalStorageDirectory().getPath() + "/Xiaomi";
-                        String name = "/ScanResultRecorder.txt";
-                        String strFilePath = path + name;
-                        try{
-                            File filePath=null;
-                            filePath = new File(strFilePath);
-                            if (!filePath.exists()) {
-                                filePath.getParentFile().mkdirs();
-                                filePath.createNewFile();
-                            }
-                            //获取当前时间
-                            @SuppressLint("SimpleDateFormat")
-                            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-                            Date curDate = new Date(System.currentTimeMillis());
-                            String staCurTime = formatter.format(curDate);
-                            String scanResultRecord = curDate + ":  " + mTaskRecordMachineListData.getMachineData().getNameplate() + mTaskRecordMachineListData.getTaskName() + " [over]！\r\n";
-                            RandomAccessFile raf = new RandomAccessFile(filePath, "rwd");
-                            raf.seek(filePath.length());
-                            raf.write(scanResultRecord.getBytes());
-                            raf.close();
-                        } catch (Exception e) {
-                            Log.i("error:", e+"");
-                        }
                     } else {
                         Log.d(TAG, "onActivityResult: 二维码信息不对应");
                         Toast.makeText(this, "二维码信息不对应！", Toast.LENGTH_LONG).show();
@@ -790,11 +766,51 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     begainInstallButton.setVisibility(View.GONE);
                     installInfoUpdateButton.setVisibility(View.GONE);
                 }
+
+                // 扫码完写入时间和结果到本地
+                String path = Environment.getExternalStorageDirectory().getPath() + "/Xiaomi";
+                String name = "/ScanResultRecorder.txt";
+                String strFilePath = path + name;
+                try{
+                    File filePath=null;
+                    filePath = new File(strFilePath);
+                    if (!filePath.exists()) {
+                        filePath.getParentFile().mkdirs();
+                        filePath.createNewFile();
+                    }
+                    String scanResultRecord = mTaskRecordMachineListData.getMachineData().getNameplate() + mTaskRecordMachineListData.getTaskName() + " [上传 OK]！\r\n";
+                    RandomAccessFile raf = new RandomAccessFile(filePath, "rwd");
+                    raf.seek(filePath.length());
+                    raf.write(scanResultRecord.getBytes());
+                    raf.close();
+                } catch (Exception e) {
+                    Log.i("error:", e+"");
+                }
             } else {
                 mTaskRecordMachineListData.setStatus(iTaskRecordMachineListDataStatusTemp);
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg+mTaskRecordMachineListData.getStatus());
                 Toast.makeText(DetailToInstallActivity.this, "失败，网络错误，请检查网络！", Toast.LENGTH_SHORT).show();
+
+                // 扫码完写入时间和结果到本地
+                String path = Environment.getExternalStorageDirectory().getPath() + "/Xiaomi";
+                String name = "/ScanResultRecorder.txt";
+                String strFilePath = path + name;
+                try{
+                    File filePath=null;
+                    filePath = new File(strFilePath);
+                    if (!filePath.exists()) {
+                        filePath.getParentFile().mkdirs();
+                        filePath.createNewFile();
+                    }
+                    String scanResultRecord = mTaskRecordMachineListData.getMachineData().getNameplate() + mTaskRecordMachineListData.getTaskName() + " [上传 FAIL]！\r\n";
+                    RandomAccessFile raf = new RandomAccessFile(filePath, "rwd");
+                    raf.seek(filePath.length());
+                    raf.write(scanResultRecord.getBytes());
+                    raf.close();
+                } catch (Exception e) {
+                    Log.i("error:", e+"");
+                }
             }
         }
     }
@@ -875,6 +891,25 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         }
         mUploadingProcessDialog.show();
 
+        // 扫码完写入时间和结果到本地
+        String path = Environment.getExternalStorageDirectory().getPath() + "/Xiaomi";
+        String name = "/ScanResultRecorder.txt";
+        String strFilePath = path + name;
+        try{
+            File filePath=null;
+            filePath = new File(strFilePath);
+            if (!filePath.exists()) {
+                filePath.getParentFile().mkdirs();
+                filePath.createNewFile();
+            }
+            String scanResultRecord = curDate + ":  " + mTaskRecordMachineListData.getMachineData().getNameplate() + mTaskRecordMachineListData.getTaskName() + " [over]！\r\n";
+            RandomAccessFile raf = new RandomAccessFile(filePath, "rwd");
+            raf.seek(filePath.length());
+            raf.write(scanResultRecord.getBytes());
+            raf.close();
+        } catch (Exception e) {
+            Log.i("error:", e+"");
+        }
     }
     @SuppressLint("HandlerLeak")
     private class UploadTaskRecordImageHandler extends Handler {

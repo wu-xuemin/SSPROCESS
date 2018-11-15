@@ -221,11 +221,51 @@ public class ScanResultActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(ScanResultActivity.this,"账号错误，请检查登入账号!", Toast.LENGTH_SHORT).show();
                 }
+
+                // 扫码完写入时间和结果到本地
+                String path = Environment.getExternalStorageDirectory().getPath() + "/Xiaomi";
+                String name = "/ScanResultRecorder.txt";
+                String strFilePath = path + name;
+                try{
+                    File filePath=null;
+                    filePath = new File(strFilePath);
+                    if (!filePath.exists()) {
+                        filePath.getParentFile().mkdirs();
+                        filePath.createNewFile();
+                    }
+                    String scanResultRecord = mTaskRecordMachineListData.getMachineData().getNameplate() + mTaskRecordMachineListData.getTaskName() + " [start OK]！\r\n";
+                    RandomAccessFile raf = new RandomAccessFile(filePath, "rwd");
+                    raf.seek(filePath.length());
+                    raf.write(scanResultRecord.getBytes());
+                    raf.close();
+                } catch (Exception e) {
+                    Log.i("error:", e+"");
+                }
             } else {
                 mTaskRecordMachineListData.setStatus(iTaskRecordMachineListDataStatusTemp);
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg);
                 Toast.makeText(ScanResultActivity.this, "网络错误，无法开始，请检查网络！", Toast.LENGTH_SHORT).show();
+
+                // 扫码完写入时间和结果到本地
+                String path = Environment.getExternalStorageDirectory().getPath() + "/Xiaomi";
+                String name = "/ScanResultRecorder.txt";
+                String strFilePath = path + name;
+                try{
+                    File filePath=null;
+                    filePath = new File(strFilePath);
+                    if (!filePath.exists()) {
+                        filePath.getParentFile().mkdirs();
+                        filePath.createNewFile();
+                    }
+                    String scanResultRecord = mTaskRecordMachineListData.getMachineData().getNameplate() + mTaskRecordMachineListData.getTaskName() + " [start FAIL]！\r\n";
+                    RandomAccessFile raf = new RandomAccessFile(filePath, "rwd");
+                    raf.seek(filePath.length());
+                    raf.write(scanResultRecord.getBytes());
+                    raf.close();
+                } catch (Exception e) {
+                    Log.i("error:", e+"");
+                }
             }
         }
     }
