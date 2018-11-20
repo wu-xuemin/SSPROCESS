@@ -143,7 +143,7 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                     ArrayList<TaskRecordMachineListData> normalList = new ArrayList<>();
                     for (int position = 0; position < mProcessToInstallPlanList.size(); position++) {
                         if (mProcessToInstallPlanList.get(position).getMachineData().getStatus() == SinSimApp.MACHINE_CANCELED) {
-                            mProcessToInstallPlanList.remove(position);
+                            continue;
                         }else if (mProcessToInstallPlanList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
                                 ||mProcessToInstallPlanList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED) {
                             orderChangeList.add(mProcessToInstallPlanList.get(position));
