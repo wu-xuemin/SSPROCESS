@@ -78,10 +78,13 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private TaskRecordMachineListData mTaskRecordMachineListData;
     private int iTaskRecordMachineListDataStatusTemp;
 
+    private AbnormalRecordDetailsData abnormalRecordDetailsData;
+
     private BGASortableNinePhotoLayout mInstallAbnormalPhotosSnpl;
     private BGANinePhotoLayout mCurrentClickNpl;
 
     private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
+    private UpdateAbnormalRecordHandler mUpdateAbnormalRecordHandler=new UpdateAbnormalRecordHandler();
 
     private ArrayAdapter<String> arrayAdapter;
     private ArrayList<AbnormalData> mAbnormalTypeList;
@@ -133,7 +136,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         //获取传递过来的信息
         Intent intent = getIntent();
         mTaskRecordMachineListData = (TaskRecordMachineListData) intent.getSerializableExtra("mTaskRecordMachineListData");
-        Log.d(TAG, "onCreate: position :"+mTaskRecordMachineListData.getMachineData().getLocation());
+        Log.d(TAG, "onCreate: heheh :"+mTaskRecordMachineListData);
 
         //把数据填入相应位置
         orderNumberTv.setText(""+mTaskRecordMachineListData.getMachineOrderData().getOrderNum());
@@ -214,6 +217,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             } else {
                 begainInstallButton.setVisibility(View.GONE);
                 installInfoUpdateButton.setVisibility(View.GONE);
+                installAbnormalSolutionButton.setVisibility(View.GONE);
                 installAbnormalRb.setEnabled(false);
                 installNormalRb.setEnabled(true);
             }
@@ -248,7 +252,46 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     }
 
     public void onAbnormalSolution(View view) {
+        final EditText editText = new EditText(DetailToInstallActivity.this);
+        AlertDialog.Builder inputDialog = new AlertDialog.Builder(DetailToInstallActivity.this);
+        inputDialog.setTitle("请输入异常解决详情").setView(editText);
+        inputDialog.setPositiveButton("确认提交",
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    abnormalRecordDetailsData.setSolution(editText.getText().toString());
+                    abnormalRecordDetailsData.setSolutionUser(SinSimApp.getApp().getUserId());
+                    Gson gson=new Gson();
+                    String abnormalRecordToJson = gson.toJson(abnormalRecordDetailsData);
+                    LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                    mPostValue.put("abnormalRecord", abnormalRecordToJson);
+                    String updateAbnormalRecordUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.UPDATE_INSTALL_ABNORMAL_RECORD;
+                    Log.d(TAG, "abnormalRecord: "+updateAbnormalRecordUrl+mPostValue.get("abnormalRecord"));
+                    Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateAbnormalRecordUrl, mPostValue, mUpdateAbnormalRecordHandler);
+                }
+            }).show();
+    }
 
+
+    @SuppressLint("HandlerLeak")
+    private class UpdateAbnormalRecordHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if(mUpdatingProcessDialog != null && mUpdatingProcessDialog.isShowing()) {
+                mUpdatingProcessDialog.dismiss();
+            }
+            if(mUploadingProcessDialog != null && mUploadingProcessDialog.isShowing()) {
+                mUploadingProcessDialog.dismiss();
+            }
+            if (msg.what == Network.OK) {
+                Toast.makeText(DetailToInstallActivity.this, "异常已解决！", Toast.LENGTH_SHORT).show();
+                DetailToInstallActivity.this.finish();
+            } else {
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: "+errorMsg);
+                Toast.makeText(DetailToInstallActivity.this, "失败，网络错误，请检查网络！", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     /**
@@ -316,7 +359,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         }
                         Log.d(TAG, "安装异常: updateTime:" + updateTime);
                     }
-                    AbnormalRecordDetailsData abnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
+                    abnormalRecordDetailsData = mAbnormalRecordList.get(updateTime);
                     Log.d(TAG, "安装异常信息: "+new Gson().toJson(abnormalRecordDetailsData));
                     //如果安装异常，填入异常的原因
                     Log.d(TAG, "安装异常: 流程："+abnormalRecordDetailsData.getTaskRecord().getStatus()+" 异常类型："+abnormalRecordDetailsData.getAbnormalType());
@@ -768,11 +811,13 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING){
                     begainInstallButton.setVisibility(View.VISIBLE);
                     installInfoUpdateButton.setVisibility(View.GONE);
+                    installAbnormalSolutionButton.setVisibility(View.GONE);
                     installAbnormalRb.setEnabled(false);
                     installNormalRb.setEnabled(false);
                 } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING){
                     begainInstallButton.setVisibility(View.GONE);
                     installInfoUpdateButton.setVisibility(View.VISIBLE);
+                    installAbnormalSolutionButton.setVisibility(View.GONE);
                     installAbnormalRb.setEnabled(true);
                     installNormalRb.setEnabled(true);
                 } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED){
@@ -780,6 +825,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     DetailToInstallActivity.this.finish();
                 } else {
                     begainInstallButton.setVisibility(View.GONE);
+                    installAbnormalSolutionButton.setVisibility(View.GONE);
                     installInfoUpdateButton.setVisibility(View.GONE);
                 }
 

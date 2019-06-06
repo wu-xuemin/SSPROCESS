@@ -67,14 +67,6 @@ public class AbnormalRecordDetailsData {
         return machine;
     }
 
-    public String getSolution() {
-        return solution;
-    }
-
-    public int getSolutionUser() {
-        return solutionUser;
-    }
-
     public int getSubmitUser() {
         return submitUser;
     }
@@ -89,5 +81,21 @@ public class AbnormalRecordDetailsData {
 
     public long getCreateTime() {
         return createTime;
+    }
+
+    public String getSolution() {
+        return solution;
+    }
+
+    public void setSolution(String solution) {
+        this.solution = solution;
+    }
+
+    public int getSolutionUser() {
+        return solutionUser;
+    }
+
+    public void setSolutionUser(int solutionUser) {
+        this.solutionUser = solutionUser;
     }
 }
