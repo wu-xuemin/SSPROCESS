@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -18,7 +17,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
@@ -27,12 +25,12 @@ import com.example.nan.ssprocess.bean.basic.AbnormalRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.QualityRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 import com.example.nan.ssprocess.net.Network;
+import com.example.nan.ssprocess.util.ShowMessage;
 import com.google.gson.Gson;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,9 +48,6 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     private TaskRecordMachineListData mTaskRecordMachineListData=new TaskRecordMachineListData();
     private TextView locationTv;
     private TextView abnormalReasonTv;
-    private TextView mInstallPersonsTv;
-    private TextView mInstallBeginTv;
-    private TextView mInstallEndTv;
     private TextView abnormalDetailTv;
     private TextView nokReasonTv;
     private TextView nokDetailTv;
@@ -66,6 +61,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
     private final String IP = SinSimApp.getApp().getServerIP();
 
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,9 +90,9 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         });
 
         abnormalReasonTv=findViewById(R.id.abnormal_reason_tv);
-        mInstallPersonsTv=findViewById(R.id.install_persons);
-        mInstallBeginTv=findViewById(R.id.install_start_time_tv);
-        mInstallEndTv=findViewById(R.id.install_end_time_tv);
+        TextView mInstallPersonsTv = findViewById(R.id.install_persons);
+        TextView mInstallBeginTv = findViewById(R.id.install_start_time_tv);
+        TextView mInstallEndTv = findViewById(R.id.install_end_time_tv);
         abnormalDetailTv=findViewById(R.id.abnormal_detail_tv);
         installAbnormalLayout=findViewById(R.id.abnormal_detail_layout);
         installAbnormalLayout.setVisibility(View.GONE);
@@ -115,6 +111,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
         currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
         machineNumberTv.setText(mTaskRecordMachineListData.getMachineData().getNameplate());
 
+        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat formatter = new SimpleDateFormat("yy/MM/dd HH:mm");
         if(mTaskRecordMachineListData.getInstallBeginTime() != null) {
             long timestamp = Long.valueOf(mTaskRecordMachineListData.getInstallBeginTime());
@@ -124,7 +121,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
             long endTimestamp = Long.valueOf(mTaskRecordMachineListData.getInstallEndTime());
             mInstallEndTv.setText(formatter.format(new Date(endTimestamp)));
         }
-        if(mTaskRecordMachineListData.getWorkerList() != null && mTaskRecordMachineListData.getWorkerList() != "") {
+        if(mTaskRecordMachineListData.getWorkerList() != null && !mTaskRecordMachineListData.getWorkerList().equals("")) {
             mInstallPersonsTv.setText(mTaskRecordMachineListData.getWorkerList());
         }
         ///locationTv.setTextColor(Color.BLUE);
@@ -152,7 +149,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                     public void onClick(DialogInterface dialog, int which) {
                         //获取dialog的输入信息，并上传到服务器
                         if (TextUtils.isEmpty(dialogLocationEt.getText())) {
-                            Toast.makeText(DetailToAdminActivity.this,"地址不能为空，请确认后重新输入！",Toast.LENGTH_SHORT).show();
+                            ShowMessage.showToast(DetailToAdminActivity.this,"地址不能为空，请确认后重新输入！", ShowMessage.MessageDuring.SHORT);
                         }else {
                             locationTv.setText(dialogLocationEt.getText().toString());
                             if( mUpdatingProcessDialog == null) {
@@ -196,7 +193,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "FetchInstallFileListHandler handleMessage: "+errorMsg);
-                Toast.makeText(DetailToAdminActivity.this, "网络错误！"+errorMsg, Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(DetailToAdminActivity.this,"网络错误！"+errorMsg, ShowMessage.MessageDuring.SHORT);
             }
         }
     }
@@ -259,7 +256,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         }
                     } else {
                         nokReasonTv.setText("不合格");
-                        Toast.makeText(DetailToAdminActivity.this, "获取到不合格信息失败！", Toast.LENGTH_SHORT).show();
+                        ShowMessage.showToast(DetailToAdminActivity.this,"获取到不合格信息失败！", ShowMessage.MessageDuring.SHORT);
                     }
                 } else if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_QUALITY_DONE) {
                     nokReasonTv.setText("合格");
@@ -269,7 +266,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
             } else {
                 nokReasonTv.setText("暂无");
                 String errorMsg = (String)msg.obj;
-                Toast.makeText(DetailToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(DetailToAdminActivity.this,"更新失败！"+errorMsg, ShowMessage.MessageDuring.SHORT);
             }
         }
     }
@@ -322,7 +319,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                         }
                     } else {
                         abnormalReasonTv.setText("异常");
-                        Toast.makeText(DetailToAdminActivity.this, "获取异常信息失败！", Toast.LENGTH_SHORT).show();
+                        ShowMessage.showToast(DetailToAdminActivity.this,"获取异常信息失败！", ShowMessage.MessageDuring.SHORT);
                         Log.d(TAG, "handleMessage: 没有上传安装异常");
                     }
                 } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED
@@ -336,7 +333,7 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
             } else {
                 abnormalReasonTv.setText("暂无");
                 String errorMsg = (String)msg.obj;
-                Toast.makeText(DetailToAdminActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(DetailToAdminActivity.this,"更新失败！"+errorMsg, ShowMessage.MessageDuring.SHORT);
             }
         }
     }
@@ -362,11 +359,11 @@ public class DetailToAdminActivity extends AppCompatActivity implements BGANineP
                 mUpdatingProcessDialog.dismiss();
             }
             if (msg.what == Network.OK) {
-                Toast.makeText(DetailToAdminActivity.this, "上传位置成功！", Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(DetailToAdminActivity.this,"上传位置成功！", ShowMessage.MessageDuring.SHORT);
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg);
-                Toast.makeText(DetailToAdminActivity.this, "上传失败："+errorMsg, Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(DetailToAdminActivity.this,"上传失败！"+errorMsg, ShowMessage.MessageDuring.SHORT);
             }
         }
     }

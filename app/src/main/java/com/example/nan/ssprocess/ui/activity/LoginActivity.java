@@ -20,8 +20,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
@@ -116,14 +116,14 @@ public class LoginActivity extends AppCompatActivity {
                 mLoadingProcessDialog.dismiss();
             }
             mLoginButton.setEnabled(true);
-            Toast.makeText(this, "服务端IP为空，请设置IP地址", Toast.LENGTH_SHORT).show();
+            ToastUtils.showShort("服务端IP为空，请设置IP地址");
             Log.d(TAG, "login: 服务端IP为空，请设置IP地址");
         } else if (SinSimApp.getApp().getIMEI()==null){
             if(mLoadingProcessDialog.isShowing()) {
                 mLoadingProcessDialog.dismiss();
             }
             mLoginButton.setEnabled(true);
-            Toast.makeText(this, "未获取到手机识别码,请重启软件", Toast.LENGTH_SHORT).show();
+            ToastUtils.showShort("未获取到手机识别码,请重启软件");
             Log.d(TAG, "login: 未获取到手机IMEI");
         }
         else {
@@ -160,7 +160,7 @@ public class LoginActivity extends AppCompatActivity {
                     mPassword, data.getRole().getId(),data.getId(), data.getGroup()!= null ? data.getGroup().getId():0);
 
             //在登陆完成后检查人员role进入不同界面：生产部管理员：2，质检员：11, 安装组长：3
-            Log.d(TAG, "onLoginSuccess: role id "+SinSimApp.getApp().getRole());
+            Log.d(TAG, "onLoginSuccess: role id "+SinSimApp.getApp().getGroupId());
             Intent it = new Intent();
             switch (SinSimApp.getApp().getRole()){
                 case SinSimApp.LOGIN_FOR_ADMIN:
@@ -179,7 +179,7 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                     break;
                 default:
-                    Toast.makeText(LoginActivity.this,"您没有登入权限!", Toast.LENGTH_SHORT).show();
+                    ToastUtils.showShort("您没有登入权限！");
                     break;
             }
         }

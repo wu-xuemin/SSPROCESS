@@ -2,8 +2,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/hintColor"
     android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="18dp"
+        android:layout_marginBottom="2dp"
+        android:background="@color/cardview_light_background"
+        android:orientation="horizontal">
 
+        <TextView
+            android:id="@+id/nameplate_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:hint="机器编号"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:text=" 当前安装环节："/>
+
+    </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/scan_result_rv"
         android:background="@color/cardview_light_background"

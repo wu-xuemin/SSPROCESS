@@ -174,7 +174,7 @@
             android:layout_weight="1"
             android:onClick="onStopInstall"
             android:textColor="#ffffff"
-            android:backgroundTint="@color/colorPrimary"
+            android:backgroundTint="@color/border_color_on_light"
             android:padding="12dp"
             android:text="扫码完成"/>
         <android.support.v7.widget.AppCompatButton

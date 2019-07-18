@@ -45,6 +45,8 @@
                         android:layout_height="0dp"
                         android:textSize="18sp"
                         android:layout_weight="1"
+                        android:singleLine="true"
+                        android:ellipsize="end"
                         android:layout_gravity="center_vertical"
                         android:hint="订单编号"
                         android:gravity="start" />

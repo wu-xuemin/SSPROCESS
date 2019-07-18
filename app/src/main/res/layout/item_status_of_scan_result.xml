@@ -5,19 +5,9 @@
     android:id="@+id/item_scan_result_layout"
     android:paddingTop="5dp"
     android:paddingBottom="5dp"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="18dp"
     android:orientation="horizontal">
-    <TextView
-        android:id="@+id/process_machine_id_tv"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_weight="1"
-        android:layout_gravity="center_vertical"
-        android:hint="机器编号"
-        android:gravity="start"/>
     <TextView
         android:id="@+id/process_name_tv"
         android:layout_width="0dp"
@@ -40,9 +30,5 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:hint="工序状态"/>
-    <!--<Button-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/start_task_button"/>-->
 
 </LinearLayout>

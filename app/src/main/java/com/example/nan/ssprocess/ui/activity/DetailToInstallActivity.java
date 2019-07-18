@@ -11,7 +11,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -22,7 +21,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
@@ -33,6 +31,7 @@ import com.example.nan.ssprocess.bean.basic.QualityRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 import com.example.nan.ssprocess.bean.basic.UserData;
 import com.example.nan.ssprocess.net.Network;
+import com.example.nan.ssprocess.util.ShowMessage;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -166,9 +165,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 if(mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALLING) {
                     fetchInstallerListData();
                 } else {
-                    Toast toast =Toast.makeText(DetailToInstallActivity.this, "请在安装结束前进行安装人员选择！", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
+                    ShowMessage.showToast(DetailToInstallActivity.this,"请在安装结束前进行安装人员选择！", ShowMessage.MessageDuring.SHORT);
                 }
             }
         });
@@ -192,9 +189,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             begainInstallButton.setVisibility(View.GONE);
             installInfoUpdateButton.setVisibility(View.GONE);
             installAbnormalSolutionButton.setVisibility(View.GONE);
-            Toast toast = Toast.makeText(DetailToInstallActivity.this, "正在改单/拆单，不能安装！", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
+            ShowMessage.showToast(DetailToInstallActivity.this,"正在改单/拆单，不能安装！", ShowMessage.MessageDuring.SHORT);
         }else {
             if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALL_WAITING) {
                 begainInstallButton.setVisibility(View.VISIBLE);
@@ -238,7 +233,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             Intent intent = new Intent(DetailToInstallActivity.this, ScanQrcodeActivity.class);
             startActivityForResult(intent, SCAN_QRCODE_START);
         }else{
-            Toast.makeText(DetailToInstallActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus())+" ，不能开始安装！", Toast.LENGTH_SHORT).show();
+            ShowMessage.showToast(DetailToInstallActivity.this,"正在 "+SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus())+" ，不能开始安装！", ShowMessage.MessageDuring.SHORT);
         }
     }
 
@@ -247,7 +242,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             Intent intent = new Intent(DetailToInstallActivity.this, ScanQrcodeActivity.class);
             startActivityForResult(intent, SCAN_QRCODE_END);
         }else {
-            Toast.makeText(DetailToInstallActivity.this, "正在 "+SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus())+" ，不能结束安装！", Toast.LENGTH_SHORT).show();
+            ShowMessage.showToast(DetailToInstallActivity.this,"正在 "+SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus())+" ，不能结束安装！", ShowMessage.MessageDuring.SHORT);
         }
     }
 
@@ -284,12 +279,12 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 mUploadingProcessDialog.dismiss();
             }
             if (msg.what == Network.OK) {
-                Toast.makeText(DetailToInstallActivity.this, "异常已解决！", Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(DetailToInstallActivity.this,"异常已解决！", ShowMessage.MessageDuring.SHORT);
                 DetailToInstallActivity.this.finish();
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg);
-                Toast.makeText(DetailToInstallActivity.this, "失败，网络错误，请检查网络！", Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(DetailToInstallActivity.this,"失败，网络错误，请检查网络！", ShowMessage.MessageDuring.SHORT);
             }
         }
     }
@@ -336,7 +331,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 }
             } else {
                 String errorMsg = (String)msg.obj;
-                Toast.makeText(DetailToInstallActivity.this, "获取异常类型失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(DetailToInstallActivity.this,"获取异常类型失败！"+errorMsg, ShowMessage.MessageDuring.SHORT);
             }
         }
     }
@@ -412,7 +407,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 }
             } else {
                 String errorMsg = (String)msg.obj;
-                Toast.makeText(DetailToInstallActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(DetailToInstallActivity.this,"更新失败！"+errorMsg, ShowMessage.MessageDuring.SHORT);
             }
         }
     }
@@ -476,7 +471,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 nokReasonTv.setText("暂无");
                 qaNokLayout.setVisibility(View.GONE);
                 String errorMsg = (String)msg.obj;
-                Toast.makeText(DetailToInstallActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(DetailToInstallActivity.this,"更新失败！" + errorMsg, ShowMessage.MessageDuring.SHORT);
             }
         }
     }
@@ -504,7 +499,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "FetchInstallFileListHandler handleMessage: "+errorMsg);
-                Toast.makeText(DetailToInstallActivity.this, "网络错误！"+errorMsg, Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(DetailToInstallActivity.this,"网络错误！" + errorMsg, ShowMessage.MessageDuring.SHORT);
             }
         }
     }
@@ -609,7 +604,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "FetchInstalerListHandler handleMessage: "+errorMsg);
-                Toast.makeText(DetailToInstallActivity.this, "网络错误！"+errorMsg, Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(DetailToInstallActivity.this,"网络错误！"+errorMsg, ShowMessage.MessageDuring.SHORT);
             }
         }
     }
@@ -740,11 +735,11 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                             });
                             mInstallDialog.show();
                         } else {
-                            Toast.makeText(this, "失败，当前状态无法开始！", Toast.LENGTH_LONG).show();
+                            ShowMessage.showToast(this,"失败，当前状态无法开始！", ShowMessage.MessageDuring.SHORT);
                         }
                     } else {
                         Log.d(TAG, "onActivityResult: 二维码信息不对应");
-                        Toast.makeText(this, "二维码信息不对应！", Toast.LENGTH_LONG).show();
+                        ShowMessage.showToast(this,"二维码信息不对应！", ShowMessage.MessageDuring.SHORT);
                     }
                 } else {
                     Log.d(TAG, "onActivityResult: scan QRcode fail");
@@ -762,7 +757,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
                     } else {
                         Log.d(TAG, "onActivityResult: 二维码信息不对应");
-                        Toast.makeText(this, "二维码信息不对应！", Toast.LENGTH_LONG).show();
+                        ShowMessage.showToast(this,"二维码信息不对应！", ShowMessage.MessageDuring.SHORT);
                     }
                 } else {
                     Log.d(TAG, "onActivityResult: scan QRcode fail");
@@ -821,7 +816,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     installAbnormalRb.setEnabled(true);
                     installNormalRb.setEnabled(true);
                 } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED){
-                    Toast.makeText(DetailToInstallActivity.this, "该工序已安装完成！", Toast.LENGTH_SHORT).show();
+                    ShowMessage.showToast(DetailToInstallActivity.this,"该工序已安装完成！", ShowMessage.MessageDuring.SHORT);
                     DetailToInstallActivity.this.finish();
                 } else {
                     begainInstallButton.setVisibility(View.GONE);
@@ -852,7 +847,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 mTaskRecordMachineListData.setStatus(iTaskRecordMachineListDataStatusTemp);
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg+mTaskRecordMachineListData.getStatus());
-                Toast.makeText(DetailToInstallActivity.this, "失败，网络错误，请检查网络！", Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(DetailToInstallActivity.this,"失败，网络错误，请检查网络！", ShowMessage.MessageDuring.SHORT);
 
                 // 扫码完写入时间和结果到本地
                 String path = Environment.getExternalStorageDirectory().getPath() + "/Xiaomi";
@@ -892,9 +887,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         //读取和更新输入信息
         if(installNormalRb.isChecked()){
             if ("".equals(checkedName) || checkedName==null){
-                Toast toast = Toast.makeText(DetailToInstallActivity.this, "请勾选安装人员！", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
+                ShowMessage.showToast(DetailToInstallActivity.this,"请勾选安装人员！", ShowMessage.MessageDuring.SHORT);
                 return;
             }else {
                 mTaskRecordMachineListData.setWorkerList(checkedName);
@@ -940,7 +933,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 Network.Instance(SinSimApp.getApp()).uploadTaskRecordImage(uploadInstallAbnormalDetailUrl, imageUrlList, mPostValue, new UploadTaskRecordImageHandler());
 
             } else {
-                Toast.makeText(this, "异常类型、原因和照片都不能为空！", Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(this,"异常类型、原因和照片都不能为空！", ShowMessage.MessageDuring.SHORT);
                 return;
             }
         }
@@ -981,14 +974,14 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 mUploadingProcessDialog.dismiss();
             }
             if (msg.what == Network.OK) {
-                Toast.makeText(DetailToInstallActivity.this, "异常信息和照片上传成功！", Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(DetailToInstallActivity.this,"异常信息和照片上传成功！", ShowMessage.MessageDuring.SHORT);
                 Log.d(TAG, "handleMessage: 异常信息和照片上传成功！");
                 DetailToInstallActivity.this.finish();
             } else {
                 mTaskRecordMachineListData.setStatus(iTaskRecordMachineListDataStatusTemp);
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "UploadTaskRecordImageHandler: "+errorMsg);
-                Toast.makeText(DetailToInstallActivity.this, "上传失败！请重新上传", Toast.LENGTH_SHORT).show();
+                ShowMessage.showToast(DetailToInstallActivity.this,"上传失败！请重新上传！", ShowMessage.MessageDuring.SHORT);
             }
         }
     }

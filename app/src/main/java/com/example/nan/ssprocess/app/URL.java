@@ -15,6 +15,7 @@ public class URL {
     public static final String FETCH_TASK_RECORD_DETAIL = "/task/record/selectTaskRecordDetail";
     public static final String FETCH_TASK_RECORD_TO_ADMIN = "/task/record/selectAllTaskRecordDetail";
     public static final String FETCH_TASK_RECORD_BY_SEARCH_TO_ADMIN = "/machine/selectMachinesByNameplate";
+    public static final String FETCH_PROCESS_MACHINE = "/machine/selectProcessMachine";
     public static final String FETCH_DOWNLOADING_FILELIST = "/order/loading/list/selectOrderLoadingFileNameByOrderId";
     public static final String FETCH_TASK_RECORD_BY_SCAN_QRCORD_TO_ADMIN = "/task/record/selectTaskRecordByNamePlate";
     public static final String FETCH_TASK_RECORD_TO_QA = "/task/record/selectAllQaTaskRecordDetailByUserAccount";

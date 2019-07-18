@@ -19,7 +19,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.nan.ssprocess.R;
@@ -190,7 +189,7 @@ public class InstallListActivity extends AppCompatActivity {
                 Log.d(TAG, "handleMessage: 下载完成，地址："+msg.obj);
                 try {
                     String downloadFile = (String) msg.obj;
-                    Toast.makeText(InstallListActivity.this, downloadFile, Toast.LENGTH_SHORT).show();
+                    ToastUtils.showShort(downloadFile);
                     Intent intent = new Intent();
                     File file = new File(downloadFile);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -202,13 +201,13 @@ public class InstallListActivity extends AppCompatActivity {
                     intent.setDataAndType(uri, type);
                     startActivity(intent);
                 } catch (ActivityNotFoundException e) {
-                    Toast.makeText(InstallListActivity.this, "您没有安装Office文件", Toast.LENGTH_LONG).show();
+                    ToastUtils.showShort("您没有安装Office文件！");
                 }
 
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "DownloadFileHandler handleMessage: "+errorMsg);
-                Toast.makeText(InstallListActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+                ToastUtils.showShort(errorMsg);
             }
         }
     }

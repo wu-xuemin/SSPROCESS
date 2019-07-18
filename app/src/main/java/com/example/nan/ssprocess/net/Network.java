@@ -9,22 +9,19 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
-import com.example.nan.ssprocess.bean.basic.MachineData;
 import com.example.nan.ssprocess.bean.response.AbnormalRecordReponseDataWrap;
 import com.example.nan.ssprocess.bean.response.AbnormalTypeResponseDataWrap;
 import com.example.nan.ssprocess.bean.response.ListDataWrap;
 import com.example.nan.ssprocess.bean.response.LoginResponseDataWrap;
 import com.example.nan.ssprocess.bean.response.MachineResponseDataWrap;
+import com.example.nan.ssprocess.bean.response.ProcessMachineResponseDataWrap;
 import com.example.nan.ssprocess.bean.response.QualityRecordReponseDataWrap;
 import com.example.nan.ssprocess.bean.response.ResponseData;
-import com.example.nan.ssprocess.bean.response.TaskRecordFromIdResponseDataWrap;
 import com.example.nan.ssprocess.bean.response.TaskRecordResponseDataWrap;
 import com.example.nan.ssprocess.bean.response.UserResponseDataWrap;
-import com.example.nan.ssprocess.ui.activity.DetailToCheckoutActivity;
 import com.example.nan.ssprocess.util.ShowMessage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -34,7 +31,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -474,6 +470,78 @@ public class Network {
             }
         }
     }
+    /**
+     * 按nameplate查询机器当前的安装情况
+     */
+    public void fetchProcessMachine(final String url, final LinkedHashMap<String, String> values, final Handler handler) {
+        final Message msg = handler.obtainMessage();
+        if (!isNetworkConnected()) {
+            ShowMessage.showToast(mCtx, mCtx.getString(R.string.network_not_connect), ShowMessage.MessageDuring.SHORT);
+            msg.what = NG;
+            msg.obj = mCtx.getString(R.string.network_not_connect);
+            handler.sendMessage(msg);
+        } else {
+            if (url != null && values != null) {
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        RequestBody requestBody;
+                        FormBody.Builder builder = new FormBody.Builder();
+                        for (Object o : values.entrySet()) {
+                            HashMap.Entry entry = (HashMap.Entry) o;
+                            builder.add((String) entry.getKey(), (String) entry.getValue());
+                        }
+                        requestBody = builder.build();
+                        //Post method
+                        Request request = new Request.Builder().url(url).post(requestBody).build();
+                        OkHttpClient client = ((SinSimApp) mCtx).getOKHttpClient();
+                        Response response = null;
+                        try {
+                            //同步网络请求
+                            response = client.newCall(request).execute();
+                            boolean success = false;
+                            if (response.isSuccessful()) {
+                                Gson gson = new Gson();
+                                ProcessMachineResponseDataWrap responseData = gson.fromJson(response.body().string(), new TypeToken<ProcessMachineResponseDataWrap>(){}.getType());
+                                if (responseData != null) {
+                                    Log.d(TAG, "fetchProcessMachine run: getCode: "+responseData.getCode());
+                                    if (responseData.getCode() == 200) {
+                                        success = true;
+                                        msg.obj = responseData.getData().getList();
+                                    } else if (responseData.getCode() == 400) {
+                                        Log.e(TAG, responseData.getMessage());
+                                        msg.obj = responseData.getMessage();
+                                    } else if (responseData.getCode() == 500) {
+                                        Log.e(TAG, responseData.getMessage());
+                                        Log.d(TAG, "fetchProcessMachine run: error 500 :"+responseData.getMessage());
+                                        msg.obj = responseData.getMessage();
+                                    } else {
+                                        Log.e(TAG, "Format JSON string to object error!");
+                                    }
+                                }
+                                if (success) {
+                                    msg.what = OK;
+                                }
+                            } else {
+                                msg.what = NG;
+                                msg.obj = "网络请求错误！";
+                            }
+                            response.close();
+                        } catch (Exception e) {
+                            msg.what = NG;
+                            msg.obj = "网络请求错误！";
+                            Log.d(TAG, "run: "+e);
+                        } finally {
+                            handler.sendMessage(msg);
+                            if(response != null) {
+                                response.close();
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
 
     /**
      * 获取安装组员名单
@@ -707,122 +775,63 @@ public class Network {
             RandomAccessFile savedFile = null;
             final File file;
             Log.d(TAG, "downloadFile: 有网络");
-//            try {
-//                long downloadedLength = 0; // 记录已下载的文件长度
-                String fileName = url.substring(url.lastIndexOf("/"));
-                String directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
-                file = new File(directory + fileName);
-//                if (file.exists()) {
-//                    msg.what=OK;
-//                    msg.obj=""+file;
-//                    handler.sendMessage(msg);
-//                    return;
-////                    downloadedLength = file.length();
-//                }
+            String fileName = url.substring(url.lastIndexOf("/"));
+            String directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
+            file = new File(directory + fileName);
 
-                Log.d(TAG, "downloadFile: 开始okhttp");
-                OkHttpClient mOkHttpClient = new OkHttpClient();
-                Log.d(TAG, "downloadFile: 开始同步call");
-                final Request request = new Request.Builder().url(url).build();
-                final Call call = mOkHttpClient.newCall(request);
-                call.enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
+            Log.d(TAG, "downloadFile: 开始okhttp");
+            OkHttpClient mOkHttpClient = new OkHttpClient();
+            Log.d(TAG, "downloadFile: 开始同步call");
+            final Request request = new Request.Builder().url(url).build();
+            final Call call = mOkHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e(TAG, e.toString());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    InputStream is = null;
+                    byte[] buf = new byte[2048];
+                    int len = 0;
+                    FileOutputStream fos = null;
+                    try {
+                        long total = response.body().contentLength();
+                        Log.e(TAG, "total------>" + total);
+                        long current = 0;
+                        is = response.body().byteStream();
+                        fos = new FileOutputStream(file);
+                        while ((len = is.read(buf)) != -1) {
+                            current += len;
+                            fos.write(buf, 0, len);
+                            Log.e(TAG, "current------>" + current);
+                        }
+                        fos.flush();
+                        Log.d(TAG, "onResponse: 下载成功！");
+                        msg.what = OK;
+                        Log.d(TAG, "onResponse: file: "+file);
+                        msg.obj = ""+file;
+                        Log.d(TAG, "onResponse: obj : "+msg.obj);
+                    } catch (IOException e) {
                         Log.e(TAG, e.toString());
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        InputStream is = null;
-                        byte[] buf = new byte[2048];
-                        int len = 0;
-                        FileOutputStream fos = null;
+                        Log.d(TAG, "onResponse: catch 下载失败");
+                    } finally {
+                        handler.sendMessage(msg);
                         try {
-                            long total = response.body().contentLength();
-                            Log.e(TAG, "total------>" + total);
-                            long current = 0;
-                            is = response.body().byteStream();
-                            fos = new FileOutputStream(file);
-                            while ((len = is.read(buf)) != -1) {
-                                current += len;
-                                fos.write(buf, 0, len);
-                                Log.e(TAG, "current------>" + current);
+                            if (is != null) {
+                                is.close();
                             }
-                            fos.flush();
-                            Log.d(TAG, "onResponse: 下载成功！");
-                            msg.what = OK;
-                            Log.d(TAG, "onResponse: file: "+file);
-                            msg.obj = ""+file;
-                            Log.d(TAG, "onResponse: obj : "+msg.obj);
+                            if (fos != null) {
+                                fos.close();
+                            }
                         } catch (IOException e) {
                             Log.e(TAG, e.toString());
-                            Log.d(TAG, "onResponse: catch 下载失败");
-                        } finally {
-                            handler.sendMessage(msg);
-                            try {
-                                if (is != null) {
-                                    is.close();
-                                }
-                                if (fos != null) {
-                                    fos.close();
-                                }
-                            } catch (IOException e) {
-                                Log.e(TAG, e.toString());
-                            }
                         }
                     }
-                });
-//                if (response != null) {
-//                    long contentLength = response.body().contentLength();
-//                    if (contentLength == 0) {
-//                        msg.what = NG;
-//                        msg.obj = "装车单为空！";
-//                    } else if (contentLength == downloadedLength) {
-//                        // 已下载字节和文件总字节相等，说明已经下载完成了
-//                        msg.what = OK;
-//                        msg.obj = "装车单已存在！";
-//                    }
-//                    is = response.body().byteStream();
-//                    Log.d(TAG, "LocalFile: "+file);
-//                    savedFile = new RandomAccessFile(file, "rw");
-//                    // 跳过已下载的字节
-//                    savedFile.seek(downloadedLength);
-//                    byte[] b = new byte[1024];
-//                    int total = 0;
-//                    int len;
-//                    while ((len = is.read(b)) != -1) {
-//
-//                        total += len;
-//                        savedFile.write(b, 0, len);
-//                        // 计算已下载的百分比
-//                        int progress = (int) ((total + downloadedLength) * 100 / contentLength);
-//
-//                    }
-//                    response.body().close();
-//                    msg.what = OK;
-//                    msg.obj = directory + fileName;
-//                    Log.d(TAG, "downloadFile: 成功下载："+fileName);
-//                }
-//            } catch (Exception e) {
-//                msg.what = NG;
-//                msg.obj = "下载失败！";
-//                e.printStackTrace();
-//                Log.d(TAG, "downloadFile: catch报错："+e);
-//            } finally {
-//                handler.sendMessage(msg);
-//                try {
-//                    if (is != null) {
-//                        is.close();
-//                    }
-//                    if (savedFile != null) {
-//                        savedFile.close();
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-       }
+                }
+            });
+        }
     }
     /**
      * 更新位置数据

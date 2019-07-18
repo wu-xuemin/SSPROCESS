@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
-import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
+import com.example.nan.ssprocess.bean.basic.TaskNodeData;
 
 import java.util.ArrayList;
 
@@ -23,10 +23,10 @@ import java.util.ArrayList;
 public class ScanResultAdapter extends RecyclerView.Adapter {
 
     private static String TAG = "nlgScanResultAdapter";
-    private ArrayList<TaskRecordMachineListData> mProcessList;
+    private ArrayList<TaskNodeData> mProcessList;
     private ScanResultAdapter.OnItemClickListener itemClickListener = null;
 
-    public ScanResultAdapter(ArrayList<TaskRecordMachineListData> list) {
+    public ScanResultAdapter(ArrayList<TaskNodeData> list) {
         mProcessList = list;
     }
 
@@ -45,18 +45,16 @@ public class ScanResultAdapter extends RecyclerView.Adapter {
         final ScanResultAdapter.ItemView itemView = (ScanResultAdapter.ItemView) holder;
         //itemView.setIsRecyclable(false);//禁止复用
         if (mProcessList!=null && !mProcessList.isEmpty() && position < mProcessList.size()) {
-            Log.d(TAG, "onBindViewHolder: 有数据"+position);
-            itemView.machineIdTv.setText("" + mProcessList.get(position).getMachineData().getNameplate());
-            itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
-            switch (mProcessList.get(position).getStatus()){
-                case SinSimApp.TASK_INITIAL:
-                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INITIAL));
-                    itemView.processStateTv.setTextColor(Color.YELLOW);
-                    break;
-                case SinSimApp.TASK_PLANED:
-                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_PLANED));
-                    itemView.processStateTv.setTextColor(Color.YELLOW);
-                    break;
+            itemView.processNameTv.setText(mProcessList.get(position).getText());
+            switch (Integer.parseInt(mProcessList.get(position).getTaskStatus())){
+//                case SinSimApp.TASK_INITIAL:
+//                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INITIAL));
+//                    itemView.processStateTv.setTextColor(Color.YELLOW);
+//                    break;
+//                case SinSimApp.TASK_PLANED:
+//                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_PLANED));
+//                    itemView.processStateTv.setTextColor(Color.YELLOW);
+//                    break;
                 case SinSimApp.TASK_INSTALL_WAITING:
                     itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALL_WAITING));
                     itemView.processStateTv.setTextColor(Color.GREEN);
@@ -73,10 +71,10 @@ public class ScanResultAdapter extends RecyclerView.Adapter {
                     itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DOING));
                     itemView.processStateTv.setTextColor(Color.BLUE);
                     break;
-                case SinSimApp.TASK_QUALITY_DONE:
-                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DONE));
-                    itemView.processStateTv.setTextColor(Color.GREEN);
-                    break;
+//                case SinSimApp.TASK_QUALITY_DONE:
+//                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DONE));
+//                    itemView.processStateTv.setTextColor(Color.GREEN);
+//                    break;
                 case SinSimApp.TASK_INSTALL_ABNORMAL:
                     itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALL_ABNORMAL));
                     itemView.processStateTv.setTextColor(Color.RED);
@@ -123,19 +121,17 @@ public class ScanResultAdapter extends RecyclerView.Adapter {
 
     public class ItemView extends RecyclerView.ViewHolder {
         LinearLayout itemLinearLayout;
-        TextView machineIdTv;
         TextView processNameTv;
         TextView processStateTv;
 
         ItemView(View itemView) {
             super(itemView);
             itemLinearLayout=itemView.findViewById(R.id.item_scan_result_layout);
-            machineIdTv = itemView.findViewById(R.id.process_machine_id_tv);
             processNameTv = itemView.findViewById(R.id.process_name_tv);
             processStateTv = itemView.findViewById(R.id.process_state_tv);
         }
     }
-    public void setProcessList(ArrayList<TaskRecordMachineListData> list) {
+    public void setProcessList(ArrayList<TaskNodeData> list) {
         mProcessList.clear();
         mProcessList.addAll(list);
     }

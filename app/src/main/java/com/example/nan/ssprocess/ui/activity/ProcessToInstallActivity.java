@@ -2,9 +2,11 @@ package com.example.nan.ssprocess.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -15,16 +17,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
+import com.example.nan.ssprocess.bean.basic.MachineProcessData;
+import com.example.nan.ssprocess.bean.basic.TaskNodeData;
 import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.service.MyMqttService;
+import com.example.nan.ssprocess.util.ShowMessage;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -48,6 +56,9 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
     private int mPage;
     private BGARefreshLayout mRefreshLayout;
 
+    final String ip = SinSimApp.getApp().getServerIP();
+    private ArrayList<TaskRecordMachineListData> mScanResultList = new ArrayList<>();
+    private String mMachineNamePlate = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,11 +124,9 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
 
     private void fetchProcessData(int page) {
         final String account = SinSimApp.getApp().getAccount();
-        final String ip = SinSimApp.getApp().getServerIP();
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("userAccount", account);
         mPostValue.put("page", ""+page);
-        Log.d(TAG, "fetchProcessData: 登入名字："+account);
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_INSTALL;
         Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessDataHandler());
     }
@@ -142,9 +151,7 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                     ArrayList<TaskRecordMachineListData> skipList = new ArrayList<>();
                     ArrayList<TaskRecordMachineListData> normalList = new ArrayList<>();
                     for (int position = 0; position < mProcessToInstallPlanList.size(); position++) {
-                        if (mProcessToInstallPlanList.get(position).getMachineData().getStatus() == SinSimApp.MACHINE_CANCELED) {
-                            continue;
-                        }else if (mProcessToInstallPlanList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
+                        if (mProcessToInstallPlanList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
                                 ||mProcessToInstallPlanList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED) {
                             orderChangeList.add(mProcessToInstallPlanList.get(position));
                         } else {
@@ -171,7 +178,6 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                             }
                         }
                     }
-                    Log.d(TAG, "handleMessage: 机器状态排序!");
                     //排序：异常-》改单拆单-》跳过-》正常
                     abnormalList.addAll(orderChangeList);
                     abnormalList.addAll(skipList);
@@ -208,6 +214,54 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
         return true;
     }
 
+    /**
+     * 按nameplate查询该机器当前的安装信息
+     * @param nameplate 机器编号
+     */
+    private void selectProcessMachine(String nameplate){
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("nameplate", nameplate);
+        String fetchProcessMachineUrl = URL.HTTP_HEAD + ip + URL.FETCH_PROCESS_MACHINE;
+        Network.Instance(SinSimApp.getApp()).fetchProcessMachine(fetchProcessMachineUrl, mPostValue, new SelectProcessMachineHandler());
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class SelectProcessMachineHandler extends Handler{
+        @Override
+        public void handleMessage(final Message msg) {
+            if (msg.what == Network.OK) {
+                ArrayList<MachineProcessData> processMachineList=(ArrayList<MachineProcessData>)msg.obj;
+                if (processMachineList.size() != 1) {
+                    ShowMessage.showDialog(ProcessToInstallActivity.this,"找不到该机器，请重新扫码！");
+                } else {
+                    Gson gson = new Gson();
+                    ArrayList<TaskNodeData> taskNodeDataArrayList = gson.fromJson(processMachineList.get(0).getNodeData(), new TypeToken<ArrayList<TaskNodeData>>(){}.getType());
+                    Log.d(TAG, "handleMessage: " + gson.toJson(taskNodeDataArrayList));
+                    ArrayList<TaskNodeData> currentTaskList = new ArrayList<>();
+                    int taskStatus = 0;
+                    for (int index = 2; index < taskNodeDataArrayList.size() - 2; index++){//去掉开始和结束
+                        taskStatus = Integer.parseInt(taskNodeDataArrayList.get(index).getTaskStatus());
+                        if (taskStatus > SinSimApp.TASK_PLANED && taskStatus != SinSimApp.TASK_QUALITY_DONE ){
+                            currentTaskList.add(taskNodeDataArrayList.get(index));
+                        }
+                    }
+                    if (currentTaskList.size()<1){
+                        ShowMessage.showDialog(ProcessToInstallActivity.this,"该机器不在安装流程中！");
+                    }else {
+                        Intent intent = new Intent(ProcessToInstallActivity.this, ScanResultActivity.class);
+                        intent.putExtra("currentTaskList", (Serializable) currentTaskList);
+                        intent.putExtra("mScanResultList", (Serializable) mScanResultList);
+                        intent.putExtra("mMachineNamePlate", mMachineNamePlate);
+                        startActivity(intent);
+                    }
+                }
+            }else {
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: "+errorMsg);
+                Toast.makeText(ProcessToInstallActivity.this,"网络问题，请重试!"+errorMsg,Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -217,21 +271,14 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 if (resultCode == RESULT_OK)
                 {
                     // 取出Intent里的扫码结果去执行机器查找
-                    String mMachineNamePlate = data.getStringExtra("mMachineNamePlate");
-                    ArrayList<TaskRecordMachineListData> mScanResultList=new ArrayList<>();
+                    mMachineNamePlate = data.getStringExtra("mMachineNamePlate");
+                    Log.d(TAG, "onActivityResult: "+mMachineNamePlate);
                     for (int i=0;i<mProcessToInstallPlanList.size();i++){
                         if (mMachineNamePlate.equals(mProcessToInstallPlanList.get(i).getMachineData().getNameplate())){
                             mScanResultList.add(mProcessToInstallPlanList.get(i));
                         }
                     }
-                    if (mScanResultList.isEmpty()||mScanResultList.size()<1){
-                        Toast.makeText(ProcessToInstallActivity.this, "没有内容!", Toast.LENGTH_LONG).show();
-                        return;
-                    }else {
-                        Intent intent = new Intent(ProcessToInstallActivity.this, ScanResultActivity.class);
-                        intent.putExtra("mTaskRecordMachineList", (Serializable) mScanResultList);
-                        startActivity(intent);
-                    }
+                    selectProcessMachine(mMachineNamePlate);
                 }
                 break;
             default:
@@ -256,6 +303,31 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.attendance_settings:
+                AlertDialog attendanceSettingDialog = null;
+                LinearLayout layout = (LinearLayout) View.inflate(ProcessToInstallActivity.this, R.layout.dialog_attendance_setting, null);
+                final EditText editText = (EditText)layout.findViewById(R.id.work_population);
+                attendanceSettingDialog = new AlertDialog.Builder(ProcessToInstallActivity.this).create();
+                attendanceSettingDialog.setTitle("考勤信息");
+                attendanceSettingDialog.setView(layout);
+                attendanceSettingDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                attendanceSettingDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            Log.d(TAG, "onClick: 输入lalala："+editText.getText().toString());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                attendanceSettingDialog.show();
+                break;
             case R.id.logout:
                 stopService(mqttIntent);
                 SinSimApp.getApp().setLogOut();
