@@ -64,9 +64,10 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             } else {
                 itemView.planDateTv.setText(formatter.format(planDate));
             }
-            itemView.machineIdTv.setText("" + mProcessList.get(position).getMachineData().getNameplate());
-            itemView.orderNumTv.setText("" + mProcessList.get(position).getMachineOrderData().getOrderNum());
+            itemView.machineIdTv.setText(mProcessList.get(position).getMachineData().getNameplate());
+            itemView.orderNumTv.setText(mProcessList.get(position).getMachineOrderData().getOrderNum());
             itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
+            itemView.machineLocalTv.setText(mProcessList.get(position).getMachineData().getLocation());
             if (mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED){
                 itemView.processStateTv.setText("改单中");
                 itemView.taskStatusIv.setImageResource(R.mipmap.change);
@@ -157,6 +158,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
         TextView orderNumTv;
         TextView processNameTv;
         TextView processStateTv;
+        TextView machineLocalTv;
         TextView planShipDateTv;
         TextView planDateTv;
 
@@ -168,6 +170,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             orderNumTv = (TextView) itemView.findViewById(R.id.process_order_num_tv);
             processNameTv = (TextView) itemView.findViewById(R.id.process_name_tv);
             processStateTv = (TextView) itemView.findViewById(R.id.process_state_tv);
+            machineLocalTv = (TextView) itemView.findViewById(R.id.machine_local_tv);
             planShipDateTv = (TextView) itemView.findViewById(R.id.process_begin_date_tv);
             planDateTv = (TextView) itemView.findViewById(R.id.process_end_date_tv);
         }

@@ -803,21 +803,29 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             if (msg.what == Network.OK) {
                 currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
 
-                if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING){
-                    begainInstallButton.setVisibility(View.VISIBLE);
-                    installInfoUpdateButton.setVisibility(View.GONE);
-                    installAbnormalSolutionButton.setVisibility(View.GONE);
-                    installAbnormalRb.setEnabled(false);
-                    installNormalRb.setEnabled(false);
-                } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING){
+                if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING){
+                    ShowMessage.showDialog(DetailToInstallActivity.this,"请开始安装吧！");
                     begainInstallButton.setVisibility(View.GONE);
                     installInfoUpdateButton.setVisibility(View.VISIBLE);
                     installAbnormalSolutionButton.setVisibility(View.GONE);
                     installAbnormalRb.setEnabled(true);
                     installNormalRb.setEnabled(true);
                 } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED){
-                    ShowMessage.showToast(DetailToInstallActivity.this,"该工序已安装完成！", ShowMessage.MessageDuring.SHORT);
-                    DetailToInstallActivity.this.finish();
+                    ShowMessage.showDialog(DetailToInstallActivity.this,"安装完成！");
+                    begainInstallButton.setVisibility(View.GONE);
+                    installAbnormalSolutionButton.setVisibility(View.GONE);
+                    installInfoUpdateButton.setVisibility(View.GONE);
+                }else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DONE){
+                    ShowMessage.showDialog(DetailToInstallActivity.this,"安装完成！");
+                    begainInstallButton.setVisibility(View.GONE);
+                    installAbnormalSolutionButton.setVisibility(View.GONE);
+                    installInfoUpdateButton.setVisibility(View.GONE);
+                } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING){
+                    begainInstallButton.setVisibility(View.VISIBLE);
+                    installInfoUpdateButton.setVisibility(View.GONE);
+                    installAbnormalSolutionButton.setVisibility(View.GONE);
+                    installAbnormalRb.setEnabled(false);
+                    installNormalRb.setEnabled(false);
                 } else {
                     begainInstallButton.setVisibility(View.GONE);
                     installAbnormalSolutionButton.setVisibility(View.GONE);
