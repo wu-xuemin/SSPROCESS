@@ -19,15 +19,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
+import com.example.nan.ssprocess.bean.basic.AttendanceData;
 import com.example.nan.ssprocess.bean.basic.MachineProcessData;
 import com.example.nan.ssprocess.bean.basic.TaskNodeData;
 import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
+import com.example.nan.ssprocess.bean.basic.UserData;
 import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.service.MyMqttService;
 import com.example.nan.ssprocess.util.ShowMessage;
@@ -36,6 +39,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 import cn.bingoogolapple.refreshlayout.BGAMoocStyleRefreshViewHolder;
@@ -56,7 +60,7 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
     private int mPage;
     private BGARefreshLayout mRefreshLayout;
 
-    final String ip = SinSimApp.getApp().getServerIP();
+    final String IP = SinSimApp.getApp().getServerIP();
     private ArrayList<TaskRecordMachineListData> mScanResultList = new ArrayList<>();
     private String mMachineNamePlate = "";
     @Override
@@ -123,11 +127,10 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
 
 
     private void fetchProcessData(int page) {
-        final String account = SinSimApp.getApp().getAccount();
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("userAccount", account);
+        mPostValue.put("userAccount", SinSimApp.getApp().getAccount());
         mPostValue.put("page", ""+page);
-        String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_INSTALL;
+        String fetchProcessRecordUrl = URL.HTTP_HEAD + IP + URL.FETCH_TASK_RECORD_TO_INSTALL;
         Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessDataHandler());
     }
 
@@ -221,7 +224,7 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
     private void selectProcessMachine(String nameplate){
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("nameplate", nameplate);
-        String fetchProcessMachineUrl = URL.HTTP_HEAD + ip + URL.FETCH_PROCESS_MACHINE;
+        String fetchProcessMachineUrl = URL.HTTP_HEAD + IP + URL.FETCH_PROCESS_MACHINE;
         Network.Instance(SinSimApp.getApp()).fetchProcessMachine(fetchProcessMachineUrl, mPostValue, new SelectProcessMachineHandler());
     }
 
@@ -304,29 +307,10 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.attendance_settings:
-                AlertDialog attendanceSettingDialog = null;
-                LinearLayout layout = (LinearLayout) View.inflate(ProcessToInstallActivity.this, R.layout.dialog_attendance_setting, null);
-                final EditText editText = (EditText)layout.findViewById(R.id.work_population);
-                attendanceSettingDialog = new AlertDialog.Builder(ProcessToInstallActivity.this).create();
-                attendanceSettingDialog.setTitle("考勤信息");
-                attendanceSettingDialog.setView(layout);
-                attendanceSettingDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                attendanceSettingDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            Log.d(TAG, "onClick: 输入lalala："+editText.getText().toString());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                attendanceSettingDialog.show();
+                LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                mPostValue.put("id", ""+SinSimApp.getApp().getUserId());
+                String fetchInstallerListUrl = URL.HTTP_HEAD + IP + URL.FATCH_GROUP_BY_USERID;
+                Network.Instance(SinSimApp.getApp()).fetchInstallerList(fetchInstallerListUrl, mPostValue, new FetchInstallerGroupHandler());
                 break;
             case R.id.logout:
                 stopService(mqttIntent);
@@ -340,6 +324,77 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+    @SuppressLint("HandlerLeak")
+    private class FetchInstallerGroupHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+
+            if (msg.what == Network.OK) {
+                ArrayList<UserData> mInstallerList = (ArrayList<UserData>) msg.obj;
+                Log.d(TAG, "安装组人数: "+mInstallerList.size());
+
+                AlertDialog attendanceSettingDialog = null;
+                LinearLayout layout = (LinearLayout) View.inflate(ProcessToInstallActivity.this, R.layout.dialog_attendance_setting, null);
+                TextView textViewTp = (TextView)layout.findViewById(R.id.total_population);
+                final EditText editTextWp = (EditText)layout.findViewById(R.id.work_population);
+                final EditText editTextOp = (EditText)layout.findViewById(R.id.overtime_population);
+                final EditText editTextLp = (EditText)layout.findViewById(R.id.leave_population);
+                final EditText editTextTwp = (EditText)layout.findViewById(R.id.tomorrow_work_population);
+                final AttendanceData attendanceData = new AttendanceData();
+                attendanceSettingDialog = new AlertDialog.Builder(ProcessToInstallActivity.this).create();
+                attendanceSettingDialog.setTitle("考勤信息");
+                attendanceSettingDialog.setView(layout);
+                textViewTp.setText(String.valueOf(mInstallerList.size()));
+                attendanceSettingDialog.setButton(AlertDialog.BUTTON_POSITIVE, "上传", new DialogInterface.OnClickListener() {
+                    class CreateAttendenceHandler extends Handler {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            super.handleMessage(msg);
+                            if (msg.what == Network.OK) {
+                                ShowMessage.showToast(ProcessToInstallActivity.this,"考勤上传成功！",ShowMessage.MessageDuring.SHORT);
+                            }else {
+                                ShowMessage.showDialog(ProcessToInstallActivity.this,"出错！请检查网络！");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            if (editTextWp.getText().toString().length()<1 || editTextOp.getText().toString().length()<1 || editTextLp.getText().toString().length()<1 || editTextTwp.getText().toString().length()<1 ){
+                                ShowMessage.showDialog(ProcessToInstallActivity.this,"出错！请填写完整再上传！");
+                            }else {
+                                attendanceData.setAttendanceMember(editTextWp.getText().toString());
+                                attendanceData.setOvertimeMember(editTextOp.getText().toString());
+                                attendanceData.setAbsenceMember(editTextLp.getText().toString());
+                                attendanceData.setAttendanceTomorrow(editTextTwp.getText().toString());
+                                attendanceData.setUserId(SinSimApp.getApp().getUserId());
+                                attendanceData.setInstallGroupId(SinSimApp.getApp().getGroupId());
+
+                                LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                                mPostValue.put("attendance", new Gson().toJson(attendanceData));
+                                String createAttendenceUrl = URL.HTTP_HEAD + IP + URL.CREATE_ATTENDANCE;
+                                Network.Instance(SinSimApp.getApp()).updateProcessRecordData(createAttendenceUrl, mPostValue, new CreateAttendenceHandler());
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                attendanceSettingDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"取消", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                attendanceSettingDialog.show();
+            } else {
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "FetchInstallerGroupHandler handleMessage: "+errorMsg);
+                ShowMessage.showToast(ProcessToInstallActivity.this,"网络错误！"+errorMsg, ShowMessage.MessageDuring.SHORT);
+            }
+        }
     }
 
 }

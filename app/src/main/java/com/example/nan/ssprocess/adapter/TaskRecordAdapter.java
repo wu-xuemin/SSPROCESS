@@ -58,12 +58,21 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             }else {
                 itemView.planShipDateTv.setText(formatter.format(planShipDate));
             }
-            Date planDate = new Date(mProcessList.get(position).getTaskPlan().getPlanTime());
-            if(mProcessList.get(position).getTaskPlan().getPlanTime() == 0) {
-                itemView.planDateTv.setVisibility(View.INVISIBLE);
-            } else {
-                itemView.planDateTv.setText(formatter.format(planDate));
+
+            float daySum = (mProcessList.get(position).getMachineOrderData().getPlanShipDate() - new Date().getTime())/(1000*60*60*24);
+
+            //加急、过期显示红色，临期显示黄色
+            if (mProcessList.get(position).getMachineData().getIsUrgent() || daySum < 0) {
+                itemView.processStateTv.setBackgroundResource(R.drawable.textview_tag_red);
+            } else if (daySum < 3) {
+                itemView.processStateTv.setBackgroundResource(R.drawable.textview_tag_yellow);
             }
+//            Date planDate = new Date(mProcessList.get(position).getTaskPlan().getPlanTime());
+//            if(mProcessList.get(position).getTaskPlan().getPlanTime() == 0) {
+//                itemView.planDateTv.setVisibility(View.INVISIBLE);
+//            } else {
+//                itemView.planDateTv.setText(formatter.format(planDate));
+//            }
             itemView.machineIdTv.setText(mProcessList.get(position).getMachineData().getNameplate());
             itemView.orderNumTv.setText(mProcessList.get(position).getMachineOrderData().getOrderNum());
             itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
@@ -160,7 +169,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
         TextView processStateTv;
         TextView machineLocalTv;
         TextView planShipDateTv;
-        TextView planDateTv;
+        //TextView planDateTv;
 
         ItemView(View itemView) {
             super(itemView);
@@ -171,8 +180,8 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             processNameTv = (TextView) itemView.findViewById(R.id.process_name_tv);
             processStateTv = (TextView) itemView.findViewById(R.id.process_state_tv);
             machineLocalTv = (TextView) itemView.findViewById(R.id.machine_local_tv);
-            planShipDateTv = (TextView) itemView.findViewById(R.id.process_begin_date_tv);
-            planDateTv = (TextView) itemView.findViewById(R.id.process_end_date_tv);
+            planShipDateTv = (TextView) itemView.findViewById(R.id.plan_ship_date_tv);
+            //planDateTv = (TextView) itemView.findViewById(R.id.process_end_date_tv);
         }
     }
     public void setProcessList(ArrayList<TaskRecordMachineListData> list) {

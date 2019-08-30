@@ -35,5 +35,6 @@ public class URL {
     public static final String FATCH_TASK_QUALITY_RECORD_DETAIL = "/task/quality/record/selectTaskQualityRecordDetails";
     public static final String FATCH_TASK_QUALITY_RECORD_LIST = "/task/quality/record/list";
     public static final String FATCH_GROUP_BY_USERID = "/user/selectAllInstallGroupByUserId";
+    public static final String CREATE_ATTENDANCE = "/attendance/add";
 
 }

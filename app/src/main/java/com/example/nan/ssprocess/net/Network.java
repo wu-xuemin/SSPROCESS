@@ -834,6 +834,7 @@ public class Network {
         }
     }
     /**
+     * 上传string，无返回文字信息
      * 更新位置数据
      */
     public void updateProcessRecordData(final String url, final LinkedHashMap<String, String> values, final Handler handler) {

@@ -22,6 +22,7 @@ public class TaskRecordMachineListData implements Serializable {
     private TaskPlanData taskPlan;
     private TaskData task;
     private String workerList;
+    private String cmtFeedback;
 
     public int getId() {
         return id;
@@ -109,5 +110,13 @@ public class TaskRecordMachineListData implements Serializable {
 
     public TaskData getTaskData() {
         return task;
+    }
+
+    public String getCmtFeedback() {
+        return cmtFeedback;
+    }
+
+    public void setCmtFeedback(String cmtFeedback) {
+        this.cmtFeedback = cmtFeedback;
     }
 }

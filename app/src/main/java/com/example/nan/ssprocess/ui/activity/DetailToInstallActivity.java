@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -59,14 +60,16 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private RadioButton installAbnormalRb;
     private Spinner failReasonSpinner;
     private EditText installAbnormalDetailEt;
-    private Button begainInstallButton;
-    private Button installInfoUpdateButton;
+    private EditText noteEt;
+    private Button installStartButton;
+    private Button installFinishButton;
     private Button installAbnormalSolutionButton;
     private TextView nokReasonTv;
     private TextView nokDetailTv;
     private TextView currentStatusTv;
     private TextView chooseInstallerTv;
     private LinearLayout installAbnormalLayout;
+    private LinearLayout noteLayout;
     private LinearLayout qaNokLayout;
 
     private ProgressDialog mUploadingProcessDialog;
@@ -114,6 +117,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         TextView locationTv = findViewById(R.id.location_tv);
         TextView orderNumberTv=findViewById(R.id.order_number_tv);
         TextView machineNumberTv=findViewById(R.id.machine_number_tv);
+        TextView warningTv=findViewById(R.id.warning_tv);
         currentStatusTv=findViewById(R.id.current_status_tv);
         TextView installListTv=findViewById(R.id.intall_list_tv);
 
@@ -121,13 +125,15 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         installAbnormalRb=findViewById(R.id.abnormal_rb);
         failReasonSpinner=findViewById(R.id.fail_reason_spinner);
         installAbnormalDetailEt=findViewById(R.id.abnormal_detail_et);
-        begainInstallButton = findViewById(R.id.begin_install_button);
-        installInfoUpdateButton = findViewById(R.id.install_info_update_button);
+        noteEt=findViewById(R.id.note_et);
+        installStartButton = findViewById(R.id.install_start_button);
+        installFinishButton = findViewById(R.id.install_finish_button);
         installAbnormalSolutionButton = findViewById(R.id.install_abnormal_solution_button);
         nokReasonTv=findViewById(R.id.nok_reason_tv);
         nokDetailTv=findViewById(R.id.nok_detail_tv);
         chooseInstallerTv=findViewById(R.id.choose_installer_tv);
         installAbnormalLayout=findViewById(R.id.install_abnormal_ll);
+        noteLayout=findViewById(R.id.note_ll);
         //质检信息默认隐藏，只有在质检异常的状态显示
         qaNokLayout=findViewById(R.id.checked_nok_layout);
         qaNokLayout.setVisibility(View.GONE);
@@ -138,11 +144,25 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         Log.d(TAG, "onCreate: heheh :"+mTaskRecordMachineListData);
 
         //把数据填入相应位置
-        orderNumberTv.setText(""+mTaskRecordMachineListData.getMachineOrderData().getOrderNum());
+        orderNumberTv.setText(mTaskRecordMachineListData.getMachineOrderData().getOrderNum());
         currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
         machineNumberTv.setText(mTaskRecordMachineListData.getMachineData().getNameplate());
         locationTv.setText(mTaskRecordMachineListData.getMachineData().getLocation());
-        if(mTaskRecordMachineListData.getWorkerList() == null || "".equals(mTaskRecordMachineListData.getWorkerList())){
+
+        float daySum = (mTaskRecordMachineListData.getMachineOrderData().getPlanShipDate() - new Date().getTime())/(1000*60*60*24);
+
+        if (mTaskRecordMachineListData.getMachineData().getIsUrgent()) {
+            warningTv.setText("加急");
+            warningTv.setTextColor(Color.RED);
+        }else if (daySum < 0){
+            warningTv.setText("超期");
+            warningTv.setTextColor(Color.RED);
+        }else if (daySum < 3) {
+            warningTv.setText("即将超期");
+            warningTv.setTextColor(Color.YELLOW);
+        }
+
+            if(mTaskRecordMachineListData.getWorkerList() == null || "".equals(mTaskRecordMachineListData.getWorkerList())){
             Log.d(TAG, "没有安装人员");
             chooseInstallerTv.setText("选择人员");
         }else {
@@ -176,45 +196,51 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 installAbnormalLayout.setVisibility(View.VISIBLE);
+                noteLayout.setVisibility(View.GONE);
             }
         });
         installAbnormalRb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 installAbnormalLayout.setVisibility(View.GONE);
+                noteLayout.setVisibility(View.VISIBLE);
             }
         });
         if (mTaskRecordMachineListData.getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
                 ||mTaskRecordMachineListData.getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED) {
-            begainInstallButton.setVisibility(View.GONE);
-            installInfoUpdateButton.setVisibility(View.GONE);
+            installStartButton.setVisibility(View.GONE);
+            installFinishButton.setVisibility(View.GONE);
             installAbnormalSolutionButton.setVisibility(View.GONE);
             ShowMessage.showToast(DetailToInstallActivity.this,"正在改单/拆单，不能安装！", ShowMessage.MessageDuring.SHORT);
         }else {
             if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALL_WAITING) {
-                begainInstallButton.setVisibility(View.VISIBLE);
-                installInfoUpdateButton.setVisibility(View.GONE);
+                installStartButton.setVisibility(View.VISIBLE);
+                installFinishButton.setVisibility(View.GONE);
                 installAbnormalSolutionButton.setVisibility(View.GONE);
                 installAbnormalRb.setEnabled(false);
                 installNormalRb.setEnabled(false);
+                noteLayout.setVisibility(View.GONE);
             } else if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALLING) {
-                begainInstallButton.setVisibility(View.GONE);
+                installStartButton.setVisibility(View.GONE);
                 installAbnormalSolutionButton.setVisibility(View.GONE);
-                installInfoUpdateButton.setVisibility(View.VISIBLE);
+                installFinishButton.setVisibility(View.VISIBLE);
                 installAbnormalRb.setEnabled(true);
                 installNormalRb.setEnabled(true);
+                noteLayout.setVisibility(View.VISIBLE);
             } else if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALL_ABNORMAL) {
-                begainInstallButton.setVisibility(View.GONE);
+                installStartButton.setVisibility(View.GONE);
                 installAbnormalSolutionButton.setVisibility(View.VISIBLE);
-                installInfoUpdateButton.setVisibility(View.GONE);
+                installFinishButton.setVisibility(View.GONE);
                 installAbnormalRb.setEnabled(false);
                 installNormalRb.setEnabled(false);
+                noteLayout.setVisibility(View.GONE);
             } else {
-                begainInstallButton.setVisibility(View.GONE);
-                installInfoUpdateButton.setVisibility(View.GONE);
+                installStartButton.setVisibility(View.GONE);
+                installFinishButton.setVisibility(View.GONE);
                 installAbnormalSolutionButton.setVisibility(View.GONE);
                 installAbnormalRb.setEnabled(false);
-                installNormalRb.setEnabled(true);
+                installNormalRb.setEnabled(false);
+                noteLayout.setVisibility(View.GONE);
             }
         }
 
@@ -363,7 +389,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                         installAbnormalRb.setEnabled(true);
                         installNormalRb.setEnabled(false);
                         if(arrayAdapter==null){
-                            Log.d(TAG, "安装异常信息: 空!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                            Log.d(TAG, "安装异常信息: 空!");
                             fetchInstallRecordData();
                         }else {
                             //根据该选项获取位置
@@ -805,31 +831,31 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
                 if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING){
                     ShowMessage.showDialog(DetailToInstallActivity.this,"请开始安装吧！");
-                    begainInstallButton.setVisibility(View.GONE);
-                    installInfoUpdateButton.setVisibility(View.VISIBLE);
+                    installStartButton.setVisibility(View.GONE);
+                    installFinishButton.setVisibility(View.VISIBLE);
                     installAbnormalSolutionButton.setVisibility(View.GONE);
                     installAbnormalRb.setEnabled(true);
                     installNormalRb.setEnabled(true);
                 } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED){
                     ShowMessage.showDialog(DetailToInstallActivity.this,"安装完成！");
-                    begainInstallButton.setVisibility(View.GONE);
+                    installStartButton.setVisibility(View.GONE);
                     installAbnormalSolutionButton.setVisibility(View.GONE);
-                    installInfoUpdateButton.setVisibility(View.GONE);
+                    installFinishButton.setVisibility(View.GONE);
                 }else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DONE){
                     ShowMessage.showDialog(DetailToInstallActivity.this,"安装完成！");
-                    begainInstallButton.setVisibility(View.GONE);
+                    installStartButton.setVisibility(View.GONE);
                     installAbnormalSolutionButton.setVisibility(View.GONE);
-                    installInfoUpdateButton.setVisibility(View.GONE);
+                    installFinishButton.setVisibility(View.GONE);
                 } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING){
-                    begainInstallButton.setVisibility(View.VISIBLE);
-                    installInfoUpdateButton.setVisibility(View.GONE);
+                    installStartButton.setVisibility(View.VISIBLE);
+                    installFinishButton.setVisibility(View.GONE);
                     installAbnormalSolutionButton.setVisibility(View.GONE);
                     installAbnormalRb.setEnabled(false);
                     installNormalRb.setEnabled(false);
                 } else {
-                    begainInstallButton.setVisibility(View.GONE);
+                    installStartButton.setVisibility(View.GONE);
                     installAbnormalSolutionButton.setVisibility(View.GONE);
-                    installInfoUpdateButton.setVisibility(View.GONE);
+                    installFinishButton.setVisibility(View.GONE);
                 }
 
                 // 扫码完写入时间和结果到本地
@@ -900,6 +926,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             }else {
                 mTaskRecordMachineListData.setWorkerList(checkedName);
             }
+            mTaskRecordMachineListData.setCmtFeedback(noteEt.getText().toString());
+
             mTaskRecordMachineListData.setInstallEndTime(strCurTime);
             iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
             if (mTaskRecordMachineListData.getTaskData().getQualityUserId()>0) {

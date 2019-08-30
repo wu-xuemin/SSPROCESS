@@ -18,6 +18,7 @@ public class MachineData implements Serializable{
     private String nameplate;
     private String shipTime;
     private String updateTime;
+    private boolean isUrgent;
 
     public String getLocation() {
         return location;
@@ -65,5 +66,9 @@ public class MachineData implements Serializable{
 
     public int getMachineType() {
         return machineType;
+    }
+
+    public boolean getIsUrgent() {
+        return isUrgent;
     }
 }
