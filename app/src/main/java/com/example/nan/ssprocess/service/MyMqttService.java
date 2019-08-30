@@ -47,6 +47,7 @@ public class MyMqttService extends Service {
     private static final String TOPIC_QA_ABNORMAL_RESOLVE = "/s2c/quality_abnormal_resolve/";
     private static final String TOPIC_INSTALL_ABNORMAL = "/s2c/install_abnormal/";
     private static final String TOPIC_QUALITY_ABNORMAL = "/s2c/quality_abnormal/";
+    private static final String TOPIC_INSTALL_PLAN = "/s2c/install_plan/";
     /**
      * 发生安装异常时，通知对应质检员
      */
@@ -269,7 +270,7 @@ public class MyMqttService extends Service {
                             if(topic.equals(TOPIC_TO_NEXT_INSTALL + SinSimApp.getApp().getGroupId())) {
                                 Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
-                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_NEXT_INSTALL);
                                 Notification notify = builder.setSmallIcon(R.mipmap.to_install)
                                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.to_install))
                                         .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
@@ -284,7 +285,7 @@ public class MyMqttService extends Service {
                             }else if(topic.equals(TOPIC_INSTALL_ABNORMAL_RESOLVE + SinSimApp.getApp().getGroupId())) {
                                 Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
-                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_INSTALL_ABNORMAL_RESOLVE);
                                 Notification notify = builder.setSmallIcon(R.mipmap.install_abnormall_resolve)
                                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.install_abnormall_resolve))
                                         .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
@@ -313,7 +314,7 @@ public class MyMqttService extends Service {
                                 }
                                 Log.d(TAG, "messageArrived: "+title);
                                 if(title != null) {
-                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
+                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_MACHINE_STATUS_CHANGE);
                                     Notification notify = builder.setSmallIcon(iconId)
                                             .setLargeIcon(BitmapFactory.decodeResource(getResources(), iconId))
                                             .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
@@ -329,7 +330,7 @@ public class MyMqttService extends Service {
                             }else if(topic.equals(TOPIC_QUALITY_ABNORMAL + SinSimApp.getApp().getGroupId())) {
                                 Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
-                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_QUALITY_ABNORMAL);
                                 Notification notify = builder.setSmallIcon(R.mipmap.quality_abnormal)
                                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.quality_abnormal))
                                         .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
@@ -341,6 +342,22 @@ public class MyMqttService extends Service {
                                         //不设置此项不会悬挂,false 不会出现悬挂
                                         .build();
                                 mNotificationManager.notify(12,notify);
+                            }else if(topic.equals(TOPIC_INSTALL_PLAN + SinSimApp.getApp().getGroupId())) {
+                                // TODO: 待完善
+                                Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_INSTALL_PLAN);
+                                Notification notify = builder.setSmallIcon(R.mipmap.to_install)
+                                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.quality_abnormal))
+                                        .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
+                                        .setContentTitle("排班计划")
+                                        .setAutoCancel(true)
+                                        .setContentIntent(pi)
+                                        .setVisibility(Notification.VISIBILITY_PUBLIC)
+                                        .setContentText("明日排班计划已送达！")
+                                        //不设置此项不会悬挂,false 不会出现悬挂
+                                        .build();
+                                mNotificationManager.notify(13,notify);
                             }
                         }
                     }
@@ -440,6 +457,8 @@ public class MyMqttService extends Service {
                     subscribeToTopic(TOPIC_INSTALL_ABNORMAL_RESOLVE + SinSimApp.getApp().getGroupId());
                     //发生质检异常时，通知对应安装组长
                     subscribeToTopic(TOPIC_QUALITY_ABNORMAL + SinSimApp.getApp().getGroupId());
+                    //应安装组长订阅自己租的排班计划
+                    subscribeToTopic(TOPIC_INSTALL_PLAN + SinSimApp.getApp().getGroupId());
                 }
             }
         }
