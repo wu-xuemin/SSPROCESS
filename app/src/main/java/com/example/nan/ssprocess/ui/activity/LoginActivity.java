@@ -28,6 +28,7 @@ import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.util.ShowMessage;
 import com.example.nan.ssprocess.bean.response.LoginResponseData;
+import com.google.gson.Gson;
 
 import java.util.LinkedHashMap;
 
@@ -157,10 +158,10 @@ public class LoginActivity extends AppCompatActivity {
         if( data != null) {
             //Store to memory and preference
             mApp.setIsLogined(true, data.getAccount(), data.getFullName(),
-                    mPassword, data.getRole().getId(),data.getId(), data.getGroup()!= null ? data.getGroup().getId():0);
+                    mPassword, data.getRole().getId(),data.getId(), data.getGroup()!= null ? data.getGroup().getId():0, data.getGroup() != null ? data.getGroup().getGroupName():"");
 
             //在登陆完成后检查人员role进入不同界面：生产部管理员：2，质检员：11, 安装组长：3
-            Log.d(TAG, "onLoginSuccess: role id "+SinSimApp.getApp().getGroupId());
+            Log.d(TAG, "onLoginSuccess: role name "+SinSimApp.getApp().getGroupName());
             Intent it = new Intent();
             switch (SinSimApp.getApp().getRole()){
                 case SinSimApp.LOGIN_FOR_ADMIN:

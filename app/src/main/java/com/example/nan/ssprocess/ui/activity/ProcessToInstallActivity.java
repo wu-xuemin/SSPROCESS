@@ -38,8 +38,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedHashMap;
 
 import cn.bingoogolapple.refreshlayout.BGAMoocStyleRefreshViewHolder;
@@ -308,9 +310,13 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
         switch (item.getItemId()) {
             case R.id.attendance_settings:
                 LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                mPostValue.put("id", ""+SinSimApp.getApp().getUserId());
-                String fetchInstallerListUrl = URL.HTTP_HEAD + IP + URL.FATCH_GROUP_BY_USERID;
-                Network.Instance(SinSimApp.getApp()).fetchInstallerList(fetchInstallerListUrl, mPostValue, new FetchInstallerGroupHandler());
+                mPostValue.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
+                Date date = new Date(System.currentTimeMillis());
+                mPostValue.put("queryStartTime", simpleDateFormat.format(date));
+                mPostValue.put("queryFinishTime", simpleDateFormat.format(date));
+                String fetchAttendanceUrl = URL.HTTP_HEAD + IP + URL.FATCH_ATTENDANCE;
+                Network.Instance(SinSimApp.getApp()).fetchAttendance(fetchAttendanceUrl, mPostValue, new FetchAttendanceHandler());
                 break;
             case R.id.logout:
                 stopService(mqttIntent);
@@ -324,6 +330,25 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private class FetchAttendanceHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == Network.OK) {
+                Log.d(TAG, "handleMessage: "+(new Gson().toJson(msg.obj)));
+                ArrayList<AttendanceData> attendanceDataArrayList = (ArrayList<AttendanceData>) msg.obj;
+                if (attendanceDataArrayList.size()>0){
+                    ShowMessage.showDialog(ProcessToInstallActivity.this,"今天传过考勤了！");
+                }else {
+                    LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                    mPostValue.put("id", "" + SinSimApp.getApp().getUserId());
+                    String fetchInstallerListUrl = URL.HTTP_HEAD + IP + URL.FATCH_GROUP_BY_USERID;
+                    Network.Instance(SinSimApp.getApp()).fetchInstallerList(fetchInstallerListUrl, mPostValue, new FetchInstallerGroupHandler());
+                }
+            }
+        }
     }
     @SuppressLint("HandlerLeak")
     private class FetchInstallerGroupHandler extends Handler {
