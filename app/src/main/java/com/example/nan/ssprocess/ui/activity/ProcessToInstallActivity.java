@@ -332,6 +332,7 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressLint("HandlerLeak")
     private class FetchAttendanceHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
