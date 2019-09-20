@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/plan"
-        android:title="排产信息"/>
+        android:title="明日计划"/>
     <item
         android:id="@+id/attendance_settings"
         android:title="考勤信息"/>

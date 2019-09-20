@@ -318,6 +318,10 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 String fetchAttendanceUrl = URL.HTTP_HEAD + IP + URL.FATCH_ATTENDANCE;
                 Network.Instance(SinSimApp.getApp()).fetchAttendance(fetchAttendanceUrl, mPostValue, new FetchAttendanceHandler());
                 break;
+            case R.id.plan:
+                Intent intent=new Intent(ProcessToInstallActivity.this,InstallPlanActivity.class);
+                startActivity(intent);
+                break;
             case R.id.logout:
                 stopService(mqttIntent);
                 SinSimApp.getApp().setLogOut();
