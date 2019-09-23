@@ -1,10 +1,12 @@
 package com.example.nan.ssprocess.bean.basic;
 
+import java.io.Serializable;
+
 /**
  * Created by nan on 2017/12/22.
  */
 
-public class InstallPlanData {
+public class InstallPlanData implements Serializable {
     private int id;
     private String groupName;
     private String headNum;
@@ -12,6 +14,7 @@ public class InstallPlanData {
     private String nameplate;
     private String orderNum;
     private String type;
+    private String cmtSend;
 
 
     public int getId() {
@@ -40,5 +43,9 @@ public class InstallPlanData {
 
     public String getType() {
         return type;
+    }
+
+    public String getCmtSend() {
+        return cmtSend;
     }
 }

@@ -111,7 +111,6 @@ public class LoginActivity extends AppCompatActivity {
         mPostValue.put("password", mPassword);
         mPostValue.put("meid", SinSimApp.getApp().getIMEI());
         Log.d(TAG, "login: IMEI: "+SinSimApp.getApp().getIMEI());
-        Log.d(TAG, "login: IP: "+SinSimApp.getApp().getServerIP());
         if(TextUtils.isEmpty(SinSimApp.getApp().getServerIP())){
             if(mLoadingProcessDialog.isShowing()) {
                 mLoadingProcessDialog.dismiss();
@@ -129,7 +128,6 @@ public class LoginActivity extends AppCompatActivity {
         }
         else {
             String loginUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.USER_LOGIN;
-            Log.d(TAG, "login: url: "+loginUrl);
             mNetwork.fetchLoginData(loginUrl, mPostValue, mLoginHandler);
         }
 

@@ -27,6 +27,7 @@ import com.example.nan.ssprocess.adapter.TaskRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.AttendanceData;
+import com.example.nan.ssprocess.bean.basic.InstallPlanData;
 import com.example.nan.ssprocess.bean.basic.MachineProcessData;
 import com.example.nan.ssprocess.bean.basic.TaskNodeData;
 import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
@@ -40,7 +41,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
@@ -319,8 +320,18 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 Network.Instance(SinSimApp.getApp()).fetchAttendance(fetchAttendanceUrl, mPostValue, new FetchAttendanceHandler());
                 break;
             case R.id.plan:
-                Intent intent=new Intent(ProcessToInstallActivity.this,InstallPlanActivity.class);
-                startActivity(intent);
+                LinkedHashMap<String, String> mPostValue1 = new LinkedHashMap<>();
+                mPostValue1.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
+                SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
+                Calendar c = Calendar.getInstance();
+                c.add(Calendar.DAY_OF_MONTH,1);
+                String tomorrow = simpleDateFormat1.format(c.getTime());
+                Log.d(TAG, "onCreate: "+tomorrow);
+                mPostValue1.put("queryStartTime", tomorrow);
+                mPostValue1.put("queryFinishTime", tomorrow);
+
+                String fetchInstallPlanUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
+                Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl, mPostValue1, new FetchInstallPlanHandler());
                 break;
             case R.id.logout:
                 stopService(mqttIntent);
@@ -427,4 +438,28 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
         }
     }
 
+    @SuppressLint("HandlerLeak")
+    private class FetchInstallPlanHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == Network.OK) {
+                ArrayList<InstallPlanData> mInstallPlanList = (ArrayList<InstallPlanData>) msg.obj;
+                Log.d(TAG, "handleMessage: "+(new Gson().toJson(mInstallPlanList)));
+
+                if (mInstallPlanList.size()<1){
+                    ShowMessage.showDialog(ProcessToInstallActivity.this,"明日计划未安排！");
+                }else {
+                    Intent intent=new Intent(ProcessToInstallActivity.this,InstallPlanActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("mInstallPlanList", (Serializable) mInstallPlanList);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+
+            }
+
+        }
+
+    }
 }

@@ -9,7 +9,6 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -23,7 +22,6 @@ import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.response.LoginResponseData;
 import com.example.nan.ssprocess.net.Network;
-import com.example.nan.ssprocess.service.MyMqttService;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -117,7 +115,7 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
                         protected Object doInBackground(Object[] params) {
                             //检查账号密码是否正确，正确的话返回流程的状态
                             LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                            Log.d(TAG, "doInBackground: " + ip + account + password + SinSimApp.getApp().getIMEI());
+//                            Log.d(TAG, "doInBackground: " + ip + account + password + SinSimApp.getApp().getIMEI());
                             mPostValue.put("account", account);
                             mPostValue.put("password", password);
                             mPostValue.put("meid", SinSimApp.getApp().getIMEI());

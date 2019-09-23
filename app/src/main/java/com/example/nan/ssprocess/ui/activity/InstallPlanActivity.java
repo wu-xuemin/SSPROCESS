@@ -1,6 +1,10 @@
 package com.example.nan.ssprocess.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -10,17 +14,10 @@ import android.util.Log;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.InstallPlanAdapter;
-import com.example.nan.ssprocess.app.SinSimApp;
-import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.InstallPlanData;
-import com.example.nan.ssprocess.net.Network;
 import com.google.gson.Gson;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedHashMap;
 
 public class InstallPlanActivity extends AppCompatActivity {
 
@@ -32,7 +29,10 @@ public class InstallPlanActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_install_plan);
-
+        //获取传递过来的信息
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        mInstallPlanList = (ArrayList<InstallPlanData>) bundle.getSerializable("mInstallPlanList");
         //列表
         RecyclerView mInstallPlanTV = findViewById(R.id.install_plan_rv);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -46,21 +46,13 @@ public class InstallPlanActivity extends AppCompatActivity {
             @Override
             public void onItemClick(int position){
                 Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mInstallPlanList.get(position)));
+                AlertDialog showCmtDialog = new AlertDialog.Builder(InstallPlanActivity.this).create();
+                showCmtDialog.setTitle("备注信息：");
+                showCmtDialog.setMessage(mInstallPlanList.get(position).getCmtSend());
+                showCmtDialog.show();
             }
         });
-
-        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.DAY_OF_MONTH,1);
-        String tomorrow = simpleDateFormat.format(c.getTime());
-        Log.d(TAG, "onCreate: "+tomorrow);
-        mPostValue.put("queryStartTime", tomorrow);
-        mPostValue.put("queryFinishTime", tomorrow);
-
-        String fetchInstallPlanUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
-        //Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl, mPostValue, new FetchInstallPlanHandler());
-
     }
+
+
 }

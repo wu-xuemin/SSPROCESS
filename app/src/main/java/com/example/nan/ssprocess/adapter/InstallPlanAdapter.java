@@ -1,13 +1,12 @@
 package com.example.nan.ssprocess.adapter;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.nan.ssprocess.R;
@@ -77,7 +76,7 @@ public class InstallPlanAdapter extends RecyclerView.Adapter {
     }
 
     public class ItemView extends RecyclerView.ViewHolder {
-        LinearLayout installPlanLayout;
+        CardView installPlanLayout;
         TextView orderNumberTv;
         TextView nameplateTv;
         TextView headNumberTv;
@@ -85,7 +84,7 @@ public class InstallPlanAdapter extends RecyclerView.Adapter {
 
         ItemView(View itemView) {
             super(itemView);
-            installPlanLayout=itemView.findViewById(R.id.item_install_plan_layout);
+            installPlanLayout = itemView.findViewById(R.id.item_install_plan_layout);
             orderNumberTv = itemView.findViewById(R.id.order_number_tv);
             nameplateTv = itemView.findViewById(R.id.nameplate_tv);
             headNumberTv = itemView.findViewById(R.id.head_number_tv);
