@@ -87,7 +87,7 @@
         <activity
             android:name=".ui.activity.ProcessToMachineActivity"
             android:label="@string/search_result"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.ScanResultActivity"
             android:label="机器详情"
@@ -119,9 +119,13 @@
             android:name=".ui.activity.InstallListActivity"
             android:label="下载并打开"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.InstallPlanActivity"
-            android:label="排产计划"
-            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.activity.InstallPlanActivity"
+            android:label="明日计划"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.activity.InstallActualActivity"
+            android:label="今日完成"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

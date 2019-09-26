@@ -309,16 +309,6 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.attendance_settings:
-                LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                mPostValue.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
-                Date date = new Date(System.currentTimeMillis());
-                mPostValue.put("queryStartTime", simpleDateFormat.format(date));
-                mPostValue.put("queryFinishTime", simpleDateFormat.format(date));
-                String fetchAttendanceUrl = URL.HTTP_HEAD + IP + URL.FATCH_ATTENDANCE;
-                Network.Instance(SinSimApp.getApp()).fetchAttendance(fetchAttendanceUrl, mPostValue, new FetchAttendanceHandler());
-                break;
             case R.id.plan:
                 LinkedHashMap<String, String> mPostValue1 = new LinkedHashMap<>();
                 mPostValue1.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
@@ -333,6 +323,19 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 String fetchInstallPlanUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
                 Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl, mPostValue1, new FetchInstallPlanHandler());
                 break;
+            case R.id.plan_actual:
+
+                break;
+            case R.id.attendance_settings:
+                LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                mPostValue.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
+                Date date = new Date(System.currentTimeMillis());
+                mPostValue.put("queryStartTime", simpleDateFormat.format(date));
+                mPostValue.put("queryFinishTime", simpleDateFormat.format(date));
+                String fetchAttendanceUrl = URL.HTTP_HEAD + IP + URL.FATCH_ATTENDANCE;
+                Network.Instance(SinSimApp.getApp()).fetchAttendance(fetchAttendanceUrl, mPostValue, new FetchAttendanceHandler());
+                break;
             case R.id.logout:
                 stopService(mqttIntent);
                 SinSimApp.getApp().setLogOut();
@@ -345,6 +348,31 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class FetchInstallPlanHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == Network.OK) {
+                ArrayList<InstallPlanData> mInstallPlanList = (ArrayList<InstallPlanData>) msg.obj;
+                Log.d(TAG, "handleMessage: "+(new Gson().toJson(mInstallPlanList)));
+
+                if (mInstallPlanList.size()<1){
+                    ShowMessage.showDialog(ProcessToInstallActivity.this,"尚未安排明日计划！");
+                }else {
+                    Intent intent=new Intent(ProcessToInstallActivity.this,InstallPlanActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("mInstallPlanList", (Serializable) mInstallPlanList);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+
+            }
+
+        }
+
     }
 
     @SuppressLint("HandlerLeak")
@@ -438,28 +466,4 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
         }
     }
 
-    @SuppressLint("HandlerLeak")
-    private class FetchInstallPlanHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == Network.OK) {
-                ArrayList<InstallPlanData> mInstallPlanList = (ArrayList<InstallPlanData>) msg.obj;
-                Log.d(TAG, "handleMessage: "+(new Gson().toJson(mInstallPlanList)));
-
-                if (mInstallPlanList.size()<1){
-                    ShowMessage.showDialog(ProcessToInstallActivity.this,"明日计划未安排！");
-                }else {
-                    Intent intent=new Intent(ProcessToInstallActivity.this,InstallPlanActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("mInstallPlanList", (Serializable) mInstallPlanList);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-
-            }
-
-        }
-
-    }
 }

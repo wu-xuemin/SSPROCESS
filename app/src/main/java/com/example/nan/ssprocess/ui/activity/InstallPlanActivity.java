@@ -11,6 +11,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.InstallPlanAdapter;
@@ -33,6 +34,15 @@ public class InstallPlanActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         mInstallPlanList = (ArrayList<InstallPlanData>) bundle.getSerializable("mInstallPlanList");
+
+        TextView machineCountTv = findViewById(R.id.machine_count);
+        TextView headCountTv = findViewById(R.id.head_count);
+        machineCountTv.setText(""+mInstallPlanList.size());
+        int headCount = 0;
+        for (int i =0;i<mInstallPlanList.size();i++) {
+            headCount += Integer.valueOf(mInstallPlanList.get(i).getHeadNum());
+        }
+        headCountTv.setText(""+headCount);
         //列表
         RecyclerView mInstallPlanTV = findViewById(R.id.install_plan_rv);
         LinearLayoutManager manager = new LinearLayoutManager(this);
