@@ -44,14 +44,14 @@ public class InstallPlanActivity extends AppCompatActivity {
         }
         headCountTv.setText(""+headCount);
         //列表
-        RecyclerView mInstallPlanTV = findViewById(R.id.install_plan_rv);
+        RecyclerView mInstallPlanRV = findViewById(R.id.install_plan_rv);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
-        mInstallPlanTV.setLayoutManager(manager);
+        mInstallPlanRV.setLayoutManager(manager);
         mInstallPlanAdapter = new InstallPlanAdapter(mInstallPlanList);
-        mInstallPlanTV.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
-        mInstallPlanTV.setAdapter(mInstallPlanAdapter);
-        //点击跳转，把所有接收到的数据传递给下一个activity
+        mInstallPlanRV.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
+        mInstallPlanRV.setAdapter(mInstallPlanAdapter);
+        //点击弹窗
         mInstallPlanAdapter.setOnItemClickListener(new InstallPlanAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(int position){

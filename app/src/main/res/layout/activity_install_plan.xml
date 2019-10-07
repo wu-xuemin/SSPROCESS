@@ -51,7 +51,6 @@
             android:textStyle="bold"
             android:text="头"
             android:textColor="@color/black"/>
-
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/install_plan_rv"
