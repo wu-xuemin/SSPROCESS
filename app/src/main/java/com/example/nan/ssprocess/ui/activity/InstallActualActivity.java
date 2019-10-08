@@ -2,13 +2,14 @@ package com.example.nan.ssprocess.ui.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -17,10 +18,12 @@ import android.widget.TextView;
 
 import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.adapter.InstallActualAdapter;
-import com.example.nan.ssprocess.adapter.InstallPlanAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
+import com.example.nan.ssprocess.app.URL;
 import com.example.nan.ssprocess.bean.basic.InstallActualData;
 import com.example.nan.ssprocess.bean.basic.InstallPlanData;
+import com.example.nan.ssprocess.net.Network;
+import com.example.nan.ssprocess.util.ShowMessage;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -84,6 +87,18 @@ public class InstallActualActivity extends AppCompatActivity {
                     }
                 });
                 installActualDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
+                    class CreateInstallPlanActualHandler extends Handler {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            super.handleMessage(msg);
+                            if (msg.what == Network.OK) {
+                                ShowMessage.showToast(InstallActualActivity.this,"上传成功！",ShowMessage.MessageDuring.SHORT);
+                                //TODO:完成头数量传到主页
+                            }else {
+                                ShowMessage.showDialog(InstallActualActivity.this,"出错！请检查网络！");
+                            }
+                        }
+                    }
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
@@ -92,20 +107,17 @@ public class InstallActualActivity extends AppCompatActivity {
                             installActualData.setCmtFeedback(cmtFeedbackEt.getText().toString());
                             LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
                             mPostValue.put("installPlanActual", ""+new Gson().toJson(installActualData));
-                            //TODO:明天继续
+
+                            String createInstallPlanActualUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.CREATE_INSTALL_PLAN_ACTUAL;
+                            Network.Instance(SinSimApp.getApp()).updateProcessRecordData(createInstallPlanActualUrl, mPostValue, new CreateInstallPlanActualHandler());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
                 });
                 installActualDialog.show();
-                
-                
-//                AlertDialog showCmtDialog = new AlertDialog.Builder(InstallActualActivity.this).create();
-//                showCmtDialog.setTitle("备注信息：");
-//                showCmtDialog.setMessage(mInstallPlanActualList.get(position).getCmtSend());
-//                showCmtDialog.show();
             }
         });
     }
+
 }
