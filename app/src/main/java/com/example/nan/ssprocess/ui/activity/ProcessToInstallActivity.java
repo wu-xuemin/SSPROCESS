@@ -324,7 +324,15 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl, mPostValue1, new FetchInstallPlanHandler());
                 break;
             case R.id.plan_actual:
+                LinkedHashMap<String, String> mPostValue2 = new LinkedHashMap<>();
+                mPostValue2.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
+                SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
+                Date date2 = new Date(System.currentTimeMillis());
+                mPostValue2.put("queryStartTime", simpleDateFormat2.format(date2));
+                mPostValue2.put("queryFinishTime", simpleDateFormat2.format(date2));
 
+                String fetchInstallPlanUrl2 = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
+                Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl2, mPostValue2, new FetchInstallActualHandler());
                 break;
             case R.id.attendance_settings:
                 LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
@@ -368,11 +376,29 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }
-
             }
-
         }
+    }
+    @SuppressLint("HandlerLeak")
+    private class FetchInstallActualHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == Network.OK) {
+                ArrayList<InstallPlanData> mInstallPlanActualList = (ArrayList<InstallPlanData>) msg.obj;
+                Log.d(TAG, "handleMessage: "+(new Gson().toJson(mInstallPlanActualList)));
 
+                if (mInstallPlanActualList.size()<1){
+                    ShowMessage.showDialog(ProcessToInstallActivity.this,"未安排今日计划！");
+                }else {
+                    Intent intent=new Intent(ProcessToInstallActivity.this,InstallActualActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("mInstallPlanActualList", (Serializable) mInstallPlanActualList);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            }
+        }
     }
 
     @SuppressLint("HandlerLeak")

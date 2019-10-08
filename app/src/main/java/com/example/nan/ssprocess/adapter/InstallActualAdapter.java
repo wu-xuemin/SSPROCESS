@@ -30,7 +30,7 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_install_plan,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_install_actual,parent,false);
         return new InstallActualAdapter.ItemView(view);
 
     }
@@ -46,7 +46,7 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
             itemView.orderNumberTv.setText(mInstallPlanAdapter.get(position).getOrderNum());
             itemView.nameplateTv.setText(mInstallPlanAdapter.get(position).getNameplate());
             itemView.headNumberTv.setText(mInstallPlanAdapter.get(position).getHeadNum());
-            itemView.headCountDoneTv.setText(mInstallPlanAdapter.get(position).getLocation());//TODO
+            //itemView.headCountDoneTv.setText(mInstallPlanAdapter.get(position).getLocation());//TODO
 
             itemView.installPlanLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -84,7 +84,7 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
 
         ItemView(View itemView) {
             super(itemView);
-            installPlanLayout = itemView.findViewById(R.id.item_install_plan_layout);
+            installPlanLayout = itemView.findViewById(R.id.item_install_actual_layout);
             orderNumberTv = itemView.findViewById(R.id.order_number_tv);
             nameplateTv = itemView.findViewById(R.id.nameplate_tv);
             headNumberTv = itemView.findViewById(R.id.head_number_tv);

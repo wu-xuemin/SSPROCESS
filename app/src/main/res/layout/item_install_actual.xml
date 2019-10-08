@@ -51,8 +51,9 @@
                     android:textStyle="bold"
                     android:textColor="@color/black"
                     android:layout_gravity="center_vertical"
-                    android:hint="888"
-                    android:gravity="start" />
+                    android:hint="000"
+                    android:gravity="end"
+                    android:text="0"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -68,7 +69,7 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_gravity="center_vertical"
-                    android:hint="888"
+                    android:hint="000"
                     android:gravity="start" />
             </LinearLayout>
     </LinearLayout>

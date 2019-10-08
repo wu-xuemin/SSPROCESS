@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 public class InstallActualData implements Serializable {
     private int id;
-    private int headCountDone;
+    private String headCountDone;
     private String cmtFeedback;
     private String pcWireNum;
     private String kouxianNum;
@@ -25,11 +25,11 @@ public class InstallActualData implements Serializable {
         return id;
     }
 
-    public int getHeadCountDone() {
+    public String getHeadCountDone() {
         return headCountDone;
     }
 
-    public void setHeadCountDone(int headCountDone) {
+    public void setHeadCountDone(String headCountDone) {
         this.headCountDone = headCountDone;
     }
 
