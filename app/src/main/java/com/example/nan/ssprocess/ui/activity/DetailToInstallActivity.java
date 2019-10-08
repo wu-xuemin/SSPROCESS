@@ -281,7 +281,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     abnormalRecordDetailsData.setSolution(editText.getText().toString());
-                    abnormalRecordDetailsData.setSolutionUser(SinSimApp.getApp().getUserId());
+                    abnormalRecordDetailsData.setSolutionUser(SinSimApp.getApp().getAppUserId());
                     Gson gson=new Gson();
                     String abnormalRecordToJson = gson.toJson(abnormalRecordDetailsData);
                     LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
@@ -534,7 +534,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
      */
     private void fetchInstallerListData() {
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("id", ""+SinSimApp.getApp().getUserId());
+        mPostValue.put("id", ""+SinSimApp.getApp().getAppUserId());
         String fetchInstallerListUrl = URL.HTTP_HEAD + IP + URL.FATCH_GROUP_BY_USERID;
         Network.Instance(SinSimApp.getApp()).fetchInstallerList(fetchInstallerListUrl, mPostValue, new FetchInstallerListHandler());
     }
@@ -938,7 +938,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 updateProcessDetailData(SinSimApp.TASK_QUALITY_DONE);
             }
         }else if(installAbnormalRb.isChecked()){
-            AbnormalRecordDetailsData abnormalRecordAddData=new AbnormalRecordDetailsData(SinSimApp.getApp().getUserId(),mTaskRecordMachineListData.getId(),lCurTime);
+            AbnormalRecordDetailsData abnormalRecordAddData=new AbnormalRecordDetailsData(SinSimApp.getApp().getAppUserId(),mTaskRecordMachineListData.getId(),lCurTime);
             String bnormalRecordDetailsDataToJson = gson.toJson(abnormalRecordAddData);
             Log.d(TAG, "updateInstallRecordData: gson :"+ bnormalRecordDetailsDataToJson);
             if(installAbnormalDetailEt.getText()!=null && mInstallAbnormalPhotosSnpl.getData().size()>0 && !failReasonSpinner.getSelectedItem().equals("请选择")){

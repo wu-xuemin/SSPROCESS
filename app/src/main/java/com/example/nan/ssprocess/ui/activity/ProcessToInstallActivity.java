@@ -387,7 +387,7 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                     ShowMessage.showDialog(ProcessToInstallActivity.this,"今天传过考勤了！");
                 }else {
                     LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                    mPostValue.put("id", "" + SinSimApp.getApp().getUserId());
+                    mPostValue.put("id", "" + SinSimApp.getApp().getAppUserId());
                     String fetchInstallerListUrl = URL.HTTP_HEAD + IP + URL.FATCH_GROUP_BY_USERID;
                     Network.Instance(SinSimApp.getApp()).fetchInstallerList(fetchInstallerListUrl, mPostValue, new FetchInstallerGroupHandler());
                 }
@@ -438,7 +438,7 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                                 attendanceData.setOvertimeMember(editTextOp.getText().toString());
                                 attendanceData.setAbsenceMember(editTextLp.getText().toString());
                                 attendanceData.setAttendanceTomorrow(editTextTwp.getText().toString());
-                                attendanceData.setUserId(SinSimApp.getApp().getUserId());
+                                attendanceData.setUserId(SinSimApp.getApp().getAppUserId());
                                 attendanceData.setInstallGroupId(SinSimApp.getApp().getGroupId());
 
                                 LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();

@@ -108,7 +108,7 @@ public class MyMqttService extends Service {
                     if( roleId == SinSimApp.LOGIN_FOR_QA) {
                         //质检员接受消息
                         if(topic != null) {
-                            if(topic.equals(TOPIC_TO_QA + SinSimApp.getApp().getUserId())) {
+                            if(topic.equals(TOPIC_TO_QA + SinSimApp.getApp().getAppUserId())) {
                                 Intent intent = new Intent(MyMqttService.this, ProcessToCheckoutActivity.class);
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_TO_QA);
@@ -123,7 +123,7 @@ public class MyMqttService extends Service {
                                         //不设置此项不会悬挂,false 不会出现悬挂
                                         .build();
                                 mNotificationManager.notify(9,notify);
-                            } else if(topic.equals(TOPIC_QA_ABNORMAL_RESOLVE + SinSimApp.getApp().getUserId())) {
+                            } else if(topic.equals(TOPIC_QA_ABNORMAL_RESOLVE + SinSimApp.getApp().getAppUserId())) {
                                 Intent intent = new Intent(MyMqttService.this, ProcessToCheckoutActivity.class);
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_QA_ABNORMAL_RESOLVE);
@@ -138,7 +138,7 @@ public class MyMqttService extends Service {
                                         //不设置此项不会悬挂,false 不会出现悬挂
                                         .build();
                                 mNotificationManager.notify(2,notify);
-                            }else if(topic.equals(TOPIC_INSTALL_ABNORMAL_TO_QUALITY + SinSimApp.getApp().getUserId())) {
+                            }else if(topic.equals(TOPIC_INSTALL_ABNORMAL_TO_QUALITY + SinSimApp.getApp().getAppUserId())) {
                                 Intent intent = new Intent(MyMqttService.this, ProcessToCheckoutActivity.class);
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_INSTALL_ABNORMAL_TO_QUALITY);
@@ -426,13 +426,13 @@ public class MyMqttService extends Service {
     private void subscribeAllTopics() {
         if(SinSimApp.getApp().getRole() == SinSimApp.LOGIN_FOR_QA) {
             //User ID不为零则有效
-            if(SinSimApp.getApp().getUserId() != 0) {
+            if(SinSimApp.getApp().getAppUserId() != 0) {
                 //质检员订阅质检消息
-                subscribeToTopic(TOPIC_TO_QA + SinSimApp.getApp().getUserId());
+                subscribeToTopic(TOPIC_TO_QA + SinSimApp.getApp().getAppUserId());
                 //质检员订阅质检异常恢复消息
-                subscribeToTopic(TOPIC_QA_ABNORMAL_RESOLVE + SinSimApp.getApp().getUserId());
+                subscribeToTopic(TOPIC_QA_ABNORMAL_RESOLVE + SinSimApp.getApp().getAppUserId());
                 //质检员订阅安装异常
-                subscribeToTopic(TOPIC_INSTALL_ABNORMAL_TO_QUALITY + SinSimApp.getApp().getUserId());
+                subscribeToTopic(TOPIC_INSTALL_ABNORMAL_TO_QUALITY + SinSimApp.getApp().getAppUserId());
             }
         } else {
             //安装组长和安装部管理员订阅改单、拆单消息

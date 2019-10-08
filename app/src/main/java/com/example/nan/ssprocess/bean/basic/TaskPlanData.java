@@ -36,9 +36,9 @@ public class TaskPlanData implements Serializable {
         return updateTime;
     }
 
-    public int getUserId() {
-        return userId;
-    }
+//    public int getUserId() {
+//        return userId;
+//    }
 
     public int getPlanType() {
         return planType;

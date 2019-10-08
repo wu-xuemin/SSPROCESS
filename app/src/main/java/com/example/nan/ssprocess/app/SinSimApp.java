@@ -124,7 +124,7 @@ public class SinSimApp extends Application {
     private String password; //用户密码
     private int role; //用户角色（工长，质检）
     private String ip;
-    private int userId;
+    private int appUserId;
     private int groupId;
     private String groupName;
 
@@ -206,11 +206,11 @@ public class SinSimApp extends Application {
             this.role = Integer.valueOf(readValue(PersistentValueType.ROLE, "0"));
         }
         this.ip = readValue(PersistentValueType.SERVICE_IP, "");
-        String userIdStr = readValue(PersistentValueType.USER_ID, "0");
-        if ("".equals(userIdStr)){
-            this.userId =0;
+        String appUserIdStr = readValue(PersistentValueType.USER_ID, "0");
+        if ("".equals(appUserIdStr)){
+            this.appUserId =0;
         }else {
-            this.userId = Integer.valueOf(readValue(PersistentValueType.USER_ID, "0"));
+            this.appUserId = Integer.valueOf(readValue(PersistentValueType.USER_ID, "0"));
         }
         String groupIdStr = readValue(PersistentValueType.GROUP_ID, "0");
         if ("".equals(groupIdStr)){
@@ -239,13 +239,13 @@ public class SinSimApp extends Application {
      * @param account
      * @param fullname
      */
-    public void setIsLogined(boolean isLogined, String account, String fullname, String password, int role, int userId, int groupId, String groupName) {
+    public void setIsLogined(boolean isLogined, String account, String fullname, String password, int role, int appUserId, int groupId, String groupName) {
         writePreferenceValue(PersistentValueType.IS_LOGIN, String.valueOf(isLogined));
         writePreferenceValue(PersistentValueType.ACCOUNT, account);
         writePreferenceValue(PersistentValueType.FULL_NAME, fullname);
         writePreferenceValue(PersistentValueType.PASSWORD, password);
         writePreferenceValue(PersistentValueType.ROLE, String.valueOf(role));
-        writePreferenceValue(PersistentValueType.USER_ID, String.valueOf(userId));
+        writePreferenceValue(PersistentValueType.USER_ID, String.valueOf(appUserId));
         writePreferenceValue(PersistentValueType.GROUP_ID, String.valueOf(groupId));
         writePreferenceValue(PersistentValueType.GROUP_NAME, groupName);
         try {
@@ -255,7 +255,7 @@ public class SinSimApp extends Application {
             this.fullname = fullname;
             this.password = password;
             this.role = role;
-            this.userId=userId;
+            this.appUserId=appUserId;
             this.groupId=groupId;
             this.groupName=groupName;
         } catch (Exception e) {
@@ -280,7 +280,7 @@ public class SinSimApp extends Application {
             this.fullname = "";
             this.password = "";
             this.role = -1;
-            this.userId = 0;
+            this.appUserId = 0;
             this.groupId = 0;
             this.groupName = "";
         } catch (Exception e) {
@@ -392,8 +392,8 @@ public class SinSimApp extends Application {
         return role;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getAppUserId() {
+        return appUserId;
     }
 
     public int getGroupId() {

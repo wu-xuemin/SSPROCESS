@@ -41,11 +41,7 @@ dependencies {
     //九宫格
     implementation 'cn.bingoogolapple:bga-photopicker:1.2.7@aar'
     implementation 'cn.bingoogolapple:bga-baseadapter:1.2.7@aar'
-    //4选1
-    //implementation 'com.github.bumptech.glide:glide:4.3.1'
     implementation 'com.squareup.picasso:picasso:2.5.2'
-    //implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
-    //implementation 'org.xutils:xutils:3.5.0'
 
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
@@ -55,6 +51,5 @@ dependencies {
     implementation 'com.orhanobut:logger:1.13'
     implementation 'com.blankj:utilcode:1.9.8'
     implementation 'id.zelory:compressor:2.1.0'
-//A super util package, please refer to "https://github.com/Blankj/AndroidUtilCode"
 
 }
