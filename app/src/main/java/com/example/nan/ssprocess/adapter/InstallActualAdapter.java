@@ -1,6 +1,7 @@
 package com.example.nan.ssprocess.adapter;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -46,7 +47,18 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
             itemView.orderNumberTv.setText(mInstallPlanAdapter.get(position).getOrderNum());
             itemView.nameplateTv.setText(mInstallPlanAdapter.get(position).getNameplate());
             itemView.headNumberTv.setText(mInstallPlanAdapter.get(position).getHeadNum());
-            //itemView.headCountDoneTv.setText(mInstallPlanAdapter.get(position).getLocation());//TODO
+//            if (mInstallPlanAdapter.get(position).getHeadCountDone() < Integer.parseInt(mInstallPlanAdapter.get(position).getHeadNum())){
+//                itemView.headCountDoneTv.setText(""+mInstallPlanAdapter.get(position).getHeadCountDone());
+//                itemView.headCountDoneTv.setTextColor(Color.RED);
+//            }else if (mInstallPlanAdapter.get(position).getHeadCountDone() >= Integer.parseInt(mInstallPlanAdapter.get(position).getHeadNum())){
+//                itemView.headCountDoneTv.setText(""+mInstallPlanAdapter.get(position).getHeadCountDone());
+//                itemView.headCountDoneTv.setTextColor(Color.GREEN);
+//            }else {
+//                itemView.headCountDoneTv.setText("0");
+//                itemView.headCountDoneTv.setTextColor(Color.RED);
+//            }
+            itemView.headCountDoneTv.setText(""+mInstallPlanAdapter.get(position).getHeadCountDone());
+
 
             itemView.installPlanLayout.setOnClickListener(new View.OnClickListener() {
                 @Override

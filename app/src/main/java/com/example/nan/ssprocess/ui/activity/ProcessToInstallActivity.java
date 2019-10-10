@@ -328,7 +328,7 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 mPostValue2.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
                 SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
                 Date date2 = new Date(System.currentTimeMillis());
-                mPostValue2.put("queryStartTime", simpleDateFormat2.format(date2));
+                mPostValue2.put("isNotFinished", "true");
                 mPostValue2.put("queryFinishTime", simpleDateFormat2.format(date2));
 
                 String fetchInstallPlanUrl2 = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
@@ -426,7 +426,7 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
         public void handleMessage(final Message msg) {
 
             if (msg.what == Network.OK) {
-                ArrayList<UserData> mInstallerList = (ArrayList<UserData>) msg.obj;
+                final ArrayList<UserData> mInstallerList = (ArrayList<UserData>) msg.obj;
                 Log.d(TAG, "安装组人数: "+mInstallerList.size());
 
                 AlertDialog attendanceSettingDialog = null;
@@ -457,8 +457,18 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
-                            if (editTextWp.getText().toString().length()<1 || editTextOp.getText().toString().length()<1 || editTextLp.getText().toString().length()<1 || editTextTwp.getText().toString().length()<1 ){
+                            if (editTextWp.getText().toString().length()<1
+                                    || editTextOp.getText().toString().length()<1
+                                    || editTextLp.getText().toString().length()<1
+                                    || editTextTwp.getText().toString().length()<1
+                                    ){
                                 ShowMessage.showDialog(ProcessToInstallActivity.this,"出错！请填写完整再上传！");
+                            } else if (Integer.parseInt(editTextWp.getText().toString()) > mInstallerList.size()
+                                    || Integer.parseInt(editTextOp.getText().toString()) > mInstallerList.size()
+                                    || Integer.parseInt(editTextLp.getText().toString()) > mInstallerList.size()
+                                    || Integer.parseInt(editTextTwp.getText().toString()) > mInstallerList.size()
+                                    ){
+                                ShowMessage.showDialog(ProcessToInstallActivity.this,"出错！人数不能大于实际人数！");
                             }else {
                                 attendanceData.setAttendanceMember(editTextWp.getText().toString());
                                 attendanceData.setOvertimeMember(editTextOp.getText().toString());

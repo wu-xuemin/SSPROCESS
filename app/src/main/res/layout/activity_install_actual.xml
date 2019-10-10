@@ -17,7 +17,7 @@
             android:padding="8dp"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:text="完成总计："
+            android:text="当前需完成："
             android:textColor="@color/black"/>
         <TextView
             android:id="@+id/actual_machine_count"
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:hint="？？"
+            android:hint="00"
             android:gravity="end"/>
         <TextView
             android:layout_width="wrap_content"
@@ -35,22 +35,22 @@
             android:textStyle="bold"
             android:text="台"
             android:textColor="@color/black"/>
-        <TextView
-            android:id="@+id/actual_head_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:hint="？？"
-            android:gravity="end"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:text="头"
-            android:textColor="@color/black"/>
+        <!--<TextView-->
+            <!--android:id="@+id/actual_head_count"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="20sp"-->
+            <!--android:textStyle="bold"-->
+            <!--android:hint="0000"-->
+            <!--android:gravity="end"/>-->
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:padding="8dp"-->
+            <!--android:textSize="20sp"-->
+            <!--android:textStyle="bold"-->
+            <!--android:text="头"-->
+            <!--android:textColor="@color/black"/>-->
 
     </LinearLayout>
     <android.support.v7.widget.RecyclerView

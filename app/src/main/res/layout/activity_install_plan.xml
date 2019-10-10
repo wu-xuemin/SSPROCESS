@@ -35,22 +35,22 @@
             android:textStyle="bold"
             android:text="台"
             android:textColor="@color/black"/>
-        <TextView
-            android:id="@+id/head_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:hint="暂无"
-            android:gravity="end"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:text="头"
-            android:textColor="@color/black"/>
+        <!--<TextView-->
+            <!--android:id="@+id/head_count"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="20sp"-->
+            <!--android:textStyle="bold"-->
+            <!--android:hint="暂无"-->
+            <!--android:gravity="end"/>-->
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:padding="8dp"-->
+            <!--android:textSize="20sp"-->
+            <!--android:textStyle="bold"-->
+            <!--android:text="头"-->
+            <!--android:textColor="@color/black"/>-->
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/install_plan_rv"

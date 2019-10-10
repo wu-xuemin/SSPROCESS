@@ -7,7 +7,8 @@ import java.io.Serializable;
  */
 
 public class InstallActualData implements Serializable {
-    private int id;
+
+    private int installPlanId;
     private String headCountDone;
     private String cmtFeedback;
     private String pcWireNum;
@@ -20,10 +21,6 @@ public class InstallActualData implements Serializable {
     private String deviceBuxiuNum;
     private String deviceSwitchNum;
 
-
-    public int getId() {
-        return id;
-    }
 
     public String getHeadCountDone() {
         return headCountDone;
@@ -111,5 +108,9 @@ public class InstallActualData implements Serializable {
 
     public void setDeviceSwitchNum(String deviceSwitchNum) {
         this.deviceSwitchNum = deviceSwitchNum;
+    }
+
+    public void setInstallPlanId(int installPlanId) {
+        this.installPlanId = installPlanId;
     }
 }

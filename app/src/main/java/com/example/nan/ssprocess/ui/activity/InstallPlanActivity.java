@@ -36,13 +36,13 @@ public class InstallPlanActivity extends AppCompatActivity {
         mInstallPlanList = (ArrayList<InstallPlanData>) bundle.getSerializable("mInstallPlanList");
 
         TextView machineCountTv = findViewById(R.id.machine_count);
-        TextView headCountTv = findViewById(R.id.head_count);
+//        TextView headCountTv = findViewById(R.id.head_count);
         machineCountTv.setText(""+mInstallPlanList.size());
-        int headCount = 0;
-        for (int i =0;i<mInstallPlanList.size();i++) {
-            headCount += Integer.valueOf(mInstallPlanList.get(i).getHeadNum());
-        }
-        headCountTv.setText(""+headCount);
+//        int headCount = 0;
+//        for (int i =0;i<mInstallPlanList.size();i++) {
+//            headCount += Integer.valueOf(mInstallPlanList.get(i).getHeadNum());
+//        }
+//        headCountTv.setText(""+headCount);
         //列表
         RecyclerView mInstallPlanRV = findViewById(R.id.install_plan_rv);
         LinearLayoutManager manager = new LinearLayoutManager(this);

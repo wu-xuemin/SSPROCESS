@@ -19,7 +19,7 @@
                 android:orientation="horizontal">
                 <TextView
                     android:id="@+id/order_number_tv"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -32,7 +32,7 @@
                     android:gravity="bottom" />
                 <TextView
                     android:id="@+id/nameplate_tv"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
                     android:textColor="@color/black"
@@ -69,7 +69,7 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_gravity="center_vertical"
-                    android:hint="000"
+                    android:hint="00000"
                     android:gravity="start" />
             </LinearLayout>
     </LinearLayout>

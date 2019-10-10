@@ -10,6 +10,7 @@ public class InstallPlanData implements Serializable {
     private int id;
     private String groupName;
     private String headNum;
+    private int headCountDone;
     private String location;
     private String nameplate;
     private String orderNum;
@@ -47,5 +48,13 @@ public class InstallPlanData implements Serializable {
 
     public String getCmtSend() {
         return cmtSend;
+    }
+
+    public int getHeadCountDone() {
+        return headCountDone;
+    }
+
+    public void setHeadCountDone(int headCountDone) {
+        this.headCountDone = headCountDone;
     }
 }
