@@ -46,6 +46,7 @@ public class InstallPlanAdapter extends RecyclerView.Adapter {
             itemView.orderNumberTv.setText(mInstallPlanAdapter.get(position).getOrderNum());
             itemView.nameplateTv.setText(mInstallPlanAdapter.get(position).getNameplate());
             itemView.headNumberTv.setText(mInstallPlanAdapter.get(position).getHeadNum());
+            itemView.needleNumberTv.setText(mInstallPlanAdapter.get(position).getNeedleNum());
             itemView.locationTv.setText(mInstallPlanAdapter.get(position).getLocation());
 
             itemView.installPlanLayout.setOnClickListener(new View.OnClickListener() {
@@ -79,7 +80,8 @@ public class InstallPlanAdapter extends RecyclerView.Adapter {
         CardView installPlanLayout;
         TextView orderNumberTv;
         TextView nameplateTv;
-        TextView headNumberTv;//TODO:针数
+        TextView headNumberTv;
+        TextView needleNumberTv;
         TextView locationTv;
 
         ItemView(View itemView) {
@@ -88,6 +90,7 @@ public class InstallPlanAdapter extends RecyclerView.Adapter {
             orderNumberTv = itemView.findViewById(R.id.order_number_tv);
             nameplateTv = itemView.findViewById(R.id.nameplate_tv);
             headNumberTv = itemView.findViewById(R.id.head_number_tv);
+            needleNumberTv = itemView.findViewById(R.id.needle_number_tv);
             locationTv = itemView.findViewById(R.id.location_tv);
         }
     }

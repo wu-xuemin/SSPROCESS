@@ -16,6 +16,7 @@ public class InstallPlanData implements Serializable {
     private String orderNum;
     private String type;
     private String cmtSend;
+    private String needleNum;
 
 
     public int getId() {
@@ -56,5 +57,9 @@ public class InstallPlanData implements Serializable {
 
     public void setHeadCountDone(int headCountDone) {
         this.headCountDone = headCountDone;
+    }
+
+    public String getNeedleNum() {
+        return needleNum;
     }
 }

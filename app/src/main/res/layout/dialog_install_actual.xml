@@ -83,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
-                android:minWidth="80dp"
+                android:minWidth="60dp"
                 android:inputType="number" />
             <TextView
                 android:layout_width="wrap_content"
@@ -97,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
-                android:minWidth="80dp"
+                android:minWidth="60dp"
                 android:inputType="number" />
         </LinearLayout>
         <LinearLayout
@@ -116,8 +116,8 @@
                 android:id="@+id/warn_signal_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:minWidth="80dp"
+                android:imeOptions="actionNext"
+                android:minWidth="60dp"
                 android:inputType="number" />
             <TextView
                 android:layout_width="wrap_content"
@@ -130,8 +130,8 @@
                 android:id="@+id/device_signal_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:minWidth="80dp"
+                android:imeOptions="actionNext"
+                android:minWidth="60dp"
                 android:inputType="number" />
         </LinearLayout>
         <LinearLayout
@@ -150,8 +150,8 @@
                 android:id="@+id/warn_power_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:minWidth="80dp"
+                android:imeOptions="actionNext"
+                android:minWidth="60dp"
                 android:inputType="number" />
             <TextView
                 android:layout_width="wrap_content"
@@ -164,8 +164,8 @@
                 android:id="@+id/device_power_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:minWidth="80dp"
+                android:imeOptions="actionNext"
+                android:minWidth="60dp"
                 android:inputType="number" />
         </LinearLayout>
         <LinearLayout
@@ -184,8 +184,8 @@
                 android:id="@+id/device_buxiu_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:minWidth="80dp"
+                android:imeOptions="actionNext"
+                android:minWidth="60dp"
                 android:inputType="number" />
             <TextView
                 android:layout_width="wrap_content"
@@ -198,8 +198,8 @@
                 android:id="@+id/device_switch_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:minWidth="80dp"
+                android:imeOptions="actionNext"
+                android:minWidth="60dp"
                 android:inputType="number" />
         </LinearLayout>
     </LinearLayout>

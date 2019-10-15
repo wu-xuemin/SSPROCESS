@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.activity.InstallActualActivity">
     <LinearLayout
         android:id="@+id/actual_info_layout"
@@ -53,12 +54,19 @@
             <!--android:textColor="@color/black"/>-->
 
     </LinearLayout>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/install_actual_rv"
-        android:background="@color/cardview_light_background"
-        android:layout_width="match_parent"
+    <cn.bingoogolapple.refreshlayout.BGARefreshLayout
+        android:id="@+id/refreshLayout"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/actual_info_layout"
-        >
-    </android.support.v7.widget.RecyclerView>
-</android.support.constraint.ConstraintLayout>
+        android:layout_width="match_parent"
+        android:layout_weight="1">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/install_actual_rv"
+            android:background="@color/cardview_light_background"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            >
+        </android.support.v7.widget.RecyclerView>
+    </cn.bingoogolapple.refreshlayout.BGARefreshLayout>
+
+</LinearLayout>

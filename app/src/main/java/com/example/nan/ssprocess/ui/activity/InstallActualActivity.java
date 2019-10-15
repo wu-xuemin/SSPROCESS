@@ -11,8 +11,6 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -29,14 +27,21 @@ import com.example.nan.ssprocess.net.Network;
 import com.example.nan.ssprocess.util.ShowMessage;
 import com.google.gson.Gson;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 
-public class InstallActualActivity extends AppCompatActivity {
+import cn.bingoogolapple.refreshlayout.BGAMoocStyleRefreshViewHolder;
+import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
+
+public class InstallActualActivity extends AppCompatActivity implements BGARefreshLayout.BGARefreshLayoutDelegate{
 
     private static final String TAG = "nlg";
     private InstallActualAdapter mInstallActualAdapter;
     private ArrayList<InstallPlanData> mInstallPlanActualList = new ArrayList<>();
+    TextView machineCountTv;
+    private BGARefreshLayout mRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +52,7 @@ public class InstallActualActivity extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
         mInstallPlanActualList = (ArrayList<InstallPlanData>) bundle.getSerializable("mInstallPlanActualList");
 
-        TextView machineCountTv = findViewById(R.id.actual_machine_count);
+        machineCountTv = findViewById(R.id.actual_machine_count);
 //        TextView headCountTv = findViewById(R.id.actual_head_count);
         machineCountTv.setText(""+mInstallPlanActualList.size());
 //        int headCountSum = 0;
@@ -74,10 +79,22 @@ public class InstallActualActivity extends AppCompatActivity {
                 LinearLayout layout = (LinearLayout) View.inflate(InstallActualActivity.this, R.layout.dialog_install_actual, null);
                 final EditText headCountDoneEt = (EditText)layout.findViewById(R.id.head_count_done);
                 final EditText cmtFeedbackEt = (EditText)layout.findViewById(R.id.cmt_feedback);
+                final EditText pcWireEt = (EditText)layout.findViewById(R.id.pc_wire_num);
+                final EditText kouxianEt = (EditText)layout.findViewById(R.id.kouxian_num);
+                final EditText lightWireEt = (EditText)layout.findViewById(R.id.light_wire_num);
+                final EditText warnSignalEt = (EditText)layout.findViewById(R.id.warn_signal_num);
+                final EditText deviceSignalEt = (EditText)layout.findViewById(R.id.device_signal_num);
+                final EditText warnPowerEt = (EditText)layout.findViewById(R.id.warn_power_num);
+                final EditText devicePowerEt = (EditText)layout.findViewById(R.id.device_power_num);
+                final EditText deviceBuxiuEt = (EditText)layout.findViewById(R.id.device_buxiu_num);
+                final EditText deviceSwitchEt = (EditText)layout.findViewById(R.id.device_switch_num);
 
                 LinearLayout hanxianLL = layout.findViewById(R.id.hanxian_ll);
-                hanxianLL.setVisibility(View.GONE);
-
+                if (SinSimApp.getApp().getGroupName().equals("焊线组")) {
+                    hanxianLL.setVisibility(View.VISIBLE);
+                }else {
+                    hanxianLL.setVisibility(View.GONE);
+                }
                 TextView headCountTv = (TextView)layout.findViewById(R.id.head_count_tv);
 //                final int headCount = Integer.parseInt(mInstallPlanActualList.get(position).getHeadNum()) - mInstallPlanActualList.get(position).getHeadCountDone();
 //                headCountTv.setText(""+headCount);
@@ -101,9 +118,9 @@ public class InstallActualActivity extends AppCompatActivity {
                             if (msg.what == Network.OK) {
                                 ShowMessage.showToast(InstallActualActivity.this,"上传成功！",ShowMessage.MessageDuring.SHORT);
                                 mInstallPlanActualList.get(position).setHeadCountDone(Integer.parseInt(headCountDoneEt.getText().toString()) + mInstallPlanActualList.get(position).getHeadCountDone());
+                                //更新adapter
                                 mInstallActualAdapter.notifyDataSetChanged();
                             }else {
-//                                ShowMessage.showDialog(InstallActualActivity.this,"出错！请检查网络！");
                                 ShowMessage.showDialog(InstallActualActivity.this,msg.obj.toString());
                             }
                         }
@@ -113,13 +130,22 @@ public class InstallActualActivity extends AppCompatActivity {
                         try {
                             if (headCountDoneEt.getText().toString().length()<1){
                                 ShowMessage.showDialog(InstallActualActivity.this,"出错！请填写完整再上传！");
-//                            } else if (Integer.parseInt(headCountDoneEt.getText().toString()) > headCount){
-//                                ShowMessage.showDialog(InstallActualActivity.this,"出错！头数不能大于实际！");
                             }else {
                                 InstallActualData installActualData = new InstallActualData();
                                 installActualData.setHeadCountDone(headCountDoneEt.getText().toString());
                                 installActualData.setCmtFeedback(cmtFeedbackEt.getText().toString());
                                 installActualData.setInstallPlanId(mInstallPlanActualList.get(position).getId());
+                                if (SinSimApp.getApp().getGroupName().equals("焊线组")) {
+                                    installActualData.setPcWireNum(pcWireEt.getText().toString());
+                                    installActualData.setKouxianNum(kouxianEt.getText().toString());
+                                    installActualData.setLightWireNum(lightWireEt.getText().toString());
+                                    installActualData.setWarnSignalNum(warnSignalEt.getText().toString());
+                                    installActualData.setDeviceSignalNum(deviceSignalEt.getText().toString());
+                                    installActualData.setWarnPowerNum(warnPowerEt.getText().toString());
+                                    installActualData.setDevicePowerNum(devicePowerEt.getText().toString());
+                                    installActualData.setDeviceBuxiuNum(deviceBuxiuEt.getText().toString());
+                                    installActualData.setDeviceSwitchNum(deviceSwitchEt.getText().toString());
+                                }
                                 LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
                                 mPostValue.put("installPlanActual", "" + new Gson().toJson(installActualData));
                                 Log.d(TAG, "onClick: " + new Gson().toJson(installActualData));
@@ -135,6 +161,52 @@ public class InstallActualActivity extends AppCompatActivity {
                 installActualDialog.show();
             }
         });
+
+        mRefreshLayout = findViewById(R.id.refreshLayout);
+        mRefreshLayout.setDelegate(this);
+        // 设置下拉刷新和上拉加载更多的风格     参数1：应用程序上下文，参数2：是否具有上拉加载更多功能
+        BGAMoocStyleRefreshViewHolder moocStyleRefreshViewHolder = new BGAMoocStyleRefreshViewHolder(this, true);
+        moocStyleRefreshViewHolder.setOriginalImage(R.drawable.bga_refresh_moooc);
+        moocStyleRefreshViewHolder.setUltimateColor(R.color.colorAccent);
+        mRefreshLayout.setRefreshViewHolder(moocStyleRefreshViewHolder);
     }
 
+    @Override
+    public void onBGARefreshLayoutBeginRefreshing(BGARefreshLayout refreshLayout) {
+        Log.d(TAG, "onBGARefreshLayoutBeginRefreshing: 下划刷新");
+        LinkedHashMap<String, String> mPostValue2 = new LinkedHashMap<>();
+        mPostValue2.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
+        SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
+        Date date2 = new Date(System.currentTimeMillis());
+        mPostValue2.put("isNotFinished", "true");
+        mPostValue2.put("queryFinishTime", simpleDateFormat2.format(date2));
+
+        String fetchInstallPlanUrl2 = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
+        Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl2, mPostValue2, new FetchInstallActualHandler());
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class FetchInstallActualHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            mRefreshLayout.endRefreshing();
+            mRefreshLayout.endLoadingMore();
+            if (msg.what == Network.OK) {
+                ArrayList<InstallPlanData> installPlanActualList = (ArrayList<InstallPlanData>) msg.obj;
+                mInstallPlanActualList.clear();
+                mInstallPlanActualList.addAll(installPlanActualList);//直接赋值会被指向其他的地址，所以需要用list操作来实现更新
+                Log.d(TAG, "handleMessage: "+(new Gson().toJson(mInstallPlanActualList)));
+                machineCountTv.setText(""+mInstallPlanActualList.size());
+                //更新adapter
+                mInstallActualAdapter.notifyDataSetChanged();
+            } else {
+                ShowMessage.showDialog(InstallActualActivity.this,"网络出错了！");
+            }
+        }
+    }
+    @Override
+    public boolean onBGARefreshLayoutBeginLoadingMore(BGARefreshLayout refreshLayout) {
+        return false;
+    }
 }
