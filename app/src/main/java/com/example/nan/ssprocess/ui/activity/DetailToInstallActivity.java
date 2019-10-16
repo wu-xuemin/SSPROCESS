@@ -91,6 +91,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private ArrayAdapter<String> arrayAdapter;
     private ArrayList<AbnormalData> mAbnormalTypeList;
     private ArrayList<Integer> checkedNameList = new ArrayList<>();
+    private ArrayList<UserData> mInstallerList;
     private String checkedName;
 
     private final String IP = SinSimApp.getApp().getServerIP();
@@ -177,15 +178,94 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 fetchDownloadListData();
             }
         });
-
+        //获取安装工人信息
+        fetchInstallerListData();
         //点击选择安装工人
         chooseInstallerTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALLING) {
-                    fetchInstallerListData();
-                } else {
+                if(mTaskRecordMachineListData.getStatus() != SinSimApp.TASK_INSTALLING) {
                     ShowMessage.showToast(DetailToInstallActivity.this,"请在安装结束前进行安装人员选择！", ShowMessage.MessageDuring.SHORT);
+                }else {
+                    String[] items={};
+                    boolean[] checkedItemsArray = new boolean[mInstallerList.size()];
+                    for (int i=0;i<mInstallerList.size();i++){
+                        items = Arrays.copyOf(items, items.length+1);
+                        items[items.length-1] = mInstallerList.get(i).getName();
+                        //初始化是否选择的boolean数组
+                        checkedItemsArray[i] = false;
+                    }
+                    for (int i = 0; i < checkedNameList.size(); i++) {
+                        for (int j = 0; j < checkedItemsArray.length; j++) {
+                            if(checkedNameList.get(i) == j) {
+                                checkedItemsArray[j] = true;
+                            }
+                        }
+                    }
+
+                    // 创建一个AlertDialog建造者
+                    AlertDialog.Builder alertDialogBuilder= new AlertDialog.Builder(DetailToInstallActivity.this);
+                    // 设置标题
+                    alertDialogBuilder.setTitle("安装人员：");
+                    // 参数介绍
+                    // 第一个参数：弹出框的信息集合，一般为字符串集合
+                    // 第二个参数：被默认选中的，一个布尔类型的数组
+                    // 第三个参数：勾选事件监听
+                    final String[] finalItems = items;
+
+                    alertDialogBuilder.setMultiChoiceItems(items, checkedItemsArray, new DialogInterface.OnMultiChoiceClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                            // dialog：不常使用，弹出框接口
+                            // which：勾选或取消的是第几个
+                            // isChecked：是否勾选
+                            if (isChecked) {
+                                // 选中
+                                Log.d(TAG, "onClick: "+which);
+                                checkedNameList.add(which);
+                            }else {
+                                // 取消选中
+                                for (int i=0;i<checkedNameList.size();i++){
+                                    if (which==checkedNameList.get(i)){
+                                        checkedNameList.remove(i);
+                                        break;
+                                    }
+                                }
+                            }
+
+                        }
+                    });
+                    alertDialogBuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            checkedName="";
+                            for (int i=0;i<checkedNameList.size();i++){
+                                if(i != checkedNameList.size()-1) {
+                                    checkedName += finalItems[checkedNameList.get(i)]+", ";
+                                } else {
+                                    checkedName += finalItems[checkedNameList.get(i)];
+                                }
+                            }
+                            if(!"".equals(checkedName)) {
+                                chooseInstallerTv.setText(checkedName);
+                            }else {
+                                chooseInstallerTv.setText("选择人员");
+                            }
+                            // 关闭提示框
+                            mInstallerListDialog.dismiss();
+                        }
+                    });
+                    alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            // 关闭提示框
+                            mInstallerListDialog.dismiss();
+                        }
+                    });
+                    mInstallerListDialog = alertDialogBuilder.create();
+                    mInstallerListDialog.show();
                 }
             }
         });
@@ -265,8 +345,13 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
     public void onStopInstall(View view) {
         if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING) {
-            Intent intent = new Intent(DetailToInstallActivity.this, ScanQrcodeActivity.class);
-            startActivityForResult(intent, SCAN_QRCODE_END);
+            if (installNormalRb.isChecked() && ("".equals(checkedName) || checkedName==null)){
+                ShowMessage.showToast(DetailToInstallActivity.this,"请勾选安装人员！", ShowMessage.MessageDuring.SHORT);
+                return;
+            }else {
+                Intent intent = new Intent(DetailToInstallActivity.this, ScanQrcodeActivity.class);
+                startActivityForResult(intent, SCAN_QRCODE_END);
+            }
         }else {
             ShowMessage.showToast(DetailToInstallActivity.this,"正在 "+SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus())+" ，不能结束安装！", ShowMessage.MessageDuring.SHORT);
         }
@@ -545,88 +630,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         public void handleMessage(final Message msg) {
 
             if (msg.what == Network.OK) {
-                ArrayList<UserData> mInstallerList = (ArrayList<UserData>) msg.obj;
+                mInstallerList = (ArrayList<UserData>) msg.obj;
                 Log.d(TAG, "安装组人数: "+mInstallerList.size());
-                String[] items={};
-                boolean[] checkedItemsArray = new boolean[mInstallerList.size()];
-                for (int i=0;i<mInstallerList.size();i++){
-                    items = Arrays.copyOf(items, items.length+1);
-                    items[items.length-1] = mInstallerList.get(i).getName();
-                    //初始化是否选择的boolean数组
-                    checkedItemsArray[i] = false;
-                }
-                for (int i = 0; i < checkedNameList.size(); i++) {
-                    for (int j = 0; j < checkedItemsArray.length; j++) {
-                        if(checkedNameList.get(i) == j) {
-                            checkedItemsArray[j] = true;
-                        }
-                    }
-                }
-
-                // 创建一个AlertDialog建造者
-                AlertDialog.Builder alertDialogBuilder= new AlertDialog.Builder(DetailToInstallActivity.this);
-                // 设置标题
-                alertDialogBuilder.setTitle("安装人员：");
-                // 参数介绍
-                // 第一个参数：弹出框的信息集合，一般为字符串集合
-                // 第二个参数：被默认选中的，一个布尔类型的数组
-                // 第三个参数：勾选事件监听
-                final String[] finalItems = items;
-
-                alertDialogBuilder.setMultiChoiceItems(items, checkedItemsArray, new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        // dialog：不常使用，弹出框接口
-                        // which：勾选或取消的是第几个
-                        // isChecked：是否勾选
-                        if (isChecked) {
-                            // 选中
-                            Log.d(TAG, "onClick: "+which);
-                            checkedNameList.add(which);
-                        }else {
-                            // 取消选中
-                            for (int i=0;i<checkedNameList.size();i++){
-                                if (which==checkedNameList.get(i)){
-                                    checkedNameList.remove(i);
-                                    break;
-                                }
-                            }
-                        }
-
-                    }
-                });
-                alertDialogBuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        checkedName="";
-                        for (int i=0;i<checkedNameList.size();i++){
-                            if(i != checkedNameList.size()-1) {
-                                checkedName += finalItems[checkedNameList.get(i)]+", ";
-                            } else {
-                                checkedName += finalItems[checkedNameList.get(i)];
-                            }
-                        }
-                        if(!"".equals(checkedName)) {
-                            chooseInstallerTv.setText(checkedName);
-                        }else {
-                            chooseInstallerTv.setText("选择人员");
-                        }
-                        // 关闭提示框
-                        mInstallerListDialog.dismiss();
-                    }
-                });
-                alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        // 关闭提示框
-                        mInstallerListDialog.dismiss();
-                    }
-                });
-                mInstallerListDialog = alertDialogBuilder.create();
-                mInstallerListDialog.show();
-
         } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "FetchInstalerListHandler handleMessage: "+errorMsg);
@@ -836,6 +841,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     installAbnormalSolutionButton.setVisibility(View.GONE);
                     installAbnormalRb.setEnabled(true);
                     installNormalRb.setEnabled(true);
+                    noteLayout.setVisibility(View.VISIBLE);
                 } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED){
                     ShowMessage.showDialog(DetailToInstallActivity.this,"安装完成！");
                     installStartButton.setVisibility(View.GONE);
@@ -920,12 +926,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
         //读取和更新输入信息
         if(installNormalRb.isChecked()){
-            if ("".equals(checkedName) || checkedName==null){
-                ShowMessage.showToast(DetailToInstallActivity.this,"请勾选安装人员！", ShowMessage.MessageDuring.SHORT);
-                return;
-            }else {
-                mTaskRecordMachineListData.setWorkerList(checkedName);
-            }
+            mTaskRecordMachineListData.setWorkerList(checkedName);
             mTaskRecordMachineListData.setCmtFeedback(noteEt.getText().toString());
 
             mTaskRecordMachineListData.setInstallEndTime(strCurTime);

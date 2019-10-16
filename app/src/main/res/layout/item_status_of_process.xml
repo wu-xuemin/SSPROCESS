@@ -64,6 +64,8 @@
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:layout_weight="1"
+                        android:singleLine="true"
+                        android:ellipsize="end"
                         android:layout_gravity="center_vertical"
                         android:hint="工序名称"
                         android:gravity="bottom" />

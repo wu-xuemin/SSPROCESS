@@ -58,7 +58,8 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
 //                itemView.headCountDoneTv.setTextColor(Color.RED);
 //            }
             itemView.headCountDoneTv.setText(""+mInstallPlanAdapter.get(position).getHeadCountDone());
-
+            itemView.cmdInfoTv.setText(""+mInstallPlanAdapter.get(position).getCmtSend());
+            itemView.cmdInfoTv.setSelected(true);//用于滚动显示
 
             itemView.installPlanLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -93,6 +94,7 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
         TextView nameplateTv;
         TextView headNumberTv;
         TextView headCountDoneTv;
+        TextView cmdInfoTv;
 
         ItemView(View itemView) {
             super(itemView);
@@ -101,6 +103,7 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
             nameplateTv = itemView.findViewById(R.id.nameplate_tv);
             headNumberTv = itemView.findViewById(R.id.head_number_tv);
             headCountDoneTv = itemView.findViewById(R.id.head_count_done_tv);
+            cmdInfoTv = itemView.findViewById(R.id.cmd_info);
         }
     }
     public void setProcessList(ArrayList<InstallPlanData> list) {
