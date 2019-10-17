@@ -47,6 +47,7 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
             itemView.orderNumberTv.setText(mInstallPlanAdapter.get(position).getOrderNum());
             itemView.nameplateTv.setText(mInstallPlanAdapter.get(position).getNameplate());
             itemView.headNumberTv.setText(mInstallPlanAdapter.get(position).getHeadNum());
+            itemView.needleNumbleTv.setText(mInstallPlanAdapter.get(position).getNeedleNum());
 //            if (mInstallPlanAdapter.get(position).getHeadCountDone() < Integer.parseInt(mInstallPlanAdapter.get(position).getHeadNum())){
 //                itemView.headCountDoneTv.setText(""+mInstallPlanAdapter.get(position).getHeadCountDone());
 //                itemView.headCountDoneTv.setTextColor(Color.RED);
@@ -95,6 +96,7 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
         TextView headNumberTv;
         TextView headCountDoneTv;
         TextView cmdInfoTv;
+        TextView needleNumbleTv;
 
         ItemView(View itemView) {
             super(itemView);
@@ -104,6 +106,7 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
             headNumberTv = itemView.findViewById(R.id.head_number_tv);
             headCountDoneTv = itemView.findViewById(R.id.head_count_done_tv);
             cmdInfoTv = itemView.findViewById(R.id.cmd_info);
+            needleNumbleTv = itemView.findViewById(R.id.needle_numble);
         }
     }
     public void setProcessList(ArrayList<InstallPlanData> list) {
