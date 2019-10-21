@@ -44,6 +44,7 @@ public class LoginResponseData {
 
     public static class LoginGroup {
         private String groupName;
+        private String type;
         private int id;
 
         public String getGroupName() {
@@ -52,6 +53,10 @@ public class LoginResponseData {
 
         public int getId() {
             return id;
+        }
+
+        public String getType() {
+            return type;
         }
     }
 

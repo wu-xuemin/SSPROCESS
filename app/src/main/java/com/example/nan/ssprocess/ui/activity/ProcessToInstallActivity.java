@@ -308,37 +308,36 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        LinkedHashMap<String, String> mPostValue;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
+        Date date;
         switch (item.getItemId()) {
             case R.id.plan:
-                LinkedHashMap<String, String> mPostValue1 = new LinkedHashMap<>();
-                mPostValue1.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
-                SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
+                mPostValue = new LinkedHashMap<>();
+                mPostValue.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
                 Calendar c = Calendar.getInstance();
                 c.add(Calendar.DAY_OF_MONTH,1);
-                String tomorrow = simpleDateFormat1.format(c.getTime());
+                String tomorrow = simpleDateFormat.format(c.getTime());
                 Log.d(TAG, "onCreate: "+tomorrow);
-                mPostValue1.put("queryStartTime", tomorrow);
-                mPostValue1.put("queryFinishTime", tomorrow);
+                mPostValue.put("queryStartTime", tomorrow);
 
                 String fetchInstallPlanUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
-                Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl, mPostValue1, new FetchInstallPlanHandler());
+                Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl, mPostValue, new FetchInstallPlanHandler());
                 break;
             case R.id.plan_actual:
-                LinkedHashMap<String, String> mPostValue2 = new LinkedHashMap<>();
-                mPostValue2.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
-                SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
-                Date date2 = new Date(System.currentTimeMillis());
-                mPostValue2.put("isNotFinished", "true");
-                mPostValue2.put("queryFinishTime", simpleDateFormat2.format(date2));
+                mPostValue = new LinkedHashMap<>();
+                mPostValue.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
+                date = new Date(System.currentTimeMillis());
+                mPostValue.put("isNotFinished", "true");
+                mPostValue.put("queryFinishTime", simpleDateFormat.format(date));
 
                 String fetchInstallPlanUrl2 = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
-                Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl2, mPostValue2, new FetchInstallActualHandler());
+                Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl2, mPostValue, new FetchInstallActualHandler());
                 break;
             case R.id.attendance_settings:
-                LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                mPostValue = new LinkedHashMap<>();
                 mPostValue.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
-                Date date = new Date(System.currentTimeMillis());
+                date = new Date(System.currentTimeMillis());
                 mPostValue.put("queryStartTime", simpleDateFormat.format(date));
                 mPostValue.put("queryFinishTime", simpleDateFormat.format(date));
                 String fetchAttendanceUrl = URL.HTTP_HEAD + IP + URL.FATCH_ATTENDANCE;

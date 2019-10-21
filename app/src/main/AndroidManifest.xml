@@ -121,12 +121,15 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.InstallPlanActivity"
-            android:label="明日计划"
+            android:label="后续计划"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.InstallActualActivity"
             android:label="今日完成"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.activity.MenuActivity"
+            android:label="部装"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

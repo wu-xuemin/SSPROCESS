@@ -233,21 +233,26 @@ public class SplashActivity extends AppCompatActivity implements EasyPermissions
     }
 
     private void startActivityByRole() {
+        Intent it = new Intent();
+
         if (SinSimApp.LOGIN_FOR_ADMIN == SinSimApp.getApp().getRole()) {
-            Intent it = new Intent();
             it.setClass(SplashActivity.this, ProcessToAdminActivity.class);
             startActivity(it);
             finish();
         } else if (SinSimApp.LOGIN_FOR_QA == SinSimApp.getApp().getRole()) {
-            Intent it2 = new Intent();
-            it2.setClass(SplashActivity.this, ProcessToCheckoutActivity.class);
-            startActivity(it2);
+            it.setClass(SplashActivity.this, ProcessToCheckoutActivity.class);
+            startActivity(it);
             finish();
         } else if (SinSimApp.LOGIN_FOR_INSTALL == SinSimApp.getApp().getRole()) {
-            Intent it3 = new Intent();
-            it3.setClass(SplashActivity.this, ProcessToInstallActivity.class);
-            startActivity(it3);
-            finish();
+            if (SinSimApp.getApp().getGroupType().equals("部装")){
+                it.setClass(SplashActivity.this, MenuActivity.class);
+                startActivity(it);
+                finish();
+            }else {
+                it.setClass(SplashActivity.this, ProcessToInstallActivity.class);
+                startActivity(it);
+                finish();
+            }
         } else {
             Toast.makeText(SplashActivity.this, "您无权限操作!", Toast.LENGTH_SHORT).show();
             jumpToLoginAct();
