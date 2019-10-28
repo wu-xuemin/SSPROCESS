@@ -116,8 +116,10 @@ public class MyMqttService extends Service {
                         //质检员接受消息
                         if(topic != null) {
                             if(topic.equals(TOPIC_TO_QA + SinSimApp.getApp().getAppUserId())) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToCheckoutActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                notificationUtils.sendNotification("待质检", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_TO_QA,9);
+                                notificationUtils.sendNotification("待质检", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_TO_QA,9,pi);
 
 //                                Intent intent = new Intent(MyMqttService.this, ProcessToCheckoutActivity.class);
 //                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
@@ -134,8 +136,10 @@ public class MyMqttService extends Service {
 //                                        .build();
 //                                mNotificationManager.notify(9,notify);
                             } else if(topic.equals(TOPIC_QA_ABNORMAL_RESOLVE + SinSimApp.getApp().getAppUserId())) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToCheckoutActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                notificationUtils.sendNotification("质检异常解决", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_QA_ABNORMAL_RESOLVE,2);
+                                notificationUtils.sendNotification("质检异常解决", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_QA_ABNORMAL_RESOLVE,2, pi);
 
 //                                Intent intent = new Intent(MyMqttService.this, ProcessToCheckoutActivity.class);
 //                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
@@ -152,8 +156,10 @@ public class MyMqttService extends Service {
 //                                        .build();
 //                                mNotificationManager.notify(2,notify);
                             }else if(topic.equals(TOPIC_INSTALL_ABNORMAL_TO_QUALITY + SinSimApp.getApp().getAppUserId())) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToCheckoutActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                notificationUtils.sendNotification("安装异常", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_INSTALL_ABNORMAL_TO_QUALITY,13);
+                                notificationUtils.sendNotification("安装异常", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_INSTALL_ABNORMAL_TO_QUALITY,13,pi);
 
 //                                Intent intent = new Intent(MyMqttService.this, ProcessToCheckoutActivity.class);
 //                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
@@ -175,8 +181,10 @@ public class MyMqttService extends Service {
                         //生产部管理员接受消息
                         if(topic != null) {
                             if(topic.contains(TOPIC_TO_NEXT_INSTALL)) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                notificationUtils.sendNotification("待安装", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_TO_NEXT_INSTALL,3);
+                                notificationUtils.sendNotification("待安装", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_TO_NEXT_INSTALL,3, pi);
 
 //                                Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
 //                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
@@ -193,8 +201,10 @@ public class MyMqttService extends Service {
 //                                        .build();
 //                                mNotificationManager.notify(3,notify);
                             }else if(topic.contains(TOPIC_INSTALL_ABNORMAL_RESOLVE)) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                notificationUtils.sendNotification("安装异常解决", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_INSTALL_ABNORMAL_RESOLVE,4);
+                                notificationUtils.sendNotification("安装异常解决", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_INSTALL_ABNORMAL_RESOLVE,4,pi);
 
 //                                Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
 //                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
@@ -211,8 +221,10 @@ public class MyMqttService extends Service {
 //                                        .build();
 //                                mNotificationManager.notify(4,notify);
                             }else if(topic.contains(TOPIC_QA_ABNORMAL_RESOLVE)) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                notificationUtils.sendNotification("质检异常解决", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_QA_ABNORMAL_RESOLVE,14);
+                                notificationUtils.sendNotification("质检异常解决", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_QA_ABNORMAL_RESOLVE,14,pi);
 
 //                                Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
 //                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
@@ -245,7 +257,7 @@ public class MyMqttService extends Service {
                                 }
                                 if(title != null) {
                                     NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                    notificationUtils.sendNotification(title, "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_MACHINE_STATUS_CHANGE,5);
+                                    notificationUtils.sendNotification(title, "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_MACHINE_STATUS_CHANGE,5,pi);
 
 //                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_MACHINE_STATUS_CHANGE);
 //                                    Notification notify = builder.setSmallIcon(iconId)
@@ -261,8 +273,10 @@ public class MyMqttService extends Service {
 //                                    mNotificationManager.notify(5,notify);
                                 }
                             } else if(topic.contains(TOPIC_INSTALL_ABNORMAL)) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                notificationUtils.sendNotification("安装异常", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_INSTALL_ABNORMAL,10);
+                                notificationUtils.sendNotification("安装异常", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_INSTALL_ABNORMAL,10,pi);
 
 //                                Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
 //                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
@@ -279,8 +293,10 @@ public class MyMqttService extends Service {
 //                                        .build();
 //                                mNotificationManager.notify(10,notify);
                             }else if(topic.contains(TOPIC_QUALITY_ABNORMAL)) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                notificationUtils.sendNotification("质检异常", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_QUALITY_ABNORMAL,11);
+                                notificationUtils.sendNotification("质检异常", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_QUALITY_ABNORMAL,11,pi);
 
 //                                Intent intent = new Intent(MyMqttService.this, ProcessToAdminActivity.class);
 //                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
@@ -302,8 +318,10 @@ public class MyMqttService extends Service {
                         //安装组长接受消息
                         if(topic != null) {
                             if(topic.equals(TOPIC_TO_NEXT_INSTALL + SinSimApp.getApp().getGroupId())) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                notificationUtils.sendNotification("待安装", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_TO_NEXT_INSTALL,6);
+                                notificationUtils.sendNotification("待安装", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_TO_NEXT_INSTALL,6,pi);
 
 //                                Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
 //                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
@@ -320,8 +338,10 @@ public class MyMqttService extends Service {
 //                                        .build();
 //                                mNotificationManager.notify(6,notify);
                             }else if(topic.equals(TOPIC_INSTALL_ABNORMAL_RESOLVE + SinSimApp.getApp().getGroupId())) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                notificationUtils.sendNotification("安装异常解决", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_INSTALL_ABNORMAL_RESOLVE,7);
+                                notificationUtils.sendNotification("安装异常解决", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_INSTALL_ABNORMAL_RESOLVE,7,pi);
 
 //                                Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
 //                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
@@ -355,7 +375,7 @@ public class MyMqttService extends Service {
                                 Log.d(TAG, "messageArrived: "+title);
                                 if(title != null) {
                                     NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                    notificationUtils.sendNotification(title, "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_MACHINE_STATUS_CHANGE,8);
+                                    notificationUtils.sendNotification(title, "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_MACHINE_STATUS_CHANGE,8,pi);
 
 //                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(MyMqttService.this, TOPIC_MACHINE_STATUS_CHANGE);
 //                                    Notification notify = builder.setSmallIcon(iconId)
@@ -371,8 +391,10 @@ public class MyMqttService extends Service {
 //                                    mNotificationManager.notify(8,notify);
                                 }
                             }else if(topic.equals(TOPIC_QUALITY_ABNORMAL + SinSimApp.getApp().getGroupId())) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                notificationUtils.sendNotification("质检异常", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_QUALITY_ABNORMAL,12);
+                                notificationUtils.sendNotification("质检异常", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_QUALITY_ABNORMAL,12,pi);
 
 //                                Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
 //                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
@@ -389,11 +411,15 @@ public class MyMqttService extends Service {
 //                                        .build();
 //                                mNotificationManager.notify(12,notify);
                             }else if(topic.equals(TOPIC_INSTALL_PLAN + SinSimApp.getApp().getGroupId())) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                notificationUtils.sendNotification("排班计划", "后续排班计划已送达！", TOPIC_INSTALL_PLAN,16);
+                                notificationUtils.sendNotification("排班计划", "后续排班计划已送达！", TOPIC_INSTALL_PLAN,16,pi);
                             }else if(topic.equals(TOPIC_TASK_REMIND + SinSimApp.getApp().getGroupId())) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                notificationUtils.sendNotification("漏扫提醒", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_TASK_REMIND,17);
+                                notificationUtils.sendNotification("漏扫提醒", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_TASK_REMIND,17,pi);
                             }
                         }
                     }
@@ -447,8 +473,9 @@ public class MyMqttService extends Service {
 
         Intent intent = new Intent(this, SplashActivity.class);
         intent.putExtra(SinSimApp.FROM_NOTIFICATION, true);
+        PendingIntent pi = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-        notificationUtils.sendNotification("浙江信胜", "作业流程管理系统", "浙江信胜",1);
+        notificationUtils.sendNotification("浙江信胜", "作业流程管理系统", "浙江信胜",1,pi);
 
         //这边设置“FLAG_UPDATE_CURRENT”是为了让后面的Activity接收pendingIntent中Extra的数据
 //        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
