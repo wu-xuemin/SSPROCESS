@@ -104,7 +104,7 @@ public class NotificationUtil extends ContextWrapper {
                 //设置LED闪烁
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setTicker(content)
-                .setNumber(10)
+                .setNumber(1)
                 .setAutoCancel(true);
     }
 
