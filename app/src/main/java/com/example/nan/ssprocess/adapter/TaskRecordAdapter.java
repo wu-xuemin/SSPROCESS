@@ -134,6 +134,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
                 itemView.processStateTv.setBackgroundResource(R.drawable.textview_tag_red);
             } else if (daySum < 0) {
                 itemView.planShipDateTv.setText("超期");
+                itemView.taskStatusIv.setImageResource(R.mipmap.install_over_time);
                 itemView.processStateTv.setBackgroundResource(R.drawable.textview_tag_red);
             } else if (daySum < 3) {
                 itemView.planShipDateTv.setText("临期");
