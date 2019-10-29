@@ -367,7 +367,7 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 Log.d(TAG, "handleMessage: "+(new Gson().toJson(mInstallPlanList)));
 
                 if (mInstallPlanList.size()<1){
-                    ShowMessage.showDialog(ProcessToInstallActivity.this,"尚未安排明日计划！");
+                    ShowMessage.showDialog(ProcessToInstallActivity.this,"尚未安排后续计划！");
                 }else {
                     Intent intent=new Intent(ProcessToInstallActivity.this,InstallPlanActivity.class);
                     Bundle bundle = new Bundle();
