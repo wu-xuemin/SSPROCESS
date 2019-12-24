@@ -142,7 +142,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         //获取传递过来的信息
         Intent intent = getIntent();
         mTaskRecordMachineListData = (TaskRecordMachineListData) intent.getSerializableExtra("mTaskRecordMachineListData");
-        Log.d(TAG, "onCreate: heheh :"+mTaskRecordMachineListData);
 
         //把数据填入相应位置
         orderNumberTv.setText(mTaskRecordMachineListData.getMachineOrderData().getOrderNum());

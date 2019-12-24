@@ -64,7 +64,7 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
     private BGARefreshLayout mRefreshLayout;
 
     final String IP = SinSimApp.getApp().getServerIP();
-    private ArrayList<TaskRecordMachineListData> mScanResultList = new ArrayList<>();
+    private ArrayList<TaskRecordMachineListData> mScanResultList;
     private String mMachineNamePlate = "";
     private AttendanceData mAttendanceData;
     private boolean mAttendanceFlag;
@@ -244,7 +244,7 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 } else {
                     Gson gson = new Gson();
                     ArrayList<TaskNodeData> taskNodeDataArrayList = gson.fromJson(processMachineList.get(0).getNodeData(), new TypeToken<ArrayList<TaskNodeData>>(){}.getType());
-                    Log.d(TAG, "handleMessage: " + gson.toJson(taskNodeDataArrayList));
+                    Log.d(TAG, "taskNodeDataArrayList: " + gson.toJson(taskNodeDataArrayList));
                     ArrayList<TaskNodeData> currentTaskList = new ArrayList<>();
                     int taskStatus = 0;
                     for (int index = 2; index < taskNodeDataArrayList.size() - 2; index++){//去掉开始和结束
@@ -257,8 +257,8 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                         ShowMessage.showDialog(ProcessToInstallActivity.this,"该机器不在安装流程中！");
                     }else {
                         Intent intent = new Intent(ProcessToInstallActivity.this, ScanResultActivity.class);
-                        intent.putExtra("currentTaskList", (Serializable) currentTaskList);
-                        intent.putExtra("mScanResultList", (Serializable) mScanResultList);
+                        intent.putExtra("currentTaskList", (Serializable) currentTaskList);//机器当前的安装步骤
+                        intent.putExtra("mScanResultList", (Serializable) mScanResultList);//当前机器的信息，如果不在当前用户的安装列表中，则为空
                         intent.putExtra("mMachineNamePlate", mMachineNamePlate);
                         startActivity(intent);
                     }
@@ -278,7 +278,8 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
             case SCAN_QRCODE_START:
                 if (resultCode == RESULT_OK)
                 {
-                    // 取出Intent里的扫码结果去执行机器查找
+                    mScanResultList = new ArrayList<TaskRecordMachineListData>();
+                    // 取出Intent里的扫码结果去当前安装组的待执行机器列表里面查找
                     mMachineNamePlate = data.getStringExtra("mMachineNamePlate");
                     Log.d(TAG, "onActivityResult: "+mMachineNamePlate);
                     for (int i=0;i<mProcessToInstallPlanList.size();i++){

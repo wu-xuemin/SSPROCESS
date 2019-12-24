@@ -41,13 +41,15 @@ import java.util.LinkedHashMap;
 public class ScanResultActivity extends AppCompatActivity {
 
     private static String TAG = "nlgScanResultActivity";
-    private ScanResultAdapter mScanResultAdapter;
     private TaskRecordMachineListData mTaskRecordMachineListData;
     private int iTaskRecordMachineListDataStatusTemp;
     private AlertDialog mInstallDialog=null;
     private AlertDialog mQaDialog=null;
     private ProgressDialog mUpdatingProcessDialog;
 
+    private ArrayList<TaskNodeData> currentTaskList;
+    private ArrayList<TaskRecordMachineListData> mScanResultList;
+    private String mMachineNamePlate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,9 +63,9 @@ public class ScanResultActivity extends AppCompatActivity {
 
         //获取传递过来的信息
         Intent intent = getIntent();
-        final ArrayList<TaskNodeData> currentTaskList = (ArrayList<TaskNodeData>) intent.getSerializableExtra("currentTaskList");
-        final ArrayList<TaskRecordMachineListData> mScanResultList = (ArrayList<TaskRecordMachineListData>) intent.getSerializableExtra("mScanResultList");
-        final String mMachineNamePlate = intent.getStringExtra("mMachineNamePlate");
+        currentTaskList = (ArrayList<TaskNodeData>) intent.getSerializableExtra("currentTaskList");//机器当前的安装步骤
+        mScanResultList = (ArrayList<TaskRecordMachineListData>) intent.getSerializableExtra("mScanResultList");//当前机器的信息，如果不在当前用户的安装列表中，则为空
+        mMachineNamePlate = intent.getStringExtra("mMachineNamePlate");//机器编号
 
         TextView nameplateTv = findViewById(R.id.nameplate_tv);
         nameplateTv.setText(mMachineNamePlate);
@@ -74,15 +76,17 @@ public class ScanResultActivity extends AppCompatActivity {
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mScanResultRv.setLayoutManager(manager);
         mScanResultRv.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
-        mScanResultAdapter = new ScanResultAdapter(currentTaskList);
+        ScanResultAdapter mScanResultAdapter = new ScanResultAdapter(currentTaskList);
         mScanResultRv.setAdapter(mScanResultAdapter);
         //点击跳转，把所有接收到的数据传递给下一个activity
         mScanResultAdapter.setOnItemClickListener(new ScanResultAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(final int position) {
-                if (mScanResultList.isEmpty() || mScanResultList.size() < 1) {
+                if (mScanResultList.isEmpty()) {
+                    //TODO:发送信息
                     ShowMessage.showToast(ScanResultActivity.this, "无权操作该工序！", ShowMessage.MessageDuring.SHORT);
                 } else {
+                    mScanResultList.size();
                     boolean isTaskOwner = false;
                     for (int index=0;index<mScanResultList.size();index++){
                         if (currentTaskList.get(position).getText().equals(mScanResultList.get(index).getTaskName())) {
@@ -92,6 +96,7 @@ public class ScanResultActivity extends AppCompatActivity {
                         }
                     }
                     if (!isTaskOwner){
+                        //TODO:发送信息
                         ShowMessage.showToast(ScanResultActivity.this, "无权操作该工序！", ShowMessage.MessageDuring.SHORT);
                     }else {
                         Log.d(TAG, "onItemClick: gson :" + new Gson().toJson(mTaskRecordMachineListData));
