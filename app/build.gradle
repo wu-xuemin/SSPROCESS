@@ -16,6 +16,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    android.applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                //在这里修改apk文件名
+                outputFileName = "Sinsim-${variant.name}-v${variant.versionName}.apk"
+            }
+    }
 }
 
 dependencies {
@@ -35,7 +42,7 @@ dependencies {
     implementation 'cn.bingoogolapple:bga-refreshlayout:1.1.8@aar'
     //二维码
     implementation 'pub.devrel:easypermissions:1.0.1'
-    implementation 'com.google.zxing:core:3.3.0'
+    implementation 'com.google.zxing:core:3.3.3'
     implementation 'cn.bingoogolapple:bga-qrcodecore:1.1.9@aar'
     implementation 'cn.bingoogolapple:bga-zxing:1.1.9@aar'
     //九宫格

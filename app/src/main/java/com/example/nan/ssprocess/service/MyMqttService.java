@@ -588,6 +588,8 @@ public class MyMqttService extends Service {
         try {
             if(mqttAndroidClient!=null){
                 mqttAndroidClient.disconnect();
+                mqttAndroidClient.unregisterResources();
+                mqttAndroidClient.close();
             }
         } catch (MqttException e) {
             e.printStackTrace();

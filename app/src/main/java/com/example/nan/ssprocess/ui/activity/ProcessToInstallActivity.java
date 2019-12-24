@@ -66,6 +66,8 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
     final String IP = SinSimApp.getApp().getServerIP();
     private ArrayList<TaskRecordMachineListData> mScanResultList = new ArrayList<>();
     private String mMachineNamePlate = "";
+    private AttendanceData mAttendanceData;
+    private boolean mAttendanceFlag;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -312,7 +314,7 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
         Date date;
         switch (item.getItemId()) {
-            case R.id.plan:
+            case R.id.plan://后续计划
                 mPostValue = new LinkedHashMap<>();
                 mPostValue.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
                 Calendar c = Calendar.getInstance();
@@ -324,7 +326,7 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 String fetchInstallPlanUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
                 Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl, mPostValue, new FetchInstallPlanHandler());
                 break;
-            case R.id.plan_actual:
+            case R.id.plan_actual://今日完成
                 mPostValue = new LinkedHashMap<>();
                 mPostValue.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
                 date = new Date(System.currentTimeMillis());
@@ -334,7 +336,8 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 String fetchInstallPlanUrl2 = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
                 Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl2, mPostValue, new FetchInstallActualHandler());
                 break;
-            case R.id.attendance_settings:
+            case R.id.attendance_settings://考勤信息
+                mAttendanceData = new AttendanceData();
                 mPostValue = new LinkedHashMap<>();
                 mPostValue.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
                 date = new Date(System.currentTimeMillis());
@@ -409,8 +412,29 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 Log.d(TAG, "handleMessage: "+(new Gson().toJson(msg.obj)));
                 ArrayList<AttendanceData> attendanceDataArrayList = (ArrayList<AttendanceData>) msg.obj;
                 if (attendanceDataArrayList.size()>0){
-                    ShowMessage.showDialog(ProcessToInstallActivity.this,"今天传过考勤了！");
+                    mAttendanceData = attendanceDataArrayList.get(0);
+                    mAttendanceFlag = true;
+                    AlertDialog continueDialog = new AlertDialog.Builder(ProcessToInstallActivity.this).create();
+                    continueDialog.setTitle("考勤");
+                    continueDialog.setMessage("今天传过考勤了");
+                    continueDialog.setButton(AlertDialog.BUTTON_POSITIVE,"重新上传", new DialogInterface.OnClickListener(){
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                            mPostValue.put("id", "" + SinSimApp.getApp().getAppUserId());
+                            String fetchInstallerListUrl = URL.HTTP_HEAD + IP + URL.FATCH_GROUP_BY_USERID;
+                            Network.Instance(SinSimApp.getApp()).fetchInstallerList(fetchInstallerListUrl, mPostValue, new FetchInstallerGroupHandler());
+                        }
+                    });
+                    continueDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"取消", new DialogInterface.OnClickListener(){
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    continueDialog.show();
+//                    ShowMessage.showDialog(ProcessToInstallActivity.this,"今天传过考勤了！");
                 }else {
+                    mAttendanceFlag = false;
                     LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
                     mPostValue.put("id", "" + SinSimApp.getApp().getAppUserId());
                     String fetchInstallerListUrl = URL.HTTP_HEAD + IP + URL.FATCH_GROUP_BY_USERID;
@@ -435,11 +459,17 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 final EditText editTextOp = (EditText)layout.findViewById(R.id.overtime_population);
                 final EditText editTextLp = (EditText)layout.findViewById(R.id.leave_population);
                 final EditText editTextTwp = (EditText)layout.findViewById(R.id.tomorrow_work_population);
-                final AttendanceData attendanceData = new AttendanceData();
+                
                 attendanceSettingDialog = new AlertDialog.Builder(ProcessToInstallActivity.this).create();
                 attendanceSettingDialog.setTitle("考勤信息");
                 attendanceSettingDialog.setView(layout);
                 textViewTp.setText(String.valueOf(mInstallerList.size()));
+                if (mAttendanceFlag){
+                    editTextWp.setText(mAttendanceData.getAttendanceMember());
+                    editTextOp.setText(mAttendanceData.getOvertimeMember());
+                    editTextLp.setText(mAttendanceData.getAbsenceMember());
+                    editTextTwp.setText(mAttendanceData.getAttendanceTomorrow());
+                }
                 attendanceSettingDialog.setButton(AlertDialog.BUTTON_POSITIVE, "上传", new DialogInterface.OnClickListener() {
                     class CreateAttendenceHandler extends Handler {
                         @Override
@@ -469,17 +499,22 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                                     ){
                                 ShowMessage.showDialog(ProcessToInstallActivity.this,"出错！人数不能大于实际人数！");
                             }else {
-                                attendanceData.setAttendanceMember(editTextWp.getText().toString());
-                                attendanceData.setOvertimeMember(editTextOp.getText().toString());
-                                attendanceData.setAbsenceMember(editTextLp.getText().toString());
-                                attendanceData.setAttendanceTomorrow(editTextTwp.getText().toString());
-                                attendanceData.setUserId(SinSimApp.getApp().getAppUserId());
-                                attendanceData.setInstallGroupId(SinSimApp.getApp().getGroupId());
+                                mAttendanceData.setAttendanceMember(editTextWp.getText().toString());
+                                mAttendanceData.setOvertimeMember(editTextOp.getText().toString());
+                                mAttendanceData.setAbsenceMember(editTextLp.getText().toString());
+                                mAttendanceData.setAttendanceTomorrow(editTextTwp.getText().toString());
+                                mAttendanceData.setUserId(SinSimApp.getApp().getAppUserId());
+                                mAttendanceData.setInstallGroupId(SinSimApp.getApp().getGroupId());
 
                                 LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                                mPostValue.put("attendance", new Gson().toJson(attendanceData));
-                                String createAttendenceUrl = URL.HTTP_HEAD + IP + URL.CREATE_ATTENDANCE;
-                                Network.Instance(SinSimApp.getApp()).updateProcessRecordData(createAttendenceUrl, mPostValue, new CreateAttendenceHandler());
+                                mPostValue.put("attendance", new Gson().toJson(mAttendanceData));
+                                if (mAttendanceFlag) {
+                                    String updateAttendenceUrl = URL.HTTP_HEAD + IP + URL.UPDATE_ATTENDANCE;
+                                    Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateAttendenceUrl, mPostValue, new CreateAttendenceHandler());
+                                }else{
+                                    String createAttendenceUrl = URL.HTTP_HEAD + IP + URL.CREATE_ATTENDANCE;
+                                    Network.Instance(SinSimApp.getApp()).updateProcessRecordData(createAttendenceUrl, mPostValue, new CreateAttendenceHandler());
+                                }
                             }
                         } catch (Exception e) {
                             e.printStackTrace();

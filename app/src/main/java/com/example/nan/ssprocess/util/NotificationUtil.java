@@ -86,7 +86,7 @@ public class NotificationUtil extends ContextWrapper {
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentIntent(pi)
                 .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
-                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setAutoCancel(true);
     }
 
@@ -102,7 +102,7 @@ public class NotificationUtil extends ContextWrapper {
                 //设置默认的三色灯与振动器
                 .setDefaults(Notification.DEFAULT_LIGHTS)
                 //设置LED闪烁
-                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setTicker(content)
                 .setNumber(1)
                 .setAutoCancel(true);
