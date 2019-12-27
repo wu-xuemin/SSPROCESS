@@ -1,6 +1,7 @@
 package com.example.nan.ssprocess.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -37,11 +39,14 @@ public class MenuActivity extends AppCompatActivity {
     private static final String TAG = "nlg";
     private Intent mqttIntent;
 
+    private ProgressDialog mLoadingProcessDialog;
     private LinkedHashMap<String, String> mPostValue;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
     private Date date;
     final String IP = SinSimApp.getApp().getServerIP();
 
+    private AttendanceData mAttendanceData;
+    private boolean mAttendanceFlag;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +67,14 @@ public class MenuActivity extends AppCompatActivity {
 
         String fetchInstallPlanUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
         Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl, mPostValue, new FetchInstallPlanHandler());
+
+        if( mLoadingProcessDialog == null) {
+            mLoadingProcessDialog = new ProgressDialog(MenuActivity.this);
+            mLoadingProcessDialog.setCancelable(false);
+            mLoadingProcessDialog.setCanceledOnTouchOutside(false);
+            mLoadingProcessDialog.setMessage("获取信息中...");
+        }
+        mLoadingProcessDialog.show();
     }
 
     public void onTodayFinished(View view) {
@@ -73,6 +86,14 @@ public class MenuActivity extends AppCompatActivity {
 
         String fetchInstallPlanUrl2 = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
         Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl2, mPostValue, new FetchInstallActualHandler());
+
+        if( mLoadingProcessDialog == null) {
+            mLoadingProcessDialog = new ProgressDialog(MenuActivity.this);
+            mLoadingProcessDialog.setCancelable(false);
+            mLoadingProcessDialog.setCanceledOnTouchOutside(false);
+            mLoadingProcessDialog.setMessage("获取信息中...");
+        }
+        mLoadingProcessDialog.show();
     }
 
     public void onAttendance(View view) {
@@ -90,6 +111,9 @@ public class MenuActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            if(mLoadingProcessDialog != null && mLoadingProcessDialog.isShowing()) {
+                mLoadingProcessDialog.dismiss();
+            }
             if (msg.what == Network.OK) {
                 ArrayList<InstallPlanData> mInstallPlanList = (ArrayList<InstallPlanData>) msg.obj;
                 Log.d(TAG, "handleMessage: "+(new Gson().toJson(mInstallPlanList)));
@@ -111,6 +135,9 @@ public class MenuActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            if(mLoadingProcessDialog != null && mLoadingProcessDialog.isShowing()) {
+                mLoadingProcessDialog.dismiss();
+            }
             if (msg.what == Network.OK) {
                 ArrayList<InstallPlanData> mInstallPlanActualList = (ArrayList<InstallPlanData>) msg.obj;
                 Log.d(TAG, "handleMessage: "+(new Gson().toJson(mInstallPlanActualList)));
@@ -137,8 +164,29 @@ public class MenuActivity extends AppCompatActivity {
                 Log.d(TAG, "handleMessage: "+(new Gson().toJson(msg.obj)));
                 ArrayList<AttendanceData> attendanceDataArrayList = (ArrayList<AttendanceData>) msg.obj;
                 if (attendanceDataArrayList.size()>0){
-                    ShowMessage.showDialog(MenuActivity.this,"今天传过考勤了！");
+                    mAttendanceData = attendanceDataArrayList.get(0);
+                    mAttendanceFlag = true;
+                    AlertDialog continueDialog = new AlertDialog.Builder(MenuActivity.this).create();
+                    continueDialog.setTitle("考勤");
+                    continueDialog.setMessage("今天传过考勤了");
+                    continueDialog.setButton(AlertDialog.BUTTON_POSITIVE,"重新上传", new DialogInterface.OnClickListener(){
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                            mPostValue.put("id", "" + SinSimApp.getApp().getAppUserId());
+                            String fetchInstallerListUrl = URL.HTTP_HEAD + IP + URL.FATCH_GROUP_BY_USERID;
+                            Network.Instance(SinSimApp.getApp()).fetchInstallerList(fetchInstallerListUrl, mPostValue, new FetchInstallerGroupHandler());
+                        }
+                    });
+                    continueDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"取消", new DialogInterface.OnClickListener(){
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    continueDialog.show();
+//                    ShowMessage.showDialog(MenuActivity.this,"今天传过考勤了！");
                 }else {
+                    mAttendanceFlag = false;
                     LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
                     mPostValue.put("id", "" + SinSimApp.getApp().getAppUserId());
                     String fetchInstallerListUrl = URL.HTTP_HEAD + IP + URL.FATCH_GROUP_BY_USERID;
@@ -168,6 +216,12 @@ public class MenuActivity extends AppCompatActivity {
                 attendanceSettingDialog.setTitle("考勤信息");
                 attendanceSettingDialog.setView(layout);
                 textViewTp.setText(String.valueOf(mInstallerList.size()));
+                if (mAttendanceFlag){
+                    editTextWp.setText(mAttendanceData.getAttendanceMember());
+                    editTextOp.setText(mAttendanceData.getOvertimeMember());
+                    editTextLp.setText(mAttendanceData.getAbsenceMember());
+                    editTextTwp.setText(mAttendanceData.getAttendanceTomorrow());
+                }
                 attendanceSettingDialog.setButton(AlertDialog.BUTTON_POSITIVE, "上传", new DialogInterface.OnClickListener() {
                     class CreateAttendenceHandler extends Handler {
                         @Override
@@ -206,8 +260,14 @@ public class MenuActivity extends AppCompatActivity {
 
                                 LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
                                 mPostValue.put("attendance", new Gson().toJson(attendanceData));
-                                String createAttendenceUrl = URL.HTTP_HEAD + IP + URL.CREATE_ATTENDANCE;
-                                Network.Instance(SinSimApp.getApp()).updateProcessRecordData(createAttendenceUrl, mPostValue, new CreateAttendenceHandler());
+
+                                if (mAttendanceFlag) {
+                                    String updateAttendenceUrl = URL.HTTP_HEAD + IP + URL.UPDATE_ATTENDANCE;
+                                    Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateAttendenceUrl, mPostValue, new CreateAttendenceHandler());
+                                }else {
+                                    String createAttendenceUrl = URL.HTTP_HEAD + IP + URL.CREATE_ATTENDANCE;
+                                    Network.Instance(SinSimApp.getApp()).updateProcessRecordData(createAttendenceUrl, mPostValue, new CreateAttendenceHandler());
+                                }
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -230,6 +290,9 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void onExit(View view) {
+        if(mLoadingProcessDialog != null && mLoadingProcessDialog.isShowing()) {
+            mLoadingProcessDialog.dismiss();
+        }
         stopService(mqttIntent);
         SinSimApp.getApp().setLogOut();
         Intent it = new Intent();
@@ -240,6 +303,9 @@ public class MenuActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        if(mLoadingProcessDialog != null && mLoadingProcessDialog.isShowing()) {
+            mLoadingProcessDialog.dismiss();
+        }
         super.onDestroy();
     }
 }

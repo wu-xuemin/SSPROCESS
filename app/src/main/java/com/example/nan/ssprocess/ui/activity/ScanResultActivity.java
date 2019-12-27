@@ -84,7 +84,6 @@ public class ScanResultActivity extends AppCompatActivity {
             @Override
             public void onItemClick(final int position) {
                 if (mScanResultList.isEmpty()) {
-                    //TODO:发送信息
 //                    ShowMessage.showToast(ScanResultActivity.this, "无权操作该工序！", ShowMessage.MessageDuring.SHORT);
                     sendRemind(currentTaskList.get(position).getText());
                 } else {
@@ -98,8 +97,8 @@ public class ScanResultActivity extends AppCompatActivity {
                         }
                     }
                     if (!isTaskOwner){
-                        //TODO:发送信息
-                        ShowMessage.showToast(ScanResultActivity.this, "无权操作该工序！", ShowMessage.MessageDuring.SHORT);
+                        sendRemind(currentTaskList.get(position).getText());
+//                        ShowMessage.showToast(ScanResultActivity.this, "无权操作该工序！", ShowMessage.MessageDuring.SHORT);
                     }else {
                         Log.d(TAG, "onItemClick: gson :" + new Gson().toJson(mTaskRecordMachineListData));
                         switch (SinSimApp.getApp().getRole()) {
@@ -107,7 +106,7 @@ public class ScanResultActivity extends AppCompatActivity {
                                 if (!(mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALL_WAITING)) {
                                     Intent intent = new Intent();
                                     intent.setClass(ScanResultActivity.this, DetailToInstallActivity.class);
-                                    intent.putExtra("mTaskRecordMachineListData", mScanResultList.get(position));
+                                    intent.putExtra("mTaskRecordMachineListData", mTaskRecordMachineListData);
                                     startActivity(intent);
                                     finish();
                                 } else {//状态是安装中则直接开始安装

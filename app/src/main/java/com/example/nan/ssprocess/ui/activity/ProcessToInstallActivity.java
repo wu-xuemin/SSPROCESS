@@ -247,7 +247,7 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                     Log.d(TAG, "taskNodeDataArrayList: " + gson.toJson(taskNodeDataArrayList));
                     ArrayList<TaskNodeData> currentTaskList = new ArrayList<>();
                     int taskStatus = 0;
-                    for (int index = 2; index < taskNodeDataArrayList.size() - 2; index++){//去掉开始和结束
+                    for (int index = 2; index < taskNodeDataArrayList.size(); index++){//去掉开始和结束
                         taskStatus = Integer.parseInt(taskNodeDataArrayList.get(index).getTaskStatus());
                         if (taskStatus > SinSimApp.TASK_PLANED && taskStatus != SinSimApp.TASK_QUALITY_DONE ){
                             currentTaskList.add(taskNodeDataArrayList.get(index));
@@ -297,10 +297,10 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         if(mLoadingProcessDialog != null) {
             mLoadingProcessDialog.dismiss();
         }
+        super.onDestroy();
     }
 
     @Override
