@@ -83,7 +83,6 @@ public class NotificationUtil extends ContextWrapper {
                 .setContentTitle(title)
                 .setContentText(content)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentIntent(pi)
                 .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -96,8 +95,6 @@ public class NotificationUtil extends ContextWrapper {
                 .setContentTitle(title)
                 .setContentText(content)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher)))
                 .setContentIntent(pi)
                 //设置默认的三色灯与振动器
                 .setDefaults(Notification.DEFAULT_LIGHTS)
