@@ -50,6 +50,7 @@ public class ScanResultActivity extends AppCompatActivity {
     private ArrayList<TaskNodeData> currentTaskList;
     private ArrayList<TaskRecordMachineListData> mScanResultList;
     private String mMachineNamePlate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +85,8 @@ public class ScanResultActivity extends AppCompatActivity {
             public void onItemClick(final int position) {
                 if (mScanResultList.isEmpty()) {
                     //TODO:发送信息
-                    ShowMessage.showToast(ScanResultActivity.this, "无权操作该工序！", ShowMessage.MessageDuring.SHORT);
+//                    ShowMessage.showToast(ScanResultActivity.this, "无权操作该工序！", ShowMessage.MessageDuring.SHORT);
+                    sendRemind(currentTaskList.get(position).getText());
                 } else {
                     mScanResultList.size();
                     boolean isTaskOwner = false;
@@ -211,6 +213,40 @@ public class ScanResultActivity extends AppCompatActivity {
         });
     }
 
+    private void sendRemind(final String taskName){
+        mInstallDialog = new AlertDialog.Builder(ScanResultActivity.this).create();
+        mInstallDialog.setMessage("提醒该组扫码？");
+        mInstallDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        mInstallDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                mPostValue.put("taskName", taskName);
+                mPostValue.put("nameplate", mMachineNamePlate);
+                String sendRemindUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.SEND_REMIND;
+                Network.Instance(SinSimApp.getApp()).updateProcessRecordData(sendRemindUrl, mPostValue, new SendRemindHandler());
+            }
+        });
+        mInstallDialog.show();
+
+    }
+    @SuppressLint("HandlerLeak")
+    private class SendRemindHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if (msg.what == Network.OK) {
+                ShowMessage.showToast(ScanResultActivity.this,"消息已发送！", ShowMessage.MessageDuring.SHORT);
+            } else {
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: "+errorMsg);
+                ShowMessage.showToast(ScanResultActivity.this,"失败，网络错误，请检查网络！", ShowMessage.MessageDuring.SHORT);
+            }
+        }
+    }
     private void updateProcessDetailData(int status) {
         //更新loaction状态
         mTaskRecordMachineListData.setStatus(status);
@@ -321,4 +357,5 @@ public class ScanResultActivity extends AppCompatActivity {
             mQaDialog.dismiss();
         }
     }
+
 }

@@ -100,9 +100,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     private static final int RC_INSTALL_CHOOSE_PHOTO = 3;
     private static final int RC_INSTALL_PHOTO_PREVIEW = 4;
 
-//    private String[] items={};
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

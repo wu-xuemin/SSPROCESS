@@ -419,7 +419,7 @@ public class MyMqttService extends Service {
                                 Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
                                 PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
                                 NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-                                notificationUtils.sendNotification("漏扫提醒", "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_TASK_REMIND,17,pi);
+                                notificationUtils.sendNotification("漏扫提醒", "机器编号：" + msg.getNameplate(), TOPIC_TASK_REMIND,17,pi);
                             }
                         }
                     }
