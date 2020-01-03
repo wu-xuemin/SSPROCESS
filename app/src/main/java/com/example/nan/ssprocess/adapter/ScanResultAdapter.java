@@ -47,17 +47,9 @@ public class ScanResultAdapter extends RecyclerView.Adapter {
         if (mProcessList!=null && !mProcessList.isEmpty() && position < mProcessList.size()) {
             itemView.processNameTv.setText(mProcessList.get(position).getText());
             switch (Integer.parseInt(mProcessList.get(position).getTaskStatus())){
-//                case SinSimApp.TASK_INITIAL:
-//                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INITIAL));
-//                    itemView.processStateTv.setTextColor(Color.YELLOW);
-//                    break;
-//                case SinSimApp.TASK_PLANED:
-//                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_PLANED));
-//                    itemView.processStateTv.setTextColor(Color.YELLOW);
-//                    break;
                 case SinSimApp.TASK_INSTALL_WAITING:
                     itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALL_WAITING));
-                    itemView.processStateTv.setTextColor(Color.GREEN);
+                    itemView.processStateTv.setTextColor(Color.BLUE);
                     break;
                 case SinSimApp.TASK_INSTALLING:
                     itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALLING));
@@ -65,16 +57,12 @@ public class ScanResultAdapter extends RecyclerView.Adapter {
                     break;
                 case SinSimApp.TASK_INSTALLED:
                     itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALLED));
-                    itemView.processStateTv.setTextColor(Color.GREEN);
+                    itemView.processStateTv.setTextColor(Color.BLUE);
                     break;
                 case SinSimApp.TASK_QUALITY_DOING:
                     itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DOING));
                     itemView.processStateTv.setTextColor(Color.BLUE);
                     break;
-//                case SinSimApp.TASK_QUALITY_DONE:
-//                    itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_DONE));
-//                    itemView.processStateTv.setTextColor(Color.GREEN);
-//                    break;
                 case SinSimApp.TASK_INSTALL_ABNORMAL:
                     itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_INSTALL_ABNORMAL));
                     itemView.processStateTv.setTextColor(Color.RED);

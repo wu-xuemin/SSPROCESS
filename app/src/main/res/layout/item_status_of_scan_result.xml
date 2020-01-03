@@ -5,7 +5,7 @@
     android:id="@+id/item_scan_result_layout"
     android:paddingTop="5dp"
     android:paddingBottom="5dp"
-    android:paddingLeft="5dp"
+    android:paddingLeft="18dp"
     android:paddingRight="18dp"
     android:orientation="horizontal">
     <TextView
@@ -15,7 +15,7 @@
         android:layout_weight="1"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:gravity="center"
+        android:gravity="start"
         android:layout_gravity="center_vertical"
         android:hint="工序名称"/>
     <TextView
@@ -25,7 +25,6 @@
         android:gravity="center"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:background="@drawable/textview_tag"
         android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold"
