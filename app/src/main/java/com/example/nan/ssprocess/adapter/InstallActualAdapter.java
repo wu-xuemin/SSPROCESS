@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.nan.ssprocess.R;
@@ -45,9 +46,9 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
         //itemView.setIsRecyclable(false);//禁止复用
         if (mInstallPlanAdapter!=null && !mInstallPlanAdapter.isEmpty() && position < mInstallPlanAdapter.size()) {
             itemView.orderNumberTv.setText(mInstallPlanAdapter.get(position).getOrderNum());
+            itemView.orderNumberTv.setSelected(true);//用于滚动显示
             itemView.nameplateTv.setText(mInstallPlanAdapter.get(position).getNameplate());
             itemView.headNumberTv.setText(mInstallPlanAdapter.get(position).getHeadNum());
-            itemView.needleNumbleTv.setText(mInstallPlanAdapter.get(position).getNeedleNum());
 //            if (mInstallPlanAdapter.get(position).getHeadCountDone() < Integer.parseInt(mInstallPlanAdapter.get(position).getHeadNum())){
 //                itemView.headCountDoneTv.setText(""+mInstallPlanAdapter.get(position).getHeadCountDone());
 //                itemView.headCountDoneTv.setTextColor(Color.RED);
@@ -62,11 +63,27 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
             itemView.cmdInfoTv.setText(""+mInstallPlanAdapter.get(position).getCmtSend());
             itemView.cmdInfoTv.setSelected(true);//用于滚动显示
 
-            itemView.installPlanLayout.setOnClickListener(new View.OnClickListener() {
+//            itemView.installPlanLayout.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    if (itemClickListener != null) {
+//                        itemClickListener.onItemClick(position);
+//                    }
+//                }
+//            });
+            itemView.finishBt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (itemClickListener != null) {
-                        itemClickListener.onItemClick(position);
+                        itemClickListener.onFinishItemClick(position);
+                    }
+                }
+            });
+            itemView.finishBt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (itemClickListener != null) {
+                        itemClickListener.onNotFinishItemClick(position);
                     }
                 }
             });
@@ -96,7 +113,8 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
         TextView headNumberTv;
         TextView headCountDoneTv;
         TextView cmdInfoTv;
-        TextView needleNumbleTv;
+        Button finishBt;
+        Button notFinishBt;
 
         ItemView(View itemView) {
             super(itemView);
@@ -106,7 +124,8 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
             headNumberTv = itemView.findViewById(R.id.head_number_tv);
             headCountDoneTv = itemView.findViewById(R.id.head_count_done_tv);
             cmdInfoTv = itemView.findViewById(R.id.cmd_info);
-            needleNumbleTv = itemView.findViewById(R.id.needle_numble);
+            finishBt = itemView.findViewById(R.id.finish);
+            notFinishBt = itemView.findViewById(R.id.not_finish);
         }
     }
     public void setProcessList(ArrayList<InstallPlanData> list) {
@@ -119,6 +138,8 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
      */
     public interface OnItemClickListener{
         void onItemClick(int position);
+        void onFinishItemClick(int position);
+        void onNotFinishItemClick(int position);
     }
 
     /**
