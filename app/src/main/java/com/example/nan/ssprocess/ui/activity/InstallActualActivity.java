@@ -74,7 +74,7 @@ public class InstallActualActivity extends AppCompatActivity implements BGARefre
             @Override
             public void onItemClick(final int position){
                 Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mInstallPlanActualList.get(position)));
-                
+                /*
                 AlertDialog installActualDialog = null;
                 LinearLayout layout = (LinearLayout) View.inflate(InstallActualActivity.this, R.layout.dialog_install_actual, null);
                 final EditText headCountDoneEt = (EditText)layout.findViewById(R.id.head_count_done);
@@ -140,7 +140,7 @@ public class InstallActualActivity extends AppCompatActivity implements BGARefre
                                 installActualData.setInstallPlanId(mInstallPlanActualList.get(position).getId());
                                 if (SinSimApp.getApp().getGroupName().equals("焊线组")) {
 
-                                    /*
+
                                     installActualData.setPcWireNum(pcWireEt.getText().toString());
                                     installActualData.setKouxianNum(kouxianEt.getText().toString());
                                     installActualData.setLightWireNum(lightWireEt.getText().toString());
@@ -150,7 +150,7 @@ public class InstallActualActivity extends AppCompatActivity implements BGARefre
                                     installActualData.setDevicePowerNum(devicePowerEt.getText().toString());
                                     installActualData.setDeviceBuxiuNum(deviceBuxiuEt.getText().toString());
                                     installActualData.setDeviceSwitchNum(deviceSwitchEt.getText().toString());
-                                    */
+
                                 }
                                 LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
                                 mPostValue.put("installPlanActual", "" + new Gson().toJson(installActualData));
@@ -164,16 +164,18 @@ public class InstallActualActivity extends AppCompatActivity implements BGARefre
                         }
                     }
                 });
-                installActualDialog.show();
+                installActualDialog.show();*/
             }
 
             @Override
             public void onFinishItemClick(int position) {
+                Log.d(TAG, "onFinishItemClick: 完成");
 
             }
 
             @Override
             public void onNotFinishItemClick(final int position) {
+                Log.d(TAG, "onNotFinishItemClick: 未完成");
                 AlertDialog installActualDialog = null;
                 LinearLayout layout = (LinearLayout) View.inflate(InstallActualActivity.this, R.layout.dialog_install_actual, null);
                 final EditText headCountDoneEt = (EditText)layout.findViewById(R.id.head_count_done);
