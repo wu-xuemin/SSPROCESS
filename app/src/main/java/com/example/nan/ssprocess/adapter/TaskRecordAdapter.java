@@ -130,14 +130,11 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             if (mProcessList.get(position).getMachineData().getIsUrgent()) {
                 itemView.planShipDateTv.setText("加急");
                 itemView.taskStatusIv.setImageResource(R.mipmap.install_fast);
-                itemView.processStateTv.setBackgroundResource(R.drawable.textview_tag_red);
             } else if (daySum < 0) {
                 itemView.planShipDateTv.setText("超期");
                 itemView.taskStatusIv.setImageResource(R.mipmap.install_over_time);
-                itemView.processStateTv.setBackgroundResource(R.drawable.textview_tag_red);
             } else if (daySum < 3) {
                 itemView.planShipDateTv.setText("临期");
-                itemView.processStateTv.setBackgroundResource(R.drawable.textview_tag_yellow);
             }
             itemView.itemLinearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
