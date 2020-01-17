@@ -1,6 +1,7 @@
 package com.example.nan.ssprocess.adapter;
 
 import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -71,6 +72,12 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
 //                    }
 //                }
 //            });
+            if (mInstallPlanAdapter.get(position).isHasFinished()) {
+                itemView.finishBt.setBackgroundResource(R.drawable.button_green);
+            } else {
+                itemView.finishBt.setBackgroundResource(R.drawable.button_gray);
+            }
+
             itemView.finishBt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -79,7 +86,7 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
                     }
                 }
             });
-            itemView.finishBt.setOnClickListener(new View.OnClickListener() {
+            itemView.notFinishBt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (itemClickListener != null) {

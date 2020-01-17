@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,13 +36,18 @@ import java.util.LinkedHashMap;
 import cn.bingoogolapple.refreshlayout.BGAMoocStyleRefreshViewHolder;
 import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
 
-public class InstallActualActivity extends AppCompatActivity implements BGARefreshLayout.BGARefreshLayoutDelegate{
+public class InstallActualActivity extends AppCompatActivity{
 
     private static final String TAG = "nlg";
     private InstallActualAdapter mInstallActualAdapter;
     private ArrayList<InstallPlanData> mInstallPlanActualList = new ArrayList<>();
-    TextView machineCountTv;
+    private ArrayList<InstallActualData> mInstallActualList = new ArrayList<>();
+    private TextView machineCountTv;
+    private TextView mMachineFinishTv;
+    private TextView mHeadFinishTv;
     private BGARefreshLayout mRefreshLayout;
+    private LinearLayout mHeadFinishLayout;
+    private LinearLayout mMachineFinishLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +58,13 @@ public class InstallActualActivity extends AppCompatActivity implements BGARefre
         Bundle bundle = intent.getExtras();
         mInstallPlanActualList = (ArrayList<InstallPlanData>) bundle.getSerializable("mInstallPlanActualList");
 
-        machineCountTv = findViewById(R.id.actual_machine_count);
+        machineCountTv = (TextView) findViewById(R.id.actual_machine_count);
+        mMachineFinishTv = (TextView) findViewById(R.id.machine_finish_tv);
+        mHeadFinishTv = (TextView) findViewById(R.id.head_finish_tv);
+        mHeadFinishLayout = (LinearLayout)findViewById(R.id.head_finish_ll);
+        mMachineFinishLayout = (LinearLayout)findViewById(R.id.machine_finish_ll);
+        mHeadFinishLayout.setVisibility(View.GONE);
+
 //        TextView headCountTv = findViewById(R.id.actual_head_count);
         machineCountTv.setText(""+mInstallPlanActualList.size());
 //        int headCountSum = 0;
@@ -62,7 +74,7 @@ public class InstallActualActivity extends AppCompatActivity implements BGARefre
 //        }
 //        headCountTv.setText(""+headCountSum);
         //列表
-        RecyclerView mInstallActualRV = findViewById(R.id.install_actual_rv);
+        RecyclerView mInstallActualRV = (RecyclerView) findViewById(R.id.install_actual_rv);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mInstallActualRV.setLayoutManager(manager);
@@ -73,8 +85,9 @@ public class InstallActualActivity extends AppCompatActivity implements BGARefre
         mInstallActualAdapter.setOnItemClickListener(new InstallActualAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(final int position){
-                Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mInstallPlanActualList.get(position)));
                 /*
+                Log.d(TAG, "onItemClick: gson :"+new Gson().toJson(mInstallPlanActualList.get(position)));
+
                 AlertDialog installActualDialog = null;
                 LinearLayout layout = (LinearLayout) View.inflate(InstallActualActivity.this, R.layout.dialog_install_actual, null);
                 final EditText headCountDoneEt = (EditText)layout.findViewById(R.id.head_count_done);
@@ -164,118 +177,142 @@ public class InstallActualActivity extends AppCompatActivity implements BGARefre
                         }
                     }
                 });
-                installActualDialog.show();*/
+                installActualDialog.show();
+                */
             }
 
             @Override
             public void onFinishItemClick(int position) {
                 Log.d(TAG, "onFinishItemClick: 完成");
-
+                InstallActualData installActualData = new InstallActualData();
+                installActualData.setInstallPlanId(mInstallPlanActualList.get(position).getId());
+                installActualData.setHeadCountDone(Integer.parseInt(mInstallPlanActualList.get(position).getHeadNum()));
+                if (mInstallActualList.size()<1) {
+                    mInstallActualList.add(installActualData);
+                } else {
+                    boolean flag = true;
+                    for (int i = 0; i < mInstallActualList.size();i++){
+                        if (installActualData.getInstallPlanId() == mInstallActualList.get(i).getInstallPlanId()){
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag){
+                        mInstallActualList.add(installActualData);
+                    }
+                }
+                mInstallPlanActualList.get(position).setHeadCountDone(installActualData.getHeadCountDone());
+                mInstallPlanActualList.get(position).setHasFinished(true);
+                mMachineFinishTv.setText(String.valueOf(mInstallActualList.size()));
+                mInstallActualAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onNotFinishItemClick(final int position) {
                 Log.d(TAG, "onNotFinishItemClick: 未完成");
-                AlertDialog installActualDialog = null;
+                Log.d(TAG, "onNotFinishItemClick: "+new Gson().toJson(mInstallPlanActualList.get(position)));
+
                 LinearLayout layout = (LinearLayout) View.inflate(InstallActualActivity.this, R.layout.dialog_install_actual, null);
                 final EditText headCountDoneEt = (EditText)layout.findViewById(R.id.head_count_done);
                 final EditText cmtFeedbackEt = (EditText)layout.findViewById(R.id.cmt_feedback);
 
                 LinearLayout headNumberLL = layout.findViewById(R.id.actual_head_number_ll);
-                LinearLayout hanxianLL = layout.findViewById(R.id.hanxian_ll);
-                hanxianLL.setVisibility(View.GONE);//焊线组信息需求变更
+//                LinearLayout hanxianLL = layout.findViewById(R.id.hanxian_ll);
+//                hanxianLL.setVisibility(View.GONE);//焊线组信息需求变更
 
-                if (SinSimApp.getApp().getGroupName().equals("焊线组")) {
+                if (SinSimApp.getApp().getGroupName().equals("焊线组")
+                        || SinSimApp.getApp().getGroupName().equals("驱动组")
+                        || SinSimApp.getApp().getGroupName().equals("台板组")
+                        || SinSimApp.getApp().getGroupName().equals("线架组")) {
                     headNumberLL.setVisibility(View.GONE);
                 }else {
                     headNumberLL.setVisibility(View.VISIBLE);
                 }
                 TextView headCountTv = (TextView)layout.findViewById(R.id.head_count_tv);
-//                final int headCount = Integer.parseInt(mInstallPlanActualList.get(position).getHeadNum()) - mInstallPlanActualList.get(position).getHeadCountDone();
-//                headCountTv.setText(""+headCount);
                 headCountTv.setText(mInstallPlanActualList.get(position).getHeadNum());
 
-                installActualDialog = new AlertDialog.Builder(InstallActualActivity.this).create();
+                AlertDialog installActualDialog = new AlertDialog.Builder(InstallActualActivity.this).create();
                 installActualDialog.setTitle("完成情况");
                 installActualDialog.setView(layout);
                 installActualDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                     }
                 });
                 installActualDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            InstallActualData installActualData = new InstallActualData();
-                            if (headCountDoneEt.getText().toString().length()<1){
-                                if (!SinSimApp.getApp().getGroupName().equals("焊线组")) {
-                                    ShowMessage.showDialog(InstallActualActivity.this, "出错！请填写完整！");
-                                }
-                            }else {
-                                if (SinSimApp.getApp().getGroupName().equals("焊线组")) {
-                                    installActualData.setHeadCountDone(mInstallPlanActualList.get(position).getHeadNum());
-                                }else {
-                                    installActualData.setHeadCountDone(headCountDoneEt.getText().toString());
-                                }
-                                installActualData.setCmtFeedback(cmtFeedbackEt.getText().toString());
-                                installActualData.setInstallPlanId(mInstallPlanActualList.get(position).getId());
+                        InstallActualData installActualData = new InstallActualData();
+                        if (headCountDoneEt.getText().toString().length()<1){
+                            if (!SinSimApp.getApp().getGroupName().equals("焊线组")
+                                    || !SinSimApp.getApp().getGroupName().equals("驱动组")
+                                    || !SinSimApp.getApp().getGroupName().equals("台板组")
+                                    || !SinSimApp.getApp().getGroupName().equals("线架组")) {
+                                ShowMessage.showDialog(InstallActualActivity.this, "出错！请填写完整！");
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        }else {
+                            if (SinSimApp.getApp().getGroupName().equals("焊线组")
+                                    || SinSimApp.getApp().getGroupName().equals("驱动组")
+                                    || SinSimApp.getApp().getGroupName().equals("台板组")
+                                    || SinSimApp.getApp().getGroupName().equals("线架组")) {
+                                installActualData.setHeadCountDone(0);
+                            }else {
+                                installActualData.setHeadCountDone(Integer.parseInt(headCountDoneEt.getText().toString()));
+                            }
+                            installActualData.setCmtFeedback(cmtFeedbackEt.getText().toString());
+                            installActualData.setInstallPlanId(mInstallPlanActualList.get(position).getId());
                         }
+
+                        if (mInstallActualList.size()<1) {
+                            mInstallActualList.add(installActualData);
+                        } else {
+                            boolean flag = true;
+                            for (int i = 0; i < mInstallActualList.size();i++){
+                                if (installActualData.getInstallPlanId() == mInstallActualList.get(i).getInstallPlanId()){
+                                    flag = false;
+                                    mInstallActualList.get(i).setHeadCountDone(installActualData.getHeadCountDone());
+                                    mInstallActualList.get(i).setCmtFeedback(installActualData.getCmtFeedback());
+                                    break;
+                                }
+                            }
+                            if (flag){
+                                mInstallActualList.add(installActualData);
+                            }
+                        }
+                        mInstallPlanActualList.get(position).setHeadCountDone(installActualData.getHeadCountDone());
+                        mInstallPlanActualList.get(position).setHasFinished(false);
+                        mMachineFinishTv.setText(String.valueOf(mInstallActualList.size()));
+                        mInstallActualAdapter.notifyDataSetChanged();
                     }
                 });
                 installActualDialog.show();
             }
         });
 
-        mRefreshLayout = findViewById(R.id.refreshLayout);
-        mRefreshLayout.setDelegate(this);
-        // 设置下拉刷新和上拉加载更多的风格     参数1：应用程序上下文，参数2：是否具有上拉加载更多功能
-        BGAMoocStyleRefreshViewHolder moocStyleRefreshViewHolder = new BGAMoocStyleRefreshViewHolder(this, true);
-        moocStyleRefreshViewHolder.setOriginalImage(R.drawable.bga_refresh_moooc);
-        moocStyleRefreshViewHolder.setUltimateColor(R.color.colorAccent);
-        mRefreshLayout.setRefreshViewHolder(moocStyleRefreshViewHolder);
     }
 
-    @Override
-    public void onBGARefreshLayoutBeginRefreshing(BGARefreshLayout refreshLayout) {
-        Log.d(TAG, "onBGARefreshLayoutBeginRefreshing: 下划刷新");
-        LinkedHashMap<String, String> mPostValue2 = new LinkedHashMap<>();
-        mPostValue2.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
-        SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
-        Date date2 = new Date(System.currentTimeMillis());
-        mPostValue2.put("isNotFinished", "true");
-        mPostValue2.put("queryFinishTime", simpleDateFormat2.format(date2));
+    /**
+     * 上传数据
+     * @param view
+     */
+    public void onUpload(View view) {
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("installPlanActualList", "" + new Gson().toJson(mInstallActualList));
+        Log.d(TAG, "onClick: " + new Gson().toJson(mInstallActualList));
 
-        String fetchInstallPlanUrl2 = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
-        Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl2, mPostValue2, new FetchInstallActualHandler());
+        String createInstallPlanActualUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.CREATE_INSTALL_PLAN_ACTUAL;
+        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(createInstallPlanActualUrl, mPostValue, new CreateInstallPlanActualHandler());
     }
-
     @SuppressLint("HandlerLeak")
-    private class FetchInstallActualHandler extends Handler {
+    class CreateInstallPlanActualHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            mRefreshLayout.endRefreshing();
-            mRefreshLayout.endLoadingMore();
             if (msg.what == Network.OK) {
-                ArrayList<InstallPlanData> installPlanActualList = (ArrayList<InstallPlanData>) msg.obj;
-                mInstallPlanActualList.clear();
-                mInstallPlanActualList.addAll(installPlanActualList);//直接赋值会被指向其他的地址，所以需要用list操作来实现更新
-                Log.d(TAG, "handleMessage: "+(new Gson().toJson(mInstallPlanActualList)));
-                machineCountTv.setText(""+mInstallPlanActualList.size());
-                //更新adapter
-                mInstallActualAdapter.notifyDataSetChanged();
-            } else {
-                ShowMessage.showDialog(InstallActualActivity.this,"网络出错了！");
+                ShowMessage.showToast(InstallActualActivity.this,"上传成功！",ShowMessage.MessageDuring.SHORT);
+            }else {
+                ShowMessage.showDialog(InstallActualActivity.this,msg.obj.toString());
             }
         }
-    }
-    @Override
-    public boolean onBGARefreshLayoutBeginLoadingMore(BGARefreshLayout refreshLayout) {
-        return false;
     }
 }

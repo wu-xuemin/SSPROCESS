@@ -54,47 +54,89 @@
             <!--android:textColor="@color/black"/>-->
 
     </LinearLayout>
-    <cn.bingoogolapple.refreshlayout.BGARefreshLayout
-        android:id="@+id/refreshLayout"
-        android:layout_height="0dp"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_weight="1">
-        <ScrollView
+        android:layout_height="match_parent">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/install_actual_rv"
+                android:background="@color/cardview_light_background"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                >
+            </android.support.v7.widget.RecyclerView>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 >
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/install_actual_rv"
-                    android:background="@color/cardview_light_background"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    >
-                </android.support.v7.widget.RecyclerView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="完成总数："
+                    android:padding="8dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    />
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/head_finish_ll">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="完成总数："
+                        android:id="@+id/head_finish_tv"
+                        android:padding="8dp"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:hint="000"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="头"
                         android:padding="8dp"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         />
                 </LinearLayout>
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="提交"
-                    />
-            </LinearLayout>
 
-        </ScrollView>
-    </cn.bingoogolapple.refreshlayout.BGARefreshLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/machine_finish_ll">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/machine_finish_tv"
+                        android:padding="8dp"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:hint="00"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="台"
+                        android:padding="8dp"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onUpload"
+                android:text="提交"
+                />
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>
