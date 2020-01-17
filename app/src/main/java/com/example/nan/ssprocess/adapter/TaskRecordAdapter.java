@@ -59,8 +59,6 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
                 itemView.planShipDateTv.setText(formatter.format(planShipDate));
             }
 
-            float daySum = (mProcessList.get(position).getMachineOrderData().getPlanShipDate() - new Date().getTime())/(1000*60*60*24);
-
 //            Date planDate = new Date(mProcessList.get(position).getTaskPlan().getPlanTime());
 //            if(mProcessList.get(position).getTaskPlan().getPlanTime() == 0) {
 //                itemView.planDateTv.setVisibility(View.INVISIBLE);
@@ -127,6 +125,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
 
                 }
             }
+            float daySum = (mProcessList.get(position).getMachineOrderData().getPlanShipDate() - new Date().getTime())/(1000*60*60*24);
             //加急、过期显示红色，临期显示黄色
             if (mProcessList.get(position).getMachineData().getIsUrgent()) {
                 itemView.planShipDateTv.setText("加急");

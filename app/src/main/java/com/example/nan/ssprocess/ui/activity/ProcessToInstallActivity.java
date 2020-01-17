@@ -154,12 +154,24 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                 Log.d(TAG, "handleMessage: size: "+mProcessToInstallPlanList.size());
 
                 if (mProcessToInstallPlanList.size() > 0) {
+                    ArrayList<TaskRecordMachineListData> tempList = new ArrayList<>();
+                    ArrayList<TaskRecordMachineListData> urgentList = new ArrayList<>();
+                    ArrayList<TaskRecordMachineListData> beyondList = new ArrayList<>();
+                    ArrayList<TaskRecordMachineListData> arriveList = new ArrayList<>();
                     ArrayList<TaskRecordMachineListData> abnormalList = new ArrayList<>();
                     ArrayList<TaskRecordMachineListData> orderChangeList = new ArrayList<>();
                     ArrayList<TaskRecordMachineListData> skipList = new ArrayList<>();
                     ArrayList<TaskRecordMachineListData> normalList = new ArrayList<>();
                     for (int position = 0; position < mProcessToInstallPlanList.size(); position++) {
-                        if (mProcessToInstallPlanList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
+                        float daySum = (mProcessToInstallPlanList.get(position).getMachineOrderData().getPlanShipDate() - new Date().getTime())/(1000*60*60*24);
+
+                        if (mProcessToInstallPlanList.get(position).getMachineData().getIsUrgent()){
+                            urgentList.add(mProcessToInstallPlanList.get(position));
+                        } else if (daySum < 0) {
+                            beyondList.add(mProcessToInstallPlanList.get(position));
+                        } else if (daySum < 3) {
+                            arriveList.add(mProcessToInstallPlanList.get(position));
+                        } else if (mProcessToInstallPlanList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
                                 ||mProcessToInstallPlanList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED) {
                             orderChangeList.add(mProcessToInstallPlanList.get(position));
                         } else {
@@ -186,11 +198,15 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                             }
                         }
                     }
-                    //排序：异常-》改单拆单-》跳过-》正常
-                    abnormalList.addAll(orderChangeList);
-                    abnormalList.addAll(skipList);
-                    abnormalList.addAll(normalList);
-                    mProcessToInstallPlanList=abnormalList;
+                    //排序：加急-》超期-》临期-》异常-》改单拆单-》跳过-》正常
+                    tempList.addAll(urgentList);
+                    tempList.addAll(beyondList);
+                    tempList.addAll(arriveList);
+                    tempList.addAll(abnormalList);
+                    tempList.addAll(orderChangeList);
+                    tempList.addAll(skipList);
+                    tempList.addAll(normalList);
+                    mProcessToInstallPlanList=tempList;
                 }
                 if (mProcessToInstallPlanList.size()==0){
                     mTaskRecordAdapter.setProcessList(mProcessToInstallPlanList);
