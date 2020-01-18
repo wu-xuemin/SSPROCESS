@@ -1,6 +1,7 @@
 package com.example.nan.ssprocess.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
@@ -48,6 +49,7 @@ public class InstallActualActivity extends AppCompatActivity{
     private BGARefreshLayout mRefreshLayout;
     private LinearLayout mHeadFinishLayout;
     private LinearLayout mMachineFinishLayout;
+    private ProgressDialog mLoadingProcessDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,10 +185,14 @@ public class InstallActualActivity extends AppCompatActivity{
 
             @Override
             public void onFinishItemClick(int position) {
-                Log.d(TAG, "onFinishItemClick: 完成");
                 InstallActualData installActualData = new InstallActualData();
                 installActualData.setInstallPlanId(mInstallPlanActualList.get(position).getId());
-                installActualData.setHeadCountDone(Integer.parseInt(mInstallPlanActualList.get(position).getHeadNum()));
+                String strHead = mInstallPlanActualList.get(position).getHeadNum();
+                if (strHead.contains("+")){
+                    String split[] = strHead.split("\\+");
+                    strHead = String.valueOf(Integer.parseInt(split[0]) + Integer.parseInt(split[1]));
+                }
+                installActualData.setHeadCountDone(Integer.parseInt(strHead));
                 if (mInstallActualList.size()<1) {
                     mInstallActualList.add(installActualData);
                 } else {
@@ -244,10 +250,10 @@ public class InstallActualActivity extends AppCompatActivity{
                     public void onClick(DialogInterface dialog, int which) {
                         InstallActualData installActualData = new InstallActualData();
                         if (headCountDoneEt.getText().toString().length()<1){
-                            if (!SinSimApp.getApp().getGroupName().equals("焊线组")
-                                    || !SinSimApp.getApp().getGroupName().equals("驱动组")
-                                    || !SinSimApp.getApp().getGroupName().equals("台板组")
-                                    || !SinSimApp.getApp().getGroupName().equals("线架组")) {
+                            if (!(SinSimApp.getApp().getGroupName().equals("焊线组")
+                                    || SinSimApp.getApp().getGroupName().equals("驱动组")
+                                    || SinSimApp.getApp().getGroupName().equals("台板组")
+                                    || SinSimApp.getApp().getGroupName().equals("线架组"))) {
                                 ShowMessage.showDialog(InstallActualActivity.this, "出错！请填写完整！");
                             }
                         }else {
@@ -297,21 +303,43 @@ public class InstallActualActivity extends AppCompatActivity{
      */
     public void onUpload(View view) {
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("installPlanActualList", "" + new Gson().toJson(mInstallActualList));
+        mPostValue.put("installPlanActualListInfo", "" + new Gson().toJson(mInstallActualList));
         Log.d(TAG, "onClick: " + new Gson().toJson(mInstallActualList));
 
         String createInstallPlanActualUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.CREATE_INSTALL_PLAN_ACTUAL;
         Network.Instance(SinSimApp.getApp()).updateProcessRecordData(createInstallPlanActualUrl, mPostValue, new CreateInstallPlanActualHandler());
+        if( mLoadingProcessDialog == null) {
+            mLoadingProcessDialog = new ProgressDialog(InstallActualActivity.this);
+            mLoadingProcessDialog.setCancelable(false);
+            mLoadingProcessDialog.setCanceledOnTouchOutside(false);
+            mLoadingProcessDialog.setMessage("获取信息中...");
+        }
+        mLoadingProcessDialog.show();
     }
     @SuppressLint("HandlerLeak")
     class CreateInstallPlanActualHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            if(mLoadingProcessDialog != null && mLoadingProcessDialog.isShowing()) {
+                mLoadingProcessDialog.dismiss();
+            }
+            Log.d(TAG, "handleMessage: "+msg.what);
             if (msg.what == Network.OK) {
-                ShowMessage.showToast(InstallActualActivity.this,"上传成功！",ShowMessage.MessageDuring.SHORT);
+//                ShowMessage.showToast(InstallActualActivity.this,"上传成功！",ShowMessage.MessageDuring.SHORT);
+                AlertDialog installActualDialog = new AlertDialog.Builder(InstallActualActivity.this).create();
+                installActualDialog.setTitle("上传成功");
+                installActualDialog.setMessage("上传成功，返回上一页!");
+                installActualDialog.setCancelable(false);
+                installActualDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+                installActualDialog.show();
             }else {
-                ShowMessage.showDialog(InstallActualActivity.this,msg.obj.toString());
+                ShowMessage.showDialog(InstallActualActivity.this,"上传失败");
             }
         }
     }

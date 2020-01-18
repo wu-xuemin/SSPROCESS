@@ -471,11 +471,11 @@ public class MyMqttService extends Service {
         }
 
 
-        Intent intent = new Intent(this, SplashActivity.class);
-        intent.putExtra(SinSimApp.FROM_NOTIFICATION, true);
-        PendingIntent pi = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
-        notificationUtils.sendNotification("浙江信胜", "作业流程管理系统", "浙江信胜",1,pi);
+//        Intent intent = new Intent(this, SplashActivity.class);
+//        intent.putExtra(SinSimApp.FROM_NOTIFICATION, true);
+//        PendingIntent pi = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
+//        notificationUtils.sendNotification("浙江信胜", "作业流程管理系统", "浙江信胜",1,pi);
 
         //这边设置“FLAG_UPDATE_CURRENT”是为了让后面的Activity接收pendingIntent中Extra的数据
 //        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
