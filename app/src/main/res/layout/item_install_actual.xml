@@ -116,13 +116,13 @@
             android:gravity="end">
             <Button
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
                 android:id="@+id/finish"
                 android:background="@drawable/button_gray"
                 android:text="完成"/>
             <Button
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
                 android:id="@+id/not_finish"
                 android:layout_marginLeft="20dp"
                 android:background="@drawable/button_gray"
