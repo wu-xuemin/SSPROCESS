@@ -18,6 +18,7 @@ public class InstallPlanData implements Serializable {
     private String cmtSend;
     private String needleNum;
     private boolean hasFinished;
+    private boolean notFinished;
 
 
     public int getId() {
@@ -70,5 +71,13 @@ public class InstallPlanData implements Serializable {
 
     public void setHasFinished(boolean hasFinished) {
         this.hasFinished = hasFinished;
+    }
+
+    public boolean isNotFinished() {
+        return notFinished;
+    }
+
+    public void setNotFinished(boolean notFinished) {
+        this.notFinished = notFinished;
     }
 }

@@ -209,6 +209,7 @@ public class InstallActualActivity extends AppCompatActivity{
                 }
                 mInstallPlanActualList.get(position).setHeadCountDone(installActualData.getHeadCountDone());
                 mInstallPlanActualList.get(position).setHasFinished(true);
+                mInstallPlanActualList.get(position).setNotFinished(false);
                 mMachineFinishTv.setText(String.valueOf(mInstallActualList.size()));
                 mInstallActualAdapter.notifyDataSetChanged();
             }
@@ -249,44 +250,50 @@ public class InstallActualActivity extends AppCompatActivity{
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         InstallActualData installActualData = new InstallActualData();
-                        if (headCountDoneEt.getText().toString().length()<1){
-                            if (!(SinSimApp.getApp().getGroupName().equals("焊线组")
-                                    || SinSimApp.getApp().getGroupName().equals("驱动组")
-                                    || SinSimApp.getApp().getGroupName().equals("台板组")
-                                    || SinSimApp.getApp().getGroupName().equals("线架组"))) {
-                                ShowMessage.showDialog(InstallActualActivity.this, "出错！请填写完整！");
+                        if (SinSimApp.getApp().getGroupName().equals("焊线组")
+                                || SinSimApp.getApp().getGroupName().equals("驱动组")
+                                || SinSimApp.getApp().getGroupName().equals("台板组")
+                                || SinSimApp.getApp().getGroupName().equals("线架组")) {
+                            installActualData.setHeadCountDone(0);
+                        } else {
+                            if (headCountDoneEt.getText().toString().length()<1) {
+                                ShowMessage.showDialog(InstallActualActivity.this, "出错！请填写头数！");
+                                return;
                             }
-                        }else {
-                            if (SinSimApp.getApp().getGroupName().equals("焊线组")
-                                    || SinSimApp.getApp().getGroupName().equals("驱动组")
-                                    || SinSimApp.getApp().getGroupName().equals("台板组")
-                                    || SinSimApp.getApp().getGroupName().equals("线架组")) {
-                                installActualData.setHeadCountDone(0);
-                            }else {
+                            String strHead = mInstallPlanActualList.get(position).getHeadNum();
+                            if (strHead.contains("+")){
+                                String split[] = strHead.split("\\+");
+                                strHead = String.valueOf(Integer.parseInt(split[0]) + Integer.parseInt(split[1]));
+                            }
+                            if (Integer.parseInt(strHead) <= Integer.parseInt(headCountDoneEt.getText().toString())){
+                                ShowMessage.showDialog(InstallActualActivity.this, "出错！头数超标！");
+                                return;
+                            } else {
                                 installActualData.setHeadCountDone(Integer.parseInt(headCountDoneEt.getText().toString()));
                             }
-                            installActualData.setCmtFeedback(cmtFeedbackEt.getText().toString());
-                            installActualData.setInstallPlanId(mInstallPlanActualList.get(position).getId());
                         }
+                        installActualData.setCmtFeedback(cmtFeedbackEt.getText().toString());
+                        installActualData.setInstallPlanId(mInstallPlanActualList.get(position).getId());
 
-                        if (mInstallActualList.size()<1) {
+                        if (mInstallActualList.size() < 1) {
                             mInstallActualList.add(installActualData);
                         } else {
                             boolean flag = true;
-                            for (int i = 0; i < mInstallActualList.size();i++){
-                                if (installActualData.getInstallPlanId() == mInstallActualList.get(i).getInstallPlanId()){
+                            for (int i = 0; i < mInstallActualList.size(); i++) {
+                                if (installActualData.getInstallPlanId() == mInstallActualList.get(i).getInstallPlanId()) {
                                     flag = false;
                                     mInstallActualList.get(i).setHeadCountDone(installActualData.getHeadCountDone());
                                     mInstallActualList.get(i).setCmtFeedback(installActualData.getCmtFeedback());
                                     break;
                                 }
                             }
-                            if (flag){
+                            if (flag) {
                                 mInstallActualList.add(installActualData);
                             }
                         }
                         mInstallPlanActualList.get(position).setHeadCountDone(installActualData.getHeadCountDone());
                         mInstallPlanActualList.get(position).setHasFinished(false);
+                        mInstallPlanActualList.get(position).setNotFinished(true);
                         mMachineFinishTv.setText(String.valueOf(mInstallActualList.size()));
                         mInstallActualAdapter.notifyDataSetChanged();
                     }

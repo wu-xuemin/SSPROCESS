@@ -77,6 +77,11 @@ public class InstallActualAdapter extends RecyclerView.Adapter {
             } else {
                 itemView.finishBt.setBackgroundResource(R.drawable.button_gray);
             }
+            if (mInstallPlanAdapter.get(position).isNotFinished()) {
+                itemView.notFinishBt.setBackgroundResource(R.drawable.button_red);
+            } else {
+                itemView.notFinishBt.setBackgroundResource(R.drawable.button_gray);
+            }
 
             itemView.finishBt.setOnClickListener(new View.OnClickListener() {
                 @Override
