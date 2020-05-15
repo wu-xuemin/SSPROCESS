@@ -331,28 +331,28 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");// HH:mm:ss
         Date date;
         switch (item.getItemId()) {
-            case R.id.plan://后续计划
-                mPostValue = new LinkedHashMap<>();
-                mPostValue.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
-                Calendar c = Calendar.getInstance();
-                c.add(Calendar.DAY_OF_MONTH,1);
-                String tomorrow = simpleDateFormat.format(c.getTime());
-                Log.d(TAG, "onCreate: "+tomorrow);
-                mPostValue.put("queryStartTime", tomorrow);
-
-                String fetchInstallPlanUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
-                Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl, mPostValue, new FetchInstallPlanHandler());
-                break;
-            case R.id.plan_actual://今日完成
-                mPostValue = new LinkedHashMap<>();
-                mPostValue.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
-                date = new Date(System.currentTimeMillis());
-                mPostValue.put("isNotFinished", "true");
-                mPostValue.put("queryFinishTime", simpleDateFormat.format(date));
-
-                String fetchInstallPlanUrl2 = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
-                Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl2, mPostValue, new FetchInstallActualHandler());
-                break;
+//            case R.id.plan://后续计划
+//                mPostValue = new LinkedHashMap<>();
+//                mPostValue.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
+//                Calendar c = Calendar.getInstance();
+//                c.add(Calendar.DAY_OF_MONTH,1);
+//                String tomorrow = simpleDateFormat.format(c.getTime());
+//                Log.d(TAG, "onCreate: "+tomorrow);
+//                mPostValue.put("queryStartTime", tomorrow);
+//
+//                String fetchInstallPlanUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
+//                Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl, mPostValue, new FetchInstallPlanHandler());
+//                break;
+//            case R.id.plan_actual://今日完成
+//                mPostValue = new LinkedHashMap<>();
+//                mPostValue.put("installGroupName", ""+SinSimApp.getApp().getGroupName());
+//                date = new Date(System.currentTimeMillis());
+//                mPostValue.put("isNotFinished", "true");
+//                mPostValue.put("queryFinishTime", simpleDateFormat.format(date));
+//
+//                String fetchInstallPlanUrl2 = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.FATCH_INSTALL_PLAN;
+//                Network.Instance(SinSimApp.getApp()).fetchInstallPlan(fetchInstallPlanUrl2, mPostValue, new FetchInstallActualHandler());
+//                break;
             case R.id.attendance_settings://考勤信息
                 mAttendanceData = new AttendanceData();
                 mPostValue = new LinkedHashMap<>();

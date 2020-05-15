@@ -9,6 +9,8 @@ import java.io.Serializable;
 public class MachineOrderData implements Serializable {
     private int id;
     private String orderNum;
+    private String headNum;
+    private String needleNum;
     private int machineType;//类型
     private String contractShipDate;//合同日期
     private long planShipDate;//计划日期
@@ -31,5 +33,13 @@ public class MachineOrderData implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public String getHeadNum() {
+        return headNum;
+    }
+
+    public String getNeedleNum() {
+        return needleNum;
     }
 }

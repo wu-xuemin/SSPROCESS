@@ -114,10 +114,18 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
         TextView locationTv = findViewById(R.id.location_tv);
         TextView orderNumberTv=findViewById(R.id.order_number_tv);
+        TextView headerNumberTv=findViewById(R.id.header_number_tv);
+        TextView needleNumberTv=findViewById(R.id.needle_number_tv);
         TextView machineNumberTv=findViewById(R.id.machine_number_tv);
         TextView warningTv=findViewById(R.id.warning_tv);
         currentStatusTv=findViewById(R.id.current_status_tv);
         TextView installListTv=findViewById(R.id.intall_list_tv);
+        LinearLayout needleAndHead=findViewById(R.id.needle_and_header);
+        if (SinSimApp.getApp().getGroupId() == 1 || SinSimApp.getApp().getGroupId() == 2 || SinSimApp.getApp().getGroupId() == 8){
+            needleAndHead.setVisibility(View.VISIBLE);
+        }else {
+            needleAndHead.setVisibility(View.GONE);
+        }
 
         installNormalRb=findViewById(R.id.normal_rb);
         installAbnormalRb=findViewById(R.id.abnormal_rb);
@@ -144,6 +152,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         orderNumberTv.setText(mTaskRecordMachineListData.getMachineOrderData().getOrderNum());
         currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
         machineNumberTv.setText(mTaskRecordMachineListData.getMachineData().getNameplate());
+        headerNumberTv.setText(mTaskRecordMachineListData.getMachineOrderData().getHeadNum());
+        needleNumberTv.setText(mTaskRecordMachineListData.getMachineOrderData().getNeedleNum());
         locationTv.setText(mTaskRecordMachineListData.getMachineData().getLocation());
 
         float daySum = (mTaskRecordMachineListData.getMachineOrderData().getPlanShipDate() - new Date().getTime())/(1000*60*60*24);
