@@ -371,15 +371,19 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    abnormalRecordDetailsData.setSolution(editText.getText().toString());
-                    abnormalRecordDetailsData.setSolutionUser(SinSimApp.getApp().getAppUserId());
-                    Gson gson=new Gson();
-                    String abnormalRecordToJson = gson.toJson(abnormalRecordDetailsData);
-                    LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-                    mPostValue.put("abnormalRecord", abnormalRecordToJson);
-                    String updateAbnormalRecordUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.UPDATE_INSTALL_ABNORMAL_RECORD;
-                    Log.d(TAG, "abnormalRecord: "+updateAbnormalRecordUrl+mPostValue.get("abnormalRecord"));
-                    Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateAbnormalRecordUrl, mPostValue, mUpdateAbnormalRecordHandler);
+                    if (editText.getText().toString().isEmpty() || editText.getText().toString().equals("")){
+                        ShowMessage.showToast(DetailToInstallActivity.this,"没有输入详情，提交失败！", ShowMessage.MessageDuring.SHORT);
+                    }else {
+                        abnormalRecordDetailsData.setSolution(editText.getText().toString());
+                        abnormalRecordDetailsData.setSolutionUser(SinSimApp.getApp().getAppUserId());
+                        Gson gson = new Gson();
+                        String abnormalRecordToJson = gson.toJson(abnormalRecordDetailsData);
+                        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+                        mPostValue.put("abnormalRecord", abnormalRecordToJson);
+                        String updateAbnormalRecordUrl = URL.HTTP_HEAD + SinSimApp.getApp().getServerIP() + URL.UPDATE_INSTALL_ABNORMAL_RECORD;
+                        Log.d(TAG, "abnormalRecord: " + updateAbnormalRecordUrl + mPostValue.get("abnormalRecord"));
+                        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateAbnormalRecordUrl, mPostValue, mUpdateAbnormalRecordHandler);
+                    }
                 }
             }).show();
     }
