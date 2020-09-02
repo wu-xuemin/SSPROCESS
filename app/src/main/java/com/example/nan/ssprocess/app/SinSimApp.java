@@ -207,6 +207,10 @@ public class SinSimApp extends Application {
             this.role = Integer.valueOf(readValue(PersistentValueType.ROLE, "0"));
         }
         this.ip = readValue(PersistentValueType.SERVICE_IP, "");
+//        this.ip = "192.168.1.139:8080";
+//        this.ip = "10.0.2.2:8080";
+//模拟器
+   //     this.ip = "10.0.2.2:8004";
         String appUserIdStr = readValue(PersistentValueType.USER_ID, "0");
         if ("".equals(appUserIdStr)){
             this.appUserId =0;
@@ -228,7 +232,9 @@ public class SinSimApp extends Application {
         IMEI = null;
         TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
         if (telephonyManager != null) {
-            IMEI = telephonyManager.getDeviceId();
+//模拟器
+ //           IMEI = "AVDAVD7890AVDAV";
+           IMEI = telephonyManager.getDeviceId();
         } else {
             Log.d(TAG, "getIMEI: have some error");
         }
