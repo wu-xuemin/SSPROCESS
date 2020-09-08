@@ -12,6 +12,12 @@ public class ServerToClientMsg {
         public static final Integer ORDER_SPLIT = 2;
         ///取消
         public static final Integer ORDER_CANCEL = 3;
+
+        //总装排产
+        public static final Integer INSTALL_PLAN = 4;
+
+        //通知质检员、质检组长
+        public static final Integer QUALITY_INSPECT = 5;
     }
 
     /**

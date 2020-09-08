@@ -31,6 +31,7 @@ public class SinSimApp extends Application {
     public static final int LOGIN_RESULT_SUCCESS_CODE = 20001;
     public static final int LOGIN_FOR_ADMIN = 2;
     public static final int LOGIN_FOR_QA = 11;
+    public static final int LOGIN_FOR_QA_LEADER = 16; //质检组长
     public static final int LOGIN_FOR_INSTALL = 3;
 
     public static final String FROM_NOTIFICATION = "1";

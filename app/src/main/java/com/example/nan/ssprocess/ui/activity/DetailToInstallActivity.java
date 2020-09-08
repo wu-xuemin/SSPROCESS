@@ -858,7 +858,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                     installAbnormalSolutionButton.setVisibility(View.GONE);
                     installFinishButton.setVisibility(View.GONE);
                 }else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DONE){
-                    ShowMessage.showDialog(DetailToInstallActivity.this,"安装完成！");
+                    ShowMessage.showDialog(DetailToInstallActivity.this,"质检完成！"); ///
                     installStartButton.setVisibility(View.GONE);
                     installAbnormalSolutionButton.setVisibility(View.GONE);
                     installFinishButton.setVisibility(View.GONE);

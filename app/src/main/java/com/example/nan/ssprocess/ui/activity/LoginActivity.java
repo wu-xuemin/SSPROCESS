@@ -181,6 +181,7 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                         break;
                     case SinSimApp.LOGIN_FOR_QA:
+                    case SinSimApp.LOGIN_FOR_QA_LEADER:
                         it.setClass(LoginActivity.this, ProcessToCheckoutActivity.class);
                         startActivity(it);
                         finish();

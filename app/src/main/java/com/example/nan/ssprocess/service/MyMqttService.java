@@ -54,6 +54,7 @@ public class MyMqttService extends Service {
     private static final String TOPIC_QUALITY_ABNORMAL = "/s2c/quality_abnormal/";
     private static final String TOPIC_INSTALL_PLAN = "/s2c/install_plan/";
     private static final String TOPIC_TASK_REMIND = "/s2c/task_remind/";
+    private static final String TOPIC_MACHINE_QUALITY_INSPECT = "/s2c/machine_quality_inspect/";
     /**
      * 发生安装异常时，通知对应质检员
      */
@@ -175,8 +176,40 @@ public class MyMqttService extends Service {
 //                                        //不设置此项不会悬挂,false 不会出现悬挂
 //                                        .build();
 //                                mNotificationManager.notify(13,notify);
+                            } else  if(topic.equals(TOPIC_MACHINE_QUALITY_INSPECT)) {
+                                Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
+                                PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
+                                String title = null;
+                                int iconId = -1;
+                                if(msg.getType().equals(ServerToClientMsg.MsgType.QUALITY_INSPECT)) {
+                                    title = "机器已设置位置，可以准备质检了";
+                                    iconId = R.mipmap.to_quality;
+                                }
+                                Log.d(TAG, "messageArrived: "+title);
+                                if(title != null) {
+                                    NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
+                                    notificationUtils.sendNotification(title, "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_MACHINE_QUALITY_INSPECT,8,pi);
+                                }
                             }
                         }
+                    } else  if( roleId == SinSimApp.LOGIN_FOR_QA_LEADER) {
+                        //质检组长
+                        if(topic.equals(TOPIC_MACHINE_QUALITY_INSPECT)) {
+                            Intent intent = new Intent(MyMqttService.this, ProcessToInstallActivity.class);
+                            PendingIntent pi = PendingIntent.getActivity(MyMqttService.this, 0, intent, 0);
+                            String title = null;
+                            int iconId = -1;
+                            if(msg.getType().equals(ServerToClientMsg.MsgType.QUALITY_INSPECT)) {
+                                title = "机器已设置位置，可以准备质检了";
+                                iconId = R.mipmap.to_quality;
+                            }
+                            Log.d(TAG, "messageArrived: "+title);
+                            if(title != null) {
+                                NotificationUtil notificationUtils =new NotificationUtil(MyMqttService.this);
+                                notificationUtils.sendNotification(title, "需求单号：" + msg.getOrderNum() + " | 机器编号：" + msg.getNameplate(), TOPIC_MACHINE_QUALITY_INSPECT,8,pi);
+                            }
+                        }
+
                     } else if(roleId == SinSimApp.LOGIN_FOR_ADMIN) {
                         //生产部管理员接受消息
                         if(topic != null) {
@@ -497,7 +530,13 @@ public class MyMqttService extends Service {
 
 
     private void subscribeAllTopics() {
-        if(SinSimApp.getApp().getRole() == SinSimApp.LOGIN_FOR_QA) {
+
+        if(SinSimApp.getApp().getRole() == SinSimApp.LOGIN_FOR_QA_LEADER) {
+            //质检组长订阅 质检提醒（在设置机器位置时就发出了）
+            subscribeToTopic(TOPIC_MACHINE_QUALITY_INSPECT );
+        } else if(SinSimApp.getApp().getRole() == SinSimApp.LOGIN_FOR_QA) {
+            //质检组长订阅 质检提醒（在设置机器位置时就发出了）
+            subscribeToTopic(TOPIC_MACHINE_QUALITY_INSPECT );
             //User ID不为零则有效
             if(SinSimApp.getApp().getAppUserId() != 0) {
                 //质检员订阅质检消息
@@ -506,6 +545,7 @@ public class MyMqttService extends Service {
                 subscribeToTopic(TOPIC_QA_ABNORMAL_RESOLVE + SinSimApp.getApp().getAppUserId());
                 //质检员订阅安装异常
                 subscribeToTopic(TOPIC_INSTALL_ABNORMAL_TO_QUALITY + SinSimApp.getApp().getAppUserId());
+
             }
         } else {
             //安装组长和安装部管理员订阅改单、拆单消息
