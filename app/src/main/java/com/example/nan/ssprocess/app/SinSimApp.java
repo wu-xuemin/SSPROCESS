@@ -79,6 +79,21 @@ public class SinSimApp extends Application {
     public static final int TASK_INSTALL_ABNORMAL = 7;
     public static final int TASK_QUALITY_ABNORMAL = 8;
     public static final int TASK_SKIP = 9;
+
+    /**
+     * 二期的质检和原先不同，在定了 机器位置，则就要发消息给质检人员。
+     * 所以质检的状态，不和工序的状态共用。
+     * 包括：
+     * 该条质检未开始，无此检验条目，质检合格，质检不合格。
+     * （没有质检中,因为是对一条质检内容而言,对机器有多条质检，才有质检中这样的状态）,
+     * “未检”按钮（因为无法检查，比如安装好了盖住了无法打开检验）,
+     */
+    public static final String STR_QUALITY_INSPECT_NOT_START = "未质检";
+    public static final String STR_QUALITY_INSPECT_NOT_NEED = "无此检验条目";
+    public static final String STR_QUALITY_INSPECT_FAILURE = "质检不合格";
+    public static final String STR_QUALITY_INSPECT_SUCCESS = "质检合格";
+    public static final String STR_QUALITY_INSPECT_UNCHECKED = "未检";
+
     public static String getInstallStatusString(int status) {
         String result = "";
         switch (status){

@@ -116,8 +116,13 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
         final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("userAccount", account);
+//        mPostValue.put("userAccount", account);
+        /**
+         * 新的质检方案，质检不再指定质检人
+         */
+        mPostValue.put("recordStatus", SinSimApp.STR_QUALITY_INSPECT_NOT_START);
         mPostValue.put("page", ""+page);
+
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_QA;
         Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessDataHandler());
     }

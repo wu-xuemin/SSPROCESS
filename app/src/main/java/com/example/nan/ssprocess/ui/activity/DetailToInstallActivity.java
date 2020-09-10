@@ -941,13 +941,21 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
             mTaskRecordMachineListData.setInstallEndTime(strCurTime);
             iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
-            if (mTaskRecordMachineListData.getTaskData().getQualityUserId()>0) {
-                updateProcessDetailData(SinSimApp.TASK_INSTALLED);
-            } else {
-                mTaskRecordMachineListData.setQualityBeginTime(strCurTime);
-                mTaskRecordMachineListData.setQualityEndTime(strCurTime);
-                updateProcessDetailData(SinSimApp.TASK_QUALITY_DONE);
-            }
+            /**
+             * 旧的设计，每个工序可能有对应的质检人员（可能有可能无），
+             * 如果工序有对应质检，则发安装完成，如果没有对应质检，则直接发质检完成。
+             *
+             * 新的设计：工序和质检有关，但是不是和质检人员有关, 所有安装扫码之后，都是安装完成
+             */
+//            if (mTaskRecordMachineListData.getTaskData().getQualityUserId()>0) {
+//                updateProcessDetailData(SinSimApp.TASK_INSTALLED);
+//            } else {
+//                mTaskRecordMachineListData.setQualityBeginTime(strCurTime);
+//                mTaskRecordMachineListData.setQualityEndTime(strCurTime);
+//                updateProcessDetailData(SinSimApp.TASK_QUALITY_DONE);
+//            }
+            updateProcessDetailData(SinSimApp.TASK_INSTALLED);
+
         }else if(installAbnormalRb.isChecked()){
             AbnormalRecordDetailsData abnormalRecordAddData=new AbnormalRecordDetailsData(SinSimApp.getApp().getAppUserId(),mTaskRecordMachineListData.getId(),lCurTime);
             String bnormalRecordDetailsDataToJson = gson.toJson(abnormalRecordAddData);
