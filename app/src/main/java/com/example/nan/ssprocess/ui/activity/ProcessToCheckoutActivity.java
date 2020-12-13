@@ -118,7 +118,7 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
 //        mPostValue.put("userAccount", account);
         /**
-         * 新的质检方案，质检不再指定质检人
+         * 新的质检方案，质检不再指定质检人，不传质检人即可
          */
         mPostValue.put("recordStatus", SinSimApp.STR_QUALITY_INSPECT_NOT_START);
         mPostValue.put("page", ""+page);
