@@ -10,6 +10,16 @@ public class TaskRecordMachineListData implements Serializable {
     private int id;//task record id;
     private String taskName;//流程名字
     private int status;//流程状态
+    private String recordStatus; //质检状态，3期新质检
+
+    public String getRecordStatus() {
+        return recordStatus;
+    }
+
+    public void setRecordStatus(String recordStatus) {
+        this.recordStatus = recordStatus;
+    }
+
     private String installBeginTime;
     private String installEndTime;
     private String leader;

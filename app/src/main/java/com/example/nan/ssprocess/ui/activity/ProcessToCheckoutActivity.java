@@ -118,9 +118,10 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
 //        mPostValue.put("userAccount", account);
         /**
-         * 新的质检方案，质检不再指定质检人，不传质检人即可
+         * 新的质检方案，接口也是新的
          */
-        mPostValue.put("recordStatus", SinSimApp.STR_QUALITY_INSPECT_NOT_START);
+//        mPostValue.put("recordStatus", SinSimApp.STR_QUALITY_INSPECT_NOT_START);
+        mPostValue.put("recordStatus", String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_NOT_STARTED));
         mPostValue.put("page", ""+page);
 
         String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_QA;
@@ -161,6 +162,13 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
                                 case SinSimApp.TASK_INSTALLED:
                                 case SinSimApp.TASK_QUALITY_DOING:
                                 case SinSimApp.TASK_QUALITY_DONE:
+
+                                //3期
+                                case SinSimApp.TASK_QUALITY_INSPECT_NOT_STARTED:
+                                case SinSimApp.TASK_QUALITY_INSPECT_NO_SUCH_ITEM:
+                                case SinSimApp.TASK_QUALITY_INSPECT_NG:
+                                case SinSimApp.TASK_QUALITY_INSPECT_OK:
+                                case SinSimApp.TASK_QUALITY_INSPECT_HAVE_NOT_CHECKED:
                                     normalList.add(mProcessToCheckoutList.get(position));
                                     break;
                                 case SinSimApp.TASK_INSTALL_ABNORMAL:

@@ -120,6 +120,28 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
                         itemView.taskStatusIv.setImageResource(R.mipmap.jump);
                         itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_SKIP));
                         break;
+
+                        //3期
+                    case SinSimApp.TASK_QUALITY_INSPECT_NOT_STARTED:
+                        itemView.taskStatusIv.setImageResource(R.mipmap.jump);
+                        itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_INSPECT_NOT_STARTED));
+                        break;
+                    case SinSimApp.TASK_QUALITY_INSPECT_NO_SUCH_ITEM:
+                        itemView.taskStatusIv.setImageResource(R.mipmap.jump);
+                        itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_INSPECT_NO_SUCH_ITEM));
+                        break;
+                    case SinSimApp.TASK_QUALITY_INSPECT_NG:
+                        itemView.taskStatusIv.setImageResource(R.mipmap.jump);
+                        itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_INSPECT_NG));
+                        break;
+                    case SinSimApp.TASK_QUALITY_INSPECT_OK:
+                        itemView.taskStatusIv.setImageResource(R.mipmap.jump);
+                        itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_INSPECT_OK));
+                        break;
+                    case SinSimApp.TASK_QUALITY_INSPECT_HAVE_NOT_CHECKED:
+                        itemView.taskStatusIv.setImageResource(R.mipmap.jump);
+                        itemView.processStateTv.setText(SinSimApp.getInstallStatusString(SinSimApp.TASK_QUALITY_INSPECT_HAVE_NOT_CHECKED));
+                        break;
                     default:
                         break;
 

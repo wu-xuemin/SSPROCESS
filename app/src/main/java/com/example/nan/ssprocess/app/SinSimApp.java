@@ -3,7 +3,6 @@ package com.example.nan.ssprocess.app;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -29,10 +28,10 @@ public class SinSimApp extends Application {
 
     public static final int LOGIN_REQUEST_CODE = 20000;
     public static final int LOGIN_RESULT_SUCCESS_CODE = 20001;
-    public static final int LOGIN_FOR_ADMIN = 2;
-    public static final int LOGIN_FOR_QA = 11;
-    public static final int LOGIN_FOR_QA_LEADER = 16; //质检组长
-    public static final int LOGIN_FOR_INSTALL = 3;
+    public static final int LOGIN_FOR_ADMIN = 2;    //生产部管理员
+    public static final int LOGIN_FOR_QA = 11;      //质检员
+    public static final int LOGIN_FOR_QA_LEADER = 16;   //质检组长
+    public static final int LOGIN_FOR_INSTALL = 3;      //安装组长
 
     public static final String FROM_NOTIFICATION = "1";
 
@@ -79,6 +78,12 @@ public class SinSimApp extends Application {
     public static final int TASK_INSTALL_ABNORMAL = 7;
     public static final int TASK_QUALITY_ABNORMAL = 8;
     public static final int TASK_SKIP = 9;
+    //3期质检：
+    public static final int TASK_QUALITY_INSPECT_NOT_STARTED = 10;
+    public static final int TASK_QUALITY_INSPECT_NO_SUCH_ITEM = 11;
+    public static final int TASK_QUALITY_INSPECT_NG = 12;
+    public static final int TASK_QUALITY_INSPECT_OK = 13;
+    public static final int TASK_QUALITY_INSPECT_HAVE_NOT_CHECKED = 14;
 
     /**
      * 二期的质检和原先不同，在定了 机器位置，则就要发消息给质检人员。
@@ -88,11 +93,11 @@ public class SinSimApp extends Application {
      * （没有质检中,因为是对一条质检内容而言,对机器有多条质检，才有质检中这样的状态）,
      * “未检”按钮（因为无法检查，比如安装好了盖住了无法打开检验）,
      */
-    public static final String STR_QUALITY_INSPECT_NOT_START = "未质检";
+    public static final String STR_QUALITY_INSPECT_NOT_START = "待质检";
     public static final String STR_QUALITY_INSPECT_NOT_NEED = "无此检验条目";
     public static final String STR_QUALITY_INSPECT_FAILURE = "质检不合格";
     public static final String STR_QUALITY_INSPECT_SUCCESS = "质检合格";
-    public static final String STR_QUALITY_INSPECT_UNCHECKED = "未检";
+    public static final String STR_QUALITY_INSPECT_HAVE_NOT_CHECKED = "未检";
 
     public static String getInstallStatusString(int status) {
         String result = "";
@@ -127,6 +132,25 @@ public class SinSimApp extends Application {
             case SinSimApp.TASK_SKIP:
                 result = "跳过";
                 break;
+
+                //3期质检
+            case SinSimApp.TASK_QUALITY_INSPECT_NOT_STARTED:
+                result = SinSimApp.STR_QUALITY_INSPECT_NOT_START;
+                break;
+            case SinSimApp.TASK_QUALITY_INSPECT_NO_SUCH_ITEM:
+                result = SinSimApp.STR_QUALITY_INSPECT_NOT_NEED;
+                break;
+            case SinSimApp.TASK_QUALITY_INSPECT_NG:
+                result = SinSimApp.STR_QUALITY_INSPECT_FAILURE;
+                break;
+            case SinSimApp.TASK_QUALITY_INSPECT_OK:
+                result = SinSimApp.STR_QUALITY_INSPECT_SUCCESS;
+                break;
+            case SinSimApp.TASK_QUALITY_INSPECT_HAVE_NOT_CHECKED:
+                result = SinSimApp.STR_QUALITY_INSPECT_HAVE_NOT_CHECKED;
+                break;
+
+
             default:
                 break;
 
