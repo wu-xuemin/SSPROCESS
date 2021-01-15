@@ -30,28 +30,70 @@
                 android:text="质检结果："
                 android:textColor="@color/black"
                 android:background="@color/windowBackground"/>
-            <RadioGroup
-                android:id="@+id/resalt_for_checkout_label"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_marginTop="12dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp">
 
-                <RadioButton
-                    android:id="@+id/checked_ok_rb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="合格" />
-                <RadioButton
-                    android:id="@+id/checked_nok_rb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="不合格" />
-            </RadioGroup>
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/qi_name_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="质检项名称"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text=": " />
+
+                    <TextView
+                        android:id="@+id/qi_content_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:text="质检项内容"/>
+                </LinearLayout>
+<!-- app上 质检条目,内容 + 打勾打叉（合格不合格） + 输入框（可写可不写） + “无此检验条目”按钮 + “未检”按钮（因为无法检查，比如安装好了盖住了无法打开检验）+ 复检结果。
+ 即最多复检一次。有弹框提示是否确认。不需要编辑。
+“无此检验条目” 可以一个个点，也可以按照工序一次点一堆条目。
+-->
+            </LinearLayout>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    >
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/checkout_list_rv"
+                        android:background="@color/cardview_light_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        >
+                    </android.support.v7.widget.RecyclerView>
+                </LinearLayout>
+
+            </ScrollView>
+
 
             <LinearLayout
                 android:layout_width="match_parent"

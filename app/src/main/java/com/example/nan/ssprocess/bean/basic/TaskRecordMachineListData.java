@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * Created by nan on 2017/12/8.
+ * 新QA的数据也在这里
  */
 
 public class TaskRecordMachineListData implements Serializable {
@@ -128,5 +129,34 @@ public class TaskRecordMachineListData implements Serializable {
 
     public void setCmtFeedback(String cmtFeedback) {
         this.cmtFeedback = cmtFeedback;
+    }
+
+//    //新QA的数据也在这里
+//    private String inspectName;
+//    private String inspectContent;
+//
+//    public String getInspectName() {
+//        return inspectName;
+//    }
+//
+//    public void setInspectName(String inspectName) {
+//        this.inspectName = inspectName;
+//    }
+//
+//    public String getInspectContent() {
+//        return inspectContent;
+//    }
+//
+//    public void setInspectContent(String inspectContent) {
+//        this.inspectContent = inspectContent;
+//    }
+    private QualityInspectData qualityInspect;
+
+    public QualityInspectData getQualityInspect() {
+        return qualityInspect;
+    }
+
+    public void setQualityInspect(QualityInspectData qualityInspect) {
+        this.qualityInspect = qualityInspect;
     }
 }

@@ -67,6 +67,14 @@ public class SinSimApp extends Application {
      * "7" --> 安装异常
      * "8" --> 质检异常
      * "9" --> 跳过
+     *
+     * "10" --> 待质检 （同4？）
+     *  3期新质检
+     * "10" --> 未开始质检
+     * "11" --> 无此检验条目
+     * "12" --> 质检不合格
+     * "13" --> 质检合格
+     * "14" --> 未检
      */
     public static final int TASK_INITIAL = 0;
     public static final int TASK_PLANED = 1;
@@ -172,6 +180,7 @@ public class SinSimApp extends Application {
     private String IMEI;
     private static SinSimApp mApp;
 
+    private boolean isAvdTest = false;
     /**
      * 缓存
      */
@@ -250,7 +259,9 @@ public class SinSimApp extends Application {
 //        this.ip = "192.168.1.139:8080";
 //        this.ip = "10.0.2.2:8080";
 //模拟器
-   //     this.ip = "10.0.2.2:8004";
+        if(isAvdTest) {
+            this.ip = "10.0.2.2:8004";
+        }
         String appUserIdStr = readValue(PersistentValueType.USER_ID, "0");
         if ("".equals(appUserIdStr)){
             this.appUserId =0;
@@ -272,9 +283,11 @@ public class SinSimApp extends Application {
         IMEI = null;
         TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
         if (telephonyManager != null) {
-//模拟器
- //           IMEI = "AVDAVD7890AVDAV";
            IMEI = telephonyManager.getDeviceId();
+//模拟器
+            if(isAvdTest) {
+                IMEI = "AVDAVD7890AVDAV";
+            }
         } else {
             Log.d(TAG, "getIMEI: have some error");
         }

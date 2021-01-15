@@ -955,6 +955,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 //                updateProcessDetailData(SinSimApp.TASK_QUALITY_DONE);
 //            }
             updateProcessDetailData(SinSimApp.TASK_INSTALLED);
+            //相关地方要处理，比如流程里，安装完成了，就可以到下一步了，不需要质检，因为质检不再和安装关联。
 
         }else if(installAbnormalRb.isChecked()){
             AbnormalRecordDetailsData abnormalRecordAddData=new AbnormalRecordDetailsData(SinSimApp.getApp().getAppUserId(),mTaskRecordMachineListData.getId(),lCurTime);

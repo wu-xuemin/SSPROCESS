@@ -2,6 +2,7 @@ package com.example.nan.ssprocess.adapter;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.provider.SyncStateContract;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,6 +24,8 @@ import java.util.Date;
 
 /**
  * Created by Young on 2017/11/26.
+ *
+ * 新QA的数据也在这里
  */
 
 public class TaskRecordAdapter extends RecyclerView.Adapter {
@@ -67,7 +70,16 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
 //            }
             itemView.machineIdTv.setText(mProcessList.get(position).getMachineData().getNameplate());
             itemView.orderNumTv.setText(mProcessList.get(position).getMachineOrderData().getOrderNum());
-            itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
+            if(mProcessList.get(position).getStatus() == SinSimApp.TASK_QUALITY_INSPECT_NOT_STARTED
+            || mProcessList.get(position).getStatus() == SinSimApp.TASK_QUALITY_INSPECT_NG) {
+                itemView.processNameTv.setVisibility(View.INVISIBLE);
+                itemView.qualityInspectItemNameTv.setVisibility(View.VISIBLE);
+                itemView.qualityInspectItemNameTv.setText(mProcessList.get(position).getQualityInspect().getInspectName() + "...等");
+            } else {
+                itemView.qualityInspectItemNameTv.setVisibility(View.INVISIBLE);
+                itemView.processNameTv.setVisibility(View.VISIBLE);
+                itemView.processNameTv.setText(mProcessList.get(position).getTaskName());
+            }
             itemView.machineLocalTv.setText(mProcessList.get(position).getMachineData().getLocation());
             if (mProcessList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED){
                 itemView.processStateTv.setText("改单中");
@@ -191,6 +203,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
         TextView machineIdTv;
         TextView orderNumTv;
         TextView processNameTv;
+        TextView qualityInspectItemNameTv;
         TextView processStateTv;
         TextView machineLocalTv;
         TextView planShipDateTv;
@@ -203,6 +216,8 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             machineIdTv = (TextView) itemView.findViewById(R.id.process_machine_id_tv);
             orderNumTv = (TextView) itemView.findViewById(R.id.process_order_num_tv);
             processNameTv = (TextView) itemView.findViewById(R.id.process_name_tv);
+
+            qualityInspectItemNameTv = (TextView) itemView.findViewById(R.id.quality_inspect_item_name_tv);
             processStateTv = (TextView) itemView.findViewById(R.id.process_state_tv);
             machineLocalTv = (TextView) itemView.findViewById(R.id.machine_local_tv);
             planShipDateTv = (TextView) itemView.findViewById(R.id.plan_ship_date_tv);

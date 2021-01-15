@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="64dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
+        <TextView
+            android:id="@+id/item_inspect_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="质检条目"
+            android:textStyle="bold"
+            android:textSize="15sp"/>
+        <TextView
+            android:id="@+id/item_inspect_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="质检内容"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/checked_nok_layout"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:orientation="vertical">
+
+        <RadioGroup
+            android:id="@+id/result_for_checkout_rg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp">
+
+            <RadioButton
+                android:id="@+id/item_checked_ok_rb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="合格" />
+            <RadioButton
+                android:id="@+id/item_checked_ng_rb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="不合格" />
+            <RadioButton
+                android:id="@+id/item_no_such_one_rb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="无此检验条目" />
+            <RadioButton
+                android:id="@+id/item_have_not_checked_rb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="未检" />
+        </RadioGroup>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/qa_nok_ll"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/checkout_comment_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:hint="输入备注"
+            android:minLines="4"
+            android:padding="4dp"
+            android:gravity="start"
+            android:textSize="16sp"
+            android:background="@drawable/editview_bg" />
+
+        <EditText
+            android:id="@+id/checkout_re_check_comment_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:hint="复检时输入的备注"
+            android:minLines="4"
+            android:padding="4dp"
+            android:gravity="start"
+            android:textSize="16sp"
+            android:background="@drawable/editview_bg" />
+</LinearLayout>
+
+</LinearLayout>

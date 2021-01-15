@@ -70,6 +70,18 @@
                         android:hint="工序名称"
                         android:gravity="bottom" />
                     <TextView
+                        android:id="@+id/quality_inspect_item_name_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:layout_gravity="center_vertical"
+                        android:hint="质检条目名称"
+                        android:gravity="bottom" />
+                    <TextView
                         android:id="@+id/machine_local_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
