@@ -118,13 +118,14 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
 //        mPostValue.put("userAccount", account);
         /**
-         * 新的质检方案，接口也是新的
+         * 新的质检方案，接口也是新的; 以机器为单位进行显示，而不是以工序/质检项为单位进行显示。
          */
 //        mPostValue.put("recordStatus", SinSimApp.STR_QUALITY_INSPECT_NOT_START);
         mPostValue.put("recordStatus", String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_NOT_STARTED));
         mPostValue.put("page", ""+page);
+//        String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_QA;
+        String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_QUALITY_INSPECT_MACHINE_TO_QA;
 
-        String fetchProcessRecordUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_QA;
         Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchProcessRecordUrl, mPostValue, new FetchProcessDataHandler());
     }
 

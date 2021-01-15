@@ -74,7 +74,7 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             || mProcessList.get(position).getStatus() == SinSimApp.TASK_QUALITY_INSPECT_NG) {
                 itemView.processNameTv.setVisibility(View.INVISIBLE);
                 itemView.qualityInspectItemNameTv.setVisibility(View.VISIBLE);
-                itemView.qualityInspectItemNameTv.setText(mProcessList.get(position).getQualityInspect().getInspectName() + "...等");
+//                itemView.qualityInspectItemNameTv.setText(mProcessList.get(position).getQualityInspect().getInspectName() + "...等");
             } else {
                 itemView.qualityInspectItemNameTv.setVisibility(View.INVISIBLE);
                 itemView.processNameTv.setVisibility(View.VISIBLE);

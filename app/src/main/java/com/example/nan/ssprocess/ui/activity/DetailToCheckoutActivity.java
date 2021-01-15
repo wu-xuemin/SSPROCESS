@@ -81,6 +81,8 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     private static final int RC_CHECKOUT_PHOTO_PREVIEW = 4;
 
     private QualityInspectAdapter mQualityInspectAdapter;
+    //   先获取 mProcessToCheckoutList， 然后从中获取 mQualityInspectList
+    private ArrayList<TaskRecordMachineListData> mProcessToCheckoutList = new ArrayList<>();
     private ArrayList<QualityInspectData> mQualityInspectList = new ArrayList<>();
     private TextView mQualityInspectItemNameTv;
     private TextView mQualityInspectItemContentTv;
@@ -177,8 +179,8 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             }
         });
 
-        mQualityInspectItemNameTv.setText(mTaskRecordMachineListData.getQualityInspect().getInspectName());
-        mQualityInspectItemContentTv.setText(mTaskRecordMachineListData.getQualityInspect().getInspectContent());
+//        mQualityInspectItemNameTv.setText(mTaskRecordMachineListData.getQualityInspect().getInspectName());
+//        mQualityInspectItemContentTv.setText(mTaskRecordMachineListData.getQualityInspect().getInspectContent());
 //        checkedOkRb.setChecked(true);
         QaNokLinearLayout.setVisibility(View.GONE);
 //        checkedOkRb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -433,8 +435,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         }
     }
 
-
-
     /**
      * 获取装车单的文件名
      */
@@ -640,6 +640,95 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchQualityInspectData(0);
+    }
+    private void fetchQualityInspectData(int page) {
+        final String account = SinSimApp.getApp().getAccount();
+        final String ip = SinSimApp.getApp().getServerIP();
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+
+
+        mPostValue.put("nameplate", String.valueOf(mTaskRecordMachineListData.getMachineData().getNameplate()));
+        mPostValue.put("recordStatus", String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_NOT_STARTED));
+        mPostValue.put("page", ""+page);
+
+        String fetchQualityInspectUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_QA;
+        //获取质检数据
+        Network.Instance(SinSimApp.getApp()).fetchProcessTaskRecordData(fetchQualityInspectUrl, mPostValue, new FetchQualityInspectDataHandler());
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class FetchQualityInspectDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if (msg.what == Network.OK) {
+                mProcessToCheckoutList=(ArrayList<TaskRecordMachineListData>)msg.obj;
+                Log.d(TAG, "handleMessage: size: "+mProcessToCheckoutList.size());
+//
+                if (mProcessToCheckoutList.size() > 0) {
+                    ArrayList<TaskRecordMachineListData> abnormalList = new ArrayList<>();
+                    ArrayList<TaskRecordMachineListData> orderChangeList = new ArrayList<>();
+                    ArrayList<TaskRecordMachineListData> skipList = new ArrayList<>();
+                    ArrayList<TaskRecordMachineListData> normalList = new ArrayList<>();
+                    for (int position = 0; position < mProcessToCheckoutList.size(); position++) {
+                        if (mProcessToCheckoutList.get(position).getMachineData().getStatus() == SinSimApp.MACHINE_CANCELED) {
+                            mProcessToCheckoutList.remove(position);
+                        }else if (mProcessToCheckoutList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
+                                ||mProcessToCheckoutList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED) {
+                            orderChangeList.add(mProcessToCheckoutList.get(position));
+                        } else {
+                            switch (mProcessToCheckoutList.get(position).getStatus()) {
+                                case SinSimApp.TASK_INITIAL:
+                                case SinSimApp.TASK_PLANED:
+                                case SinSimApp.TASK_INSTALL_WAITING:
+                                case SinSimApp.TASK_INSTALLING:
+                                case SinSimApp.TASK_INSTALLED:
+                                case SinSimApp.TASK_QUALITY_DOING:
+                                case SinSimApp.TASK_QUALITY_DONE:
+
+                                    //3期
+                                case SinSimApp.TASK_QUALITY_INSPECT_NOT_STARTED:
+                                case SinSimApp.TASK_QUALITY_INSPECT_NO_SUCH_ITEM:
+                                case SinSimApp.TASK_QUALITY_INSPECT_NG:
+                                case SinSimApp.TASK_QUALITY_INSPECT_OK:
+                                case SinSimApp.TASK_QUALITY_INSPECT_HAVE_NOT_CHECKED:
+                                    normalList.add(mProcessToCheckoutList.get(position));
+                                    break;
+                                case SinSimApp.TASK_INSTALL_ABNORMAL:
+                                case SinSimApp.TASK_QUALITY_ABNORMAL:
+                                    abnormalList.add(mProcessToCheckoutList.get(position));
+                                    break;
+                                case SinSimApp.TASK_SKIP:
+                                    skipList.add(mProcessToCheckoutList.get(position));
+                                    break;
+                                default:
+                                    break;
+
+                            }
+                        }
+                    }
+                    Log.d(TAG, "handleMessage: 机器状态排序!");
+                    //排序：异常-》改单拆单-》跳过-》正常
+                    abnormalList.addAll(orderChangeList);
+                    abnormalList.addAll(skipList);
+                    abnormalList.addAll(normalList);
+                    mProcessToCheckoutList=abnormalList;
+                }
+				
+                for(int k=0; k< mProcessToCheckoutList.size(); k++){
+                    mQualityInspectList.add(mProcessToCheckoutList.get(k).getQualityInspect());
+                }
+                mQualityInspectAdapter.notifyDataSetChanged();
+
+            } else {
+                String errorMsg = (String)msg.obj;
+                Toast.makeText(DetailToCheckoutActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
