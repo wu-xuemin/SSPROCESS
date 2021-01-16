@@ -84,8 +84,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     //   先获取 mProcessToCheckoutList， 然后从中获取 mQualityInspectList
     private ArrayList<TaskRecordMachineListData> mProcessToCheckoutList = new ArrayList<>();
     private ArrayList<QualityInspectData> mQualityInspectList = new ArrayList<>();
-    private TextView mQualityInspectItemNameTv;
-    private TextView mQualityInspectItemContentTv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,8 +102,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         currentStatusTv=findViewById(R.id.current_status_tv);
         TextView installListTv=findViewById(R.id.intall_list_tv);
 
-        mQualityInspectItemNameTv = findViewById(R.id.qi_name_tv);
-        mQualityInspectItemContentTv = findViewById(R.id.qi_content_tv);
         //点击下载装车单
         installListTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,8 +175,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             }
         });
 
-//        mQualityInspectItemNameTv.setText(mTaskRecordMachineListData.getQualityInspect().getInspectName());
-//        mQualityInspectItemContentTv.setText(mTaskRecordMachineListData.getQualityInspect().getInspectContent());
 //        checkedOkRb.setChecked(true);
         QaNokLinearLayout.setVisibility(View.GONE);
 //        checkedOkRb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

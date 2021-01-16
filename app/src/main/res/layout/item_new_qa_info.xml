@@ -1,39 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingTop="6dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="64dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp">
+        android:layout_marginRight="16dp"
+        android:background="#1A373737"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
+        android:orientation="horizontal">
+
         <TextView
             android:id="@+id/item_inspect_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
             android:text="质检条目"
+            android:textSize="15sp"
             android:textStyle="bold"
-            android:textSize="15sp"/>
+            tools:layout_gravity="center" />
+
         <TextView
             android:id="@+id/item_inspect_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
             android:text="质检内容"
+            android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="@color/black" />
+            tools:layout_gravity="center" />
     </LinearLayout>
 
+    <!--横线-->
+    <View
+        android:id="@+id/dividerProjectMember11"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="4"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintDimensionRatio="w,1:1"
+        tools:layout_editor_absoluteX="60dp" />
+
     <LinearLayout
+        android:id="@+id/checked_nok_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/checked_nok_layout"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:orientation="vertical">
@@ -42,10 +63,10 @@
             android:id="@+id/result_for_checkout_rg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
+            android:layout_marginLeft="16dp"
             android:layout_marginTop="12dp"
             android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp">
+            android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/item_checked_ok_rb"
@@ -53,18 +74,21 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="合格" />
+
             <RadioButton
                 android:id="@+id/item_checked_ng_rb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="不合格" />
+
             <RadioButton
                 android:id="@+id/item_no_such_one_rb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="无此检验条目" />
+
             <RadioButton
                 android:id="@+id/item_have_not_checked_rb"
                 android:layout_width="wrap_content"
@@ -73,39 +97,58 @@
                 android:text="未检" />
         </RadioGroup>
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/qa_nok_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/qa_nok_ll"
         android:orientation="vertical">
 
         <EditText
             android:id="@+id/checkout_comment_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:layout_marginTop="4dp"
             android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"
+            android:background="@drawable/editview_bg"
+            android:gravity="start"
             android:hint="输入备注"
             android:minLines="4"
             android:padding="4dp"
-            android:gravity="start"
-            android:textSize="16sp"
-            android:background="@drawable/editview_bg" />
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/checkout_re_check_comment_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:layout_marginTop="4dp"
             android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"
+            android:background="@drawable/editview_bg"
+            android:gravity="start"
             android:hint="复检时输入的备注"
             android:minLines="4"
             android:padding="4dp"
-            android:gravity="start"
-            android:textSize="16sp"
-            android:background="@drawable/editview_bg" />
-</LinearLayout>
+            android:textSize="16sp" />
+    </LinearLayout>
 
+    <!--横线-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="11dp">
+
+        <View
+            android:id="@+id/dividerProjectMember22"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="?android:attr/listDivider"
+            android:paddingTop="3dp"
+            android:paddingBottom="11dp"
+            app:layout_constraintDimensionRatio="w,1:1"
+            tools:layout_editor_absoluteX="60dp" />
+    </LinearLayout>
 </LinearLayout>
