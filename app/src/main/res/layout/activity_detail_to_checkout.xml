@@ -8,67 +8,66 @@
     <ScrollView
         android:id="@+id/weather_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:scrollbars="none"
-        android:overScrollMode="never">
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <include layout="@layout/machine_info"/>
+            <include layout="@layout/machine_info" />
 
             <TextView
                 android:id="@+id/checkout_info_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/windowBackground"
                 android:padding="8dp"
-                android:textSize="20sp"
-                android:textStyle="bold"
                 android:text="质检结果："
                 android:textColor="@color/black"
-                android:background="@color/windowBackground"/>
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginRight="16dp"-->
-<!--                android:layout_marginLeft="16dp"-->
-<!--                android:layout_marginTop="8dp"-->
-<!--                android:orientation="horizontal">-->
-<!--                <LinearLayout-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:orientation="horizontal">-->
-<!--                    <TextView-->
-<!--                        android:id="@+id/qi_name_tv"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="质检项名称"-->
-<!--                        android:textSize="15sp"-->
-<!--                        android:textStyle="bold"/>-->
+            <!--            <LinearLayout-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginRight="16dp"-->
+            <!--                android:layout_marginLeft="16dp"-->
+            <!--                android:layout_marginTop="8dp"-->
+            <!--                android:orientation="horizontal">-->
+            <!--                <LinearLayout-->
+            <!--                    android:layout_width="0dp"-->
+            <!--                    android:layout_height="match_parent"-->
+            <!--                    android:layout_weight="1"-->
+            <!--                    android:orientation="horizontal">-->
+            <!--                    <TextView-->
+            <!--                        android:id="@+id/qi_name_tv"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:text="质检项名称"-->
+            <!--                        android:textSize="15sp"-->
+            <!--                        android:textStyle="bold"/>-->
 
-<!--                    <TextView-->
-<!--                        android:id="@+id/textView"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:text=": " />-->
+            <!--                    <TextView-->
+            <!--                        android:id="@+id/textView"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:layout_weight="1"-->
+            <!--                        android:text=": " />-->
 
-<!--                    <TextView-->
-<!--                        android:id="@+id/qi_content_tv"-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:textSize="16sp"-->
-<!--                        android:textStyle="bold"-->
-<!--                        android:textColor="@color/black"-->
-<!--                        android:text="质检项内容"/>-->
-<!--                </LinearLayout>-->
-<!--            </LinearLayout>-->
+            <!--                    <TextView-->
+            <!--                        android:id="@+id/qi_content_tv"-->
+            <!--                        android:layout_width="0dp"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:layout_weight="1"-->
+            <!--                        android:textSize="16sp"-->
+            <!--                        android:textStyle="bold"-->
+            <!--                        android:textColor="@color/black"-->
+            <!--                        android:text="质检项内容"/>-->
+            <!--                </LinearLayout>-->
+            <!--            </LinearLayout>-->
             <!-- app上 质检条目,内容 + 打勾打叉（合格不合格） + 输入框（可写可不写） + “无此检验条目”按钮 + “未检”按钮（因为无法检查，比如安装好了盖住了无法打开检验）+ 复检结果。
  即最多复检一次。有弹框提示是否确认。不需要编辑。
 “无此检验条目” 可以一个个点，也可以按照工序一次点一堆条目。
@@ -77,107 +76,111 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    >
+                    android:orientation="vertical">
+
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/checkout_list_rv"
-                        android:background="@color/cardview_light_background"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        >
-                    </android.support.v7.widget.RecyclerView>
+                        android:background="@color/cardview_light_background"></android.support.v7.widget.RecyclerView>
                 </LinearLayout>
 
             </ScrollView>
 
+            <!--            <LinearLayout-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:id="@+id/qa_nok_ll"-->
+            <!--                android:orientation="vertical">-->
+            <!--                <TextView-->
+            <!--                    android:id="@+id/checkout_nok_detail_label"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_marginTop="1dp"-->
+            <!--                    android:layout_marginRight="16dp"-->
+            <!--                    android:layout_marginLeft="16dp"-->
+            <!--                    android:textSize="16sp"-->
+            <!--                    android:text="不合格原因："-->
+            <!--                    android:textStyle="bold"/>-->
+            <!--                <EditText-->
+            <!--                    android:id="@+id/checkout_nok_detail_et"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_marginTop="4dp"-->
+            <!--                    android:layout_marginRight="16dp"-->
+            <!--                    android:layout_marginLeft="16dp"-->
+            <!--                    android:hint="输入不合格原因"-->
+            <!--                    android:minLines="4"-->
+            <!--                    android:padding="4dp"-->
+            <!--                    android:gravity="start"-->
+            <!--                    android:textSize="16sp"-->
+            <!--                    android:background="@drawable/editview_bg" />-->
+            <!--                <TextView-->
+            <!--                    android:id="@+id/take_photos_label"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_marginTop="4dp"-->
+            <!--                    android:layout_marginRight="16dp"-->
+            <!--                    android:layout_marginLeft="16dp"-->
+            <!--                    android:textSize="16sp"-->
+            <!--                    android:text="拍照上传："-->
+            <!--                    android:textStyle="bold"/>-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/qa_nok_ll"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/checkout_nok_detail_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:textSize="16sp"
-                    android:text="不合格原因："
-                    android:textStyle="bold"/>
-                <EditText
-                    android:id="@+id/checkout_nok_detail_et"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:hint="输入不合格原因"
-                    android:minLines="4"
-                    android:padding="4dp"
-                    android:gravity="start"
-                    android:textSize="16sp"
-                    android:background="@drawable/editview_bg" />
-                <TextView
-                    android:id="@+id/take_photos_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:textSize="16sp"
-                    android:text="拍照上传："
-                    android:textStyle="bold"/>
-
-                <cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout
-                    android:id="@+id/checkout_nok_add_photos"
-                    style="@style/WrapWrap"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="4dp"
-                    app:bga_snpl_deleteDrawable="@mipmap/bga_pp_ic_delete"
-                    app:bga_snpl_deleteDrawableOverlapQuarter="false"
-                    app:bga_snpl_editable="true"
-                    app:bga_snpl_itemCornerRadius="0dp"
-                    app:bga_snpl_itemSpanCount="3"
-                    app:bga_snpl_itemWhiteSpacing="4dp"
-                    app:bga_snpl_itemWidth="0dp"
-                    app:bga_snpl_maxItemCount="9"
-                    app:bga_snpl_otherWhiteSpacing="100dp"
-                    app:bga_snpl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
-                    app:bga_snpl_plusDrawable="@mipmap/bga_pp_ic_plus"
-                    app:bga_snpl_plusEnable="true"
-                    app:bga_snpl_sortable="true" />
-            </LinearLayout>
+            <!--                <cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout-->
+            <!--                    android:id="@+id/checkout_nok_add_photos"-->
+            <!--                    style="@style/WrapWrap"-->
+            <!--                    android:layout_marginRight="16dp"-->
+            <!--                    android:layout_marginLeft="16dp"-->
+            <!--                    android:layout_marginTop="4dp"-->
+            <!--                    app:bga_snpl_deleteDrawable="@mipmap/bga_pp_ic_delete"-->
+            <!--                    app:bga_snpl_deleteDrawableOverlapQuarter="false"-->
+            <!--                    app:bga_snpl_editable="true"-->
+            <!--                    app:bga_snpl_itemCornerRadius="0dp"-->
+            <!--                    app:bga_snpl_itemSpanCount="3"-->
+            <!--                    app:bga_snpl_itemWhiteSpacing="4dp"-->
+            <!--                    app:bga_snpl_itemWidth="0dp"-->
+            <!--                    app:bga_snpl_maxItemCount="9"-->
+            <!--                    app:bga_snpl_otherWhiteSpacing="100dp"-->
+            <!--                    app:bga_snpl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"-->
+            <!--                    app:bga_snpl_plusDrawable="@mipmap/bga_pp_ic_plus"-->
+            <!--                    app:bga_snpl_plusEnable="true"-->
+            <!--                    app:bga_snpl_sortable="true" />-->
+            <!--            </LinearLayout>-->
         </LinearLayout>
     </ScrollView>
-    <LinearLayout
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content">-->
+<!--        <android.support.v7.widget.AppCompatButton-->
+<!--            android:id="@+id/checkout_start_button"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="64dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:onClick="onStartQa"-->
+<!--            android:textColor="#ffffff"-->
+<!--            android:backgroundTint="@color/colorPrimary"-->
+<!--            android:padding="12dp"-->
+<!--            android:text="扫码开始"/>-->
+<!--        <android.support.v7.widget.AppCompatButton-->
+<!--            android:id="@+id/checkout_end_button"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="64dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:onClick="onStopQa"-->
+<!--            android:textColor="#ffffff"-->
+<!--            android:backgroundTint="@color/colorPrimary"-->
+<!--            android:padding="12dp"-->
+<!--            android:text="扫码完成"/>-->
+<!--    </LinearLayout>-->
+
+    <Button
+        android:id="@+id/button_upload_quality_inspect_record"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/checkout_start_button"
-            android:layout_width="wrap_content"
-            android:layout_height="64dp"
-            android:layout_weight="1"
-            android:onClick="onStartQa"
-            android:textColor="#ffffff"
-            android:backgroundTint="@color/colorPrimary"
-            android:padding="12dp"
-            android:text="扫码开始"/>
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/checkout_end_button"
-            android:layout_width="wrap_content"
-            android:layout_height="64dp"
-            android:layout_weight="1"
-            android:onClick="onStopQa"
-            android:textColor="#ffffff"
-            android:backgroundTint="@color/colorPrimary"
-            android:padding="12dp"
-            android:text="扫码完成"/>
-    </LinearLayout>
+        android:layout_height="64dp"
+        android:text="提交质检" />
 </LinearLayout>

@@ -56,11 +56,11 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     private TextView locationTv;
 //    private RadioButton checkedOkRb;
 //    private RadioButton checkedNokRb;
-    private EditText checkoutNokDetailEt;
-    private Button beginQaButton;
-    private Button endQaButton;
+//    private EditText checkoutNokDetailEt;
+//    private Button beginQaButton;
+//    private Button endQaButton;
     private TextView currentStatusTv;
-    private LinearLayout QaNokLinearLayout;
+//    private LinearLayout QaNokLinearLayout;
 
     private ProgressDialog mUploadingProcessDialog;
     private AlertDialog mQaDialog=null;
@@ -71,7 +71,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     private TaskRecordMachineListData mTaskRecordMachineListData;
     private int iTaskRecordMachineListDataStatusTemp;
 
-    private BGASortableNinePhotoLayout mCheckoutNokPhotosSnpl;
+//    private BGASortableNinePhotoLayout mCheckoutNokPhotosSnpl;
     private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
 
     private final String IP = SinSimApp.getApp().getServerIP();
@@ -84,6 +84,8 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     //   先获取 mProcessToCheckoutList， 然后从中获取 mQualityInspectList
     private ArrayList<TaskRecordMachineListData> mProcessToCheckoutList = new ArrayList<>();
     private ArrayList<QualityInspectData> mQualityInspectList = new ArrayList<>();
+
+    private Button buttonUploadQualityInspectRecord;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,10 +115,17 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 
 //        checkedOkRb=findViewById(R.id.checked_ok_rb);
 //        checkedNokRb=findViewById(R.id.checked_nok_rb);
-        checkoutNokDetailEt=findViewById(R.id.checkout_nok_detail_et);
-        beginQaButton = findViewById(R.id.checkout_start_button);
-        endQaButton = findViewById(R.id.checkout_end_button);
-        QaNokLinearLayout = findViewById(R.id.qa_nok_ll);
+//        checkoutNokDetailEt=findViewById(R.id.checkout_nok_detail_et);
+//        beginQaButton = findViewById(R.id.checkout_start_button);
+//        endQaButton = findViewById(R.id.checkout_end_button);
+//        QaNokLinearLayout = findViewById(R.id.qa_nok_ll);
+        buttonUploadQualityInspectRecord = findViewById(R.id.button_upload_quality_inspect_record);
+        buttonUploadQualityInspectRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateQualityInspectData();
+            }
+        });
 
         //获取传递过来的信息
         /**
@@ -176,7 +185,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         });
 
 //        checkedOkRb.setChecked(true);
-        QaNokLinearLayout.setVisibility(View.GONE);
+//        QaNokLinearLayout.setVisibility(View.GONE);
 //        checkedOkRb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 //            @Override
 //            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -191,23 +200,23 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 //        });
 
         if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED) {
-            beginQaButton.setVisibility(View.VISIBLE);
-            endQaButton.setVisibility(View.GONE);
+//            beginQaButton.setVisibility(View.VISIBLE);
+//            endQaButton.setVisibility(View.GONE);
 //            checkedOkRb.setEnabled(false);
 //            checkedNokRb.setEnabled(false);
         }else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DOING) {
-            beginQaButton.setVisibility(View.GONE);
-            endQaButton.setVisibility(View.VISIBLE);
+//            beginQaButton.setVisibility(View.GONE);
+//            endQaButton.setVisibility(View.VISIBLE);
 //            checkedOkRb.setEnabled(true);
 //            checkedNokRb.setEnabled(true);
         }else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_ABNORMAL){
-            beginQaButton.setVisibility(View.GONE);
-            endQaButton.setVisibility(View.GONE);
+//            beginQaButton.setVisibility(View.GONE);
+//            endQaButton.setVisibility(View.GONE);
 //            checkedOkRb.setEnabled(false);
 //            checkedNokRb.setEnabled(true);
         }else {
-            beginQaButton.setVisibility(View.GONE);
-            endQaButton.setVisibility(View.GONE);
+//            beginQaButton.setVisibility(View.GONE);
+//            endQaButton.setVisibility(View.GONE);
 //            checkedOkRb.setEnabled(true);
 //            checkedNokRb.setEnabled(false);
         }
@@ -217,10 +226,10 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 //        fetchQARecordData3Qi();
 
         //九宫格拍照
-        mCheckoutNokPhotosSnpl = findViewById(R.id.checkout_nok_add_photos);
-        mCheckoutNokPhotosSnpl.setMaxItemCount(3);
-        mCheckoutNokPhotosSnpl.setPlusEnable(true);
-        mCheckoutNokPhotosSnpl.setDelegate(this);
+//        mCheckoutNokPhotosSnpl = findViewById(R.id.checkout_nok_add_photos);
+//        mCheckoutNokPhotosSnpl.setMaxItemCount(3);
+//        mCheckoutNokPhotosSnpl.setPlusEnable(true);
+//        mCheckoutNokPhotosSnpl.setDelegate(this);
 
         RecyclerView mQualityInspectRV = (RecyclerView) findViewById(R.id.checkout_list_rv);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -293,6 +302,11 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 //        Network.Instance(SinSimApp.getApp()).fetchProcessQARecordData(fetchProcessRecordUrl, mPostValue, new FetchQaRecordDataHandler());
 //    }
 
+    //更新新质检数据
+    private void updateQualityInspectData() {
+
+    }
+
     @SuppressLint("HandlerLeak")
     private class FetchQaRecordDataHandler extends Handler {
         @Override
@@ -316,9 +330,9 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 //                        checkedNokRb.setChecked(true);
 //                        checkedNokRb.setEnabled(true);
 //                        checkedOkRb.setEnabled(false);
-                        checkoutNokDetailEt.setText(mQualityRecordDetailsData.getComment());
-                        checkoutNokDetailEt.setFocusable(false);
-                        checkoutNokDetailEt.setFocusableInTouchMode(false);
+//                        checkoutNokDetailEt.setText(mQualityRecordDetailsData.getComment());
+//                        checkoutNokDetailEt.setFocusable(false);
+//                        checkoutNokDetailEt.setFocusableInTouchMode(false);
                         //加载历史照片地址
                         String picsName=mQualityRecordDetailsData.getQualityRecordImage().getImage();
                         picsName=picsName.substring(1,picsName.indexOf("]"));
@@ -339,15 +353,15 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                                     checkoutPhotoList.add(picUrl);
                                 }
                             }
-                            mCheckoutNokPhotosSnpl.addMoreData(checkoutPhotoList);
-                            mCheckoutNokPhotosSnpl.setEditable(false);
+//                            mCheckoutNokPhotosSnpl.addMoreData(checkoutPhotoList);
+//                            mCheckoutNokPhotosSnpl.setEditable(false);
                         }
                     } else {
                         Log.d(TAG, "handleMessage: 尚未质检");
                     }
                 }else {
 //                    checkedOkRb.setChecked(true);
-                    checkoutNokDetailEt.setText("");
+//                    checkoutNokDetailEt.setText("");
                 }
             } else {
                 String errorMsg = (String)msg.obj;
@@ -464,7 +478,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 
     @Override
     public void onClickDeleteNinePhotoItem(BGASortableNinePhotoLayout sortableNinePhotoLayout, View view, int position, String model, ArrayList<String> models) {
-        mCheckoutNokPhotosSnpl.removeItem(position);
+//        mCheckoutNokPhotosSnpl.removeItem(position);
     }
 
     @Override
@@ -472,7 +486,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         Intent photoPickerPreviewIntent = new BGAPhotoPickerPreviewActivity.IntentBuilder(DetailToCheckoutActivity.this)
                 .previewPhotos(models) // 当前预览的图片路径集合
                 .selectedPhotos(models) // 当前已选中的图片路径集合
-                .maxChooseCount(mCheckoutNokPhotosSnpl.getMaxItemCount()) // 图片选择张数的最大值
+//                .maxChooseCount(mCheckoutNokPhotosSnpl.getMaxItemCount()) // 图片选择张数的最大值
                 .currentPosition(position) // 当前预览图片的索引
                 .isFromTakePhoto(false) // 是否是拍完照后跳转过来
                 .build();
@@ -489,7 +503,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         File takePhotoDir = new File(Environment.getExternalStorageDirectory(), "BGAPhotoPickerTakePhoto");
         Intent photoPickerIntent = new BGAPhotoPickerActivity.IntentBuilder(DetailToCheckoutActivity.this)
                 .cameraFileDir(takePhotoDir) // 拍照后照片的存放目录，改成你自己拍照后要存放照片的目录。
-                .maxChooseCount(mCheckoutNokPhotosSnpl.getMaxItemCount() - mCheckoutNokPhotosSnpl.getItemCount()) // 图片选择张数的最大值
+//                .maxChooseCount(mCheckoutNokPhotosSnpl.getMaxItemCount() - mCheckoutNokPhotosSnpl.getItemCount()) // 图片选择张数的最大值
                 .selectedPhotos(null) // 当前已选中的图片路径集合
                 .pauseOnScroll(false) // 滚动列表时是否暂停加载图片
                 .build();
@@ -565,13 +579,13 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                 break;
             case RC_CHECKOUT_CHOOSE_PHOTO:
                 if(resultCode == RESULT_OK) {
-                    mCheckoutNokPhotosSnpl.addMoreData(BGAPhotoPickerActivity.getSelectedPhotos(data));
+//                    mCheckoutNokPhotosSnpl.addMoreData(BGAPhotoPickerActivity.getSelectedPhotos(data));
                 } else {
                     Log.d(TAG, "onActivityResult: choose  nothing");
                 }
                 break;
             case RC_CHECKOUT_PHOTO_PREVIEW:
-                mCheckoutNokPhotosSnpl.setData(BGAPhotoPickerPreviewActivity.getSelectedPhotos(data));
+//                mCheckoutNokPhotosSnpl.setData(BGAPhotoPickerPreviewActivity.getSelectedPhotos(data));
             default:
                 break;
         }
@@ -599,21 +613,21 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             if (msg.what == Network.OK) {
                 currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
                 if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED) {
-                    beginQaButton.setVisibility(View.VISIBLE);
-                    endQaButton.setVisibility(View.GONE);
+//                    beginQaButton.setVisibility(View.VISIBLE);
+//                    endQaButton.setVisibility(View.GONE);
                 }else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DOING) {
-                    beginQaButton.setVisibility(View.GONE);
-                    endQaButton.setVisibility(View.VISIBLE);
+//                    beginQaButton.setVisibility(View.GONE);
+//                    endQaButton.setVisibility(View.VISIBLE);
 //                    checkedNokRb.setEnabled(true);
 //                    checkedOkRb.setEnabled(true);
                 }else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_QUALITY_DONE) {
-                    beginQaButton.setVisibility(View.GONE);
-                    endQaButton.setVisibility(View.VISIBLE);
+//                    beginQaButton.setVisibility(View.GONE);
+//                    endQaButton.setVisibility(View.VISIBLE);
                     Toast.makeText(DetailToCheckoutActivity.this, "质检信息上传成功！", Toast.LENGTH_SHORT).show();
                     DetailToCheckoutActivity.this.finish();
                 }else {
-                    beginQaButton.setVisibility(View.GONE);
-                    endQaButton.setVisibility(View.GONE);
+//                    beginQaButton.setVisibility(View.GONE);
+//                    endQaButton.setVisibility(View.GONE);
                 }
             } else {
                 mTaskRecordMachineListData.setStatus(iTaskRecordMachineListDataStatusTemp);
