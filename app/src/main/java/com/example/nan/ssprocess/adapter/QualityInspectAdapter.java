@@ -1,52 +1,86 @@
 package com.example.nan.ssprocess.adapter;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.bean.basic.InstallPlanData;
 import com.example.nan.ssprocess.bean.basic.QualityInspectData;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by wxm on 2020/12/24.
  */
-
-public class QualityInspectAdapter extends RecyclerView.Adapter {
+// extends RecyclerView.Adapter
+public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectAdapter.ItemView> implements View.OnClickListener {
 
     private static String TAG = "QualityRespectlAdapter";
-    private ArrayList<QualityInspectData> mQualityInspectAdapter;
-    private QualityInspectAdapter.OnItemClickListener itemClickListener = null;
+//    private ArrayList<QualityInspectData> mQualityInspectAdapter;
+    private OnItemClickListener mOnItemClickListener;//声明自定义的接口
 
-    public QualityInspectAdapter(ArrayList<QualityInspectData> list) {
-        mQualityInspectAdapter = list;
+    private List<QualityInspectData> dataList;//数据源
+    private Context context;//上下文
+    /// 这里，传数据
+    public QualityInspectAdapter(List<QualityInspectData> list, Context context ) {
+        this.dataList = list;
+        this.context = context;
+    }
+//    public QualityInspectAdapter(ArrayList<QualityInspectData> list) {
+//        mQualityInspectAdapter = list;
+//    }
+
+    public void updateDataSoruce(List<QualityInspectData> list)
+    {
+        this.dataList = list;
+        notifyDataSetChanged();
     }
 
+//    @Override
+//    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+//        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_new_qa_info,parent,false);
+//        return new QualityInspectAdapter.ItemView(view);
+//
+//    }
+
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_new_qa_info,parent,false);
-        return new QualityInspectAdapter.ItemView(view);
-
+    public ItemView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_new_qa_info, parent, false);
+        return new ItemView(view);
     }
+
 
     /**
      * 绑定数据
      */
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
+//    public void onBindViewHolder(RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
+    public void onBindViewHolder(ItemView holder, int position) {
         final QualityInspectAdapter.ItemView itemView = (QualityInspectAdapter.ItemView) holder;
         //itemView.setIsRecyclable(false);//禁止复用
-        if (mQualityInspectAdapter !=null && !mQualityInspectAdapter.isEmpty() && position < mQualityInspectAdapter.size()) {
-            itemView.itemInspectNameTv.setText(mQualityInspectAdapter.get(position).getInspectName());
+        if (dataList !=null && !dataList.isEmpty() && position < dataList.size()) {
+            //显示编号，方便查看
+            itemView.itemInspectNameTv.setText((position+1) + ". " + dataList.get(position).getInspectName());
             itemView.itemInspectNameTv.setSelected(true);//用于滚动显示
-            itemView.itemInspectContentTv.setText(mQualityInspectAdapter.get(position).getInspectContent());
+            itemView.itemInspectContentTv.setText(dataList.get(position).getInspectContent());
+
+            holder.itemInspectNameTv.setTag(position);
+            holder.itemInspectContentTv.setTag(position);
+            holder.radioButtonOK.setTag(position);
+            holder.radioButtonNG.setTag(position);
+            holder.radioButtonNoSuchOne.setTag(position);
+            holder.radioButtonHaveNotChecked.setTag(position );
+            holder.checkoutCommentEt.setTag(position);
+            holder.checkoutReCheckCommentEt.setTag(position);
         }else {
             Log.d(TAG, "onBindViewHolder: 没有获取到list数据");
         }
@@ -54,12 +88,12 @@ public class QualityInspectAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return mQualityInspectAdapter.size();
+        return dataList.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mQualityInspectAdapter.size()) {
+        if (position == dataList.size()) {
             return 1;
         } else {
             return 0;
@@ -70,31 +104,88 @@ public class QualityInspectAdapter extends RecyclerView.Adapter {
 //        CardView installPlanLayout;
         TextView itemInspectNameTv;
         TextView itemInspectContentTv;
+        RadioButton radioButtonOK;
+        RadioButton radioButtonNG;
+        RadioButton radioButtonNoSuchOne;
+        RadioButton radioButtonHaveNotChecked;
+        EditText checkoutCommentEt;
+        EditText checkoutReCheckCommentEt;
 
         ItemView(View itemView) {
             super(itemView);
             itemInspectNameTv = itemView.findViewById(R.id.item_inspect_name);
             itemInspectContentTv = itemView.findViewById(R.id.item_inspect_content);
+            radioButtonOK = itemView.findViewById(R.id.item_checked_ok_rb);
+            radioButtonNG = itemView.findViewById(R.id.item_checked_ng_rb);
+            radioButtonNoSuchOne = itemView.findViewById(R.id.item_no_such_one_rb);
+            radioButtonHaveNotChecked = itemView.findViewById(R.id.item_have_not_checked_rb);
+            checkoutCommentEt = itemView.findViewById(R.id.checkout_comment_et);
+            checkoutReCheckCommentEt = itemView.findViewById(R.id.checkout_re_check_comment_et);
+
+
+            /**
+             * 注意：这里为起点入口，为ItemView添加点击事件, 这里没有加，无法触发item的点击事件！
+             */
+            itemInspectNameTv.setOnClickListener(QualityInspectAdapter.this);
+            itemInspectContentTv.setOnClickListener(QualityInspectAdapter.this);
+            radioButtonOK.setOnClickListener(QualityInspectAdapter.this);
+            radioButtonNG.setOnClickListener(QualityInspectAdapter.this);
+            radioButtonNoSuchOne.setOnClickListener(QualityInspectAdapter.this);
+            radioButtonHaveNotChecked.setOnClickListener(QualityInspectAdapter.this);
+            checkoutCommentEt.setOnClickListener(QualityInspectAdapter.this);
+            checkoutReCheckCommentEt.setOnClickListener(QualityInspectAdapter.this);
         }
     }
     public void setProcessList(ArrayList<QualityInspectData> list) {
-        mQualityInspectAdapter.clear();
-        mQualityInspectAdapter.addAll(list);
+        dataList.clear();
+        dataList.addAll(list);
     }
 
     /**
      * 点击事件接口
      */
     public interface OnItemClickListener{
-        void onItemClick(int position);
+//        void onItemClick(int position);
         void onFinishItemClick(int position);
         void onNotFinishItemClick(int position);
+
+        void onItemClick(View v, QualityInspectAdapter.ViewName viewName, int position);
+        void onItemLongClick(View v);
     }
+
+    //=======================以下为item中的button控件点击事件处理===================================
+    //item里面有多个控件可以点击（item+item内部控件）
+    public enum ViewName {
+        ITEM,
+        PRACTISE,
+        DX_TO_BE_SELECT
+    }
+
 
     /**
      * 设置点击事件的方法
      */
-    public void setOnItemClickListener(QualityInspectAdapter.OnItemClickListener itemClickListener){
-        this.itemClickListener = itemClickListener;
+    public void setOnItemClickListener(OnItemClickListener itemClickListener){
+        this.mOnItemClickListener = itemClickListener;
+    }
+
+    @Override
+    public void onClick(View v) {
+        int position = (int) v.getTag();      //getTag()获取数据
+        if (mOnItemClickListener != null) {
+            switch (v.getId()){
+                // todo
+//                case R.id.rv_dx:
+//                    mOnItemClickListener.onItemClick(v, DianXianQingceAdapter.ViewName.PRACTISE, position);
+//                    break;
+//                case R.id.rv_dx_tobeSelect:
+//                    mOnItemClickListener.onItemClick(v, DianXianQingceAdapter.ViewName.DX_TO_BE_SELECT, position);
+//                    break;
+                default:
+                    mOnItemClickListener.onItemClick(v, QualityInspectAdapter.ViewName.ITEM, position);
+                    break;
+            }
+        }
+
     }
 }

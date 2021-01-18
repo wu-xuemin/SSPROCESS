@@ -2,10 +2,6 @@ package com.example.nan.ssprocess.bean.basic;
 
 import java.io.Serializable;
 
-/**
- * Created by nan on 2017/12/22.
- */
-
 public class QualityInspectData implements Serializable {
     private int id;
     private String inspectName;

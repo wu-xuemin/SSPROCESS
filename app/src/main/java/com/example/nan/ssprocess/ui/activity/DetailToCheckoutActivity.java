@@ -18,19 +18,15 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.adapter.InstallActualAdapter;
 import com.example.nan.ssprocess.adapter.QualityInspectAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
-import com.example.nan.ssprocess.bean.basic.InstallPlanData;
 import com.example.nan.ssprocess.bean.basic.QualityInspectData;
 import com.example.nan.ssprocess.bean.basic.QualityRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
@@ -81,10 +77,17 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     private static final int RC_CHECKOUT_PHOTO_PREVIEW = 4;
 
     private QualityInspectAdapter mQualityInspectAdapter;
+    private RecyclerView mQualityInspectRV;
     //   先获取 mProcessToCheckoutList， 然后从中获取 mQualityInspectList
-    private ArrayList<TaskRecordMachineListData> mProcessToCheckoutList = new ArrayList<>();
+    private ArrayList<TaskRecordMachineListData> taskRecordMachineListDataArrayList = new ArrayList<>();
     private ArrayList<QualityInspectData> mQualityInspectList = new ArrayList<>();
+    private ArrayList<TaskRecordMachineListData> mQualityInspectRecordList = new ArrayList<>();
 
+    /**
+     * 各条质检项的质检结果
+     */
+    private ArrayList<TextView> recordRemarkTvArray;    //该条质检的备注 数组
+    private ArrayList<TextView> reInspectTvArray;       //复检结果 数组
     private Button buttonUploadQualityInspectRecord;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -231,13 +234,13 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 //        mCheckoutNokPhotosSnpl.setPlusEnable(true);
 //        mCheckoutNokPhotosSnpl.setDelegate(this);
 
-        RecyclerView mQualityInspectRV = (RecyclerView) findViewById(R.id.checkout_list_rv);
+        mQualityInspectRV = (RecyclerView) findViewById(R.id.checkout_list_rv);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mQualityInspectRV.setLayoutManager(manager);
-        mQualityInspectAdapter = new QualityInspectAdapter(mQualityInspectList);
-        mQualityInspectRV.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
-        mQualityInspectRV.setAdapter(mQualityInspectAdapter);
+//        mQualityInspectAdapter = new QualityInspectAdapter(mQualityInspectList);
+//        mQualityInspectRV.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
+//        mQualityInspectRV.setAdapter(mQualityInspectAdapter);
     }
 
     public void onStartQa(View view) {
@@ -305,7 +308,83 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     //更新新质检数据
     private void updateQualityInspectData() {
 
+
+        Gson gson=new Gson();
+        String mQualityInspectListDataToJson = gson.toJson(taskRecordMachineListDataArrayList);
+        Log.d(TAG, "onItemClick: gson :"+ mQualityInspectListDataToJson);
+        LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
+        mPostValue.put("mQualityInspectList", mQualityInspectListDataToJson);
+        String updateQualityInspectRecordUrl = URL.HTTP_HEAD + IP + URL.UPDATE_QUALITY_INSPECT_RECORD_LIST;
+        Log.d(TAG, "updateQualityInspectData: "+updateQualityInspectRecordUrl+mPostValue.get("machine"));
+        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateQualityInspectRecordUrl, mPostValue, new UpdateLocationDataHandler());
+
     }
+
+    /**
+     * 备选电线item 里的控件点击监听事件
+     */
+    private QualityInspectAdapter.OnItemClickListener MyItemClickListener = new QualityInspectAdapter.OnItemClickListener() {
+
+//        @Override
+//        public void onItemClick(int position) {
+//
+//            Toast.makeText(DetailToCheckoutActivity.this,"你点击了 onItemClick" + (position+1),Toast.LENGTH_SHORT).show();
+//        }
+
+        @Override
+        public void onFinishItemClick(int position) {
+
+            Toast.makeText(DetailToCheckoutActivity.this,"你点击了 onFinishItemClick " + (position+1),Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onNotFinishItemClick(int position) {
+
+            Toast.makeText(DetailToCheckoutActivity.this,"你点击了 onNotFinishItemClick " + (position+1),Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onItemClick(View v, QualityInspectAdapter.ViewName viewName, int position) {
+            //viewName可区分item及item内部控件
+            switch (v.getId()){
+
+                case R.id.item_checked_ok_rb:
+                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 OK" + (position+1),Toast.LENGTH_SHORT).show();
+
+                    break;
+                case R.id.item_checked_ng_rb:
+                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 NG" + (position+1),Toast.LENGTH_SHORT).show();
+
+                    break;
+                case R.id.item_no_such_one_rb:
+                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 无此检测条目 " + (position+1),Toast.LENGTH_SHORT).show();
+
+                    break;
+                case R.id.item_have_not_checked_rb:
+                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 未检 " + (position+1),Toast.LENGTH_SHORT).show();
+
+                    break;
+
+                case R.id.checkout_comment_et:
+                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 备注 " + (position+1),Toast.LENGTH_SHORT).show();
+
+                    break;
+                case R.id.checkout_re_check_comment_et:
+                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 复检" + (position+1),Toast.LENGTH_SHORT).show();
+
+                    break;
+                default:
+                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 Default...." + (position+1),Toast.LENGTH_SHORT).show();
+
+                    break;
+            }
+        }
+
+        @Override
+        public void onItemLongClick(View v) {
+
+        }
+    };
 
     @SuppressLint("HandlerLeak")
     private class FetchQaRecordDataHandler extends Handler {
@@ -673,22 +752,22 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         @Override
         public void handleMessage(final Message msg) {
             if (msg.what == Network.OK) {
-                mProcessToCheckoutList=(ArrayList<TaskRecordMachineListData>)msg.obj;
-                Log.d(TAG, "handleMessage: size: "+mProcessToCheckoutList.size());
+                taskRecordMachineListDataArrayList =(ArrayList<TaskRecordMachineListData>)msg.obj;
+                Log.d(TAG, "handleMessage: size: "+ taskRecordMachineListDataArrayList.size());
 //
-                if (mProcessToCheckoutList.size() > 0) {
+                if (taskRecordMachineListDataArrayList.size() > 0) {
                     ArrayList<TaskRecordMachineListData> abnormalList = new ArrayList<>();
                     ArrayList<TaskRecordMachineListData> orderChangeList = new ArrayList<>();
                     ArrayList<TaskRecordMachineListData> skipList = new ArrayList<>();
                     ArrayList<TaskRecordMachineListData> normalList = new ArrayList<>();
-                    for (int position = 0; position < mProcessToCheckoutList.size(); position++) {
-                        if (mProcessToCheckoutList.get(position).getMachineData().getStatus() == SinSimApp.MACHINE_CANCELED) {
-                            mProcessToCheckoutList.remove(position);
-                        }else if (mProcessToCheckoutList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
-                                ||mProcessToCheckoutList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED) {
-                            orderChangeList.add(mProcessToCheckoutList.get(position));
+                    for (int position = 0; position < taskRecordMachineListDataArrayList.size(); position++) {
+                        if (taskRecordMachineListDataArrayList.get(position).getMachineData().getStatus() == SinSimApp.MACHINE_CANCELED) {
+                            taskRecordMachineListDataArrayList.remove(position);
+                        }else if (taskRecordMachineListDataArrayList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
+                                || taskRecordMachineListDataArrayList.get(position).getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED) {
+                            orderChangeList.add(taskRecordMachineListDataArrayList.get(position));
                         } else {
-                            switch (mProcessToCheckoutList.get(position).getStatus()) {
+                            switch (taskRecordMachineListDataArrayList.get(position).getStatus()) {
                                 case SinSimApp.TASK_INITIAL:
                                 case SinSimApp.TASK_PLANED:
                                 case SinSimApp.TASK_INSTALL_WAITING:
@@ -703,14 +782,14 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                                 case SinSimApp.TASK_QUALITY_INSPECT_NG:
                                 case SinSimApp.TASK_QUALITY_INSPECT_OK:
                                 case SinSimApp.TASK_QUALITY_INSPECT_HAVE_NOT_CHECKED:
-                                    normalList.add(mProcessToCheckoutList.get(position));
+                                    normalList.add(taskRecordMachineListDataArrayList.get(position));
                                     break;
                                 case SinSimApp.TASK_INSTALL_ABNORMAL:
                                 case SinSimApp.TASK_QUALITY_ABNORMAL:
-                                    abnormalList.add(mProcessToCheckoutList.get(position));
+                                    abnormalList.add(taskRecordMachineListDataArrayList.get(position));
                                     break;
                                 case SinSimApp.TASK_SKIP:
-                                    skipList.add(mProcessToCheckoutList.get(position));
+                                    skipList.add(taskRecordMachineListDataArrayList.get(position));
                                     break;
                                 default:
                                     break;
@@ -723,13 +802,24 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                     abnormalList.addAll(orderChangeList);
                     abnormalList.addAll(skipList);
                     abnormalList.addAll(normalList);
-                    mProcessToCheckoutList=abnormalList;
+                    taskRecordMachineListDataArrayList =abnormalList;
                 }
-				
-                for(int k=0; k< mProcessToCheckoutList.size(); k++){
-                    mQualityInspectList.add(mProcessToCheckoutList.get(k).getQualityInspect());
+                for(int t=0; t<taskRecordMachineListDataArrayList.size(); t++){
+                    mQualityInspectList.add(taskRecordMachineListDataArrayList.get(t).getQualityInspect());
                 }
-                mQualityInspectAdapter.notifyDataSetChanged();
+                if (mQualityInspectAdapter == null)
+                {
+                    mQualityInspectAdapter = new QualityInspectAdapter(mQualityInspectList, DetailToCheckoutActivity.this);//, RelateNewDxActivity.this, Constant.REQUEST_CODE_LUJING_CANDIDATE_WIRES);
+                    mQualityInspectRV.addItemDecoration(new DividerItemDecoration(DetailToCheckoutActivity.this, DividerItemDecoration.VERTICAL));
+                    mQualityInspectRV.setAdapter(mQualityInspectAdapter);
+                    mQualityInspectAdapter.setOnItemClickListener(MyItemClickListener);
+                }
+                mQualityInspectAdapter.updateDataSoruce(mQualityInspectList);
+
+//                mQualityInspectAdapter.notifyDataSetChanged();
+
+                Log.i(TAG, "FetchQualityInspectDataHandler DONE");
+
 
             } else {
                 String errorMsg = (String)msg.obj;
