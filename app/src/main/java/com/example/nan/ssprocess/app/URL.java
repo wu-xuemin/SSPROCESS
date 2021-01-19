@@ -21,6 +21,7 @@ public class URL {
 //    public static final String FETCH_TASK_RECORD_TO_QA = "/task/record/selectAllQaTaskRecordDetailByUserAccount";
     public static final String FETCH_TASK_RECORD_TO_QA = "/quality/inspect/record/selectQualityInspectRecordDetail";
 //    两个接口返回的东西，让新接口也包含旧接口的返回内容。
+    public static final String UPDATE_QUALITY_INSPECT_RECORD_LIST = "/quality/inspect/record/updateQualityInspectRecordList";
 
     public static final String FETCH_QUALITY_INSPECT_MACHINE_TO_QA = "/quality/inspect/record/selectQualityInspectRecordDetailGroupByMachine";
 

@@ -315,7 +315,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         String mQualityInspectListDataToJson = gson.toJson(mQualityInspectRecordTobeUploadList);
         Log.d(TAG, "onItemClick: gson :"+ mQualityInspectListDataToJson);
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
-        mPostValue.put("mQualityInspectList", mQualityInspectListDataToJson);
+        mPostValue.put("mQualityInspectRecordTobeUploadList", mQualityInspectListDataToJson);
         String updateQualityInspectRecordUrl = URL.HTTP_HEAD + IP + URL.UPDATE_QUALITY_INSPECT_RECORD_LIST;
         Log.d(TAG, "updateQualityInspectData: "+updateQualityInspectRecordUrl+mPostValue.get("machine"));
         Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateQualityInspectRecordUrl, mPostValue, new UpdateLocationDataHandler());
@@ -351,20 +351,23 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             switch (v.getId()){
 
                 case R.id.item_checked_ok_rb:
-                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 OK" + (position+1),Toast.LENGTH_SHORT).show();
-
+//                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 OK" + (position+1),Toast.LENGTH_SHORT).show();
+                    /**
+                     * 因为要和APP其他状态共用一些代码，所以这里不要用字符串，用数字
+                     */
+                    mQualityInspectRecordTobeUploadList.get(position).setRecordStatus(String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_OK));
                     break;
                 case R.id.item_checked_ng_rb:
-                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 NG" + (position+1),Toast.LENGTH_SHORT).show();
-
+//                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 NG" + (position+1),Toast.LENGTH_SHORT).show();
+                    mQualityInspectRecordTobeUploadList.get(position).setRecordStatus((String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_NG)));
                     break;
                 case R.id.item_no_such_one_rb:
-                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 无此检测条目 " + (position+1),Toast.LENGTH_SHORT).show();
-
+//                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 无此检测条目 " + (position+1),Toast.LENGTH_SHORT).show();
+                    mQualityInspectRecordTobeUploadList.get(position).setRecordStatus(String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_NO_SUCH_ITEM));
                     break;
                 case R.id.item_have_not_checked_rb:
-                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 未检 " + (position+1),Toast.LENGTH_SHORT).show();
-
+//                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 未检 " + (position+1),Toast.LENGTH_SHORT).show();
+                    mQualityInspectRecordTobeUploadList.get(position).setRecordStatus(String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_HAVE_NOT_CHECKED));
                     break;
 
                 case R.id.checkout_comment_et:
@@ -380,11 +383,11 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 //                    }
                     break;
                 case R.id.checkout_re_check_comment_et:
-                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 复检" + (position+1),Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 复检" + (position+1),Toast.LENGTH_SHORT).show();
 
                     break;
                 default:
-                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 Default...." + (position+1),Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 Default...." + (position+1),Toast.LENGTH_SHORT).show();
 
                     break;
             }
