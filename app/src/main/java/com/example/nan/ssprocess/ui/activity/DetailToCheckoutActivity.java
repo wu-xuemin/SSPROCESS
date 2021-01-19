@@ -47,7 +47,9 @@ import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
  * @author nan  2017/12/18
  */
 
-public class DetailToCheckoutActivity extends AppCompatActivity implements BGASortableNinePhotoLayout.Delegate{
+public class DetailToCheckoutActivity extends AppCompatActivity implements BGASortableNinePhotoLayout.Delegate,
+        QualityInspectAdapter.CommentEditListener,
+        QualityInspectAdapter.RecheckCommentEditListener{
     private static final String TAG="nlgDetailToCheckout";
     private TextView locationTv;
 //    private RadioButton checkedOkRb;
@@ -59,16 +61,16 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 //    private LinearLayout QaNokLinearLayout;
 
     private ProgressDialog mUploadingProcessDialog;
-    private AlertDialog mQaDialog=null;
+    private AlertDialog mQaDialog = null;
     private ProgressDialog mUpdatingProcessDialog;
-    private AlertDialog mLocationSettingDialog =null;
+    private AlertDialog mLocationSettingDialog = null;
 
 
     private TaskRecordMachineListData mTaskRecordMachineListData;
     private int iTaskRecordMachineListDataStatusTemp;
 
 //    private BGASortableNinePhotoLayout mCheckoutNokPhotosSnpl;
-    private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler=new UpdateProcessDetailDataHandler();
+    private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler = new UpdateProcessDetailDataHandler();
 
     private final String IP = SinSimApp.getApp().getServerIP();
     private static final int SCAN_QRCODE_START = 1;
@@ -81,7 +83,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     //   先获取 mProcessToCheckoutList， 然后从中获取 mQualityInspectList
     private ArrayList<TaskRecordMachineListData> taskRecordMachineListDataArrayList = new ArrayList<>();
     private ArrayList<QualityInspectData> mQualityInspectList = new ArrayList<>();
-    private ArrayList<TaskRecordMachineListData> mQualityInspectRecordList = new ArrayList<>();
+    private ArrayList<TaskRecordMachineListData> mQualityInspectRecordTobeUploadList = new ArrayList<>();
 
     /**
      * 各条质检项的质检结果
@@ -310,7 +312,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 
 
         Gson gson=new Gson();
-        String mQualityInspectListDataToJson = gson.toJson(taskRecordMachineListDataArrayList);
+        String mQualityInspectListDataToJson = gson.toJson(mQualityInspectRecordTobeUploadList);
         Log.d(TAG, "onItemClick: gson :"+ mQualityInspectListDataToJson);
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
         mPostValue.put("mQualityInspectList", mQualityInspectListDataToJson);
@@ -321,7 +323,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     }
 
     /**
-     * 备选电线item 里的控件点击监听事件
+     * 质检各个item 里的控件点击监听事件
      */
     private QualityInspectAdapter.OnItemClickListener MyItemClickListener = new QualityInspectAdapter.OnItemClickListener() {
 
@@ -366,8 +368,16 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                     break;
 
                 case R.id.checkout_comment_et:
-                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 备注 " + (position+1),Toast.LENGTH_SHORT).show();
-
+                    /**
+                     * 在这里做的话，只有点击了输入框才能赋值，应该改成自动赋值。
+                     */
+//                    EditText editTextComment = (EditText) v;
+//                    if(editTextComment != null) {
+//                        Toast.makeText(DetailToCheckoutActivity.this, " 备注 " + (position + 1) + ", " + editTextComment.getText(), Toast.LENGTH_SHORT).show();
+//                        mQualityInspectRecordTobeUploadList.get(position).setRecordRemark(editTextComment.getText().toString());
+//                    } else {
+//                        Log.w(TAG, "找不到checkout_comment_et");
+//                    }
                     break;
                 case R.id.checkout_re_check_comment_et:
                     Toast.makeText(DetailToCheckoutActivity.this,"你点击了 复检" + (position+1),Toast.LENGTH_SHORT).show();
@@ -827,6 +837,22 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             }
         }
     }
+
+
+    @Override
+    public void commentEditInfo(int position, String inputString) {
+        //回调处理edittext内容，使用map的好处在于：position确定的情况下，string改变，只会动态改变string内容
+        Log.i(TAG, "备注， position: " + position + ", string: " + inputString);
+
+    }
+
+    @Override
+    public void recheckCommentEditInfo(int position, String inputString) {
+        //回调处理edittext内容，使用map的好处在于：position确定的情况下，string改变，只会动态改变string内容
+        Log.i(TAG, "复检备注，position: " + position + ", string: " + inputString);
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -3,6 +3,8 @@ package com.example.nan.ssprocess.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,6 +83,10 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
             holder.radioButtonHaveNotChecked.setTag(position );
             holder.checkoutCommentEt.setTag(position);
             holder.checkoutReCheckCommentEt.setTag(position);
+
+            //监听item里的editText。。。
+            holder.checkoutCommentEt.addTextChangedListener(new TextSwitcher(holder)  );
+            holder.checkoutReCheckCommentEt.addTextChangedListener(new TextSwitcher(holder)  );
         }else {
             Log.d(TAG, "onBindViewHolder: 没有获取到list数据");
         }
@@ -134,11 +140,60 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
             radioButtonHaveNotChecked.setOnClickListener(QualityInspectAdapter.this);
             checkoutCommentEt.setOnClickListener(QualityInspectAdapter.this);
             checkoutReCheckCommentEt.setOnClickListener(QualityInspectAdapter.this);
+
         }
     }
+
+    /**
+     * 监听备注edit输入框
+     */
+    public interface CommentEditListener {
+        void commentEditInfo(int position, String inputString);
+    }
+
+    /**
+     * 监听复检备注edit的输入框
+     */
+    public interface RecheckCommentEditListener {
+        void recheckCommentEditInfo(int position, String inputString);
+    }
+
     public void setProcessList(ArrayList<QualityInspectData> list) {
         dataList.clear();
         dataList.addAll(list);
+    }
+
+    //自定义EditText的监听类
+    class TextSwitcher implements TextWatcher {
+
+        private ItemView mHolder;
+
+        public TextSwitcher(ItemView mHolder) {
+            this.mHolder = mHolder;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            //用户输入完毕后，处理输入数据，回调给主界面处理
+            CommentEditListener commentEditListener= (CommentEditListener) context;
+            RecheckCommentEditListener recheckCommentEditListener= (RecheckCommentEditListener) context;
+
+            if(s!=null){
+                commentEditListener.commentEditInfo(Integer.parseInt(mHolder.checkoutCommentEt.getTag().toString()),s.toString());
+                recheckCommentEditListener.recheckCommentEditInfo(Integer.parseInt(mHolder.checkoutReCheckCommentEt.getTag().toString()),s.toString());
+            }
+
+        }
     }
 
     /**
@@ -183,6 +238,7 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
 //                    break;
                 default:
                     mOnItemClickListener.onItemClick(v, QualityInspectAdapter.ViewName.ITEM, position);
+
                     break;
             }
         }
