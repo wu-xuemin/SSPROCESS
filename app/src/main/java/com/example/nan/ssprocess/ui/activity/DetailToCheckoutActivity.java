@@ -48,7 +48,7 @@ import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
  */
 
 public class DetailToCheckoutActivity extends AppCompatActivity implements BGASortableNinePhotoLayout.Delegate,
-        QualityInspectAdapter.CommentEditListener,
+        QualityInspectAdapter.RemarkEditListener,
         QualityInspectAdapter.RecheckCommentEditListener{
     private static final String TAG="nlgDetailToCheckout";
     private TextView locationTv;
@@ -816,6 +816,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                 }
                 for(int t=0; t<taskRecordMachineListDataArrayList.size(); t++){
                     mQualityInspectList.add(taskRecordMachineListDataArrayList.get(t).getQualityInspect());
+                    mQualityInspectRecordTobeUploadList.add(taskRecordMachineListDataArrayList.get(t));
                 }
                 if (mQualityInspectAdapter == null)
                 {
@@ -840,17 +841,23 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 
 
     @Override
-    public void commentEditInfo(int position, String inputString) {
+    public void remarkEditInfo(int position, String inputString) {
         //回调处理edittext内容，使用map的好处在于：position确定的情况下，string改变，只会动态改变string内容
         Log.i(TAG, "备注， position: " + position + ", string: " + inputString);
-
+        /**
+         * 把监控获取的输入框信息更新给mQualityInspectRecordTobeUploadList，用于上传。
+         */
+        mQualityInspectRecordTobeUploadList.get(position ).setRecordRemark(inputString);
     }
 
     @Override
     public void recheckCommentEditInfo(int position, String inputString) {
         //回调处理edittext内容，使用map的好处在于：position确定的情况下，string改变，只会动态改变string内容
         Log.i(TAG, "复检备注，position: " + position + ", string: " + inputString);
-
+        /**
+         * 把监控获取的输入框信息更新给mQualityInspectRecordTobeUploadList，用于上传。
+         */
+        mQualityInspectRecordTobeUploadList.get(position ).setReInspect(inputString);
     }
 
     @Override

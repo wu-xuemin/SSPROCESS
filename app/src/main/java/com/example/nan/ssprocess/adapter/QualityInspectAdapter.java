@@ -85,8 +85,8 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
             holder.checkoutReCheckCommentEt.setTag(position);
 
             //监听item里的editText。。。
-            holder.checkoutCommentEt.addTextChangedListener(new TextSwitcher(holder)  );
-            holder.checkoutReCheckCommentEt.addTextChangedListener(new TextSwitcher(holder)  );
+            holder.checkoutCommentEt.addTextChangedListener(new TextWatcherForRemark(holder)  );
+            holder.checkoutReCheckCommentEt.addTextChangedListener(new TextWatcherForReCheck(holder)  );
         }else {
             Log.d(TAG, "onBindViewHolder: 没有获取到list数据");
         }
@@ -147,12 +147,12 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
     /**
      * 监听备注edit输入框
      */
-    public interface CommentEditListener {
-        void commentEditInfo(int position, String inputString);
+    public interface RemarkEditListener {
+        void remarkEditInfo(int position, String inputString);
     }
 
     /**
-     * 监听复检备注edit的输入框
+     * 监听复检备注editText的输入框
      */
     public interface RecheckCommentEditListener {
         void recheckCommentEditInfo(int position, String inputString);
@@ -163,12 +163,12 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
         dataList.addAll(list);
     }
 
-    //自定义EditText的监听类
-    class TextSwitcher implements TextWatcher {
+    //自定义EditText的监听类--for remark备注
+    class TextWatcherForRemark implements TextWatcher {
 
         private ItemView mHolder;
 
-        public TextSwitcher(ItemView mHolder) {
+        public TextWatcherForRemark(ItemView mHolder) {
             this.mHolder = mHolder;
         }
 
@@ -185,17 +185,43 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
         @Override
         public void afterTextChanged(Editable s) {
             //用户输入完毕后，处理输入数据，回调给主界面处理
-            CommentEditListener commentEditListener= (CommentEditListener) context;
-            RecheckCommentEditListener recheckCommentEditListener= (RecheckCommentEditListener) context;
+            RemarkEditListener remarkEditListener= (RemarkEditListener) context;
 
             if(s!=null){
-                commentEditListener.commentEditInfo(Integer.parseInt(mHolder.checkoutCommentEt.getTag().toString()),s.toString());
+                remarkEditListener.remarkEditInfo(Integer.parseInt(mHolder.checkoutCommentEt.getTag().toString()),s.toString());
+            }
+
+        }
+    }
+    //自定义EditText的监听类--for recheck 复检的备注，
+    class TextWatcherForReCheck implements TextWatcher {
+
+        private ItemView mHolder;
+
+        public TextWatcherForReCheck(ItemView mHolder) {
+            this.mHolder = mHolder;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            //用户输入完毕后，处理输入数据，回调给主界面处理
+            RecheckCommentEditListener recheckCommentEditListener= (RecheckCommentEditListener) context;
+            if(s!=null){
                 recheckCommentEditListener.recheckCommentEditInfo(Integer.parseInt(mHolder.checkoutReCheckCommentEt.getTag().toString()),s.toString());
             }
 
         }
     }
-
     /**
      * 点击事件接口
      */
