@@ -17,17 +17,15 @@ import com.example.nan.ssprocess.R;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by wxm on 2020/12/24.
  */
 // extends RecyclerView.Adapter
-public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectAdapter.ItemView> implements View.OnClickListener {
+public class QualityInspectRecordAdapter extends RecyclerView.Adapter<QualityInspectRecordAdapter.ItemView> implements View.OnClickListener {
 
-    private static String TAG = "QualityRespectlAdapter";
-//    private ArrayList<QualityInspectData> mQualityInspectAdapter;
+    private static String TAG = "QualityInspectRecordAdapter";
     private OnItemClickListener mOnItemClickListener;//声明自定义的接口
 
 //    private List<QualityInspectData> dataList;//数据源
@@ -35,13 +33,10 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
 
     private Context context;//上下文
     /// 这里，传数据
-    public QualityInspectAdapter(List<TaskRecordMachineListData> list, Context context ) {
+    public QualityInspectRecordAdapter(List<TaskRecordMachineListData> list, Context context ) {
         this.dataList = list;
         this.context = context;
     }
-//    public QualityInspectAdapter(ArrayList<QualityInspectData> list) {
-//        mQualityInspectAdapter = list;
-//    }
 
     public void updateDataSoruce(List<TaskRecordMachineListData> list)
     {
@@ -70,13 +65,13 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
     @Override
 //    public void onBindViewHolder(RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
     public void onBindViewHolder(ItemView holder, int position) {
-        final QualityInspectAdapter.ItemView itemView = (QualityInspectAdapter.ItemView) holder;
+//        final QualityInspectRecordAdapter.ItemView itemView = (QualityInspectRecordAdapter.ItemView) holder;
         //itemView.setIsRecyclable(false);//禁止复用
         if (dataList !=null && !dataList.isEmpty() && position < dataList.size()) {
             //显示编号，方便查看
-            itemView.itemInspectNameTv.setText((position+1) + ". " + dataList.get(position).getInspectName());
-            itemView.itemInspectNameTv.setSelected(true);//用于滚动显示
-            itemView.itemInspectContentTv.setText(dataList.get(position).getInspectContent());
+            holder.itemInspectNameTv.setText((position+1) + ". " + dataList.get(position).getInspectName());
+            holder.itemInspectNameTv.setSelected(true);//用于滚动显示
+            holder.itemInspectContentTv.setText(dataList.get(position).getInspectContent());
 
             /**
              * 要把dataList的数据附上，否则item里没有数据显示
@@ -104,6 +99,7 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
             }
             holder.checkoutCommentEt.setText(dataList.get(position).getRecordRemark());
             holder.checkoutReCheckCommentEt.setText(dataList.get(position).getReInspect());
+
             holder.itemInspectNameTv.setTag(position);
             holder.itemInspectContentTv.setTag(position);
             holder.radioButtonOK.setTag(position);
@@ -161,14 +157,14 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
             /**
              * 注意：这里为起点入口，为ItemView添加点击事件, 这里没有加，无法触发item的点击事件！
              */
-            itemInspectNameTv.setOnClickListener(QualityInspectAdapter.this);
-            itemInspectContentTv.setOnClickListener(QualityInspectAdapter.this);
-            radioButtonOK.setOnClickListener(QualityInspectAdapter.this);
-            radioButtonNG.setOnClickListener(QualityInspectAdapter.this);
-            radioButtonNoSuchOne.setOnClickListener(QualityInspectAdapter.this);
-            radioButtonHaveNotChecked.setOnClickListener(QualityInspectAdapter.this);
-            checkoutCommentEt.setOnClickListener(QualityInspectAdapter.this);
-            checkoutReCheckCommentEt.setOnClickListener(QualityInspectAdapter.this);
+            itemInspectNameTv.setOnClickListener(QualityInspectRecordAdapter.this);
+            itemInspectContentTv.setOnClickListener(QualityInspectRecordAdapter.this);
+            radioButtonOK.setOnClickListener(QualityInspectRecordAdapter.this);
+            radioButtonNG.setOnClickListener(QualityInspectRecordAdapter.this);
+            radioButtonNoSuchOne.setOnClickListener(QualityInspectRecordAdapter.this);
+            radioButtonHaveNotChecked.setOnClickListener(QualityInspectRecordAdapter.this);
+            checkoutCommentEt.setOnClickListener(QualityInspectRecordAdapter.this);
+            checkoutReCheckCommentEt.setOnClickListener(QualityInspectRecordAdapter.this);
 
         }
     }
@@ -257,12 +253,11 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
      * 点击事件接口
      */
     public interface OnItemClickListener{
-//        void onItemClick(int position);
-        void onFinishItemClick(int position);
-        void onNotFinishItemClick(int position);
+////        void onItemClick(int position);
+//        void onFinishItemClick(int position);
+//        void onNotFinishItemClick(int position);
 
-        void onItemClick(View v, QualityInspectAdapter.ViewName viewName, int position);
-        void onItemLongClick(View v);
+        void onItemClick(View v, QualityInspectRecordAdapter.ViewName viewName, int position);
     }
 
     //=======================以下为item中的button控件点击事件处理===================================
@@ -286,15 +281,8 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
         int position = (int) v.getTag();      //getTag()获取数据
         if (mOnItemClickListener != null) {
             switch (v.getId()){
-                // todo
-//                case R.id.rv_dx:
-//                    mOnItemClickListener.onItemClick(v, DianXianQingceAdapter.ViewName.PRACTISE, position);
-//                    break;
-//                case R.id.rv_dx_tobeSelect:
-//                    mOnItemClickListener.onItemClick(v, DianXianQingceAdapter.ViewName.DX_TO_BE_SELECT, position);
-//                    break;
                 default:
-                    mOnItemClickListener.onItemClick(v, QualityInspectAdapter.ViewName.ITEM, position);
+                    mOnItemClickListener.onItemClick(v, QualityInspectRecordAdapter.ViewName.ITEM, position);
 
                     break;
             }

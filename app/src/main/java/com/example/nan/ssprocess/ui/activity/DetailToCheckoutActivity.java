@@ -24,10 +24,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.adapter.QualityInspectAdapter;
+import com.example.nan.ssprocess.adapter.QualityInspectRecordAdapter;
 import com.example.nan.ssprocess.app.SinSimApp;
 import com.example.nan.ssprocess.app.URL;
-import com.example.nan.ssprocess.bean.basic.QualityInspectData;
 import com.example.nan.ssprocess.bean.basic.QualityRecordDetailsData;
 import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 import com.example.nan.ssprocess.net.Network;
@@ -48,17 +47,11 @@ import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
  */
 
 public class DetailToCheckoutActivity extends AppCompatActivity implements BGASortableNinePhotoLayout.Delegate,
-        QualityInspectAdapter.RemarkEditListener,
-        QualityInspectAdapter.RecheckCommentEditListener{
+        QualityInspectRecordAdapter.RemarkEditListener,
+        QualityInspectRecordAdapter.RecheckCommentEditListener{
     private static final String TAG="nlgDetailToCheckout";
     private TextView locationTv;
-//    private RadioButton checkedOkRb;
-//    private RadioButton checkedNokRb;
-//    private EditText checkoutNokDetailEt;
-//    private Button beginQaButton;
-//    private Button endQaButton;
     private TextView currentStatusTv;
-//    private LinearLayout QaNokLinearLayout;
 
     private ProgressDialog mUploadingProcessDialog;
     private AlertDialog mQaDialog = null;
@@ -68,8 +61,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 
     private TaskRecordMachineListData mTaskRecordMachineListData;
     private int iTaskRecordMachineListDataStatusTemp;
-
-//    private BGASortableNinePhotoLayout mCheckoutNokPhotosSnpl;
     private UpdateProcessDetailDataHandler mUpdateProcessDetailDataHandler = new UpdateProcessDetailDataHandler();
 
     private final String IP = SinSimApp.getApp().getServerIP();
@@ -78,20 +69,21 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     private static final int RC_CHECKOUT_CHOOSE_PHOTO = 3;
     private static final int RC_CHECKOUT_PHOTO_PREVIEW = 4;
 
-    private QualityInspectAdapter mQualityInspectAdapter;
+    private QualityInspectRecordAdapter mQualityInspectRecordAdapter;
     private RecyclerView mQualityInspectRV;
-    //   先获取 mProcessToCheckoutList， 然后从中获取 mQualityInspectList
+    //   先获取 taskRecordMachineListDataArrayList， 然后从中获取 mQualityInspectList
+    /**
+     * TaskRecordMachineListData 包含了 质检
+     */
     private ArrayList<TaskRecordMachineListData> taskRecordMachineListDataArrayList = new ArrayList<>();
-//    private ArrayList<QualityInspectData> mQualityInspectList = new ArrayList<>();
-    private ArrayList<TaskRecordMachineListData> mQualityInspectList = new ArrayList<>();
-
+    /**
+     * 被用户填写了，待上传的质检
+     */
     private ArrayList<TaskRecordMachineListData> mQualityInspectRecordTobeUploadList = new ArrayList<>();
 
     /**
      * 各条质检项的质检结果
      */
-    private ArrayList<TextView> recordRemarkTvArray;    //该条质检的备注 数组
-    private ArrayList<TextView> reInspectTvArray;       //复检结果 数组
     private Button buttonUploadQualityInspectRecord;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,12 +112,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             }
         });
 
-//        checkedOkRb=findViewById(R.id.checked_ok_rb);
-//        checkedNokRb=findViewById(R.id.checked_nok_rb);
-//        checkoutNokDetailEt=findViewById(R.id.checkout_nok_detail_et);
-//        beginQaButton = findViewById(R.id.checkout_start_button);
-//        endQaButton = findViewById(R.id.checkout_end_button);
-//        QaNokLinearLayout = findViewById(R.id.qa_nok_ll);
         buttonUploadQualityInspectRecord = findViewById(R.id.button_upload_quality_inspect_record);
         buttonUploadQualityInspectRecord.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,7 +123,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         //获取传递过来的信息
         /**
          * mTaskRecordMachineListData是由前个页面ProcessToCheckoutActivity传过来，
-         * 里面的质检条目（可能数量很多）则在质检页面自己去获取。（mQualityInspectList）
+         * 里面的质检条目（可能数量很多）则在质检页面自己去获取。
          */
         Intent intent = getIntent();
         mTaskRecordMachineListData = (TaskRecordMachineListData) intent.getSerializableExtra("mTaskRecordMachineListData");
@@ -228,14 +214,11 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mQualityInspectRV.setLayoutManager(manager);
-//        mQualityInspectAdapter = new QualityInspectAdapter(mQualityInspectList);
-//        mQualityInspectRV.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
-//        mQualityInspectRV.setAdapter(mQualityInspectAdapter);
 
-        mQualityInspectAdapter = new QualityInspectAdapter(mQualityInspectList, DetailToCheckoutActivity.this);//, RelateNewDxActivity.this, Constant.REQUEST_CODE_LUJING_CANDIDATE_WIRES);
+        mQualityInspectRecordAdapter = new QualityInspectRecordAdapter(taskRecordMachineListDataArrayList, DetailToCheckoutActivity.this);//, RelateNewDxActivity.this, Constant.REQUEST_CODE_LUJING_CANDIDATE_WIRES);
         mQualityInspectRV.addItemDecoration(new DividerItemDecoration(DetailToCheckoutActivity.this, DividerItemDecoration.VERTICAL));
-        mQualityInspectRV.setAdapter(mQualityInspectAdapter);
-        mQualityInspectAdapter.setOnItemClickListener(MyItemClickListener);
+        mQualityInspectRV.setAdapter(mQualityInspectRecordAdapter);
+        mQualityInspectRecordAdapter.setOnItemClickListener(MyItemClickListener);
     }
 
     public void onStartQa(View view) {
@@ -284,6 +267,23 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             }
         }
     }
+
+    @SuppressLint("HandlerLeak")
+    private class UpdateQualityInspectRecordDataHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            if(mUpdatingProcessDialog != null && mUpdatingProcessDialog.isShowing()) {
+                mUpdatingProcessDialog.dismiss();
+            }
+            if (msg.what == Network.OK) {
+                Toast.makeText(DetailToCheckoutActivity.this, "上传质检信息成功！", Toast.LENGTH_SHORT).show();
+            } else {
+                String errorMsg = (String)msg.obj;
+                Log.d(TAG, "handleMessage: "+errorMsg);
+                Toast.makeText(DetailToCheckoutActivity.this, "上传失败："+errorMsg, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     private void fetchQARecordData() {
         Log.i(TAG, "获取历史质检数据");
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
@@ -303,7 +303,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     //更新新质检数据
     private void updateQualityInspectData() {
 
-
         Gson gson=new Gson();
         String mQualityInspectListDataToJson = gson.toJson(mQualityInspectRecordTobeUploadList);
         Log.d(TAG, "onItemClick: gson :"+ mQualityInspectListDataToJson);
@@ -311,55 +310,32 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         mPostValue.put("mQualityInspectRecordTobeUploadList", mQualityInspectListDataToJson);
         String updateQualityInspectRecordUrl = URL.HTTP_HEAD + IP + URL.UPDATE_QUALITY_INSPECT_RECORD_LIST;
         Log.d(TAG, "updateQualityInspectData: "+updateQualityInspectRecordUrl+mPostValue.get("machine"));
-        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateQualityInspectRecordUrl, mPostValue, new UpdateLocationDataHandler());
-
+        Network.Instance(SinSimApp.getApp()).updateProcessRecordData(updateQualityInspectRecordUrl, mPostValue, new UpdateQualityInspectRecordDataHandler());
     }
 
     /**
      * 质检各个item 里的控件点击监听事件
      */
-    private QualityInspectAdapter.OnItemClickListener MyItemClickListener = new QualityInspectAdapter.OnItemClickListener() {
-
-//        @Override
-//        public void onItemClick(int position) {
-//
-//            Toast.makeText(DetailToCheckoutActivity.this,"你点击了 onItemClick" + (position+1),Toast.LENGTH_SHORT).show();
-//        }
+    private QualityInspectRecordAdapter.OnItemClickListener MyItemClickListener = new QualityInspectRecordAdapter.OnItemClickListener() {
 
         @Override
-        public void onFinishItemClick(int position) {
-
-            Toast.makeText(DetailToCheckoutActivity.this,"你点击了 onFinishItemClick " + (position+1),Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onNotFinishItemClick(int position) {
-
-            Toast.makeText(DetailToCheckoutActivity.this,"你点击了 onNotFinishItemClick " + (position+1),Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onItemClick(View v, QualityInspectAdapter.ViewName viewName, int position) {
+        public void onItemClick(View v, QualityInspectRecordAdapter.ViewName viewName, int position) {
             //viewName可区分item及item内部控件
             switch (v.getId()){
 
                 case R.id.item_checked_ok_rb:
-//                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 OK" + (position+1),Toast.LENGTH_SHORT).show();
                     /**
                      * 因为要和APP其他状态共用一些代码，所以这里不要用字符串，用数字
                      */
                     mQualityInspectRecordTobeUploadList.get(position).setRecordStatus(String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_OK));
                     break;
                 case R.id.item_checked_ng_rb:
-//                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 NG" + (position+1),Toast.LENGTH_SHORT).show();
                     mQualityInspectRecordTobeUploadList.get(position).setRecordStatus((String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_NG)));
                     break;
                 case R.id.item_no_such_one_rb:
-//                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 无此检测条目 " + (position+1),Toast.LENGTH_SHORT).show();
                     mQualityInspectRecordTobeUploadList.get(position).setRecordStatus(String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_NO_SUCH_ITEM));
                     break;
                 case R.id.item_have_not_checked_rb:
-//                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 未检 " + (position+1),Toast.LENGTH_SHORT).show();
                     mQualityInspectRecordTobeUploadList.get(position).setRecordStatus(String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_HAVE_NOT_CHECKED));
                     break;
 
@@ -376,20 +352,12 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 //                    }
                     break;
                 case R.id.checkout_re_check_comment_et:
-//                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 复检" + (position+1),Toast.LENGTH_SHORT).show();
-
                     break;
                 default:
-//                    Toast.makeText(DetailToCheckoutActivity.this,"你点击了 Default...." + (position+1),Toast.LENGTH_SHORT).show();
-
                     break;
             }
         }
 
-        @Override
-        public void onItemLongClick(View v) {
-
-        }
     };
 
     @SuppressLint("HandlerLeak")
@@ -815,29 +783,28 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                     taskRecordMachineListDataArrayList =abnormalList;
                 }
                 for(int t=0; t<taskRecordMachineListDataArrayList.size(); t++){
-                    mQualityInspectList.add(taskRecordMachineListDataArrayList.get(t));
                     mQualityInspectRecordTobeUploadList.add(taskRecordMachineListDataArrayList.get(t));
                 }
-                if (mQualityInspectAdapter == null)
+                if (mQualityInspectRecordAdapter == null)
                 {
-                    mQualityInspectAdapter = new QualityInspectAdapter(mQualityInspectList, DetailToCheckoutActivity.this);//, RelateNewDxActivity.this, Constant.REQUEST_CODE_LUJING_CANDIDATE_WIRES);
+                    mQualityInspectRecordAdapter = new QualityInspectRecordAdapter(taskRecordMachineListDataArrayList, DetailToCheckoutActivity.this);//, RelateNewDxActivity.this, Constant.REQUEST_CODE_LUJING_CANDIDATE_WIRES);
                     mQualityInspectRV.addItemDecoration(new DividerItemDecoration(DetailToCheckoutActivity.this, DividerItemDecoration.VERTICAL));
-                    mQualityInspectRV.setAdapter(mQualityInspectAdapter);
-                    mQualityInspectAdapter.setOnItemClickListener(MyItemClickListener);
+                    mQualityInspectRV.setAdapter(mQualityInspectRecordAdapter);
+                    mQualityInspectRecordAdapter.setOnItemClickListener(MyItemClickListener);
                 }
-                mQualityInspectAdapter.updateDataSoruce(mQualityInspectList);
+                mQualityInspectRecordAdapter.updateDataSoruce(taskRecordMachineListDataArrayList);
  
 
 
                 Log.i(TAG, "FetchQualityInspectDataHandler DONE");
 
                 if (taskRecordMachineListDataArrayList.size()==0){
-                    mQualityInspectAdapter.updateDataSoruce(taskRecordMachineListDataArrayList);
-                    mQualityInspectAdapter.notifyDataSetChanged();
+                    mQualityInspectRecordAdapter.updateDataSoruce(taskRecordMachineListDataArrayList);
+                    mQualityInspectRecordAdapter.notifyDataSetChanged();
                     Toast.makeText(DetailToCheckoutActivity.this, "没有更多了...", Toast.LENGTH_SHORT).show();
                 }else {
-                    mQualityInspectAdapter.updateDataSoruce(taskRecordMachineListDataArrayList);
-                    mQualityInspectAdapter.notifyDataSetChanged();
+                    mQualityInspectRecordAdapter.updateDataSoruce(taskRecordMachineListDataArrayList);
+                    mQualityInspectRecordAdapter.notifyDataSetChanged();
                     Log.i(TAG, "0's RecordStatus:" + taskRecordMachineListDataArrayList.get(0).getRecordStatus());
                     Log.i(TAG, "0's RecordRemark:" + taskRecordMachineListDataArrayList.get(0).getRecordRemark());
                     Toast.makeText(DetailToCheckoutActivity.this, "列表已更新！", Toast.LENGTH_SHORT).show();
