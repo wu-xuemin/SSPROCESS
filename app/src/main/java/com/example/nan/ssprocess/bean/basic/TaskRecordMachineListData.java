@@ -15,6 +15,25 @@ public class TaskRecordMachineListData implements Serializable {
     private String recordRemark; //对该条质检的备注，3期新质检
     private String reInspect;   //复检结果，3期新质检
 
+    private String inspectName;
+    private String inspectContent;
+
+    public String getInspectName() {
+        return inspectName;
+    }
+
+    public void setInspectName(String inspectName) {
+        this.inspectName = inspectName;
+    }
+
+    public String getInspectContent() {
+        return inspectContent;
+    }
+
+    public void setInspectContent(String inspectContent) {
+        this.inspectContent = inspectContent;
+    }
+
     public String getRecordRemark() {
         return recordRemark;
     }

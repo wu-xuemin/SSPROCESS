@@ -82,7 +82,9 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     private RecyclerView mQualityInspectRV;
     //   先获取 mProcessToCheckoutList， 然后从中获取 mQualityInspectList
     private ArrayList<TaskRecordMachineListData> taskRecordMachineListDataArrayList = new ArrayList<>();
-    private ArrayList<QualityInspectData> mQualityInspectList = new ArrayList<>();
+//    private ArrayList<QualityInspectData> mQualityInspectList = new ArrayList<>();
+    private ArrayList<TaskRecordMachineListData> mQualityInspectList = new ArrayList<>();
+
     private ArrayList<TaskRecordMachineListData> mQualityInspectRecordTobeUploadList = new ArrayList<>();
 
     /**
@@ -189,20 +191,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             }
         });
 
-//        checkedOkRb.setChecked(true);
-//        QaNokLinearLayout.setVisibility(View.GONE);
-//        checkedOkRb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                QaNokLinearLayout.setVisibility(View.VISIBLE);
-//            }
-//        });
-//        checkedNokRb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                QaNokLinearLayout.setVisibility(View.GONE);
-//            }
-//        });
 
         if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED) {
 //            beginQaButton.setVisibility(View.VISIBLE);
@@ -243,6 +231,11 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 //        mQualityInspectAdapter = new QualityInspectAdapter(mQualityInspectList);
 //        mQualityInspectRV.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
 //        mQualityInspectRV.setAdapter(mQualityInspectAdapter);
+
+        mQualityInspectAdapter = new QualityInspectAdapter(mQualityInspectList, DetailToCheckoutActivity.this);//, RelateNewDxActivity.this, Constant.REQUEST_CODE_LUJING_CANDIDATE_WIRES);
+        mQualityInspectRV.addItemDecoration(new DividerItemDecoration(DetailToCheckoutActivity.this, DividerItemDecoration.VERTICAL));
+        mQualityInspectRV.setAdapter(mQualityInspectAdapter);
+        mQualityInspectAdapter.setOnItemClickListener(MyItemClickListener);
     }
 
     public void onStartQa(View view) {
@@ -752,7 +745,11 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
 
 
         mPostValue.put("nameplate", String.valueOf(mTaskRecordMachineListData.getMachineData().getNameplate()));
-        mPostValue.put("recordStatus", String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_NOT_STARTED));
+        /**
+         * 已经质检OK、不需要再看了的，就不再显示； 未检或者NG的才显示
+         */
+        mPostValue.put("recordStatus", String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_NOT_STARTED)
+                +"," + String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_NG) );
         mPostValue.put("page", ""+page);
 
         String fetchQualityInspectUrl = URL.HTTP_HEAD + ip + URL.FETCH_TASK_RECORD_TO_QA;
@@ -818,7 +815,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                     taskRecordMachineListDataArrayList =abnormalList;
                 }
                 for(int t=0; t<taskRecordMachineListDataArrayList.size(); t++){
-                    mQualityInspectList.add(taskRecordMachineListDataArrayList.get(t).getQualityInspect());
+                    mQualityInspectList.add(taskRecordMachineListDataArrayList.get(t));
                     mQualityInspectRecordTobeUploadList.add(taskRecordMachineListDataArrayList.get(t));
                 }
                 if (mQualityInspectAdapter == null)
@@ -829,12 +826,22 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                     mQualityInspectAdapter.setOnItemClickListener(MyItemClickListener);
                 }
                 mQualityInspectAdapter.updateDataSoruce(mQualityInspectList);
+ 
 
-//                mQualityInspectAdapter.notifyDataSetChanged();
 
                 Log.i(TAG, "FetchQualityInspectDataHandler DONE");
 
-
+                if (taskRecordMachineListDataArrayList.size()==0){
+                    mQualityInspectAdapter.updateDataSoruce(taskRecordMachineListDataArrayList);
+                    mQualityInspectAdapter.notifyDataSetChanged();
+                    Toast.makeText(DetailToCheckoutActivity.this, "没有更多了...", Toast.LENGTH_SHORT).show();
+                }else {
+                    mQualityInspectAdapter.updateDataSoruce(taskRecordMachineListDataArrayList);
+                    mQualityInspectAdapter.notifyDataSetChanged();
+                    Log.i(TAG, "0's RecordStatus:" + taskRecordMachineListDataArrayList.get(0).getRecordStatus());
+                    Log.i(TAG, "0's RecordRemark:" + taskRecordMachineListDataArrayList.get(0).getRecordRemark());
+                    Toast.makeText(DetailToCheckoutActivity.this, "列表已更新！", Toast.LENGTH_SHORT).show();
+                }
             } else {
                 String errorMsg = (String)msg.obj;
                 Toast.makeText(DetailToCheckoutActivity.this, "更新失败！"+errorMsg, Toast.LENGTH_SHORT).show();

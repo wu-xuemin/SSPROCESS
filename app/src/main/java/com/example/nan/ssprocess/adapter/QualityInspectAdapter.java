@@ -14,7 +14,8 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.example.nan.ssprocess.R;
-import com.example.nan.ssprocess.bean.basic.QualityInspectData;
+import com.example.nan.ssprocess.app.SinSimApp;
+import com.example.nan.ssprocess.bean.basic.TaskRecordMachineListData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +30,12 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
 //    private ArrayList<QualityInspectData> mQualityInspectAdapter;
     private OnItemClickListener mOnItemClickListener;//声明自定义的接口
 
-    private List<QualityInspectData> dataList;//数据源
+//    private List<QualityInspectData> dataList;//数据源
+    private List<TaskRecordMachineListData> dataList;//数据源
+
     private Context context;//上下文
     /// 这里，传数据
-    public QualityInspectAdapter(List<QualityInspectData> list, Context context ) {
+    public QualityInspectAdapter(List<TaskRecordMachineListData> list, Context context ) {
         this.dataList = list;
         this.context = context;
     }
@@ -40,7 +43,7 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
 //        mQualityInspectAdapter = list;
 //    }
 
-    public void updateDataSoruce(List<QualityInspectData> list)
+    public void updateDataSoruce(List<TaskRecordMachineListData> list)
     {
         this.dataList = list;
         notifyDataSetChanged();
@@ -75,6 +78,32 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
             itemView.itemInspectNameTv.setSelected(true);//用于滚动显示
             itemView.itemInspectContentTv.setText(dataList.get(position).getInspectContent());
 
+            /**
+             * 要把dataList的数据附上，否则item里没有数据显示
+             */
+            if(Integer.valueOf(dataList.get(position).getRecordStatus()) == SinSimApp.TASK_QUALITY_INSPECT_NOT_STARTED){
+                holder.radioButtonOK.setChecked(false);
+                holder.radioButtonNG.setChecked(false);
+                holder.radioButtonNoSuchOne.setChecked(false);
+                holder.radioButtonHaveNotChecked.setChecked(false);
+            } else if (Integer.valueOf(dataList.get(position).getRecordStatus()) == SinSimApp.TASK_QUALITY_INSPECT_OK){
+                holder.radioButtonOK.setChecked(true);
+                holder.radioButtonNG.setChecked(false);
+                holder.radioButtonNoSuchOne.setChecked(false);
+                holder.radioButtonHaveNotChecked.setChecked(false);
+            } else if(Integer.valueOf(dataList.get(position).getRecordStatus()) == SinSimApp.TASK_QUALITY_INSPECT_NG){
+                holder.radioButtonOK.setChecked(false);
+                holder.radioButtonNG.setChecked(true);
+                holder.radioButtonNoSuchOne.setChecked(false);
+                holder.radioButtonHaveNotChecked.setChecked(false);
+            } else if (Integer.valueOf(dataList.get(position).getRecordStatus()) == SinSimApp.TASK_QUALITY_INSPECT_NO_SUCH_ITEM){
+                holder.radioButtonOK.setChecked(false);
+                holder.radioButtonNG.setChecked(false);
+                holder.radioButtonNoSuchOne.setChecked(false);
+                holder.radioButtonHaveNotChecked.setChecked(true);
+            }
+            holder.checkoutCommentEt.setText(dataList.get(position).getRecordRemark());
+            holder.checkoutReCheckCommentEt.setText(dataList.get(position).getReInspect());
             holder.itemInspectNameTv.setTag(position);
             holder.itemInspectContentTv.setTag(position);
             holder.radioButtonOK.setTag(position);
@@ -158,10 +187,12 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
         void recheckCommentEditInfo(int position, String inputString);
     }
 
-    public void setProcessList(ArrayList<QualityInspectData> list) {
-        dataList.clear();
-        dataList.addAll(list);
-    }
+    //显示数据 --前面已经传好了
+    //上一次的质检结果，已经OK的不用显示，NG和未检的要显示
+//    public void setQualityInspectRecordList(ArrayList<TaskRecordMachineListData> list) {
+//        dataList.clear();
+//        dataList.addAll(list);
+//    }
 
     //自定义EditText的监听类--for remark备注
     class TextWatcherForRemark implements TextWatcher {
@@ -270,4 +301,5 @@ public class QualityInspectAdapter  extends RecyclerView.Adapter<QualityInspectA
         }
 
     }
+
 }
