@@ -211,7 +211,8 @@ public class SinSimApp extends Application {
         USER_ID,     //用户id
         GROUP_ID,
         GROUP_NAME,
-        GROUP_TYPE
+        GROUP_TYPE,
+        LAST_CONNECT_PRINTER_NAME
     }
 
     public static SinSimApp getApp() {
@@ -291,6 +292,9 @@ public class SinSimApp extends Application {
         } else {
             Log.d(TAG, "getIMEI: have some error");
         }
+        if(IMEI == null) {
+            IMEI = "868906040986480";
+        }
         return IMEI;
     }
     /**
@@ -352,6 +356,21 @@ public class SinSimApp extends Application {
             e.printStackTrace();
         }
     }
+
+    public void setPrinterName(String printerName) {
+        writePreferenceValue(PersistentValueType.LAST_CONNECT_PRINTER_NAME, printerName);
+        try {
+            commitValues();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getPrinterName() {
+        return readValue(PersistentValueType.LAST_CONNECT_PRINTER_NAME, "");
+    }
+
+
 
     /**
      * Reads the specified string persistent value.

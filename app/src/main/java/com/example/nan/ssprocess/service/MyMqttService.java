@@ -39,6 +39,8 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONObject;
 
+import java.util.UUID;
+
 /**
  * @author nan 2017/11/22
  */
@@ -81,7 +83,7 @@ public class MyMqttService extends Service {
         String serverIp = SinSimApp.getApp().getServerIP();
         final String serverUri = URL.TCP_HEAD + serverIp.substring(0, serverIp.indexOf(":")) + URL.MQTT_PORT;
         //以用户ID作为client ID
-        mqttAndroidClient = new MqttAndroidClient(MyMqttService.this, serverUri, SinSimApp.getApp().getIMEI());
+        mqttAndroidClient = new MqttAndroidClient(MyMqttService.this, serverUri, UUID.randomUUID().toString());
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
