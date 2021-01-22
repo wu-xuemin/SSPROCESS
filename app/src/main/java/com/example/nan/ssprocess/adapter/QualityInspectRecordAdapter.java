@@ -71,7 +71,7 @@ public class QualityInspectRecordAdapter extends RecyclerView.Adapter<QualityIns
             //显示编号，方便查看
             holder.itemInspectNameTv.setText((position+1) + ". " + dataList.get(position).getInspectName());
             holder.itemInspectNameTv.setSelected(true);//用于滚动显示
-            holder.itemInspectContentTv.setText(dataList.get(position).getInspectContent());
+            holder.itemInspectContentTv.setText(dataList.get(position).getQualityInspect().getInspectContent());
 
             /**
              * 要把dataList的数据附上，否则item里没有数据显示

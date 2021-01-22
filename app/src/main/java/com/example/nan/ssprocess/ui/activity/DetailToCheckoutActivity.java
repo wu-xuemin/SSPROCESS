@@ -277,6 +277,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
             }
             if (msg.what == Network.OK) {
                 Toast.makeText(DetailToCheckoutActivity.this, "上传质检信息成功！", Toast.LENGTH_SHORT).show();
+                DetailToCheckoutActivity.this.finish();
             } else {
                 String errorMsg = (String)msg.obj;
                 Log.d(TAG, "handleMessage: "+errorMsg);
@@ -792,19 +793,12 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                     mQualityInspectRV.setAdapter(mQualityInspectRecordAdapter);
                     mQualityInspectRecordAdapter.setOnItemClickListener(MyItemClickListener);
                 }
+
                 mQualityInspectRecordAdapter.updateDataSoruce(taskRecordMachineListDataArrayList);
- 
-
-
-                Log.i(TAG, "FetchQualityInspectDataHandler DONE");
-
+                mQualityInspectRecordAdapter.notifyDataSetChanged();
                 if (taskRecordMachineListDataArrayList.size()==0){
-                    mQualityInspectRecordAdapter.updateDataSoruce(taskRecordMachineListDataArrayList);
-                    mQualityInspectRecordAdapter.notifyDataSetChanged();
                     Toast.makeText(DetailToCheckoutActivity.this, "没有更多了...", Toast.LENGTH_SHORT).show();
                 }else {
-                    mQualityInspectRecordAdapter.updateDataSoruce(taskRecordMachineListDataArrayList);
-                    mQualityInspectRecordAdapter.notifyDataSetChanged();
                     Log.i(TAG, "0's RecordStatus:" + taskRecordMachineListDataArrayList.get(0).getRecordStatus());
                     Log.i(TAG, "0's RecordRemark:" + taskRecordMachineListDataArrayList.get(0).getRecordRemark());
                     Toast.makeText(DetailToCheckoutActivity.this, "列表已更新！", Toast.LENGTH_SHORT).show();

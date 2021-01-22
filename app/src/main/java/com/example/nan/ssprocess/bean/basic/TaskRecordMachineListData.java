@@ -16,7 +16,8 @@ public class TaskRecordMachineListData implements Serializable {
     private String reInspect;   //复检结果，3期新质检
 
     private String inspectName;
-    private String inspectContent;
+    // 在 qualityInspect里已经包含了inspectContent，不需要了; 而虽然也包含了inspectName，但是inspectName是在QualityInspectRecord里就存在的。
+//    private String inspectContent;
 
     public String getInspectName() {
         return inspectName;
@@ -26,13 +27,13 @@ public class TaskRecordMachineListData implements Serializable {
         this.inspectName = inspectName;
     }
 
-    public String getInspectContent() {
-        return inspectContent;
-    }
-
-    public void setInspectContent(String inspectContent) {
-        this.inspectContent = inspectContent;
-    }
+//    public String getInspectContent() {
+//        return inspectContent;
+//    }
+//
+//    public void setInspectContent(String inspectContent) {
+//        this.inspectContent = inspectContent;
+//    }
 
     public String getRecordRemark() {
         return recordRemark;

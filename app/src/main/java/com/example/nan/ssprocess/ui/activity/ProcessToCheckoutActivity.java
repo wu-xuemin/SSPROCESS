@@ -192,6 +192,25 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
                     abnormalList.addAll(normalList);
                     mProcessToCheckoutList=abnormalList;
                 }
+				
+                /**
+                 * 对同个机器的多个质检项，只显示第一项，到详情页面里，会重新获取全部质检项。
+                 */
+                ArrayList<TaskRecordMachineListData> mProcessToCheckoutTempList = new ArrayList<>();
+                for(int t=0; t<mProcessToCheckoutList.size(); t++){
+                    boolean isExist = false;
+                    for(int tt=0; tt<mProcessToCheckoutTempList.size(); tt++) {
+                        if(mProcessToCheckoutTempList.get(tt).getMachineData().getNameplate().equals(mProcessToCheckoutList.get(t).getMachineData().getNameplate())){
+                            isExist = true;
+                            break;
+                        }
+                    }
+                    if( !isExist ){
+                        mProcessToCheckoutTempList.add(mProcessToCheckoutList.get(t));
+                    }
+                }
+                mProcessToCheckoutList = mProcessToCheckoutTempList;
+
                 if (mProcessToCheckoutList.size()==0){
                     mTaskRecordAdapter.setProcessList(mProcessToCheckoutList);
                     mTaskRecordAdapter.notifyDataSetChanged();

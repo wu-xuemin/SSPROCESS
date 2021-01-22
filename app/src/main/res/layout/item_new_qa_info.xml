@@ -10,10 +10,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginRight="6dp"
         android:background="#1A373737"
-        android:gravity="center_vertical"
+        android:gravity="start|center_vertical"
         android:minHeight="64dp"
         android:orientation="horizontal">
 
@@ -22,7 +24,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="center|start"
             android:text="质检条目"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -33,7 +35,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="center|start"
             android:text="质检内容......"
             android:textSize="16sp"
             tools:layout_gravity="center" />

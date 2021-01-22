@@ -73,8 +73,9 @@ public class TaskRecordAdapter extends RecyclerView.Adapter {
             if(mProcessList.get(position).getStatus() == SinSimApp.TASK_QUALITY_INSPECT_NOT_STARTED
             || mProcessList.get(position).getStatus() == SinSimApp.TASK_QUALITY_INSPECT_NG) {
                 itemView.processNameTv.setVisibility(View.INVISIBLE);
+                //质检名称 在app 上会处理：同个机器的多个质检项，只显示第一项
                 itemView.qualityInspectItemNameTv.setVisibility(View.VISIBLE);
-//                itemView.qualityInspectItemNameTv.setText(mProcessList.get(position).getQualityInspect().getInspectName() + "...等");
+                itemView.qualityInspectItemNameTv.setText(mProcessList.get(position).getInspectName() + "...等");
             } else {
                 itemView.qualityInspectItemNameTv.setVisibility(View.INVISIBLE);
                 itemView.processNameTv.setVisibility(View.VISIBLE);
