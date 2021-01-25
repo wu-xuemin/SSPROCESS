@@ -85,6 +85,8 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
      * 各条质检项的质检结果
      */
     private Button buttonUploadQualityInspectRecord;
+
+    final String account = SinSimApp.getApp().getAccount();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -329,15 +331,19 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                      * 因为要和APP其他状态共用一些代码，所以这里不要用字符串，用数字
                      */
                     mQualityInspectRecordTobeUploadList.get(position).setRecordStatus(String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_OK));
+                    mQualityInspectRecordTobeUploadList.get(position).setInspectPerson(account);
                     break;
                 case R.id.item_checked_ng_rb:
                     mQualityInspectRecordTobeUploadList.get(position).setRecordStatus((String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_NG)));
+                    mQualityInspectRecordTobeUploadList.get(position).setInspectPerson(account);
                     break;
                 case R.id.item_no_such_one_rb:
                     mQualityInspectRecordTobeUploadList.get(position).setRecordStatus(String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_NO_SUCH_ITEM));
+                    mQualityInspectRecordTobeUploadList.get(position).setInspectPerson(account);
                     break;
                 case R.id.item_have_not_checked_rb:
                     mQualityInspectRecordTobeUploadList.get(position).setRecordStatus(String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_HAVE_NOT_CHECKED));
+                    mQualityInspectRecordTobeUploadList.get(position).setInspectPerson(account);
                     break;
 
                 case R.id.checkout_comment_et:
@@ -708,7 +714,6 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         fetchQualityInspectData(0);
     }
     private void fetchQualityInspectData(int page) {
-        final String account = SinSimApp.getApp().getAccount();
         final String ip = SinSimApp.getApp().getServerIP();
         LinkedHashMap<String, String> mPostValue = new LinkedHashMap<>();
 
@@ -783,6 +788,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                     abnormalList.addAll(normalList);
                     taskRecordMachineListDataArrayList =abnormalList;
                 }
+
                 for(int t=0; t<taskRecordMachineListDataArrayList.size(); t++){
                     mQualityInspectRecordTobeUploadList.add(taskRecordMachineListDataArrayList.get(t));
                 }
@@ -819,6 +825,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
          * 把监控获取的输入框信息更新给mQualityInspectRecordTobeUploadList，用于上传。
          */
         mQualityInspectRecordTobeUploadList.get(position ).setRecordRemark(inputString);
+        mQualityInspectRecordTobeUploadList.get(position).setInspectPerson(account);
     }
 
     @Override
@@ -829,6 +836,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
          * 把监控获取的输入框信息更新给mQualityInspectRecordTobeUploadList，用于上传。
          */
         mQualityInspectRecordTobeUploadList.get(position ).setReInspect(inputString);
+        mQualityInspectRecordTobeUploadList.get(position).setInspectPerson(account);
     }
 
     @Override
