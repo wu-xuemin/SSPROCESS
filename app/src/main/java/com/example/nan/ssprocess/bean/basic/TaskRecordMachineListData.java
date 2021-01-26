@@ -15,10 +15,19 @@ public class TaskRecordMachineListData implements Serializable {
     private String recordRemark; //对该条质检的备注，3期新质检
     private String reInspect;   //复检结果，3期新质检
     private String inspectPerson;   //质检人，3期新质检
+    private String updateTime;   //质检更新时间，3期新质检
 
     private String inspectName;
     // 在 qualityInspect里已经包含了inspectContent，不需要了; 而虽然也包含了inspectName，但是inspectName是在QualityInspectRecord里就存在的。
 //    private String inspectContent;
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
 
     public String getInspectPerson() {
         return inspectPerson;

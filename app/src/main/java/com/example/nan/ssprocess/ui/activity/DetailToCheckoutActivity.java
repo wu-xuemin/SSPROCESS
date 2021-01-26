@@ -87,6 +87,9 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     private Button buttonUploadQualityInspectRecord;
 
     final String account = SinSimApp.getApp().getAccount();
+
+//    @SuppressLint("SimpleDateFormat")
+//    SimpleDateFormat formatter = new SimpleDateFormat("yy/MM/dd");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -324,6 +327,10 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         @Override
         public void onItemClick(View v, QualityInspectRecordAdapter.ViewName viewName, int position) {
             //viewName可区分item及item内部控件
+            mQualityInspectRecordTobeUploadList.get(position).setInspectPerson(account);
+//            mQualityInspectRecordTobeUploadList.get(position).setUpdateTime(formatter.format(new Date()));
+            Date now = new Date();
+            mQualityInspectRecordTobeUploadList.get(position).setUpdateTime(String.valueOf((now.getTime())));
             switch (v.getId()){
 
                 case R.id.item_checked_ok_rb:
@@ -331,19 +338,15 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
                      * 因为要和APP其他状态共用一些代码，所以这里不要用字符串，用数字
                      */
                     mQualityInspectRecordTobeUploadList.get(position).setRecordStatus(String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_OK));
-                    mQualityInspectRecordTobeUploadList.get(position).setInspectPerson(account);
                     break;
                 case R.id.item_checked_ng_rb:
                     mQualityInspectRecordTobeUploadList.get(position).setRecordStatus((String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_NG)));
-                    mQualityInspectRecordTobeUploadList.get(position).setInspectPerson(account);
                     break;
                 case R.id.item_no_such_one_rb:
                     mQualityInspectRecordTobeUploadList.get(position).setRecordStatus(String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_NO_SUCH_ITEM));
-                    mQualityInspectRecordTobeUploadList.get(position).setInspectPerson(account);
                     break;
                 case R.id.item_have_not_checked_rb:
                     mQualityInspectRecordTobeUploadList.get(position).setRecordStatus(String.valueOf(SinSimApp.TASK_QUALITY_INSPECT_HAVE_NOT_CHECKED));
-                    mQualityInspectRecordTobeUploadList.get(position).setInspectPerson(account);
                     break;
 
                 case R.id.checkout_comment_et:
@@ -826,6 +829,9 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
          */
         mQualityInspectRecordTobeUploadList.get(position ).setRecordRemark(inputString);
         mQualityInspectRecordTobeUploadList.get(position).setInspectPerson(account);
+//        mQualityInspectRecordTobeUploadList.get(position).setUpdateTime(formatter.format(new Date()));
+        Date now = new Date();
+        mQualityInspectRecordTobeUploadList.get(position).setUpdateTime(String.valueOf((now.getTime())));
     }
 
     @Override
@@ -837,6 +843,9 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
          */
         mQualityInspectRecordTobeUploadList.get(position ).setReInspect(inputString);
         mQualityInspectRecordTobeUploadList.get(position).setInspectPerson(account);
+        mQualityInspectRecordTobeUploadList.get(position).setInspectPerson(account);
+        Date now = new Date();
+        mQualityInspectRecordTobeUploadList.get(position).setUpdateTime(String.valueOf((now.getTime())));
     }
 
     @Override
