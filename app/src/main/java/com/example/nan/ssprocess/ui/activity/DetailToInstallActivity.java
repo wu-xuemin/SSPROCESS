@@ -819,7 +819,6 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         }
     }
     private void updateProcessDetailData(int status) {
-        //更新loaction状态
         mTaskRecordMachineListData.setStatus(status);
         Gson gson=new Gson();
         String taskRecordDataToJson = gson.toJson(mTaskRecordMachineListData);
@@ -954,6 +953,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 //                mTaskRecordMachineListData.setQualityEndTime(strCurTime);
 //                updateProcessDetailData(SinSimApp.TASK_QUALITY_DONE);
 //            }
+                mTaskRecordMachineListData.setQualityBeginTime(strCurTime);
+                mTaskRecordMachineListData.setQualityEndTime(strCurTime);
             updateProcessDetailData(SinSimApp.TASK_INSTALLED);
             //相关地方要处理，比如流程里，安装完成了，就可以到下一步了，不需要质检，因为质检不再和安装关联。
 

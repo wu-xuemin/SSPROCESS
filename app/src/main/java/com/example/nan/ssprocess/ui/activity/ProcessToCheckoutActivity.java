@@ -261,7 +261,12 @@ public class ProcessToCheckoutActivity extends AppCompatActivity implements BGAR
                         return;
                     }else {
                         Intent intent = new Intent(ProcessToCheckoutActivity.this, ScanResultActivity.class);
-                        intent.putExtra("mTaskRecordMachineList", (Serializable) mScanResultList);
+//                        intent.putExtra("mTaskRecordMachineList", (Serializable) mScanResultList);
+                        /**
+                         * 质检只传机器信息，不传工序信息
+                         * 而且只有一个机器，mScanResultList只有一个值。
+                         */
+                        intent.putExtra("mScanResultMachine", (Serializable) mScanResultList.get(0));//当前机器的信息，如果不在当前用户的安装列表中，则为空
                         startActivity(intent);
                     }
                 }

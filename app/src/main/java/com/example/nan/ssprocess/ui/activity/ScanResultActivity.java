@@ -47,8 +47,14 @@ public class ScanResultActivity extends AppCompatActivity {
     private AlertDialog mQaDialog=null;
     private ProgressDialog mUpdatingProcessDialog;
 
+    //对于安装组长，以工序为单位，
     private ArrayList<TaskNodeData> currentTaskList;
+    /**
+     * 对于质检，以机器为单位，方便质检人员，扫码之后，  直接进入 该机器的质检详情页面。
+     */
     private ArrayList<TaskRecordMachineListData> mScanResultList;
+    //扫码得到的机器信息
+    private TaskRecordMachineListData mScanResultMachine;
     private String mMachineNamePlate;
 
     @Override
@@ -64,8 +70,9 @@ public class ScanResultActivity extends AppCompatActivity {
 
         //获取传递过来的信息
         Intent intent = getIntent();
-        currentTaskList = (ArrayList<TaskNodeData>) intent.getSerializableExtra("currentTaskList");//机器当前的安装步骤
+        currentTaskList = (ArrayList<TaskNodeData>) intent.getSerializableExtra("currentTaskList");//机器当前的安装步骤 --质检时不会传这个，质检只传机器信息。
         mScanResultList = (ArrayList<TaskRecordMachineListData>) intent.getSerializableExtra("mScanResultList");//当前机器的信息，如果不在当前用户的安装列表中，则为空
+        mScanResultMachine =( TaskRecordMachineListData ) intent.getSerializableExtra("mScanResultMachine");//质检用的，当前机器的信息，唯一
         mMachineNamePlate = intent.getStringExtra("mMachineNamePlate");//机器编号
 
         TextView nameplateTv = findViewById(R.id.nameplate_tv);
@@ -77,139 +84,157 @@ public class ScanResultActivity extends AppCompatActivity {
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mScanResultRv.setLayoutManager(manager);
         mScanResultRv.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
-        ScanResultAdapter mScanResultAdapter = new ScanResultAdapter(currentTaskList);
-        mScanResultRv.setAdapter(mScanResultAdapter);
-        //点击跳转，把所有接收到的数据传递给下一个activity
-        mScanResultAdapter.setOnItemClickListener(new ScanResultAdapter.OnItemClickListener(){
-            @Override
-            public void onItemClick(final int position) {
-                if (mScanResultList.isEmpty()) {
+        /**
+         * 安装组 才会传这个，质检组时 不传这个，所以质检时为空。
+         */
+        if(currentTaskList != null ) {
+            ScanResultAdapter mScanResultAdapter = new ScanResultAdapter(currentTaskList);
+            mScanResultRv.setAdapter(mScanResultAdapter);
+            //点击跳转，把所有接收到的数据传递给下一个activity
+            mScanResultAdapter.setOnItemClickListener(new ScanResultAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(final int position) {
+                    if (mScanResultList.isEmpty()) {
 //                    ShowMessage.showToast(ScanResultActivity.this, "无权操作该工序！", ShowMessage.MessageDuring.SHORT);
-                    sendRemind(currentTaskList.get(position).getText());
-                } else {
-                    mScanResultList.size();
-                    boolean isTaskOwner = false;
-                    for (int index=0;index<mScanResultList.size();index++){
-                        if (currentTaskList.get(position).getText().equals(mScanResultList.get(index).getTaskName())) {
-                            mTaskRecordMachineListData = mScanResultList.get(index);
-                            isTaskOwner = true;
-                            break;
-                        }
-                    }
-                    if (!isTaskOwner){
                         sendRemind(currentTaskList.get(position).getText());
+                    } else {
+                        mScanResultList.size();
+                        boolean isTaskOwner = false;
+                        for (int index = 0; index < mScanResultList.size(); index++) {
+                            if (currentTaskList.get(position).getText().equals(mScanResultList.get(index).getTaskName())) {
+                                mTaskRecordMachineListData = mScanResultList.get(index);
+                                isTaskOwner = true;
+                                break;
+                            }
+                        }
+                        if (!isTaskOwner) {
+                            sendRemind(currentTaskList.get(position).getText());
 //                        ShowMessage.showToast(ScanResultActivity.this, "无权操作该工序！", ShowMessage.MessageDuring.SHORT);
-                    }else {
-                        Log.d(TAG, "onItemClick: gson :" + new Gson().toJson(mTaskRecordMachineListData));
-                        switch (SinSimApp.getApp().getRole()) {
-                            case SinSimApp.LOGIN_FOR_INSTALL:
-                                if (!(mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALL_WAITING)) {
-                                    Intent intent = new Intent();
-                                    intent.setClass(ScanResultActivity.this, DetailToInstallActivity.class);
-                                    intent.putExtra("mTaskRecordMachineListData", mTaskRecordMachineListData);
-                                    startActivity(intent);
-                                    finish();
-                                } else {//状态是安装中则直接开始安装
-                                    mInstallDialog = new AlertDialog.Builder(ScanResultActivity.this).create();
-                                    mInstallDialog.setMessage("是否现在开始安装？");
-                                    mInstallDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "否", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
+                        } else {
+                            Log.d(TAG, "onItemClick: gson :" + new Gson().toJson(mTaskRecordMachineListData));
+                            switch (SinSimApp.getApp().getRole()) {
+                                case SinSimApp.LOGIN_FOR_INSTALL:
+                                    if (!(mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALL_WAITING)) {
+                                        Intent intent = new Intent();
+                                        intent.setClass(ScanResultActivity.this, DetailToInstallActivity.class);
+                                        intent.putExtra("mTaskRecordMachineListData", mTaskRecordMachineListData);
+                                        startActivity(intent);
+                                        finish();
+                                    } else {//状态是安装中则直接开始安装
+                                        mInstallDialog = new AlertDialog.Builder(ScanResultActivity.this).create();
+                                        mInstallDialog.setMessage("是否现在开始安装？");
+                                        mInstallDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "否", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
 
-                                        }
-                                    });
-                                    mInstallDialog.setButton(AlertDialog.BUTTON_POSITIVE, "是", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            //先改状态再执行跳转
-                                            if (mUpdatingProcessDialog == null) {
-                                                mUpdatingProcessDialog = new ProgressDialog(ScanResultActivity.this);
-                                                mUpdatingProcessDialog.setCancelable(false);
-                                                mUpdatingProcessDialog.setCanceledOnTouchOutside(false);
-                                                mUpdatingProcessDialog.setMessage("正在开始...");
                                             }
-                                            mUpdatingProcessDialog.show();
-                                            //获取当前时间
-                                            @SuppressLint("SimpleDateFormat")
-                                            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-                                            Date curDate = new Date(System.currentTimeMillis());
-                                            String staCurTime = formatter.format(curDate);
-                                            mTaskRecordMachineListData.setInstallBeginTime(staCurTime);
-                                            iTaskRecordMachineListDataStatusTemp = mTaskRecordMachineListData.getStatus();
-                                            updateProcessDetailData(SinSimApp.TASK_INSTALLING);
-
-                                            // 扫码完写入时间和结果到本地
-                                            String path = Environment.getExternalStorageDirectory().getPath() + "/Xiaomi";
-                                            String name = "/ScanResultRecorder.txt";
-                                            String strFilePath = path + name;
-                                            try {
-                                                File filePath = null;
-                                                filePath = new File(strFilePath);
-                                                if (!filePath.exists()) {
-                                                    filePath.getParentFile().mkdirs();
-                                                    filePath.createNewFile();
+                                        });
+                                        mInstallDialog.setButton(AlertDialog.BUTTON_POSITIVE, "是", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                //先改状态再执行跳转
+                                                if (mUpdatingProcessDialog == null) {
+                                                    mUpdatingProcessDialog = new ProgressDialog(ScanResultActivity.this);
+                                                    mUpdatingProcessDialog.setCancelable(false);
+                                                    mUpdatingProcessDialog.setCanceledOnTouchOutside(false);
+                                                    mUpdatingProcessDialog.setMessage("正在开始...");
                                                 }
-                                                String scanResultRecord = curDate + ":  " + mTaskRecordMachineListData.getMachineData().getNameplate() + mTaskRecordMachineListData.getTaskName() + " [start]！\r\n";
-                                                RandomAccessFile raf = new RandomAccessFile(filePath, "rwd");
-                                                raf.seek(filePath.length());
-                                                raf.write(scanResultRecord.getBytes());
-                                                raf.close();
-                                            } catch (Exception e) {
-                                                Log.i("error:", e + "");
-                                            }
-                                        }
-                                    });
-                                    mInstallDialog.show();
-                                }
-                                break;
-                            case SinSimApp.LOGIN_FOR_QA:
-                                if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALLED) {
-                                    mQaDialog = new AlertDialog.Builder(ScanResultActivity.this).create();
-                                    mQaDialog.setMessage("是否现在开始质检？");
-                                    mQaDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "否", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
+                                                mUpdatingProcessDialog.show();
+                                                //获取当前时间
+                                                @SuppressLint("SimpleDateFormat")
+                                                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+                                                Date curDate = new Date(System.currentTimeMillis());
+                                                String staCurTime = formatter.format(curDate);
+                                                mTaskRecordMachineListData.setInstallBeginTime(staCurTime);
+                                                iTaskRecordMachineListDataStatusTemp = mTaskRecordMachineListData.getStatus();
+                                                updateProcessDetailData(SinSimApp.TASK_INSTALLING);
 
-                                        }
-                                    });
-                                    mQaDialog.setButton(AlertDialog.BUTTON_POSITIVE, "是", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            //先改状态再执行跳转
-                                            if (mUpdatingProcessDialog == null) {
-                                                mUpdatingProcessDialog = new ProgressDialog(ScanResultActivity.this);
-                                                mUpdatingProcessDialog.setCancelable(false);
-                                                mUpdatingProcessDialog.setCanceledOnTouchOutside(false);
-                                                mUpdatingProcessDialog.setMessage("正在开始...");
+                                                // 扫码完写入时间和结果到本地
+                                                String path = Environment.getExternalStorageDirectory().getPath() + "/Xiaomi";
+                                                String name = "/ScanResultRecorder.txt";
+                                                String strFilePath = path + name;
+                                                try {
+                                                    File filePath = null;
+                                                    filePath = new File(strFilePath);
+                                                    if (!filePath.exists()) {
+                                                        filePath.getParentFile().mkdirs();
+                                                        filePath.createNewFile();
+                                                    }
+                                                    String scanResultRecord = curDate + ":  " + mTaskRecordMachineListData.getMachineData().getNameplate() + mTaskRecordMachineListData.getTaskName() + " [start]！\r\n";
+                                                    RandomAccessFile raf = new RandomAccessFile(filePath, "rwd");
+                                                    raf.seek(filePath.length());
+                                                    raf.write(scanResultRecord.getBytes());
+                                                    raf.close();
+                                                } catch (Exception e) {
+                                                    Log.i("error:", e + "");
+                                                }
                                             }
-                                            mUpdatingProcessDialog.show();
-                                            //获取当前时间
-                                            @SuppressLint("SimpleDateFormat")
-                                            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-                                            Date curDate = new Date(System.currentTimeMillis());
-                                            String staCurTime = formatter.format(curDate);
-                                            mTaskRecordMachineListData.setQualityBeginTime(staCurTime);
-                                            iTaskRecordMachineListDataStatusTemp = mTaskRecordMachineListData.getStatus();
-                                            updateProcessDetailData(SinSimApp.TASK_QUALITY_DOING);
-                                        }
-                                    });
-                                    mQaDialog.show();
-                                } else {
-                                    Intent intent1 = new Intent();
-                                    intent1.setClass(ScanResultActivity.this, DetailToCheckoutActivity.class);
-                                    intent1.putExtra("mTaskRecordMachineListData", mTaskRecordMachineListData);
-                                    startActivity(intent1);
-                                    finish();
-                                }
-                                break;
-                            default:
-                                Toast.makeText(ScanResultActivity.this, "账号错误，请检查登入账号!", Toast.LENGTH_SHORT).show();
-                                break;
+                                        });
+                                        mInstallDialog.show();
+                                    }
+                                    break;
+                                case SinSimApp.LOGIN_FOR_QA:
+                                    /**
+                                     * 3期，检验不需要开始和结束、只需要进去一次就填结果
+                                     */
+                                    if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALLED) {
+                                        mQaDialog = new AlertDialog.Builder(ScanResultActivity.this).create();
+                                        mQaDialog.setMessage("是否现在开始质检？");
+                                        mQaDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "否", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                            }
+                                        });
+                                        mQaDialog.setButton(AlertDialog.BUTTON_POSITIVE, "是", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                //先改状态再执行跳转
+                                                if (mUpdatingProcessDialog == null) {
+                                                    mUpdatingProcessDialog = new ProgressDialog(ScanResultActivity.this);
+                                                    mUpdatingProcessDialog.setCancelable(false);
+                                                    mUpdatingProcessDialog.setCanceledOnTouchOutside(false);
+                                                    mUpdatingProcessDialog.setMessage("正在开始...");
+                                                }
+                                                mUpdatingProcessDialog.show();
+                                                //获取当前时间
+                                                @SuppressLint("SimpleDateFormat")
+                                                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+                                                Date curDate = new Date(System.currentTimeMillis());
+                                                String staCurTime = formatter.format(curDate);
+                                                mTaskRecordMachineListData.setQualityBeginTime(staCurTime);
+                                                iTaskRecordMachineListDataStatusTemp = mTaskRecordMachineListData.getStatus();
+                                                updateProcessDetailData(SinSimApp.TASK_QUALITY_DOING);
+                                            }
+                                        });
+                                        mQaDialog.show();
+                                    } else {
+                                        Intent intent1 = new Intent();
+                                        intent1.setClass(ScanResultActivity.this, DetailToCheckoutActivity.class);
+                                        intent1.putExtra("mTaskRecordMachineListData", mTaskRecordMachineListData);
+                                        startActivity(intent1);
+                                        finish();
+                                    }
+                                    break;
+                                default:
+                                    Toast.makeText(ScanResultActivity.this, "账号错误，请检查登入账号!", Toast.LENGTH_SHORT).show();
+                                    break;
+                            }
                         }
                     }
                 }
+            });
+        } else {
+            //质检
+            if (SinSimApp.getApp().getRole()==SinSimApp.LOGIN_FOR_QA || SinSimApp.getApp().getRole()==SinSimApp.LOGIN_FOR_QA_LEADER) {
+                Intent intent2 = new Intent();
+                intent2.setClass(ScanResultActivity.this, DetailToCheckoutActivity.class);
+                intent2.putExtra("mTaskRecordMachineListData", mScanResultMachine);
+                startActivity(intent2);
+                finish();
+                Toast.makeText(ScanResultActivity.this, "请开始质检！", Toast.LENGTH_SHORT).show();
             }
-        });
+        }
     }
 
     private void sendRemind(final String taskName){
