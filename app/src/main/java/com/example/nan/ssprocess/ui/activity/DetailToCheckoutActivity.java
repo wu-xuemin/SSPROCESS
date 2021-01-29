@@ -57,6 +57,7 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
     private AlertDialog mQaDialog = null;
     private ProgressDialog mUpdatingProcessDialog;
     private AlertDialog mLocationSettingDialog = null;
+    private AlertDialog mUpdateQualityInspectRecordDialog = null;
 
 
     private TaskRecordMachineListData mTaskRecordMachineListData;
@@ -121,7 +122,23 @@ public class DetailToCheckoutActivity extends AppCompatActivity implements BGASo
         buttonUploadQualityInspectRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateQualityInspectData();
+                /**
+                 * 要求有弹框确认是否提交
+                 */
+                mUpdateQualityInspectRecordDialog = new AlertDialog.Builder(DetailToCheckoutActivity.this).create();
+                mUpdateQualityInspectRecordDialog.setMessage("是否提交质检？");
+                mUpdateQualityInspectRecordDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "否", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                mUpdateQualityInspectRecordDialog.setButton(AlertDialog.BUTTON_POSITIVE, "是", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        updateQualityInspectData();
+                    }
+                });
+                mUpdateQualityInspectRecordDialog.show();
             }
         });
 

@@ -215,4 +215,17 @@ public class TaskRecordMachineListData implements Serializable {
     public void setQualityInspect(QualityInspectData qualityInspect) {
         this.qualityInspect = qualityInspect;
     }
+
+    /**
+     * 因为 质检组 也要看安装进度信息，所以需要安装进度信息 --暂不需要
+     */
+//    private TaskRecordData taskRecordData;
+//
+//    public TaskRecordData getTaskRecordData() {
+//        return taskRecordData;
+//    }
+//
+//    public void setTaskRecordData(TaskRecordData taskRecordData) {
+//        this.taskRecordData = taskRecordData;
+//    }
 }
