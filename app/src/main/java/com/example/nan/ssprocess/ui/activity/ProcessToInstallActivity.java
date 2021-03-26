@@ -265,7 +265,8 @@ public class ProcessToInstallActivity extends AppCompatActivity implements BGARe
                     int taskStatus = 0;
                     for (int index = 2; index < taskNodeDataArrayList.size(); index++){//去掉开始和结束
                         taskStatus = Integer.parseInt(taskNodeDataArrayList.get(index).getTaskStatus());
-                        if (taskStatus > SinSimApp.TASK_PLANED && taskStatus != SinSimApp.TASK_QUALITY_DONE ){
+                        //质检完成（3期之前），安装完成（3期）的就不用显示了
+                        if (taskStatus > SinSimApp.TASK_PLANED && taskStatus != SinSimApp.TASK_QUALITY_DONE && taskStatus != SinSimApp.TASK_INSTALLED ){
                             currentTaskList.add(taskNodeDataArrayList.get(index));
                         }
                     }

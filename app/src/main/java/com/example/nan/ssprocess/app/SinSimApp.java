@@ -256,7 +256,7 @@ public class SinSimApp extends Application {
         }else {
             this.role = Integer.valueOf(readValue(PersistentValueType.ROLE, "0"));
         }
-        this.ip = readValue(PersistentValueType.SERVICE_IP, "");
+        this.ip = readValue(PersistentValueType.SERVICE_IP, "192.168.1.139:8004");
 //        this.ip = "192.168.1.139:8080";
 //        this.ip = "10.0.2.2:8080";
 //模拟器
