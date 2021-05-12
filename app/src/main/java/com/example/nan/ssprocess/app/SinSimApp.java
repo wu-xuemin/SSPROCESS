@@ -79,7 +79,10 @@ public class SinSimApp extends Application {
     public static final int TASK_INITIAL = 0;
     public static final int TASK_PLANED = 1;
     public static final int TASK_INSTALL_WAITING = 2;
-    public static final int TASK_INSTALLING = 3;
+//    安装流程简化，
+//    由原先的先点击“扫码开始”--安装好了，再点击“扫码完成”
+//    改为： 只需要扫码一次。扫码一次就好了，让安装人员减少了一个扫码开始的步骤。 不再由 安装中TASK_INSTALLING 这个状态
+    public static final int TASK_INSTALLING = 3; // 这个可以不要了
     public static final int TASK_INSTALLED = 4;
     public static final int TASK_QUALITY_DOING = 5;
     public static final int TASK_QUALITY_DONE = 6;

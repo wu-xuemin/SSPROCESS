@@ -190,9 +190,10 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
         chooseInstallerTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mTaskRecordMachineListData.getStatus() != SinSimApp.TASK_INSTALLING) {
-                    ShowMessage.showToast(DetailToInstallActivity.this,"请在安装结束前进行安装人员选择！", ShowMessage.MessageDuring.SHORT);
-                }else {
+//                if(mTaskRecordMachineListData.getStatus() != SinSimApp.TASK_INSTALLING) { ///
+//                    ShowMessage.showToast(DetailToInstallActivity.this,"请在安装结束前进行安装人员选择！", ShowMessage.MessageDuring.SHORT);
+//                }else
+                    {
                     String[] items={};
                     boolean[] checkedItemsArray = new boolean[mInstallerList.size()];
                     for (int i=0;i<mInstallerList.size();i++){
@@ -292,6 +293,11 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                 noteLayout.setVisibility(View.VISIBLE);
             }
         });
+        /**
+         * 改了，安装流程简化，
+         * 由原先的先点击“扫码开始”--安装好了，再点击“扫码完成”
+         * 改为： 只需要扫码一次。扫码一次就好了，让安装人员减少了一个扫码开始的步骤。 不再由 安装中TASK_INSTALLING 这个状态
+         */
         if (mTaskRecordMachineListData.getMachineData().getStatus()==SinSimApp.MACHINE_CHANGED
                 ||mTaskRecordMachineListData.getMachineData().getStatus()==SinSimApp.MACHINE_SPLITED) {
             installStartButton.setVisibility(View.GONE);
@@ -299,14 +305,19 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             installAbnormalSolutionButton.setVisibility(View.GONE);
             ShowMessage.showToast(DetailToInstallActivity.this,"正在改单/拆单，不能安装！", ShowMessage.MessageDuring.SHORT);
         }else {
-            if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALL_WAITING) {
-                installStartButton.setVisibility(View.VISIBLE);
-                installFinishButton.setVisibility(View.GONE);
-                installAbnormalSolutionButton.setVisibility(View.GONE);
-                installAbnormalRb.setEnabled(false);
-                installNormalRb.setEnabled(false);
-                noteLayout.setVisibility(View.GONE);
-            } else if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALLING) {
+//            if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALL_WAITING) {
+//                installStartButton.setVisibility(View.VISIBLE);
+//                installFinishButton.setVisibility(View.GONE);
+//                installAbnormalSolutionButton.setVisibility(View.GONE);
+//                installAbnormalRb.setEnabled(false);
+//                installNormalRb.setEnabled(false);
+//                noteLayout.setVisibility(View.GONE);
+//            } else
+                if (
+//                        mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALLING
+//                    ||
+                        mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALL_WAITING
+                ) {
                 installStartButton.setVisibility(View.GONE);
                 installAbnormalSolutionButton.setVisibility(View.GONE);
                 installFinishButton.setVisibility(View.VISIBLE);
@@ -340,6 +351,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 
     }
 
+//    installStartButton click
     public void onStartInstall(View view) {
         if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING) {
             Intent intent = new Intent(DetailToInstallActivity.this, ScanQrcodeActivity.class);
@@ -350,7 +362,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     }
 
     public void onStopInstall(View view) {
-        if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING) {
+        if (//mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING ||
+                mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING) {
             if (installNormalRb.isChecked() && ("".equals(checkedName) || checkedName==null)){
                 ShowMessage.showToast(DetailToInstallActivity.this,"请勾选安装人员！", ShowMessage.MessageDuring.SHORT);
                 return;
@@ -751,8 +764,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
                                     String staCurTime = formatter.format(curDate);
                                     mTaskRecordMachineListData.setInstallBeginTime(staCurTime);
                                     iTaskRecordMachineListDataStatusTemp=mTaskRecordMachineListData.getStatus();
-                                    updateProcessDetailData(SinSimApp.TASK_INSTALLING);
-
+//                                    updateProcessDetailData(SinSimApp.TASK_INSTALLING);
+                                    updateProcessDetailData(SinSimApp.TASK_INSTALLED); ///安装过程中，只扫码一次 等待安装 状态 直接改为 安装完成，没有了“安装中”
                                     // 扫码完写入时间和结果到本地
                                     String path = Environment.getExternalStorageDirectory().getPath() + "/Xiaomi";
                                     String name = "/ScanResultRecorder.txt";
@@ -843,15 +856,16 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
             if (msg.what == Network.OK) {
                 currentStatusTv.setText(SinSimApp.getInstallStatusString(mTaskRecordMachineListData.getStatus()));
 
-                if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING){
-                    ShowMessage.showDialog(DetailToInstallActivity.this,"请开始安装吧！");
-                    installStartButton.setVisibility(View.GONE);
-                    installFinishButton.setVisibility(View.VISIBLE);
-                    installAbnormalSolutionButton.setVisibility(View.GONE);
-                    installAbnormalRb.setEnabled(true);
-                    installNormalRb.setEnabled(true);
-                    noteLayout.setVisibility(View.VISIBLE);
-                } else if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED){
+//                if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING){
+//                    ShowMessage.showDialog(DetailToInstallActivity.this,"请开始安装吧！");
+//                    installStartButton.setVisibility(View.GONE);
+//                    installFinishButton.setVisibility(View.VISIBLE);
+//                    installAbnormalSolutionButton.setVisibility(View.GONE);
+//                    installAbnormalRb.setEnabled(true);
+//                    installNormalRb.setEnabled(true);
+//                    noteLayout.setVisibility(View.VISIBLE);
+//                } else
+                    if (mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLED){
                     ShowMessage.showDialog(DetailToInstallActivity.this,"安装完成！");
                     installStartButton.setVisibility(View.GONE);
                     installAbnormalSolutionButton.setVisibility(View.GONE);
