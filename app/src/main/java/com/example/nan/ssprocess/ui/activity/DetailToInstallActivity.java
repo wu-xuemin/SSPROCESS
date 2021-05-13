@@ -313,10 +313,8 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
 //                installNormalRb.setEnabled(false);
 //                noteLayout.setVisibility(View.GONE);
 //            } else
-                if (
-//                        mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALLING
-//                    ||
-                        mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALL_WAITING
+                if (mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALLING  ///为了支持之前已经处在“安装中”的机器 也能继续点击扫码结束按钮
+                    || mTaskRecordMachineListData.getStatus() == SinSimApp.TASK_INSTALL_WAITING
                 ) {
                 installStartButton.setVisibility(View.GONE);
                 installAbnormalSolutionButton.setVisibility(View.GONE);
@@ -362,7 +360,7 @@ public class DetailToInstallActivity extends AppCompatActivity implements BGASor
     }
 
     public void onStopInstall(View view) {
-        if (//mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING ||
+        if ( mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALLING || ///为了支持原先处于“安装中”的机器，也能继续点击扫码结束按钮
                 mTaskRecordMachineListData.getStatus()==SinSimApp.TASK_INSTALL_WAITING) {
             if (installNormalRb.isChecked() && ("".equals(checkedName) || checkedName==null)){
                 ShowMessage.showToast(DetailToInstallActivity.this,"请勾选安装人员！", ShowMessage.MessageDuring.SHORT);
