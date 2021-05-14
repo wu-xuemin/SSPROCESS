@@ -10,8 +10,8 @@ android {
         applicationId "com.example.nan.ssprocess"
         minSdkVersion 19
         targetSdkVersion 26 
-        versionCode 34 
-        versionName "3.4"
+        versionCode 36
+        versionName "3.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
